@@ -1,21 +1,52 @@
 @startuml
 'https://plantuml.com/class-diagram
-'TODO
-
 class Test {
-
+    -int countOfQuestions
+    -String subject
+    +int getCountOfQuestions()
+    +String getSubject()
+    +void setCountOfQuestions()
+    +void setSubject()
 }
-class Exercise {
-
+class Question {
+    -int difficulty
+    -String questionString
+    -String answerString
+    -String subject
+    +int getDifficulty()
+    +String getQuestionString()
+    +String getAnswerString()
+    +String getSubject()
+    +void setDifficulty()
+    +void setQuestionsString()
+    +void setAnswerString()
+    +void setSubject()
 }
-class Program {
+class Pruefungsgenerator {
+    -GUI gui
+    -DatabaseConnection db
+    +Test makeNewTest()
+    +Question addNewQuestion()
+    +Question[] showAllQuestions(String subject)
 
 }
 class DatabaseConnection {
-    -
+    -String connection
+    +String get connection()
+    +String returnQuestion()...
 }
 class GUI {
-
+    +void showHomeScreen()
+    +void showMenu()
+    +void showAddQuestionDialog()
+    +void showMakeNewTestDialog()
+    +void showFAQ()
 }
+
+Pruefungsgenerator "1" *-- "1" DatabaseConnection : "has"
+Pruefungsgenerator "1" *-- "1" GUI : "is used by"
+Pruefungsgenerator "1" *-- "0..*" Test : "produces"
+Pruefungsgenerator "1" *-- "0..*" Question : "produces"
+Test "1..*" o-- "1..*" Question : "has"
 
 @enduml
