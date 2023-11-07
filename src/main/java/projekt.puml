@@ -13,14 +13,17 @@ class Question {
     -String questionString
     -String answerString
     -String subject
+    -String[] keywords
     +int getDifficulty()
     +String getQuestionString()
     +String getAnswerString()
     +String getSubject()
+    +String[] getKeywords()
     +void setDifficulty()
     +void setQuestionsString()
     +void setAnswerString()
     +void setSubject()
+    +void setKeywords()
 }
 class Pruefungsgenerator {
     -GUI gui
@@ -28,12 +31,13 @@ class Pruefungsgenerator {
     +Test makeNewTest()
     +Question addNewQuestion()
     +Question[] showAllQuestions(String subject)
-
+    +void editQuestion()
 }
 class DatabaseConnection {
     -String connection
     +String get connection()
-    +String returnQuestion()...
+    +String returnQuestion()
+    ...()
 }
 class GUI {
     +void showHomeScreen()
