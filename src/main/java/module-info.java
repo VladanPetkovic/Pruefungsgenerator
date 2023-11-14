@@ -7,4 +7,6 @@ module com.example.demo {
 
     opens com.example.frontend to javafx.fxml;
     exports com.example.frontend;
+    exports com.example.frontend.controller;
+    opens com.example.frontend.controller to javafx.fxml;
 }
