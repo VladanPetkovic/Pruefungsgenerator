@@ -2,55 +2,80 @@
 'https://plantuml.com/class-diagram
 class Test {
     -int countOfQuestions
+    -int overallPoints
     -String subject
+    -Question[] questions
     +int getCountOfQuestions()
+    +int getOverallPoints()
     +String getSubject()
-    +void setCountOfQuestions()
-    +void setSubject()
+    +Question[] getQuestions()
+    +void setCountOfQuestions(int count)
+    +void setOverallPoints(int points)
+    +void setSubject(String subject)
+    +void setQuestions(Question[] questions)
 }
 class Question {
     -int difficulty
+    -int points
     -String questionString
-    -String answerString
     -String subject
     -String[] keywords
+    -String[] topics
+    -Boolean language
     +int getDifficulty()
+    +int getPoints()
     +String getQuestionString()
-    +String getAnswerString()
     +String getSubject()
     +String[] getKeywords()
-    +void setDifficulty()
-    +void setQuestionsString()
-    +void setAnswerString()
-    +void setSubject()
-    +void setKeywords()
+    +String[] getTopics()
+    +Boolean getLanguage()
+    +void setDifficulty(int difficulty)
+    +void setPoints(int points)
+    +void setQuestionsString(String question)
+    +void setSubject(String subject)
+    +void setKeywords(String[] keywords)
+    +void setTopics(String[] topics)
+    +void setLanguage(Boolean lang)
 }
-class Pruefungsgenerator {
-    -GUI gui
-    -DatabaseConnection db
+class Question_open {
+    -String answer
+    +String getAnswer()
+    +void setAnswerString(String answer)
+}
+class Question_mc {
+    -int countOfAnswers
+    -String[] answers
+    +int getCountOfAnswers()
+    +String[] getAnswers()
+    +void setCountOfAnswers(int count)
+    +void setAnswers(String[] answers)
+}
+class Image {
+    -int position
+    -String path
+    -String name
+    +int getPosition()
+    +String getPath()
+    +String getName()
+    +void setPosition(int pos)
+    +void setPath(String path)
+    +void setName(String name)
+}
+class Menu {
     +Test makeNewTest()
     +Question addNewQuestion()
-    +Question[] showAllQuestions(String subject)
-    +void editQuestion()
-}
-class DatabaseConnection {
-    -String connection
-    +String get connection()
-    +String returnQuestion()
-    ...()
-}
-class GUI {
-    +void showHomeScreen()
-    +void showMenu()
-    +void showAddQuestionDialog()
-    +void showMakeNewTestDialog()
-    +void showFAQ()
+    +Question getQuestion(int id)
+    +Question[] getAllQuestions(String subject)
+    +void editQuestion(Question newQuestion)
+    +String selectSubject()
+    +void editTestHeader()
 }
 
-Pruefungsgenerator "1" *-- "1" DatabaseConnection : "has"
-Pruefungsgenerator "1" *-- "1" GUI : "is used by"
-Pruefungsgenerator "1" *-- "0..*" Test : "produces"
-Pruefungsgenerator "1" *-- "0..*" Question : "produces"
+Menu "1" *-- "0..*" Test : "produce"
+Question "0..*" --* "1" Menu : "produce & add"
 Test "1..*" o-- "1..*" Question : "has"
+Question "1..*" *-- "0..*" Image : has
+Question_mc <|-- Question
+Question_open <|-- Question
 
 @enduml

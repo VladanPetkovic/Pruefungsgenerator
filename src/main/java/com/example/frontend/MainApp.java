@@ -7,10 +7,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HomeScreen extends Application {
+public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HomeScreen.class.getResource("home.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         //String css = Objects.requireNonNull(this.getClass().getResource("css/home.css")).toExternalForm(); // maybe not needed

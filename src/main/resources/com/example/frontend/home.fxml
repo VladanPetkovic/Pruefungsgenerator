@@ -76,7 +76,7 @@
             <Button fx:id="home_btn" maxHeight="50.0" maxWidth="50.0" onAction="#onHomeButtonClick" prefHeight="50.0" prefWidth="50.0" styleClass="curled-btn" stylesheets="@css/home.css">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@icons/home.png" />
+                        <Image url="@icons/home_blue.png" />
                   </ImageView>
                </graphic>
                <GridPane.margin>
