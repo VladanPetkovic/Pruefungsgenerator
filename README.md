@@ -2,10 +2,10 @@
 ### INNO-LAB 1
 
 
->3rd Semester
->University of applied sciences Technikum Wien
+>3rd Semester \
+>University of Applied Sciences Technikum Wien
 
-Project-members:
+Project-members: Mehdi Erdem, Matthias Fichtinger, Simon Heider, Vladan Petkovic, Peter Tavaszi
 
 Supervisor: Christoph Redl
 
