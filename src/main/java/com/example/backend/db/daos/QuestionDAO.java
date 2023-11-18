@@ -128,11 +128,41 @@ public class QuestionDAO implements DAO<Question> {
 
     @Override
     public Question read(int id) {
+        String selectStmt = "SELECT * FROM Questions WHERE QuestionID = ?;";
+
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Question question = new Question(
+                        resultSet.getInt("Difficulty"),
+                        resultSet.getInt("Points"),
+                        resultSet.getString("Question"),
+                        resultSet.getBoolean("MultipleChoice"),
+                        // topic muss abgerufen und hier eingefügt werden
+                        // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                        resultSet.getString("Language"),
+                        resultSet.getString("Remarks"),
+                );
+                getConnection().close();
+                return question;
+            } else {
+                System.out.println("Question not found with ID: " + id);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
+
     @Override
-    public void update(Question user) {
+    public void update(Question question) {
 
     }
 
