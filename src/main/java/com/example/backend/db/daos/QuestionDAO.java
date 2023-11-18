@@ -82,7 +82,7 @@ public class QuestionDAO implements DAO<Question> {
         String selectQuestionsStmt = "SELECT * FROM Questions WHERE FK_Topic_ID = ?;"; // Query to get Questions
 
         try {
-            // Step 1: Get TopicID
+            // step 1: get TopicID
             PreparedStatement topicIdStatement = getConnection().prepareStatement(selectTopicIdStmt);
             topicIdStatement.setString(1, subject);
 
@@ -91,7 +91,7 @@ public class QuestionDAO implements DAO<Question> {
             if (topicIdResultSet.next()) {
                 int topicId = topicIdResultSet.getInt("TopicID");
 
-                // Step 2: Get Questions for the TopicID
+                // step 2: get questions for the TopicID
                 PreparedStatement questionsStatement = getConnection().prepareStatement(selectQuestionsStmt);
                 questionsStatement.setInt(1, topicId);
 
