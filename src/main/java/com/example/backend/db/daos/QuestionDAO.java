@@ -70,32 +70,61 @@ public class QuestionDAO implements DAO<Question> {
     }
 
     @Override
-    public ArrayList<Question> readAll() {
-        ArrayList<Question> questions = new ArrayList();
+    public ArrayList<Question> readAll(String subject) {
+        ArrayList<Question> questions = new ArrayList<>();
 
         if (questionsCache != null) {
             System.out.println("TEST");
             return questionsCache;
         }
 
-        String insertStmt = "SELECT name, population from cities;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        String selectTopicIdStmt = "SELECT TopicID FROM Topics WHERE Topic = ?;"; // Query to get TopicID
+        String selectQuestionsStmt = "SELECT * FROM Questions WHERE FK_Topic_ID = ?;"; // Query to get Questions
 
-            while(resultSet.next()) {
-                City city = new City(resultSet.getString(1), resultSet.getInt(2));
-                cities.add(city);
+        try {
+            // Step 1: Get TopicID
+            PreparedStatement topicIdStatement = getConnection().prepareStatement(selectTopicIdStmt);
+            topicIdStatement.setString(1, subject);
+
+            ResultSet topicIdResultSet = topicIdStatement.executeQuery();
+
+            if (topicIdResultSet.next()) {
+                int topicId = topicIdResultSet.getInt("TopicID");
+
+                // Step 2: Get Questions for the TopicID
+                PreparedStatement questionsStatement = getConnection().prepareStatement(selectQuestionsStmt);
+                questionsStatement.setInt(1, topicId);
+
+                ResultSet questionsResultSet = questionsStatement.executeQuery();
+
+                while (questionsResultSet.next()) {
+                    Question question = new Question(
+                            questionsResultSet.getInt("Difficulty"),
+                            questionsResultSet.getInt("Points"),
+                            questionsResultSet.getString("Question"),
+                            questionsResultSet.getBoolean("MultipleChoice"),
+                            subject,
+                            // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                            questionsResultSet.getString("Language"),
+                            questionsResultSet.getString("Remarks"),
+                    );
+                    questions.add(question);
+                }
+
+                setQuestionsCache(questions);
+                getConnection().close();
+                return questions;
+            } else {
+                System.out.println("Topic not found.");
             }
-            setCitiesCache(cities);
-            getConnection().close();
-            return cities;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return null;
     }
+
 
     @Override
     public Question read(int id) {
