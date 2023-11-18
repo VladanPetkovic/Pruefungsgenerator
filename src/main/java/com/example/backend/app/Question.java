@@ -1,7 +1,12 @@
 package com.example.backend.app;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class Question {
     private int difficulty;
     private int points;
@@ -33,40 +38,6 @@ public class Question {
         setRemarks(remarks);
     }
 
-    public int getDifficulty()
-    {
-        return this.difficulty;
-    }
-    public int getPoints()
-    {
-        return this.points;
-    }
-    public String getQuestionString()
-    {
-        return this.questionString;
-    }
-    public Boolean getMultipleChoice(){ return.this.multipleChoice; }
-    public String getTopic()
-    {
-        return this.topic;
-    }
-    public ArrayList<String> getKeywords()
-    {
-        return this.keywords;
-    }
-    public Boolean getLanguage()
-    {
-        return this.language;
-    }
-    public String getRemarks(){ return this.remarks; }
-    public void setDifficulty(int difficulty)
-    {
-        this.difficulty = difficulty;
-    }
-    public void setPoints(int points)
-    {
-        this.points = points;
-    }
     public void setQuestionsString(String question)
     {
         this.questionString = question;
