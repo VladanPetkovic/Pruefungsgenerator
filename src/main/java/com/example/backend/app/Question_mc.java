@@ -17,9 +17,9 @@ public class Question_mc extends Question {
 
     Question_mc(int difficulty, int points, String questionString,
                 Boolean multipleChoice, String topic, ArrayList<String> keywords,
-                Boolean lang, String remarks, int countOfAnswers, ArrayList<String> answers)
+                Boolean lang, String remarks, String course, int countOfAnswers, ArrayList<String> answers)
     {
-        super(difficulty, points, questionString, multipleChoice, topic, keywords, lang, remarks);
+        super(difficulty, points, questionString, multipleChoice, topic, keywords, course, lang, remarks);
         setCountOfAnswers(countOfAnswers);
         setAnswers(answers);
     }

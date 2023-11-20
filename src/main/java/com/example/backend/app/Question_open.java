@@ -17,9 +17,9 @@ public class Question_open extends Question {
 
     Question_open(int difficulty, int points, String questionString,
                 Boolean multipleChoice, String topic, ArrayList<String> keywords,
-                Boolean lang, String remarks, String answer)
+                  String course, Boolean lang, String remarks, String answer)
     {
-        super(difficulty, points, questionString, multipleChoice, topic, keywords, lang, remarks);
+        super(difficulty, points, questionString, multipleChoice, topic, keywords, course, lang, remarks);
         setAnswer(answer);
     }
 }
