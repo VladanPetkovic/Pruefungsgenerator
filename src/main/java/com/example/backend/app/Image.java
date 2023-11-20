@@ -1,32 +1,25 @@
 package com.example.backend.app;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Image {
     private int position;
     private String path;
     private String name;
-    public int getPosition()
+
+    Image()
     {
-        return this.position;
-    }
-    public String getPath()
-    {
-        return this.path;
-    }
-    public String getName()
-    {
-        return this.name;
-    }
-    public void setPosition(int pos)
-    {
-        this.position = pos;
-    }
-    public void setPath(String path)
-    {
-        this.path = path;
-    }
-    public void setName(String name)
-    {
-        this.name = name;
+
     }
 
+    Image(int position, String path, String name)
+    {
+        setPosition(position);
+        setPath(path);
+        setName(name);
+    }
 }

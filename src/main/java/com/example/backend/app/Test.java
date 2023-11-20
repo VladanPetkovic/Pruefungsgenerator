@@ -1,7 +1,12 @@
 package com.example.backend.app;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 
+
+@Getter
+@Setter
 public class Test {
     private int countOfQuestions;
     private int overallPoints;
@@ -12,36 +17,13 @@ public class Test {
     {
 
     }
-    public int getCountOfQuestions()
+
+    Test(int countOfQuestions, int overallPoints,
+         String subject, ArrayList<Question> questions)
     {
-        return this.countOfQuestions;
-    }
-    public int getOverallPoints()
-    {
-        return this.overallPoints;
-    }
-    public String getSubject()
-    {
-        return this.subject;
-    }
-    ArrayList<Question> getQuestions()
-    {
-        return this.questions;
-    }
-    public void setCountOfQuestions(int count)
-    {
-        this.countOfQuestions = count;
-    }
-    public void setOverallPoints(int points)
-    {
-        this.overallPoints = points;
-    }
-    public void setSubject(String subject)
-    {
-        this.subject = subject;
-    }
-    public void setQuestions(ArrayList<Question> questions)
-    {
-        this.questions = questions;
+        setCountOfQuestions(countOfQuestions);
+        setOverallPoints(overallPoints);
+        setSubject(subject);
+        setQuestions(questions);
     }
 }

@@ -15,13 +15,18 @@ public class Menu {
     {
         return new Test();
     }
-    public Question addNewQuestion()
+    public Question addNewQuestion(boolean isOpenQuestion)
     {
-        return new Question();
+        if(isOpenQuestion)
+        {
+            return new Question_open();
+        }
+
+        return new Question_mc();
     }
     public Question getQuestion(int id)
     {
-        return new Question();
+        return new Question_open();
     }
     public ArrayList<Question> getAllQuestions(String subject)
     {

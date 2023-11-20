@@ -1,7 +1,11 @@
 package com.example.backend.app;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class Question_mc extends Question {
     private int countOfAnswers;
     private ArrayList<String> answers;
@@ -10,20 +14,13 @@ public class Question_mc extends Question {
     {
 
     }
-    public int getCountOfAnswers()
+
+    Question_mc(int difficulty, int points, String questionString,
+                Boolean multipleChoice, String topic, ArrayList<String> keywords,
+                Boolean lang, String remarks, int countOfAnswers, ArrayList<String> answers)
     {
-        return this.countOfAnswers;
-    }
-    public ArrayList<String> getAnswers()
-    {
-        return this.answers;
-    }
-    public void setCountOfAnswers(int count)
-    {
-        this.countOfAnswers = count;
-    }
-    public void setAnswers(ArrayList<String> answers)
-    {
-        this.answers = answers;
+        super(difficulty, points, questionString, multipleChoice, topic, keywords, lang, remarks);
+        setCountOfAnswers(countOfAnswers);
+        setAnswers(answers);
     }
 }

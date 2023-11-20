@@ -10,7 +10,7 @@ import com.example.backend.app.Question;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-
+/*
 public class QuestionDAO implements DAO<Question> {
     @Setter(AccessLevel.PRIVATE)
     @Getter(AccessLevel.PRIVATE)
@@ -171,4 +171,4 @@ public class QuestionDAO implements DAO<Question> {
 
     }
 }
-
+*/
