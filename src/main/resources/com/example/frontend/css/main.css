@@ -6,19 +6,39 @@ button
     -fx-text-decoration: none;
 }
 
-.curled-btn
+.menu_btn
 {
     -fx-background-color: #2f2f2f; /* dark grey background color */
     -fx-color: #fff; /* White text color */
     -fx-border-radius: 2%; /* Rounded corners for curled edges */
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-max-height: 50px;
+    -fx-max-width: 50px;
+
 }
 
-#main_navigation
+.main_navigation
 {
     -fx-background-color: #2f2f2f; /* dark grey background color */
+    -fx-pref-width: 100px;
+    -fx-pref-height: 600px;
 }
 
-#preview_search_nav, #test_options
+.optionAreaBox
 {
     -fx-background-color: #3a3a3a; /* medium dark grey background color */
+}
+
+.searchbar_dark
+{
+    -fx-background-color: #434343;
+    -fx-text-fill: white;
+}
+.topic_label
+{
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: large;
 }
