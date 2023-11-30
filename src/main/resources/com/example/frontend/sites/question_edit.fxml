@@ -57,7 +57,7 @@
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                     </GridPane.margin>
                 </Button>
-                <Button fx:id="edit_btn" mnemonicParsing="false" styleClass="menu_btn" GridPane.rowIndex="3">
+                <Button fx:id="edit_btn" mnemonicParsing="false" onAction="#onEditQuestionButtonClick" styleClass="menu_btn" GridPane.rowIndex="3">
                     <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                             <image>
