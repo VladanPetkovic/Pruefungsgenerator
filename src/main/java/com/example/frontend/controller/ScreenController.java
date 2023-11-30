@@ -11,19 +11,26 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.EventObject;
 
-public class Home_ScreenController {
-
+public abstract class ScreenController {
     @FXML
-    private Label someText;
+    protected Label someText;
     @FXML
-    private Stage stage;
+    protected Stage stage;
     @FXML
-    private Scene scene;
+    protected Scene scene;
     @FXML
-    private Parent root;
-
+    protected Parent root;
+    @FXML
+    protected void onHomeButtonClick(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
+        root  = fxmlLoader.load();
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+        someText.setText("selecting course");
+    }
     @FXML
     protected void onCreateTestButtonClick(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/test_upload.fxml"));
@@ -32,7 +39,6 @@ public class Home_ScreenController {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        someText.setText("creating a new test");
     }
     @FXML
     protected void onUploadQuestionButtonClick()
