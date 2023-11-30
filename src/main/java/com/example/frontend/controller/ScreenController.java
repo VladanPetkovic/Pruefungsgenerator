@@ -29,7 +29,6 @@ public abstract class ScreenController {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        someText.setText("selecting course");
     }
     @FXML
     protected void onCreateTestButtonClick(ActionEvent event) throws IOException {
@@ -54,6 +53,5 @@ public abstract class ScreenController {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        someText.setText("edit question");
     }
 }
