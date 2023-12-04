@@ -32,7 +32,7 @@ public abstract class ScreenController {
     }
     @FXML
     protected void onCreateTestButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/test_upload.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/test_create.fxml"));
         root  = fxmlLoader.load();
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);

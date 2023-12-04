@@ -34,6 +34,10 @@ button
 {
     -fx-background-color: #434343;
     -fx-text-fill: white;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 300px;
 }
 .topic_label
 {
@@ -41,4 +45,29 @@ button
     -fx-text-fill: white;
     -fx-padding: 10px;
     -fx-font-size: large;
+}
+.option_label
+{
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-padding: 8px;
+    -fx-font-size: medium;
+}
+.scroll-box
+{
+    -fx-background-color: #525252;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: large;
+}
+.slider-tool
+{
+    -fx-background-color: #525252;
+    -fx-text-fill: white;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 300px;
+    -fx-tick-label-fill: white;
 }

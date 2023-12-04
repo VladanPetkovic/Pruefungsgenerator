@@ -98,8 +98,8 @@
                               <Label styleClass="option_label" text="Question-count:" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Slider fx:id="question_count_slider" blockIncrement="5.0" majorTickUnit="6.0" max="30.0" min="1.0" minorTickCount="2" showTickMarks="true" styleClass="slider-tool" value="10.0" />
-                                    <Label fx:id="label_question_count" styleClass="option_label" text="10" />
+                                    <Slider fx:id="question_count_slider" majorTickUnit="5.0" max="30.0" min="1.0" minorTickCount="1" opacity="0.95" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="10.0" />
+                                    <Label fx:id="label_question_count" styleClass="option_label" text="Label" />
                                  </children>
                               </HBox>
                            </children>
@@ -109,8 +109,8 @@
                               <Label styleClass="option_label" text="Difficulty:" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Slider fx:id="difficulty_slider" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickMarks="true" styleClass="slider-tool" value="5.0" />
-                                    <Label fx:id="label_difficulty" styleClass="option_label" text="5" />
+                                    <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                    <Label fx:id="label_difficulty" styleClass="option_label" text="Label" />
                                  </children>
                               </HBox>
                            </children>

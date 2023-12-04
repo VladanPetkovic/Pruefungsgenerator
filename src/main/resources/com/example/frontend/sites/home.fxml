@@ -47,7 +47,7 @@
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                     </GridPane.margin>
                 </Button>
-                <Button fx:id="home_btn" styleClass="menu_btn" textFill="WHITE">
+                <Button fx:id="home_btn" onAction="#onHomeButtonClick" styleClass="menu_btn" textFill="WHITE">
                     <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                             <Image url="@../icons/home_blue.png" />

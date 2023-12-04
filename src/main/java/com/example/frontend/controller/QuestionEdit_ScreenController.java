@@ -8,6 +8,4 @@ public class QuestionEdit_ScreenController extends ScreenController {
     {
         someText.setText("edit question");
     }
-
-
 }
