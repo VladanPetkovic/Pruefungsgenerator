@@ -1,46 +1,51 @@
 package com.example.frontend.controller;
 
-import com.example.frontend.MainApp;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import javafx.scene.control.Slider;
 
-import java.io.IOException;
 
-public class TestCreate_ScreenController
+public class TestCreate_ScreenController extends ScreenController
 {
     @FXML
-    private Label someText;
+    private Label label_question_count;
     @FXML
-    private Stage stage;
+    private Label label_difficulty;
     @FXML
-    private Scene scene;
+    private Slider difficulty_slider;
     @FXML
-    private Parent root;
-    @FXML
-    protected void onHomeButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
-        root  = fxmlLoader.load();
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-        someText.setText("selecting course");
-    }
-    @FXML
-    protected void onUploadQuestionButtonClick()
-    {
-        someText.setText("Uploading some question");
-    }
-    @FXML
-    protected void onEditQuestionButtonClick()
-    {
-        someText.setText("Editing some question");
+    private Slider question_count_slider;
+    int difficulty = 5;
+    int question_count = 5;
+    @Override
+    protected void onCreateTestButtonClick(ActionEvent event) {
+        someText.setText("something");
     }
 
+    public void initialize() {
+
+        label_difficulty.setText("5");
+        label_question_count.setText("10");
+
+        difficulty = (int) difficulty_slider.getValue();
+        question_count = (int) question_count_slider.getValue();
+
+        difficulty_slider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                difficulty = (int) difficulty_slider.getValue();
+                label_difficulty.setText(Integer.toString(difficulty));
+            }
+        });
+        question_count_slider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                question_count = (int) question_count_slider.getValue();
+                label_question_count.setText(Integer.toString(question_count));
+            }
+        });
+    }
 }
