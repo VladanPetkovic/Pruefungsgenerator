@@ -18,12 +18,8 @@ button
 
 }
 
-.main_navigation
-{
-    -fx-background-color: #2f2f2f; /* dark grey background color */
-    -fx-pref-width: 100px;
-    -fx-pref-height: 600px;
-}
+
+
 
 .optionAreaBox
 {
@@ -74,6 +70,28 @@ button
 
 
 
+/* Navigation bar*/
+
+
+.main_navigation
+{
+    -fx-background-color: #2f2f2f; /* dark grey background color */
+    -fx-pref-width: 100px;
+    -fx-pref-height: 600px;
+}
+
+.navigation_item_label_notSelected
+{
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+}
+
+.navigation_item_label_selected
+{
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-text-fill: #228be6; /* color of the blue icons */
+}
 
 
 /* Home Screen */
@@ -90,7 +108,6 @@ button
     -fx-background-color: #C2BFBF;
 }
 
-
 .homeScreen_label {
     -fx-font-family: "Inter";
     -fx-font-size: 41px;
@@ -98,11 +115,8 @@ button
     -fx-line-spacing: 15px;
     -fx-letter-spacing: 0em;
     -fx-text-align: center;
-    -fx-padding: 0 0 0 200px;
+    -fx-padding: 0 200px 0 0;
 }
-
-
-
 
 .homeScreen_hbox_ContinueButton
 {

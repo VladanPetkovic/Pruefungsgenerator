@@ -17,15 +17,15 @@
    <children>
       <HBox maxHeight="100.0" maxWidth="1120.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" prefWidth="1120.0" styleClass="main_navigation" stylesheets="@../css/main.css">
          <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/FH_logo.png" />
+               </image></ImageView>
             <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Prüfungsgenerator" textFill="WHITE">
                <font>
                   <Font size="35.0" />
                </font>
             </Label>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/FH_logo.png" />
-               </image></ImageView>
          </children>
       </HBox>
       <HBox maxHeight="530.0" maxWidth="1120.0" minHeight="413.0" minWidth="1115.0" prefHeight="498.0" prefWidth="1086.0">
