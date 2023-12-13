@@ -71,3 +71,47 @@ button
     -fx-max-width: 300px;
     -fx-tick-label-fill: white;
 }
+
+
+
+
+
+/* Home Screen */
+.homeScreen_gridPane
+{
+    -fx-background-color: #3A3A3A;
+}
+
+.homeScreen_dropdown
+{
+    -fx-font-size: 20px;
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-background-color: #C2BFBF;
+}
+
+
+.homeScreen_label {
+    -fx-font-family: "Inter";
+    -fx-font-size: 41px;
+    -fx-font-weight: bold;
+    -fx-line-spacing: 15px;
+    -fx-letter-spacing: 0em;
+    -fx-text-align: center;
+    -fx-padding: 0 0 0 200px;
+}
+
+
+
+
+.homeScreen_hbox_ContinueButton
+{
+    -fx-background-color: #3A3A3A;
+}
+.homeScreen_ContinueButton
+{
+    -fx-font-family: "Inter";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-color: #434343;
+}
