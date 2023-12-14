@@ -153,10 +153,24 @@ button
 
 .automatic_create_vbox
 {
-    -fx-padding: 20px 0 0 50px;
+    -fx-padding: 20px 0 20px 50px;
 }
 
 .automatic_create_spinner
 {
     -fx-base: #2f2f2f;
+}
+
+.automatic_create_uploadButton
+{
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-background-color: #2f2f2f;
+}
+
+
+/* Upload Question Scene */
+.upload_question_vbox
+{
+    -fx-padding: 20px 50px 20px 50px;
 }
