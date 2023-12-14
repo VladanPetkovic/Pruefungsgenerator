@@ -136,7 +136,6 @@ button
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-padding: 20px 0 20px 50px;
-
 }
 
 .automatic_create_scrollPane
@@ -155,4 +154,9 @@ button
 .automatic_create_vbox
 {
     -fx-padding: 20px 0 0 50px;
+}
+
+.automatic_create_spinner
+{
+    -fx-base: #2f2f2f;
 }

@@ -128,7 +128,7 @@
                                     <Label styleClass="option_label" text="Difficulty:" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" style="-fx-background-color: black;" styleClass="slider-tool" value="5.5" />
                                           <Label fx:id="label_difficulty" styleClass="option_label" text="Label" />
                                        </children>
                                     </HBox>
