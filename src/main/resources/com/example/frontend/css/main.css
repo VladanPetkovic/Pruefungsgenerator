@@ -153,10 +153,18 @@ button
 
 .automatic_create_vbox
 {
-    -fx-padding: 20px 0 0 50px;
+    -fx-padding: 20px 0px 20px 50px;
 }
 
 .automatic_create_spinner
 {
     -fx-base: #2f2f2f;
+}
+
+
+/* Question Edit Screen */
+
+.edit_question_vbox
+{
+    -fx-padding: 20px 50px 20px 50px;
 }
