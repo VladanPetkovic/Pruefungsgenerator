@@ -39,7 +39,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <MenuButton alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Studienrichtung">
+                  <MenuButton alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Study programs">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
@@ -48,7 +48,7 @@
                         <Font size="20.0" />
                      </font>
                   </MenuButton>
-                  <MenuButton maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="LV - Kurse" GridPane.columnIndex="1">
+                  <MenuButton maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Courses" GridPane.columnIndex="1">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
@@ -63,7 +63,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="homeScreen_hbox_ContinueButton" stylesheets="@../css/main.css">
          <children>
-            <Button maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_ContinueButton" stylesheets="@../css/main.css" text="WEITER" textFill="WHITE">
+            <Button maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_ContinueButton" stylesheets="@../css/main.css" text="Continue" textFill="WHITE">
                <font>
                   <Font size="20.0" />
                </font></Button>
