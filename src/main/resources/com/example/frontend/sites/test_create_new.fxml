@@ -23,7 +23,7 @@
                <image>
                   <Image url="@../icons/FH_logo.png" />
                </image></ImageView>
-            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Automatic Test Creation" textFill="WHITE">
+            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Test Creation" textFill="WHITE">
                <font>
                   <Font size="35.0" />
                </font>
