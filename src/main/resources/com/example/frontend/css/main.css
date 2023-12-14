@@ -161,9 +161,22 @@ button
     -fx-base: #2f2f2f;
 }
 
+.automatic_create_uploadButton
+{
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-background-color: #2f2f2f;
+}
+
+
+/* Upload Question Scene */
+.upload_question_vbox
+{
+    -fx-padding: 20px 50px 20px 50px;
+}
+
 
 /* Question Edit Screen */
-
 .edit_question_vbox
 {
     -fx-padding: 20px 50px 20px 50px;
