@@ -48,7 +48,7 @@ button
 }
 .scroll-box
 {
-    -fx-background-color: #525252;
+    -fx-background-color: #3A3A3A;
     -fx-background-insets: 0;
     -fx-text-fill: white;
     -fx-padding: 10px;
@@ -56,7 +56,7 @@ button
 }
 .slider-tool
 {
-    -fx-background-color: #525252;
+    -fx-background-color: #2f2f2f;
     -fx-text-fill: white;
     -fx-pref-width: 300px;
     -fx-min-width: 200px;
