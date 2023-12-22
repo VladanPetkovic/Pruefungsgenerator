@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="1080.0" maxWidth="1920.0" minHeight="630.0" minWidth="1120.0" prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.TestCreate_ScreenController">
+<HBox maxHeight="1080.0" maxWidth="1920.0" minHeight="630.0" minWidth="1120.0" prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateManual_ScreenController">
    <children>
       <GridPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="main_navigation" stylesheets="@../css/main.css">
          <columnConstraints>

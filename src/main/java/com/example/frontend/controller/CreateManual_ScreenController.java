@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 
 
-public class TestCreate_ScreenController extends ScreenController
+public class CreateManual_ScreenController extends ScreenController
 {
     @FXML
     private Label label_question_count;
@@ -21,8 +21,8 @@ public class TestCreate_ScreenController extends ScreenController
     int difficulty = 5;
     int question_count = 5;
     @Override
-    protected void onCreateTestButtonClick(ActionEvent event) {
-        someText.setText("something");
+    protected void onCreateManTestBtnClick(ActionEvent event) {
+
     }
 
     public void initialize() {

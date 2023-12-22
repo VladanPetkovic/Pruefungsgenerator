@@ -22,8 +22,8 @@ public abstract class ScreenController {
     @FXML
     protected Parent root;
     @FXML
-    protected void onHomeButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
+    protected void onCreateAutTestBtnClick(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"));
         root  = fxmlLoader.load();
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -31,8 +31,8 @@ public abstract class ScreenController {
         stage.show();
     }
     @FXML
-    protected void onCreateTestButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/test_create.fxml"));
+    protected void onCreateManTestBtnClick(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/create_manual.fxml"));
         root  = fxmlLoader.load();
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -40,12 +40,17 @@ public abstract class ScreenController {
         stage.show();
     }
     @FXML
-    protected void onUploadQuestionButtonClick()
+    protected void onUploadQuestionBtnClick(ActionEvent event) throws IOException
     {
-        someText.setText("Uploading some question");
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/question_upload.fxml"));
+        root  = fxmlLoader.load();
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
     @FXML
-    protected void onEditQuestionButtonClick(ActionEvent event) throws IOException
+    protected void onEditQuestionBtnClick(ActionEvent event) throws IOException
     {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"));
         root  = fxmlLoader.load();

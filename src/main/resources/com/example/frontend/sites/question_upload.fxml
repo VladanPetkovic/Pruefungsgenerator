@@ -50,7 +50,7 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" stylesheets="@../css/main.css">
                      <children>
-                        <Button alignment="BOTTOM_LEFT" onAction="#onCreateTestButtonClick" styleClass="menu_btn">
+                        <Button alignment="BOTTOM_LEFT" onAction="#onCreateAutTestBtnClick" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -64,7 +64,7 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="create_btn" onAction="#onCreateTestButtonClick" styleClass="menu_btn">
+                        <Button fx:id="create_btn" onAction="#onCreateManTestBtnClick" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -78,7 +78,7 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="upload_btn" onAction="#onUploadQuestionButtonClick" styleClass="menu_btn">
+                        <Button fx:id="upload_btn" onAction="#onUploadQuestionBtnClick" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -92,7 +92,7 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
                      <children>
-                        <Button fx:id="upload_btn1" onAction="#onUploadQuestionButtonClick" styleClass="menu_btn">
+                        <Button fx:id="upload_btn1" onAction="#onEditQuestionBtnClick" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
