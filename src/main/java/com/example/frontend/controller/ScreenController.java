@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public abstract class ScreenController {
     @FXML
@@ -29,6 +30,8 @@ public abstract class ScreenController {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
+
     }
     @FXML
     protected void onCreateManTestBtnClick(ActionEvent event) throws IOException {

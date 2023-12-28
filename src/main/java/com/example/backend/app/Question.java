@@ -10,7 +10,7 @@ public abstract class Question {
     private int difficulty;
     private int points;
     private String questionString;
-    private Boolean multipleChoice;
+    private int multipleChoice;
     private String topic;
     private ArrayList<String> keywords;
     private String course;
@@ -28,7 +28,7 @@ public abstract class Question {
 
     // constructor with values
     public Question(int difficulty, int points, String questionString,
-                    Boolean multipleChoice, String topic, ArrayList<String> keywords,
+                    int multipleChoice, String topic, ArrayList<String> keywords,
                     String course, Boolean lang, String remarks) {
         setDifficulty(difficulty);
         setPoints(points);

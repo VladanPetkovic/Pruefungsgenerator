@@ -6,11 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.example.backend.app.Question;
+import com.example.backend.db.models.Question;
+import com.example.backend.db.models.Topic;
+import com.example.backend.db.repositories.KeywordRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-/*
+
 public class QuestionDAO implements DAO<Question> {
     @Setter(AccessLevel.PRIVATE)
     @Getter(AccessLevel.PRIVATE)
@@ -32,7 +34,7 @@ public class QuestionDAO implements DAO<Question> {
         String searchStmt = "SELECT TopicID FROM Topics WHERE Topic = ?; ";
         try{
             PreparedStatement preparedStatement = getConnection().prepareStatement(searchStmt);
-            preparedStatement.setString(1, question.getTopic());
+            preparedStatement.setString(1, question.getTopic().getTopic());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -40,7 +42,7 @@ public class QuestionDAO implements DAO<Question> {
             if (resultSet.next()) {
                 int topicId = resultSet.getInt("TopicID");
 
-                String insertStmt = "INSERT into Questions (FK_Topic_ID, Difficulty, Points, Question, MultipleChoice, Language, Remarks) VALUES (?, ?, ?, ?, ?, ?, ?);";
+                String insertStmt = "INSERT into Questions (FK_Topic_ID, Difficulty, Points, Question, MultipleChoice, Language, Remarks, Answers) VALUES (?, ?, ?, ?, ?, ?, ?);";
                 try {
                     preparedStatement = getConnection().prepareStatement(insertStmt);
                     // use the retrieved TopicID
@@ -49,8 +51,9 @@ public class QuestionDAO implements DAO<Question> {
                     preparedStatement.setInt(3, question.getPoints());
                     preparedStatement.setString(4, question.getQuestionString());
                     preparedStatement.setInt(5, question.getMultipleChoice());
-                    preparedStatement.setBoolean(6, question.getLanguage());
+                    preparedStatement.setString(6, question.getLanguage());
                     preparedStatement.setString(7, question.getRemarks());
+                    preparedStatement.setString(8, question.getAnswers());
 
                     preparedStatement.execute();
                     getConnection().close();
@@ -70,6 +73,10 @@ public class QuestionDAO implements DAO<Question> {
     }
 
     @Override
+    public ArrayList<Question> readAll() {
+        return null;
+    }
+
     public ArrayList<Question> readAll(String subject) {
         ArrayList<Question> questions = new ArrayList<>();
 
@@ -99,14 +106,19 @@ public class QuestionDAO implements DAO<Question> {
 
                 while (questionsResultSet.next()) {
                     Question question = new Question(
+                            new Topic(subject),
                             questionsResultSet.getInt("Difficulty"),
                             questionsResultSet.getInt("Points"),
                             questionsResultSet.getString("Question"),
-                            questionsResultSet.getBoolean("MultipleChoice"),
-                            subject,
-                            // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                            questionsResultSet.getInt("MultipleChoice"),
                             questionsResultSet.getString("Language"),
                             questionsResultSet.getString("Remarks"),
+                            questionsResultSet.getString("Answers"),
+                            // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                            // // new KeywordRepository().getAll(questionsResultSet.getInt("Question_ID")),
+                            // arraylist von Images muss für die jeweilige Frage abgerufen und hinzugefügt werden
+                            // --> circa so:
+                            // // new ImageRepository().getAll(questionsResultSet.getInt("Question_ID"))
                     );
                     questions.add(question);
                 }
@@ -124,8 +136,6 @@ public class QuestionDAO implements DAO<Question> {
 
         return null;
     }
-
-
     @Override
     public Question read(int id) {
         String selectStmt = "SELECT * FROM Questions WHERE QuestionID = ?;";
@@ -138,14 +148,15 @@ public class QuestionDAO implements DAO<Question> {
 
             if (resultSet.next()) {
                 Question question = new Question(
+                        // topic muss abgerufen und hier eingefügt werden
                         resultSet.getInt("Difficulty"),
                         resultSet.getInt("Points"),
                         resultSet.getString("Question"),
-                        resultSet.getBoolean("MultipleChoice"),
-                        // topic muss abgerufen und hier eingefügt werden
-                        // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                        resultSet.getInt("MultipleChoice"),
                         resultSet.getString("Language"),
                         resultSet.getString("Remarks"),
+                        // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
+                        // images auch --> siehe wie oben
                 );
                 getConnection().close();
                 return question;
@@ -159,16 +170,12 @@ public class QuestionDAO implements DAO<Question> {
 
         return null;
     }
-
-
     @Override
     public void update(Question question) {
 
     }
-
     @Override
     public void delete(int id) {
-    
+
     }
 }
-*/

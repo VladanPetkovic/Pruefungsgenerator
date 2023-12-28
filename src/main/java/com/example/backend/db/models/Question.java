@@ -1,34 +1,43 @@
 package com.example.backend.db.models;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.lang.reflect.Array;
+import java.security.Key;
+import java.util.ArrayList;
 
 @Getter
 @Setter
 @AllArgsConstructor
 
 public class Question {
-    @JsonAlias({"question_id"})
     int question_id;
-    @JsonAlias({"fk_topic_id"})
-    int fk_topic_id;
-    @JsonAlias({"difficulty"})
+    Topic topic;
     int difficulty;
-    @JsonAlias({"points"})
     int points;
-    @JsonAlias({"question"})
-    String question;
-    @JsonAlias({"multipleChoice"})
-    boolean multipleChoice;
-    @JsonAlias({"language"})
+    String questionString;
+    int multipleChoice;
     String language;
-    @JsonAlias({"remarks"})
     String remarks;
-    @JsonAlias({"answers"})
     String answers;
+    ArrayList<Keyword> keywords;
+    ArrayList<Image> images;
 
-    // Jackson needs the default constructor
-    public Question() {}
+    public Question(Topic topic, int difficulty, int points, String questionString,
+                    int multipleChoice, String lang, String remarks,
+                    String answers, ArrayList<Keyword> keywords,
+                    ArrayList<Image> images) {
+        setTopic(topic);
+        setDifficulty(difficulty);
+        setPoints(points);
+        setQuestionString(questionString);
+        setMultipleChoice(multipleChoice);
+        setLanguage(lang);
+        setRemarks(remarks);
+        setAnswers(answers);
+        setKeywords(keywords);
+        setImages(images);
+    }
 }
