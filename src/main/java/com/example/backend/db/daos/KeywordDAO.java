@@ -64,7 +64,12 @@ public class KeywordDAO implements DAO<Keyword> {
     public ArrayList<Keyword> readAllForOneQuestion(int question_id) {
         ArrayList<Keyword> keywords = new ArrayList<>();
 
-        String selectStmt = "SELECT KeywordID, Keyword FROM Keywords;";
+        String selectStmt =
+            "SELECT Keywords.KeywordID, Keyword " +
+            "FROM Keywords" +
+            "JOIN hasKQ ON Keywords.KeywordID = hasKQ.KeywordID" +
+            "JOIN Questions ON hasKQ.QuestionID = Questions.QuestionID" +
+            "WHERE hasKQ.QuestionID = ?;";
 
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
@@ -147,6 +152,20 @@ public class KeywordDAO implements DAO<Keyword> {
             secondPpStmt.setInt(1, id);
             secondPpStmt.execute();
 
+            getConnection().close();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addKQConnection(int keyword_id, int question_id) {
+        String insertStmt = "INSERT INTO hasKQ (KeywordID, QuestionID) VALUES (?, ?);";
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
+            preparedStatement.setInt(1, keyword_id);
+            preparedStatement.setInt(2, question_id);
+            preparedStatement.execute();
             getConnection().close();
             setKeywordCache(null);
         } catch (SQLException e) {

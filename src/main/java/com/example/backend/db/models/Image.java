@@ -9,10 +9,10 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class Image {
-    int image_id;
-    String link;
-    String imageName;
-    int position;
+    private int image_id;
+    private String link;
+    private String imageName;
+    private int position;
 
     public Image(String link, String imageName, int position) {
         setLink(link);

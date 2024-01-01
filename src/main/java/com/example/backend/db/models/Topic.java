@@ -11,4 +11,9 @@ import lombok.Setter;
 public class Topic {
     private int topic_id;
     private String topic;
+
+    public Topic(Topic other) {
+        this.topic_id = other.topic_id;
+        this.topic = other.topic;
+    }
 }

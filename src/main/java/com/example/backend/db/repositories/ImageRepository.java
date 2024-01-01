@@ -2,6 +2,7 @@ package com.example.backend.db.repositories;
 
 import com.example.backend.db.daos.ImageDAO;
 import com.example.backend.db.models.Image;
+import com.example.backend.db.models.Question;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,10 @@ public class ImageRepository implements Repository<Image> {
     @Override
     public void add(Image image) {
         getImageDAO().create(image);
+    }
+
+    public void addConnection(Image image, Question question) {
+        getImageDAO().addIQConnection(image.getImage_id(), question.getQuestion_id());
     }
 
     @Override

@@ -169,4 +169,18 @@ public class ImageDAO implements DAO<Image> {
             e.printStackTrace();
         }
     }
+
+    public void addIQConnection(int image_id, int question_id) {
+        String insertStmt = "INSERT INTO hasIQ (ImageID, QuestionID) VALUES (?, ?);";
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
+            preparedStatement.setInt(1, image_id);
+            preparedStatement.setInt(2, question_id);
+            preparedStatement.execute();
+            getConnection().close();
+            setImageCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

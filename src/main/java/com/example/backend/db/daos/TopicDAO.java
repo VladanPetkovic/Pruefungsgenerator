@@ -121,6 +121,35 @@ public class TopicDAO implements DAO<Topic> {
         return topic;
     }
 
+    public Topic read(String topic_text) {
+        Topic topic = null;
+
+        String readStmt =
+                "SELECT TopicID, Topic " +
+                        "FROM Topics " +
+                        "WHERE Topic = ?;";
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(readStmt);
+            preparedStatement.setString(1, topic_text);
+
+            ResultSet result = preparedStatement.executeQuery();
+
+            if(result.next()) {
+                topic = new Topic(
+                        result.getInt(1),
+                        result.getString(2)
+                );
+            }
+
+            getConnection().close();
+            setTopicCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return topic;
+    }
+
     @Override
     public void update(Topic topic) {
         String updateStmt = "UPDATE Topics SET Topic = ? WHERE TopicID = ?";
