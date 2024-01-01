@@ -1,5 +1,6 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,22 +13,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class TopicDAO implements DAO<Topic> {
-    @Setter(AccessLevel.PRIVATE)
-    @Getter(AccessLevel.PRIVATE)
-    Connection connection;
 
     @Setter(AccessLevel.PRIVATE)
+    @Getter(AccessLevel.PRIVATE)
     ArrayList<Topic> topicCache;
 
     @Override
     public void create(Topic topic) {
         String insertStmt = "INSERT INTO Topics (Topic) VALUES (?);";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
+
             preparedStatement.setString(1, topic.getTopic());
             preparedStatement.execute();
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -38,57 +39,53 @@ public class TopicDAO implements DAO<Topic> {
         ArrayList<Topic> topics = new ArrayList<>();
 
         String selectStmt = "SELECT TopicID, Topic FROM Topics;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
-            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
-                Topic newTopic = new Topic(
-                    resultSet.getInt(1),
-                    resultSet.getString(2)
-                );
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                Topic newTopic = createModelFromResultSet(resultSet);
                 topics.add(newTopic);
             }
+
             setTopicCache(topics);
-            getConnection().close();
-            return topics;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return topics;
     }
 
     public ArrayList<Topic> readAllForOneCourse(int course_id) {
         ArrayList<Topic> topics = new ArrayList<>();
 
         String selectStmt =
-            "SELECT TopicID, Topic " +
-            "FROM Topics" +
-            "JOIN hasCT ON Topics.TopicID = hasCT.TopicID" +
-            "JOIN Courses ON hasCT.CourseID = Courses.CourseID" +
-            "WHERE hasCT.CourseID = ?;";
+                "SELECT TopicID, Topic " +
+                        "FROM Topics " +
+                        "JOIN hasCT ON Topics.TopicID = hasCT.TopicID " +
+                        "JOIN Courses ON hasCT.CourseID = Courses.CourseID " +
+                        "WHERE hasCT.CourseID = ?;";
 
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
+
             preparedStatement.setInt(1, course_id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
-                Topic newTopic = new Topic(
-                    resultSet.getInt(1),
-                    resultSet.getString(2)
-                );
+            while (resultSet.next()) {
+                Topic newTopic = createModelFromResultSet(resultSet);
                 topics.add(newTopic);
             }
+
             setTopicCache(topics);
-            getConnection().close();
-            return topics;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return topics;
     }
 
     @Override
@@ -96,24 +93,23 @@ public class TopicDAO implements DAO<Topic> {
         Topic topic = null;
 
         String readStmt =
-            "SELECT TopicID, Topic " +
-            "FROM Topics " +
-            "WHERE TopicID = ?;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(readStmt);
+                "SELECT TopicID, Topic " +
+                        "FROM Topics " +
+                        "WHERE TopicID = ?;";
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+
             preparedStatement.setInt(1, id);
 
-            ResultSet result = preparedStatement.executeQuery();
-
-            if(result.next()) {
-                topic = new Topic(
-                    result.getInt(1),
-                    result.getString(2)
-                );
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    topic = createModelFromResultSet(result);
+                }
             }
 
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -128,21 +124,20 @@ public class TopicDAO implements DAO<Topic> {
                 "SELECT TopicID, Topic " +
                         "FROM Topics " +
                         "WHERE Topic = ?;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(readStmt);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+
             preparedStatement.setString(1, topic_text);
 
-            ResultSet result = preparedStatement.executeQuery();
-
-            if(result.next()) {
-                topic = new Topic(
-                        result.getInt(1),
-                        result.getString(2)
-                );
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    topic = createModelFromResultSet(result);
+                }
             }
 
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -152,14 +147,16 @@ public class TopicDAO implements DAO<Topic> {
 
     @Override
     public void update(Topic topic) {
-        String updateStmt = "UPDATE Topics SET Topic = ? WHERE TopicID = ?";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(updateStmt);
+        String updateStmt = "UPDATE Topics SET Topic = ? WHERE TopicID = ?;";
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
+
             preparedStatement.setString(1, topic.getTopic());
             preparedStatement.setInt(2, topic.getTopic_id());
             preparedStatement.execute();
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -169,18 +166,19 @@ public class TopicDAO implements DAO<Topic> {
     public void delete(int id) {
         String deleteStmt = "DELETE FROM Topics WHERE TopicID = ?;";
         String deleteHasCTStmt = "DELETE FROM hasCT WHERE TopicID = ?;";
-        try {
-            // deleting from Topics table
-            PreparedStatement preparedStatement = getConnection().prepareStatement(deleteStmt);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
+             PreparedStatement secondPpStmt = connection.prepareStatement(deleteHasCTStmt)) {
+
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
-            // deleting from hasCT table
-            PreparedStatement secondPpStmt = getConnection().prepareStatement(deleteHasCTStmt);
+
             secondPpStmt.setInt(1, id);
             secondPpStmt.execute();
 
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -188,15 +186,25 @@ public class TopicDAO implements DAO<Topic> {
 
     public void addCTConnection(int course_id, int topic_id) {
         String insertStmt = "INSERT INTO hasCT (CourseID, TopicID) VALUES (?, ?);";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
+
             preparedStatement.setInt(1, course_id);
             preparedStatement.setInt(2, topic_id);
             preparedStatement.execute();
-            getConnection().close();
             setTopicCache(null);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Topic createModelFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Topic(
+                resultSet.getInt("TopicID"),
+                resultSet.getString("Topic")
+        );
     }
 }

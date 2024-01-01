@@ -1,5 +1,6 @@
 package com.example.backend.db.repositories;
 
+import com.example.backend.db.daos.KeywordDAO;
 import com.example.backend.db.daos.QuestionDAO;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.models.Topic;
@@ -13,6 +14,10 @@ public class QuestionRepository implements Repository<Question> {
     @Setter(AccessLevel.PRIVATE)
     @Getter(AccessLevel.PRIVATE)
     QuestionDAO questionDAO;
+
+    public QuestionRepository(QuestionDAO questionDAO) {
+        setQuestionDAO(questionDAO);
+    }
 
     @Override
     public ArrayList<Question> getAll() {

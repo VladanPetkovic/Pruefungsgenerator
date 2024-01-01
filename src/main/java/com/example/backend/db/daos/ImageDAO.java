@@ -1,35 +1,30 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Image;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ImageDAO implements DAO<Image> {
-    @Setter(AccessLevel.PRIVATE)
-    @Getter(AccessLevel.PRIVATE)
-    Connection connection;
 
     @Setter(AccessLevel.PRIVATE)
-    ArrayList<Image> ImageCache;
+    ArrayList<Image> imageCache;
+
     @Override
     public void create(Image image) {
         String insertStmt =
                 "INSERT INTO Images (Link, Imagename, Position) " +
                         "VALUES (?, ?, ?);";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setString(1, image.getLink());
             preparedStatement.setString(2, image.getImageName());
             preparedStatement.setInt(3, image.getPosition());
             preparedStatement.execute();
-            getConnection().close();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,26 +33,21 @@ public class ImageDAO implements DAO<Image> {
 
     @Override
     public ArrayList<Image> readAll() {
-        ArrayList<Image> images = new ArrayList<>();
+        String selectStmt = "SELECT ImageID, Link, Imagename, Position FROM Images;";
 
-        String selectStmt =
-                "SELECT ImageID, Link, Imagename, Position " +
-                        "FROM Images;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
-            while(resultSet.next()) {
-                Image newImage = new Image(
-                        resultSet.getInt(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getInt(4));
+            ArrayList<Image> images = new ArrayList<>();
+            while (resultSet.next()) {
+                Image newImage = createModelFromResultSet(resultSet);
                 images.add(newImage);
             }
+
             setImageCache(images);
-            getConnection().close();
             return images;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,32 +55,26 @@ public class ImageDAO implements DAO<Image> {
         return null;
     }
 
-    public ArrayList<Image> readAllForOneQuestion(int question_id) {
-        ArrayList<Image> images = new ArrayList<>();
-
+    public ArrayList<Image> readAllForOneQuestion(int questionId) {
         String selectStmt =
-            "SELECT Images.ImageID, Link, Imagename, Position " +
-            "FROM Images" +
-            "JOIN hasIQ ON Images.ImageID = hasIQ.ImageID " +
-            "JOIN Questions ON hasIQ.QuestionID = Questions.QuestionID " +
-            "WHERE hasIQ.QuestionID = ?;";
+                "SELECT Images.ImageID, Link, Imagename, Position " +
+                        "FROM Images " +
+                        "JOIN hasIQ ON Images.ImageID = hasIQ.ImageID " +
+                        "JOIN Questions ON hasIQ.QuestionID = Questions.QuestionID " +
+                        "WHERE hasIQ.QuestionID = ?;";
 
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
-            preparedStatement.setInt(1, question_id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while(resultSet.next()) {
-                Image newImage = new Image(
-                        resultSet.getInt(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getInt(4));
-                images.add(newImage);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
+            preparedStatement.setInt(1, questionId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                ArrayList<Image> images = new ArrayList<>();
+                while (resultSet.next()) {
+                    Image newImage = createModelFromResultSet(resultSet);
+                    images.add(newImage);
+                }
+                setImageCache(images);
+                return images;
             }
-            setImageCache(images);
-            getConnection().close();
-            return images;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,23 +90,15 @@ public class ImageDAO implements DAO<Image> {
                 "SELECT ImageID, Link, Imagename, Position " +
                         "FROM Images " +
                         "WHERE ImageID = ?;";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(readStmt);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setInt(1, id);
-
-            ResultSet result = preparedStatement.executeQuery();
-
-            if(result.next()) {
-                image = new Image(
-                        result.getInt(1),
-                        result.getString(2),
-                        result.getString(3),
-                        result.getInt(4)
-                );
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    image = createModelFromResultSet(result);
+                }
+                setImageCache(null);
             }
-
-            getConnection().close();
-            setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -133,16 +109,16 @@ public class ImageDAO implements DAO<Image> {
     @Override
     public void update(Image image) {
         String updateStmt =
-            "UPDATE Images " +
-            "SET Link = ?, Imagename = ?, Position = ? " +
-            "WHERE ImageID = ?";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(updateStmt);
+                "UPDATE Images " +
+                        "SET Link = ?, Imagename = ?, Position = ? " +
+                        "WHERE ImageID = ?";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
             preparedStatement.setString(1, image.getLink());
             preparedStatement.setString(2, image.getImageName());
             preparedStatement.setInt(3, image.getPosition());
+            preparedStatement.setInt(4, image.getImage_id());
             preparedStatement.execute();
-            getConnection().close();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -153,34 +129,41 @@ public class ImageDAO implements DAO<Image> {
     public void delete(int id) {
         String deleteStmt = "DELETE FROM Images WHERE ImageID = ?;";
         String deleteHasIQStmt = "DELETE FROM hasIQ WHERE ImageID = ?;";
-        try {
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
+             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt)) {
             // deleting from Images table
-            PreparedStatement preparedStatement = getConnection().prepareStatement(deleteStmt);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
             // deleting from hasIQ table
-            PreparedStatement secondPpStmt = getConnection().prepareStatement(deleteHasIQStmt);
-            secondPpStmt.setInt(1, id);
-            secondPpStmt.execute();
-
-            getConnection().close();
+            secondPreparedStatement.setInt(1, id);
+            secondPreparedStatement.execute();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void addIQConnection(int image_id, int question_id) {
+    public void addIQConnection(int imageId, int questionId) {
         String insertStmt = "INSERT INTO hasIQ (ImageID, QuestionID) VALUES (?, ?);";
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
-            preparedStatement.setInt(1, image_id);
-            preparedStatement.setInt(2, question_id);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
+            preparedStatement.setInt(1, imageId);
+            preparedStatement.setInt(2, questionId);
             preparedStatement.execute();
-            getConnection().close();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Image createModelFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Image(
+                resultSet.getInt("ImageID"),
+                resultSet.getString("Link"),
+                resultSet.getString("Imagename"),
+                resultSet.getInt("Position")
+        );
     }
 }

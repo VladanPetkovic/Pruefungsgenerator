@@ -1,5 +1,7 @@
 package com.example.backend.db.daos;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface DAO<T> {
@@ -8,4 +10,5 @@ public interface DAO<T> {
     T read(int id);
     void update(T object);
     void delete(int id);
+    T createModelFromResultSet(ResultSet resultSet) throws SQLException;
 }
