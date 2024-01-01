@@ -9,10 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class Topic {
-    int topic_id;
-    String topic;
-
-    public Topic(String topic) {
-        setTopic(topic);
-    }
+    private int topic_id;
+    private String topic;
 }

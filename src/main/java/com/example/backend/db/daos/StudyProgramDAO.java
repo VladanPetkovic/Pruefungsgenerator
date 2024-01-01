@@ -31,7 +31,8 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
 
     @Override
     public void create(StudyProgram program) {
-        String insertStmt = "INSERT into StudyPrograms (ProgramName, ProgramAbbreviation) VALUES (?, ?);";
+        String insertStmt =
+                "INSERT INTO StudyPrograms (ProgramName, ProgramAbbreviation) VALUES (?, ?);";
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
             preparedStatement.setString(1, program.getProgram_name());
@@ -48,15 +49,18 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
     public ArrayList<StudyProgram> readAll() {
         ArrayList<StudyProgram> programs = new ArrayList<>();
 
-        String insertStmt = "SELECT ProgramName, ProgramAbbreviation from StudyPrograms;";
+        String insertStmt =
+                "SELECT ProgramID, ProgramName, ProgramAbbreviation " +
+                "FROM StudyPrograms;";
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(insertStmt);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()) {
                 StudyProgram newProgram = new StudyProgram(
-                        resultSet.getString(1),
-                        resultSet.getString(2));
+                        resultSet.getInt(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3));
                 programs.add(newProgram);
             }
             setStudyProgramCache(programs);
@@ -71,16 +75,72 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
 
     @Override
     public StudyProgram read(int id) {
-        return null;
+        StudyProgram program = null;
+
+        String readStmt =
+                "SELECT ProgramID, ProgramName, ProgramAbbreviation " +
+                "FROM StudyPrograms " +
+                "WHERE ProgramID = ?;";
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(readStmt);
+            preparedStatement.setInt(1, id);
+
+            ResultSet result = preparedStatement.executeQuery();
+
+            if(result.next()) {
+                program = new StudyProgram(
+                    result.getInt(1),
+                    result.getString(2),
+                    result.getString(3)
+                );
+            }
+
+            getConnection().close();
+            setStudyProgramCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return program;
     }
 
     @Override
-    public void update(StudyProgram object) {
-
+    public void update(StudyProgram program) {
+        String updateStmt =
+                "UPDATE StudyPrograms " +
+                "SET ProgramName = ?, ProgramAbbreviation = ? " +
+                "WHERE ProgramID = ?";
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(updateStmt);
+            preparedStatement.setString(1, program.getProgram_name());
+            preparedStatement.setString(2, program.getProgram_abbr());
+            preparedStatement.setInt(3, program.getProgram_id());
+            preparedStatement.execute();
+            getConnection().close();
+            setStudyProgramCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(int id) {
+        String deleteStmt = "DELETE FROM StudyPrograms WHERE ProgramID = ?;";
+        String deleteHasScStmt = "DELETE FROM hasSC WHERE ProgramID = ?;";
+        try {
+            // deleting from StudyPrograms table
+            PreparedStatement preparedStatement = getConnection().prepareStatement(deleteStmt);
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+            // deleting from hasSC table
+            PreparedStatement secondPpStmt = getConnection().prepareStatement(deleteHasScStmt);
+            secondPpStmt.setInt(1, id);
+            secondPpStmt.execute();
 
+            getConnection().close();
+            setStudyProgramCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

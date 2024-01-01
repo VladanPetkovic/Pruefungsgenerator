@@ -22,6 +22,19 @@ Select Keywords.* FROM Keywords
     JOIN Questions ON hasKQ.QuestionID = Questions.QuestionID
 WHERE hasKQ.QuestionID = 1;
 
+-- Select all Images for a certain Question
+SELECT Images.ImageID, Link, Imagename, Position
+FROM Images
+JOIN hasIQ ON Images.ImageID = hasIQ.ImageID
+JOIN Questions ON hasIQ.QuestionID = Questions.QuestionID
+WHERE hasIQ.QuestionID = 1;
+
+-- Select all Topics for a certain Course
+Select Topics.TopicID, Topic FROM Topics
+JOIN hasCT ON Topics.TopicID = hasCT.TopicID
+JOIN Courses ON hasCT.CourseID = Courses.CourseID
+WHERE hasCT.CourseID = 6;
+
 -----------------------------------------------------------------------------
 -- Creating tables
 CREATE TABLE IF NOT EXISTS Topics (

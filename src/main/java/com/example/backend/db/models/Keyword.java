@@ -9,8 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class Keyword {
-    String keyword_id;
-    String keyword_text;
+    private int keyword_id;
+    private String keyword_text;
 
     public Keyword(String keyword) {
         setKeyword_text(keyword);

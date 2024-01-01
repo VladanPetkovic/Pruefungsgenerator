@@ -1,6 +1,5 @@
 package com.example.backend.db.models;
 
-import com.example.backend.db.repositories.StudyProgramRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class StudyProgram {
-    int program_id;
-    String program_name;
-    String program_abbr;
+    private int program_id;
+    private String program_name;
+    private String program_abbr;
 
     public StudyProgram(String program_name, String program_abbr) {
         setProgram_name(program_name);

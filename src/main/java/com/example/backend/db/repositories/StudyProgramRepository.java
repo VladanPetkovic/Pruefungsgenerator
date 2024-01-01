@@ -23,21 +23,21 @@ public class StudyProgramRepository implements Repository<StudyProgram> {
 
     @Override
     public StudyProgram get(int id) {
-        return null;
+        return getStudyProgramDAO().read(id);
     }
 
     @Override
-    public void add(StudyProgram type) {
-
+    public void add(StudyProgram program) {
+        getStudyProgramDAO().create(program);
     }
 
     @Override
     public void update(StudyProgram program) {
-
+        getStudyProgramDAO().update(program);
     }
 
     @Override
     public void remove(StudyProgram program) {
-
+        getStudyProgramDAO().delete(program.getProgram_id());
     }
 }
