@@ -1,6 +1,7 @@
 package com.example.frontend.controller;
 
 
+import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.daos.QuestionDAO;
 import com.example.backend.db.daos.StudyProgramDAO;
 import com.example.backend.db.models.Question;
@@ -16,13 +17,12 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     public void onStudyProgramBtnClick(ActionEvent event) {
         // testing, if daos and repositories work correctly
-                // when you click on the first option of studyprograms, you get the name of the first study program
+                // when you click on the first option of studyprograms, you get all study programs
 
-        System.out.println("MenuButton clicked");
-        StudyProgramDAO sdao = new StudyProgramDAO();
-        StudyProgramRepository repo = new StudyProgramRepository(sdao);
-        StudyProgram program = repo.get(1); // id = 1
-        System.out.println(program.getProgram_name());
-        System.out.println(program.getProgram_abbr());
+        ArrayList<StudyProgram> list = SQLiteDatabaseConnection.studyProgramRepository.getAll();
+        for(StudyProgram studyProgram : list) {
+            System.out.println("Studyprogram: " + studyProgram.getProgram_name());
+        }
+
     }
 }

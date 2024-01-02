@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
-    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("question_upload.fxml");
+    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
     public static Stage stage;
 
     @Override

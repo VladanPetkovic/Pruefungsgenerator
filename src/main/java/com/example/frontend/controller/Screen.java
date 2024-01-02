@@ -21,10 +21,11 @@ public class Screen<T> {
         fxmlLoader = new FXMLLoader(MainApp.class.getResource(path));
         try {
             root = fxmlLoader.load();
-        }catch (Exception e){
+            scene = new Scene(root);
+        } catch (Exception e){
             System.out.println(e.getMessage());
         }
-        scene = new Scene(root);
+
         controller = fxmlLoader.getController();
     }
 }
