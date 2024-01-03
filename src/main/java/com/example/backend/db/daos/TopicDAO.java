@@ -26,7 +26,7 @@ public class TopicDAO implements DAO<Topic> {
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
 
             preparedStatement.setString(1, topic.getTopic());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setTopicCache(null);
 
         } catch (SQLException e) {
@@ -154,7 +154,7 @@ public class TopicDAO implements DAO<Topic> {
 
             preparedStatement.setString(1, topic.getTopic());
             preparedStatement.setInt(2, topic.getTopic_id());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setTopicCache(null);
 
         } catch (SQLException e) {
@@ -172,10 +172,10 @@ public class TopicDAO implements DAO<Topic> {
              PreparedStatement secondPpStmt = connection.prepareStatement(deleteHasCTStmt)) {
 
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
 
             secondPpStmt.setInt(1, id);
-            secondPpStmt.execute();
+            secondPpStmt.executeUpdate();
 
             setTopicCache(null);
 
@@ -192,7 +192,7 @@ public class TopicDAO implements DAO<Topic> {
 
             preparedStatement.setInt(1, course_id);
             preparedStatement.setInt(2, topic_id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setTopicCache(null);
 
         } catch (SQLException e) {

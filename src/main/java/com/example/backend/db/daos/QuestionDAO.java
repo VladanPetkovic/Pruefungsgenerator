@@ -43,7 +43,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(7, question.getRemarks());
             preparedStatement.setString(8, question.getAnswers());
 
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setQuestionsCache(null);
 
         } catch (SQLException e) {
@@ -214,7 +214,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(8, question.getAnswers());
             preparedStatement.setInt(9, question.getQuestion_id());
 
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setQuestionsCache(null);
 
         } catch (SQLException e) {
@@ -233,13 +233,13 @@ public class QuestionDAO implements DAO<Question> {
              PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasKQStmt)) {
 
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
 
             secondPreparedStatement.setInt(1, id);
-            secondPreparedStatement.execute();
+            secondPreparedStatement.executeUpdate();
 
             thirdPreparedStatement.setInt(1, id);
-            thirdPreparedStatement.execute();
+            thirdPreparedStatement.executeUpdate();
 
             setQuestionsCache(null);
 

@@ -22,7 +22,7 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setString(1, course.getCourse_name());
             preparedStatement.setInt(2, course.getCourse_number());
             preparedStatement.setString(3, course.getLector());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setCourseCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +113,7 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setInt(2, course.getCourse_number());
             preparedStatement.setString(3, course.getLector());
             preparedStatement.setInt(4, course.getCourse_id());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setCourseCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,13 +131,13 @@ public class CourseDAO implements DAO<Course> {
              PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasSCStmt)) {
             // deleting from Courses table
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             // deleting from hasCT table
             secondPreparedStatement.setInt(1, id);
-            secondPreparedStatement.execute();
+            secondPreparedStatement.executeUpdate();
             // deleting from hasSC table
             thirdPreparedStatement.setInt(1, id);
-            thirdPreparedStatement.execute();
+            thirdPreparedStatement.executeUpdate();
             setCourseCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,7 +150,7 @@ public class CourseDAO implements DAO<Course> {
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, programId);
             preparedStatement.setInt(2, courseId);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setCourseCache(null);
         } catch (SQLException e) {
             e.printStackTrace();

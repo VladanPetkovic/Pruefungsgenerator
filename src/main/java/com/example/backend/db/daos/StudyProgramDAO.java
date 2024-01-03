@@ -26,7 +26,7 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
 
             preparedStatement.setString(1, program.getProgram_name());
             preparedStatement.setString(2, program.getProgram_abbr());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setStudyProgramCache(null);
 
         } catch (SQLException e) {
@@ -94,7 +94,7 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
             preparedStatement.setString(1, program.getProgram_name());
             preparedStatement.setString(2, program.getProgram_abbr());
             preparedStatement.setInt(3, program.getProgram_id());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setStudyProgramCache(null);
 
         } catch (SQLException e) {
@@ -112,10 +112,10 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
              PreparedStatement secondPpStmt = connection.prepareStatement(deleteHasScStmt)) {
 
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
 
             secondPpStmt.setInt(1, id);
-            secondPpStmt.execute();
+            secondPpStmt.executeUpdate();
 
             setStudyProgramCache(null);
 

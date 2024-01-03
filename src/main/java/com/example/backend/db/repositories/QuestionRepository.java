@@ -28,6 +28,7 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().readAll(topic.getTopic());
     }
 
+
     @Override
     public Question get(int id) {
         return getQuestionDAO().read(id);

@@ -20,7 +20,7 @@ public class KeywordDAO implements DAO<Keyword> {
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setString(1, keyword.getKeyword_text());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class KeywordDAO implements DAO<Keyword> {
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
             preparedStatement.setString(1, keyword.getKeyword_text());
             preparedStatement.setInt(2, keyword.getKeyword_id());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,10 +125,10 @@ public class KeywordDAO implements DAO<Keyword> {
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasKQStmt)) {
             // deleting from Keywords table
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             // deleting from hasKQ table
             secondPreparedStatement.setInt(1, id);
-            secondPreparedStatement.execute();
+            secondPreparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -141,7 +141,7 @@ public class KeywordDAO implements DAO<Keyword> {
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, keywordId);
             preparedStatement.setInt(2, questionId);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
             e.printStackTrace();

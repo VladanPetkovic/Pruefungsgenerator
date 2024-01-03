@@ -24,7 +24,7 @@ public class ImageDAO implements DAO<Image> {
             preparedStatement.setString(1, image.getLink());
             preparedStatement.setString(2, image.getImageName());
             preparedStatement.setInt(3, image.getPosition());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,7 +118,7 @@ public class ImageDAO implements DAO<Image> {
             preparedStatement.setString(2, image.getImageName());
             preparedStatement.setInt(3, image.getPosition());
             preparedStatement.setInt(4, image.getImage_id());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,10 +134,10 @@ public class ImageDAO implements DAO<Image> {
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt)) {
             // deleting from Images table
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             // deleting from hasIQ table
             secondPreparedStatement.setInt(1, id);
-            secondPreparedStatement.execute();
+            secondPreparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,7 +150,7 @@ public class ImageDAO implements DAO<Image> {
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, imageId);
             preparedStatement.setInt(2, questionId);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
