@@ -1,19 +1,18 @@
 package com.example.backend.db.daos;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Image;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
-import com.example.backend.db.models.Topic;
+import com.example.backend.db.models.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class QuestionDAO implements DAO<Question> {
 
@@ -142,6 +141,90 @@ public class QuestionDAO implements DAO<Question> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+
+        return questions;
+    }
+
+    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions) {
+        ArrayList<Question> questions = new ArrayList<>();
+        // making a list of values for the preparedStmt
+        ArrayList<Object> listForPreparedStmt = new ArrayList<>();
+        // if topic is present, then set topic
+        TopicDAO topicDAO = new TopicDAO();
+        Topic questionTopic = null;
+
+        StringBuilder selectQuestionsStmt = new StringBuilder("SELECT * FROM Questions WHERE");
+
+        for(SearchObject<?> searchObject : searchOptions) {
+            // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
+            if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
+                selectQuestionsStmt.append(" ").append(searchObject.getColumn_name()).append(" = ?,");
+                listForPreparedStmt.add(searchObject.getValueOfObject());
+            }
+
+            // set topic, if it is set
+            if(Objects.equals(searchObject.getColumn_name(), "FK_TOPIC_ID") && searchObject.isSet()) {
+                questionTopic = (Topic) searchObject.getValueOfObject();
+            }
+        }
+
+        // replace last char ',' to ';'
+        selectQuestionsStmt.deleteCharAt(selectQuestionsStmt.length() - 1);
+        selectQuestionsStmt.append(';');
+
+        // TODO: change this to get only questions for the course
+        if(listForPreparedStmt.isEmpty()) {
+            return readAll();
+        }
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(String.valueOf(selectQuestionsStmt))) {
+
+            // insert into prepared stmt
+            int count = 1;
+            for(Object prepObjects : listForPreparedStmt) {
+                if(prepObjects instanceof String) {
+                    questionsStatement.setString(count, (String) prepObjects);
+                } else if(prepObjects instanceof Integer) {
+                    questionsStatement.setInt(count, (int) prepObjects);
+                }
+
+                count++;
+            }
+
+            try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                while (questionsResultSet.next()) {
+                    int question_id = questionsResultSet.getInt("QuestionID");
+
+                    questionTopic = topicDAO.readForQuestion(question_id);
+
+                    KeywordDAO keywordDAO = new KeywordDAO();
+                    ArrayList<Keyword> keywords = keywordDAO.readAllForOneQuestion(question_id);
+
+                    ImageDAO imageDAO = new ImageDAO();
+                    ArrayList<Image> images = imageDAO.readAllForOneQuestion(question_id);
+
+                    Question question = new Question(
+                            question_id,
+                            new Topic(questionTopic),
+                            questionsResultSet.getInt("Difficulty"),
+                            questionsResultSet.getInt("Points"),
+                            questionsResultSet.getString("Question"),
+                            questionsResultSet.getInt("MultipleChoice"),
+                            questionsResultSet.getString("Language"),
+                            questionsResultSet.getString("Remarks"),
+                            questionsResultSet.getString("Answers"),
+                            keywords,
+                            images
+                    );
+                    questions.add(question);
+                }
+                setQuestionsCache(questions);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return questions;

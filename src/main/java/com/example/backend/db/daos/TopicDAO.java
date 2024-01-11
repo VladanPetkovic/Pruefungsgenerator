@@ -117,6 +117,35 @@ public class TopicDAO implements DAO<Topic> {
         return topic;
     }
 
+    public Topic readForQuestion(int question_id) {
+        Topic topic = null;
+
+        String readStmt =
+                "SELECT Topics.TopicID, Topics.Topic " +
+                "FROM Questions " +
+                "INNER JOIN Topics ON Questions.FK_Topic_ID = Topics.TopicID " +
+                "WHERE Questions.QuestionID = ?;";
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+
+            preparedStatement.setInt(1, question_id);
+
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    topic = createModelFromResultSet(result);
+                }
+            }
+
+            setTopicCache(null);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return topic;
+    }
+
     public Topic read(String topic_text) {
         Topic topic = null;
 

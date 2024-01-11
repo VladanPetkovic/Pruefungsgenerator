@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.util.ArrayList;
 
 @Getter
@@ -24,6 +22,8 @@ public class Question {
     String answers;
     ArrayList<Keyword> keywords;
     ArrayList<Image> images;
+
+    public Question() {}
 
     public Question(Topic topic, int difficulty, int points, String questionString,
                     int multipleChoice, String lang, String remarks,
