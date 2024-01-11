@@ -9,16 +9,20 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 
 public class CreateAutomatic_ScreenController extends ScreenController {
 
     @FXML
     private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
 
+    private int questionCount = 1; // Variable to keep track of the question count
+
     @FXML
     private void onAddQuestionBtnClick() {
+        // Increment the question count
+        questionCount++;
 
-        System.out.println("onaddquestionbtnclick");
         // Create a new VBox with the required structure
         VBox newQuestionVBox = createNewQuestionVBox();
 
@@ -29,12 +33,15 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         int parentIndex = grandparentVBox.getChildren().indexOf(addQuestionVBox.getParent());
 
         // Add the new VBox just before the addQuestionVBox
-        grandparentVBox.getChildren().add(parentIndex - 1, newQuestionVBox);
+        grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
     }
 
     private VBox createNewQuestionVBox() {
         // Create a new VBox with the specified structure
         VBox questionVBox = new VBox();
+
+        // Create and add the label indicating the question number
+        createLabel("Question " + questionCount, questionVBox);
 
         // Create and add components to the new VBox
         createLabel("Topic", questionVBox);
@@ -52,11 +59,11 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         label.getStyleClass().add("automatic_create_label");
         label.getStylesheets().add("@../css/main.css");
 
-        VBox innerVBox = new VBox(label);
-        innerVBox.setPrefHeight(150.0);
-        innerVBox.setPrefWidth(1000.0);
+        label.setPrefHeight(150.0);
+        label.setPrefWidth(1000.0);
+        label.setTextFill(Paint.valueOf("#e8e4e4"));
 
-        parentVBox.getChildren().add(innerVBox);
+        parentVBox.getChildren().add(label);
     }
 
     private void createMenuButton(VBox parentVBox) {
@@ -72,6 +79,8 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         VBox innerVBox = new VBox(menuButton);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
 
         parentVBox.getChildren().add(innerVBox);
     }
@@ -85,13 +94,15 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         VBox innerVBox = new VBox(spinner);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
 
         parentVBox.getChildren().add(innerVBox);
     }
 
     private void createSlider(VBox parentVBox) {
         Slider slider = new Slider();
-        slider.setId("difficulty_slider"); // Assuming you want to set an ID to the slider
+        slider.setId("difficulty_slider");
         slider.setMajorTickUnit(2.0);
         slider.setMax(10.0);
         slider.setMin(1.0);
@@ -100,10 +111,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         slider.setShowTickMarks(true);
         slider.setStyle("-fx-background-color: #2f2f2f;");
         slider.getStyleClass().add("slider-tool");
+        slider.setValue(5.5);
 
         VBox innerVBox = new VBox(slider);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
 
         parentVBox.getChildren().add(innerVBox);
     }

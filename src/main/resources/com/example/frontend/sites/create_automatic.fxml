@@ -110,6 +110,11 @@
                      <children>
                         <VBox>
                            <children>
+                              <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Question 1" textFill="#e8e4e4">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
                               <VBox prefHeight="150.0" prefWidth="1000.0">
                                  <children>
                                     <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Topic" textFill="#e8e4e4">
