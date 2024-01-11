@@ -7,5 +7,6 @@
 /dataSources/
 /dataSources.local.xml
 /misc.xml
+../src/main/java/com/example/backend/db/db_config.txt
 
 

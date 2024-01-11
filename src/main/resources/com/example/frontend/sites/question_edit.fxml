@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.Home_ScreenController">
+<VBox prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.QuestionEdit_ScreenController">
    <children>
       <HBox maxHeight="100.0" maxWidth="1120.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" prefWidth="1120.0" styleClass="main_navigation" stylesheets="@../css/main.css">
          <children>
@@ -50,9 +50,9 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" stylesheets="@../css/main.css">
+                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" stylesheets="@../css/main.css">
                      <children>
-                        <Button alignment="BOTTOM_LEFT" onAction="#onCreateAutTestBtnClick" styleClass="menu_btn">
+                        <Button alignment="BOTTOM_LEFT" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -64,9 +64,9 @@
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create Test&#10;automatic" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                  <VBox fx:id="nav_createTestManualButton" alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="create_btn" onAction="#onCreateManTestBtnClick" styleClass="menu_btn">
+                        <Button fx:id="create_btn" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -78,9 +78,9 @@
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+                  <VBox fx:id="nav_uploadQuestionButton" alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="upload_btn" onAction="#onUploadQuestionBtnClick" styleClass="menu_btn">
+                        <Button fx:id="upload_btn" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -92,9 +92,9 @@
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Upload&#10;Question" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
+                  <VBox fx:id="nav_editQuestionButton" alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
                      <children>
-                        <Button fx:id="upload_btn1" onAction="#onEditQuestionBtnClick" styleClass="menu_btn">
+                        <Button fx:id="upload_btn1" styleClass="menu_btn">
                            <graphic>
                               <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

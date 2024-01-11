@@ -2,28 +2,46 @@ package com.example.frontend.controller;
 
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public abstract class ScreenController {
 
-    @FXML
-    protected void onCreateAutTestBtnClick(ActionEvent event) throws IOException {
+    public static Screen<CreateAutomatic_ScreenController> createTestAutomatic = new Screen<>("sites/create_automatic.fxml");
+    public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
+    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
+    public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
 
+
+    public static void switchScene(Screen screen, boolean refresh){
+        System.out.println("inside switchScene");
+        if(refresh){
+            screen.loadComponents();
+        }
+        MainApp.stage.setScene(screen.scene);
+        MainApp.stage.show();
+    }
+
+    @FXML
+    protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
+        switchScene(createTestAutomatic,true);
     }
     @FXML
-    protected void onCreateManTestBtnClick(ActionEvent event) throws IOException {
-
+    protected void onCreateManTestNavBtnClick(MouseEvent event) throws IOException {
+        switchScene(createTestManual,true);
     }
     @FXML
-    protected void onUploadQuestionBtnClick(ActionEvent event) throws IOException
+    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-        MainApp.switchScene(MainApp.questionUpload,true);
+        System.out.println("question Upload Button Clicked");
+        switchScene(questionUpload,true);
     }
     @FXML
-    protected void onEditQuestionBtnClick(ActionEvent event) throws IOException
+    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-
+        switchScene(questionEdit,true);
     }
 }
