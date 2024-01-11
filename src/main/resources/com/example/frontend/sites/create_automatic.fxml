@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.Home_ScreenController">
+<VBox prefHeight="630.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateAutomatic_ScreenController">
    <children>
       <HBox maxHeight="100.0" maxWidth="1120.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" prefWidth="1120.0" styleClass="main_navigation" stylesheets="@../css/main.css">
          <children>
@@ -108,60 +108,77 @@
                <content>
                   <VBox prefHeight="720.0" prefWidth="1000.0" styleClass="automatic_create_scrollPane" stylesheets="@../css/main.css">
                      <children>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                        <VBox>
                            <children>
-                              <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Topic" textFill="#e8e4e4">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                              <VBox prefHeight="150.0" prefWidth="1000.0">
                                  <children>
-                                    <MenuButton mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
-                                      <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                                        <MenuItem mnemonicParsing="false" text="Action 2" />
-                                      </items>
-                                    </MenuButton>
+                                    <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Topic" textFill="#e8e4e4">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                                       <children>
+                                          <MenuButton mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" text="Action 1" />
+                                              <MenuItem mnemonicParsing="false" text="Action 2" />
+                                            </items>
+                                          </MenuButton>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="150.0" prefWidth="1000.0">
+                                 <children>
+                                    <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Points" textFill="#e8e4e4">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                                       <children>
+                                          <Spinner editable="true" styleClass="automatic_create_spinner" stylesheets="@../css/main.css" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="150.0" prefWidth="1000.0">
+                                 <children>
+                                    <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Difficulty" textFill="#e8e4e4">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                                       <children>
+                                          <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.5" />
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                        <VBox>
                            <children>
-                              <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Difficulty" textFill="#e8e4e4">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                              <VBox fx:id="addQuestionVBox" alignment="CENTER" prefHeight="150.0" prefWidth="1000.0">
                                  <children>
-                                    <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.5" />
+                                    <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onAddQuestionBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="automatic_create_addQuestionButton" stylesheets="@../css/main.css" text="Add Question" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Button>
                                  </children>
                               </VBox>
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
-                           <children>
-                              <Label prefWidth="1000.0" styleClass="automatic_create_label" stylesheets="@../css/main.css" text="Points" textFill="#e8e4e4">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
+                              <VBox alignment="CENTER" prefHeight="150.0" prefWidth="1000.0">
                                  <children>
-                                    <Spinner editable="true" styleClass="automatic_create_spinner" stylesheets="@../css/main.css" />
+                                    <Button maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="automatic_create_uploadButton" stylesheets="@../css/main.css" text="Create" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Button>
                                  </children>
                               </VBox>
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="150.0" prefWidth="1000.0">
-                           <children>
-                              <Button maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_ContinueButton" stylesheets="@../css/main.css" text="Create" textFill="WHITE">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Button>
                            </children>
                         </VBox>
                      </children>
