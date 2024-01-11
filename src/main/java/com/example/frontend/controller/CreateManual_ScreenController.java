@@ -20,13 +20,13 @@ public class CreateManual_ScreenController extends ScreenController
     private Slider question_count_slider;
     int difficulty = 5;
     int question_count = 5;
-    @Override
-    protected void onCreateManTestBtnClick(ActionEvent event) {
+    /*@Override
+    protected void onCreateManTestNavBtnClick(ActionEvent event) {
 
     }
-
+*/
     public void initialize() {
-
+/*
         label_difficulty.setText("5");
         label_question_count.setText("10");
 
@@ -47,5 +47,7 @@ public class CreateManual_ScreenController extends ScreenController
                 label_question_count.setText(Integer.toString(question_count));
             }
         });
+        */
+
     }
 }

@@ -108,7 +108,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         parentVBox.getChildren().add(innerVBox);
     }
 
-    @Override
     protected void onCreateAutTestBtnClick(ActionEvent event) {
         // Handle the "Create Automatic Test" button click
         // ...

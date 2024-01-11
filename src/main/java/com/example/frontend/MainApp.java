@@ -1,7 +1,6 @@
 package com.example.frontend;
 
-import com.example.frontend.controller.QuestionUpload_ScreenController;
-import com.example.frontend.controller.Screen;
+import com.example.frontend.controller.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,7 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
-    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
+
     public static Stage stage;
 
     @Override
