@@ -1,1 +1,1 @@
-C:\Users\vlada\Documents\FH_Vladan_Petkovic\3.Semester\Innovation_project\Pruefungsgenerator\src\main\java\com\example\backend\db\db_config.txt
+jdbc:sqlite:C:/Users/HP/Desktop/FH Technikum/LV Innovation Lab/Pruefungsgenerator/src/main/java/com/example/backend/db/mydatabase.db

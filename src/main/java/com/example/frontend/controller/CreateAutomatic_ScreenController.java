@@ -1,80 +1,129 @@
 package com.example.frontend.controller;
 
-import com.example.backend.db.daos.TopicDAO;
-import com.example.backend.db.models.Topic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import org.controlsfx.control.action.Action;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+public class CreateAutomatic_ScreenController extends ScreenController {
 
-public class CreateAutomatic_ScreenController extends ScreenController implements Initializable {
     @FXML
-    private MenuButton topicMenuButton;
-    @FXML
-    private Slider difficultySlider;
-    @FXML
-    private Spinner<Integer> pointsSpinner;
+    private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
 
-    private TopicDAO topicDAO;
+    private int questionCount = 1; // Variable to keep track of the question count
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        topicDAO = new TopicDAO();
-        ArrayList<Topic> topics = topicDAO.readAll();
-        for (Topic topic: topics
-        ) {
-            MenuItem menuItem = new MenuItem(topic.getTopic());
-            menuItem.setOnAction(e -> {
-                topicMenuButton.setText(topic.getTopic());
-            });
-            topicMenuButton.getItems().add(menuItem);
-        }
-        //difficultySlider.setMajorTickUnit(10);
-        //difficultySlider.setMinorTickCount(10);
-        difficultySlider.setSnapToTicks(true);
-        difficultySlider.setOnMouseReleased(this::onDifficultySliderMouseReleased);
+    @FXML
+    private void onAddQuestionBtnClick() {
+        // Increment the question count
+        questionCount++;
+
+        // Create a new VBox with the required structure
+        VBox newQuestionVBox = createNewQuestionVBox();
+
+        // Get the parent of the parent (grandparent) of addQuestionVBox
+        VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
+
+        // Get the index of the parent of addQuestionVBox in its grandparent
+        int parentIndex = grandparentVBox.getChildren().indexOf(addQuestionVBox.getParent());
+
+        // Add the new VBox just before the addQuestionVBox
+        grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
     }
 
-    private void onDifficultySliderMouseReleased(MouseEvent mouseEvent) {
-        System.out.println((int)difficultySlider.getValue());
+    private VBox createNewQuestionVBox() {
+        // Create a new VBox with the specified structure
+        VBox questionVBox = new VBox();
+
+        // Create and add the label indicating the question number
+        createLabel("Question " + questionCount, questionVBox);
+
+        // Create and add components to the new VBox
+        createLabel("Topic", questionVBox);
+        createMenuButton(questionVBox);
+        createLabel("Points", questionVBox);
+        createSpinner(questionVBox);
+        createLabel("Difficulty", questionVBox);
+        createSlider(questionVBox);
+
+        return questionVBox;
     }
 
-    @Override
+    private void createLabel(String labelText, VBox parentVBox) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("automatic_create_label");
+        label.getStylesheets().add("@../css/main.css");
+
+        label.setPrefHeight(150.0);
+        label.setPrefWidth(1000.0);
+        label.setTextFill(Paint.valueOf("#e8e4e4"));
+
+        parentVBox.getChildren().add(label);
+    }
+
+    private void createMenuButton(VBox parentVBox) {
+        MenuButton menuButton = new MenuButton("Choose topic...");
+        menuButton.getStyleClass().add("automatic_create_dropdown");
+        menuButton.getStylesheets().add("@../css/main.css");
+
+        MenuItem action1 = new MenuItem("Action 1");
+        MenuItem action2 = new MenuItem("Action 2");
+
+        menuButton.getItems().addAll(action1, action2);
+
+        VBox innerVBox = new VBox(menuButton);
+        innerVBox.setPrefHeight(33.0);
+        innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
+
+        parentVBox.getChildren().add(innerVBox);
+    }
+
+    private void createSpinner(VBox parentVBox) {
+        Spinner spinner = new Spinner();
+        spinner.setEditable(true);
+        spinner.getStyleClass().add("automatic_create_spinner");
+        spinner.getStylesheets().add("@../css/main.css");
+
+        VBox innerVBox = new VBox(spinner);
+        innerVBox.setPrefHeight(33.0);
+        innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
+
+        parentVBox.getChildren().add(innerVBox);
+    }
+
+    private void createSlider(VBox parentVBox) {
+        Slider slider = new Slider();
+        slider.setId("difficulty_slider");
+        slider.setMajorTickUnit(2.0);
+        slider.setMax(10.0);
+        slider.setMin(1.0);
+        slider.setMinorTickCount(1);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setStyle("-fx-background-color: #2f2f2f;");
+        slider.getStyleClass().add("slider-tool");
+        slider.setValue(5.5);
+
+        VBox innerVBox = new VBox(slider);
+        innerVBox.setPrefHeight(33.0);
+        innerVBox.setPrefWidth(1000.0);
+        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerVBox.getStylesheets().add("@../css/main.css");
+
+        parentVBox.getChildren().add(innerVBox);
+    }
+
     protected void onCreateAutTestBtnClick(ActionEvent event) {
-        // Abrufen der ausgewählten Filterparameter
-        String selectedTopic = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
-        int selectedDifficulty = (int) difficultySlider.getValue();
-        int selectedPoints = pointsSpinner.getValue();
-
-        // Hier sollte die Logik für die Datenbankabfrage erfolgen
-        // Verwende questionRepository.getAll(selectedTopic, selectedDifficulty, selectedPoints)
-
-        // Nach der Datenbankabfrage weiter zur manuellen Erstellung
-        switchToManualCreateScreen(); // Implementiere diese Methode entsprechend
-    }
-
-    private void switchToManualCreateScreen() {
-        // Implementiere die Navigation zur manuellen Erstellung (loadFXML, setScene, etc.)
-    }
-
-    // Diese Methode kann in der Initialisierung des Controllers aufgerufen werden,
-    // um die verfügbaren Themen im Menü hinzuzufügen
-    public void setAvailableTopics(List<String> topics) {
-        for (String topic : topics) {
-            MenuItem menuItem = new MenuItem(topic);
-            topicMenuButton.getItems().add(menuItem);
-        }
+        // Handle the "Create Automatic Test" button click
+        // ...
     }
 }
