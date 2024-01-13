@@ -12,18 +12,59 @@ import com.example.backend.db.repositories.StudyProgramRepository;
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Home_ScreenController extends ScreenController {
 
+    @FXML
+    private MenuButton studyProgramMenuButton;
+
+    @FXML
+    private MenuButton coursesMenuButton;
+
+    @FXML
+    private void initialize() {
+        loadStudyPrograms();
+        // You can also load courses here if needed
+        // loadCourses();
+    }
 
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
         System.out.println("continue Button Click");
-        switchScene(createTestAutomatic,true);
+        switchScene(createTestAutomatic, true);
     }
+
+    @FXML
+    public void onStudyProgramBtnClick(ActionEvent event) {
+        loadStudyPrograms();
+    }
+
+    @FXML
+    public void onCoursesBtnClick(ActionEvent event) {
+        // Implement loading courses here if needed
+        // loadCourses();
+    }
+
+    private void loadStudyPrograms() {
+        ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
+        studyProgramMenuButton.getItems().clear(); // Clear existing items
+
+        for (StudyProgram studyProgram : studyPrograms) {
+            MenuItem menuItem = new MenuItem(studyProgram.getProgram_name());
+            menuItem.setOnAction(e -> {
+                // Handle the selection of a study program if needed
+                // For example: setSelectedStudyProgram(studyProgram);
+            });
+            studyProgramMenuButton.getItems().add(menuItem);
+        }
+    }
+
+    /*
     @FXML
     public void onStudyProgramBtnClick(ActionEvent event) {
         // testing, if daos and repositories work correctly
@@ -63,4 +104,6 @@ public class Home_ScreenController extends ScreenController {
             System.out.println(question.getTopic().getTopic());
         }
     }
+
+     */
 }
