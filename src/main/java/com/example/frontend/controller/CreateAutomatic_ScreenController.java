@@ -1,7 +1,8 @@
 package com.example.frontend.controller;
 
-import com.example.backend.db.daos.TopicDAO;
-import com.example.backend.db.models.Topic;
+import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.daos.CategoryDAO;
+import com.example.backend.db.models.Category;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,7 +34,7 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
     @FXML
     private Spinner<Integer> pointsSpinner;
 
-    private TopicDAO topicDAO;
+    private CategoryDAO categoryDAO;
 
     @FXML
     private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
@@ -80,11 +81,11 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
     private void setMenuButtonHandler(MenuButton menuButton) {
         menuButton.getItems().clear();
-        ArrayList<Topic> topics = topicDAO.readAll();
-        for (Topic topic : topics) {
-            MenuItem menuItem = new MenuItem(topic.getTopic());
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        for (Category category : categories) {
+            MenuItem menuItem = new MenuItem(category.getCategory());
             menuItem.setOnAction(e -> {
-                menuButton.setText(topic.getTopic());
+                menuButton.setText(category.getCategory());
             });
             menuButton.getItems().add(menuItem);
         }
@@ -131,7 +132,7 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
     }
 
     private void createMenuButton(VBox parentVBox) {
-        MenuButton menuButton = new MenuButton("Choose topic...");
+        MenuButton menuButton = new MenuButton("Choose category...");
         menuButton.getStyleClass().add("automatic_create_dropdown");
         menuButton.getStylesheets().add("@../css/main.css");
 
@@ -183,13 +184,11 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        topicDAO = new TopicDAO();
-        ArrayList<Topic> topics = topicDAO.readAll();
-        for (Topic topic: topics
-        ) {
-            MenuItem menuItem = new MenuItem(topic.getTopic());
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        for (Category category: categories) {
+            MenuItem menuItem = new MenuItem(category.getCategory());
             menuItem.setOnAction(e -> {
-                topicMenuButton.setText(topic.getTopic());
+                topicMenuButton.setText(category.getCategory());
             });
             topicMenuButton.getItems().add(menuItem);
         }
@@ -206,12 +205,12 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
         // Abrufen der ausgewählten Filterparameter
-        String selectedTopic = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
+        String selectedCategory = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
         int selectedDifficulty = (int) difficultySlider.getValue();
         int selectedPoints = pointsSpinner.getValue();
 
         // Hier sollte die Logik für die Datenbankabfrage erfolgen
-        // Verwende questionRepository.getAll(selectedTopic, selectedDifficulty, selectedPoints)
+        // Verwende questionRepository.getAll(selectedCategory, selectedDifficulty, selectedPoints)
 
         // Nach der Datenbankabfrage weiter zur manuellen Erstellung
         switchToManualCreateScreen(); // Implementiere diese Methode entsprechend
