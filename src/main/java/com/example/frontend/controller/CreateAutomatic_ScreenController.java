@@ -5,6 +5,7 @@ import com.example.backend.db.models.Topic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -47,6 +48,9 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         // Create a new VBox with the required structure
         VBox newQuestionVBox = createNewQuestionVBox();
 
+        // Set the event handlers for the components within the new VBox
+        setEventHandlers(newQuestionVBox);
+
         // Get the parent of the parent (grandparent) of addQuestionVBox
         VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
 
@@ -55,6 +59,45 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
         // Add the new VBox just before the addQuestionVBox
         grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
+    }
+
+    private void setEventHandlers(VBox questionVBox) {
+        for (Node node : questionVBox.getChildren()) {
+            if (node instanceof VBox) {
+                setEventHandlers((VBox) node);
+            } else if (node instanceof MenuButton) {
+                MenuButton menuButton = (MenuButton) node;
+                setMenuButtonHandler(menuButton);
+            } else if (node instanceof Spinner) {
+                Spinner spinner = (Spinner) node;
+                setSpinnerHandler(spinner);
+            } else if (node instanceof Slider) {
+                Slider slider = (Slider) node;
+                setSliderHandler(slider);
+            }
+        }
+    }
+
+    private void setMenuButtonHandler(MenuButton menuButton) {
+        menuButton.getItems().clear();
+        ArrayList<Topic> topics = topicDAO.readAll();
+        for (Topic topic : topics) {
+            MenuItem menuItem = new MenuItem(topic.getTopic());
+            menuItem.setOnAction(e -> {
+                menuButton.setText(topic.getTopic());
+            });
+            menuButton.getItems().add(menuItem);
+        }
+    }
+
+    private void setSpinnerHandler(Spinner<Integer> spinner) {
+        // Add event handlers for the spinner if needed
+        // Example: spinner.setOnMouseClicked(event -> handleSpinnerClick(event, spinner));
+    }
+
+    private void setSliderHandler(Slider slider) {
+        // Add event handlers for the slider if needed
+        // Example: slider.setOnMouseReleased(event -> handleSliderMouseReleased(event, slider));
     }
 
     private VBox createNewQuestionVBox() {
