@@ -2,8 +2,11 @@ package com.example.frontend.controller;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
+import com.example.backend.db.models.Keyword;
+import com.example.backend.db.models.Question;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -15,20 +18,20 @@ import java.util.ResourceBundle;
 
 public class QuestionUpload_ScreenController extends ScreenController implements Initializable {
 
-    private static final String[] LANGUAGES = {"Deutsch", "Englisch", "Spansich", "Französisch"};
+    private static final String[] LANGUAGES = {"Deutsch", "Englisch", "Spanisch", "Französisch"};
 
     @FXML
-    private Label topicLabel;
+    private Label categoryLabel;
     @FXML
-    private MenuButton topic;
+    private MenuButton category;
     @FXML
     private Slider difficulty;
     @FXML
     private Spinner<Integer> points;
     @FXML
-    private CheckBox multibleChoice;
+    private CheckBox multipleChoice;
     @FXML
-    private VBox multibleChoiceVBox;
+    private VBox multipleChoiceVBox;
     @FXML
     private Label languageLabel;
     @FXML
@@ -39,12 +42,17 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     private TextArea remarks;
     @FXML
     private MenuButton keyword;
+    private ArrayList<Keyword> keywords;
+    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
     private VBox keywordVBox;
     @FXML
     private Button upload;
     @FXML
     private ScrollPane scrollPane;
+
+    @FXML
+    private HBox keywordsHBox;
 
     private String currentLanguage = null;
     private ArrayList<Category> categories;
@@ -56,46 +64,70 @@ public class QuestionUpload_ScreenController extends ScreenController implements
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
         fillCategoryWithCategories();
         difficulty.setValue(5);
+        points.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
+        points.getValueFactory().setValue(10);
         fillLanguageWithLanguages();
         question.setText("");
         remarks.setText("");
-        //TODO Set all
+        keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
+        fillKeywordWithKeywords();
     }
 
     private void fillCategoryWithCategories() {
-        for (Category category : categories) {
-            MenuItem menuItem = createMenuItem(category.getCategory());
-            menuItem.setOnAction(event -> selectedCategory = category);
-            topic.getItems().add(menuItem);
+        for (Category c : categories) {
+            MenuItem menuItem = createMenuItem(c.getCategory());
+            menuItem.setOnAction(event -> {
+                selectedCategory = c;
+                category.setText(c.getCategory());
+            });
+            category.getItems().add(menuItem);
+        }
+    }
+
+    private void fillKeywordWithKeywords() {
+        for (Keyword k : keywords) {
+            MenuItem menuItem = createMenuItem(k.getKeyword_text());
+            menuItem.setOnAction(event -> {
+                if (!selectedKeywords.contains(k)) {
+                    selectedKeywords.add(k);
+                    Button b = createButton(k.getKeyword_text() + " X");
+                    b.setOnAction(actionEvent -> keywordsHBox.getChildren().remove(b));
+                    keywordsHBox.getChildren().add(b);
+                }
+            });
+            keyword.getItems().add(menuItem);
         }
     }
 
     private void fillLanguageWithLanguages() {
         for (String l : LANGUAGES) {
             MenuItem menuItem = createMenuItem(l);
-            menuItem.setOnAction(event -> currentLanguage = l);
+            menuItem.setOnAction(event -> {
+                currentLanguage = l;
+                language.setText(l);
+            });
             language.getItems().add(menuItem);
         }
     }
 
     private MenuItem createMenuItem(String text) {
         MenuItem menuItem = new MenuItem(text);
-        menuItem.setOnAction(event -> currentLanguage = text);
         return menuItem;
     }
 
     @FXML
-    private void onActionMultibleChoice() {
-        if (multibleChoice.isSelected()) {
-            createMultibleChoiceButton();
+    private void onActionMultipleChoice() {
+        if (multipleChoice.isSelected()) {
+            createMultipleChoiceButton();
         } else {
-            CheckBox checkBox = multibleChoice;
-            multibleChoiceVBox.getChildren().clear();
-            multibleChoiceVBox.getChildren().add(checkBox);
+            CheckBox checkBox = multipleChoice;
+            multipleChoiceVBox.getChildren().clear();
+            multipleChoiceVBox.getChildren().add(checkBox);
+            answers.clear();
         }
     }
 
-    private void createMultibleChoiceButton() {
+    private void createMultipleChoiceButton() {
         Button button = createButton("Add answer");
         button.setOnAction(event -> {
             HBox hBoxAnswerRemove = new HBox();
@@ -104,42 +136,70 @@ public class QuestionUpload_ScreenController extends ScreenController implements
             Button buttonRemove = createButton("X");
             buttonRemove.setOnAction(e -> {
                 answers.remove(textAreaAnswer);
-                multibleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-                if(answers.size() == 10) createMultibleChoiceButton();
+                multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
+                if (answers.size() == 10) createMultipleChoiceButton();
             });
             hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            multibleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-            multibleChoiceVBox.getChildren().remove(button);
-            if(answers.size() > 10) return;
-            createMultibleChoiceButton();
+            multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
+            multipleChoiceVBox.getChildren().remove(button);
+            if (answers.size() > 10) return;
+            createMultipleChoiceButton();
         });
-        multibleChoiceVBox.getChildren().add(button);
+        multipleChoiceVBox.getChildren().add(button);
     }
 
     private Button createButton(String text) {
         Button button = new Button(text);
-        button.setOnAction(event -> {});
         return button;
     }
 
     private void scrollToNode(Node targetNode) {
-        //TODO scroll to node when necesarry and not filled out
+        // TODO: Scroll to node when necessary and not filled out
     }
 
     @FXML
     private void onActionUpload() {
         Node n = checkIfFilled();
         if (n != null) {
-            System.out.println(n);
             scrollToNode(n);
             return;
         }
-        //TODO Question upload
+        Question q = new Question(
+                selectedCategory,
+                (int) difficulty.getValue(),
+                points.getValue(),
+                question.getText(),
+                multipleChoice.isSelected() ? 1 : 0,
+                currentLanguage,
+                remarks.getText(),
+                answersToDatabaseString(),
+                selectedKeywords,
+                new ArrayList<>()
+        );
+        SQLiteDatabaseConnection.questionRepository.add(q);
+        for (Keyword k : selectedKeywords) {
+            SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
+        }
         switchScene(questionUpload, true);
     }
 
+    private String answersToDatabaseString() {
+        StringBuilder s = new StringBuilder();
+        if (multipleChoice.isSelected()) {
+            for (TextArea t : answers) {
+                s.append(t.getText()).append("\n");
+            }
+        }
+        return s.toString();
+    }
+
     private Node checkIfFilled() {
-        if (selectedCategory == null) return topicLabel;
+        if (selectedCategory == null) return categoryLabel;
+        if (multipleChoice.isSelected()) {
+            for (TextArea t : answers) {
+                if (t.getText().isEmpty()) return multipleChoice;
+            }
+        }
         if (currentLanguage == null) return languageLabel;
         if (question.getText().isEmpty()) return question;
         return null;

@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
-
     public static Stage stage;
 
     @Override
