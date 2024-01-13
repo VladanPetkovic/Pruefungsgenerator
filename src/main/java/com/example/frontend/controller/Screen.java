@@ -22,10 +22,9 @@ public class Screen<T> {
         try {
             root = fxmlLoader.load();
             scene = new Scene(root);
-        } catch (Exception e){
+        }catch (Exception e){
             System.out.println(e.getMessage());
         }
-
         controller = fxmlLoader.getController();
     }
 }

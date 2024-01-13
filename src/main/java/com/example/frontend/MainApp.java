@@ -21,14 +21,6 @@ public class MainApp extends Application {
         stage.show();
     }
 
-    public static void switchScene(Screen screen, boolean refresh){
-        if(refresh){
-            screen.loadComponents();
-        }
-        stage.setScene(screen.scene);
-        stage.show();
-    }
-
     public void setWindowsSize(Stage stage) {
         // setting window sizes
         // min. window
