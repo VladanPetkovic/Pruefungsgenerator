@@ -1,7 +1,6 @@
 package com.example.backend.db;
 
 import com.example.backend.db.daos.*;
-import com.example.backend.db.models.Topic;
 import com.example.backend.db.repositories.*;
 
 import java.io.BufferedReader;
@@ -19,7 +18,7 @@ public class SQLiteDatabaseConnection {
     public static final KeywordRepository keywordRepository = new KeywordRepository(new KeywordDAO());
     public static final QuestionRepository questionRepository = new QuestionRepository(new QuestionDAO());
     public static final StudyProgramRepository studyProgramRepository = new StudyProgramRepository(new StudyProgramDAO());
-    public static final TopicRepository TopicRepository = new TopicRepository(new TopicDAO());
+    public static final CategoryRepository CategoryRepository = new CategoryRepository(new CategoryDAO());
     public static Connection connect() {
         try{
             return DriverManager.getConnection(DATABASE_URL);

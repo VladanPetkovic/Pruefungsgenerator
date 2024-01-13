@@ -114,7 +114,7 @@
                            <children>
                               <VBox prefHeight="78.0" prefWidth="378.0">
                                  <children>
-                                    <Label styleClass="option_label" text="Select topic:" />
+                                    <Label styleClass="option_label" text="Select category:" />
                                     <TextField minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="298.0" promptText="Search Topic..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
                                  </children>
                               </VBox>

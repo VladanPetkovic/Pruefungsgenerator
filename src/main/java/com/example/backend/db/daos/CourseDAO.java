@@ -101,6 +101,26 @@ public class CourseDAO implements DAO<Course> {
         return course;
     }
 
+    public Course read(String course_name) {
+        Course course = null;
+
+        String readStmt = "SELECT * FROM Courses WHERE CourseName = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+            preparedStatement.setString(1, course_name);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    course = createModelFromResultSet(result);
+                }
+                setCourseCache(null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return course;
+    }
+
     @Override
     public void update(Course course) {
         String updateStmt =
@@ -123,16 +143,16 @@ public class CourseDAO implements DAO<Course> {
     @Override
     public void delete(int id) {
         String deleteStmt = "DELETE FROM Courses WHERE CourseID = ?;";
-        String deleteHasCTStmt = "DELETE FROM hasCT WHERE CourseID = ?;";
+        String deleteHasCCStmt = "DELETE FROM hasCC WHERE CourseID = ?;";
         String deleteHasSCStmt = "DELETE FROM hasSC WHERE CourseID = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
-             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasCTStmt);
+             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasCCStmt);
              PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasSCStmt)) {
             // deleting from Courses table
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            // deleting from hasCT table
+            // deleting from hasCC table
             secondPreparedStatement.setInt(1, id);
             secondPreparedStatement.executeUpdate();
             // deleting from hasSC table

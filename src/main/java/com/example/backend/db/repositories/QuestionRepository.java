@@ -1,10 +1,11 @@
 package com.example.backend.db.repositories;
 
-import com.example.backend.db.daos.KeywordDAO;
+import com.example.backend.db.daos.CourseDAO;
 import com.example.backend.db.daos.QuestionDAO;
+import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.models.SearchObject;
-import com.example.backend.db.models.Topic;
+import com.example.backend.db.models.Category;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class QuestionRepository implements Repository<Question> {
     @Getter(AccessLevel.PRIVATE)
     QuestionDAO questionDAO;
     final ArrayList<String> columnNames = new ArrayList<>(List.of(
-            "QuestionID", "FK_Topic_ID", "Difficulty", "Points",
+            "QuestionID", "FK_Category_ID", "Difficulty", "Points",
             "Question", "MultipleChoice", "Language", "Remarks", "Answers"));
 
     public QuestionRepository(QuestionDAO questionDAO) {
@@ -30,13 +31,14 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().readAll();
     }
 
-    public ArrayList<Question> getAll(Topic topic) {
-        return getQuestionDAO().readAll(topic.getTopic());
+    public ArrayList<Question> getAll(Category category) {
+        return getQuestionDAO().readAll(category);
     }
 
-    public ArrayList<Question> getAll(Question question_searchOptions) {
+    public ArrayList<Question> getAll(Question question_searchOptions, String courseName) {
         Field[] searchFields = Question.class.getDeclaredFields();
         ArrayList<SearchObject<?>> searchOptions = new ArrayList<>();
+        Course course = new CourseDAO().read(courseName);
         int i = 0;
 
         // check every field of question_searchOptions for values
@@ -56,7 +58,7 @@ public class QuestionRepository implements Repository<Question> {
                 Object field_value = field.get(question_searchOptions);
 
                 if(field_value == null) {
-                    searchOptions.add(new SearchObject<>(columnName, field_value, false));
+                    searchOptions.add(new SearchObject<>(columnName, null, false));
                 } else if(field_value instanceof Integer && (int) field_value == 0) {
                     searchOptions.add(new SearchObject<>(columnName, field_value, false));
                 } else {
@@ -69,7 +71,7 @@ public class QuestionRepository implements Repository<Question> {
             i++;
         }
 
-        return getQuestionDAO().readAll(searchOptions);
+        return getQuestionDAO().readAll(searchOptions, course);
     }
 
     @Override

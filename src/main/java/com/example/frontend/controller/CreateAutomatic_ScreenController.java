@@ -44,7 +44,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         createLabel("Question " + questionCount, questionVBox);
 
         // Create and add components to the new VBox
-        createLabel("Topic", questionVBox);
+        createLabel("Category", questionVBox);
         createMenuButton(questionVBox);
         createLabel("Points", questionVBox);
         createSpinner(questionVBox);

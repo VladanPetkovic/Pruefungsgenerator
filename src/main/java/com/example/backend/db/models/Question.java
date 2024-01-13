@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 public class Question {
     int question_id;
-    Topic topic;
+    Category category;
     int difficulty;
-    int points;
+    float points;
     String questionString;
     int multipleChoice;
     String language;
@@ -25,11 +25,11 @@ public class Question {
 
     public Question() {}
 
-    public Question(Topic topic, int difficulty, int points, String questionString,
+    public Question(Category category, int difficulty, float points, String questionString,
                     int multipleChoice, String lang, String remarks,
                     String answers, ArrayList<Keyword> keywords,
                     ArrayList<Image> images) {
-        setTopic(topic);
+        setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);
         setQuestionString(questionString);

@@ -1,13 +1,9 @@
 package com.example.frontend.controller;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Topic;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import com.example.backend.db.models.Category;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -51,13 +47,13 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     private ScrollPane scrollPane;
 
     private String currentLanguage = null;
-    private ArrayList<Topic> topics;
-    private Topic selectedTopic = null;
+    private ArrayList<Category> categories;
+    private Category selectedCategory = null;
     private ArrayList<TextArea> answers = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        topics = SQLiteDatabaseConnection.TopicRepository.getAll();
+        categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
         fillTopicWithTopics();
         difficulty.setValue(5);
         fillLanguageWithLanguages();
@@ -67,9 +63,9 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     }
 
     private void fillTopicWithTopics() {
-        for (Topic t : topics) {
-            MenuItem menuItem = createMenuItem(t.getTopic());
-            menuItem.setOnAction(event -> selectedTopic = t);
+        for (Category category : categories) {
+            MenuItem menuItem = createMenuItem(category.getCategory());
+            menuItem.setOnAction(event -> selectedCategory = category);
             topic.getItems().add(menuItem);
         }
     }
@@ -143,7 +139,7 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     }
 
     private Node checkIfFilled() {
-        if (selectedTopic == null) return topicLabel;
+        if (selectedCategory == null) return topicLabel;
         if (currentLanguage == null) return languageLabel;
         if (question.getText().isEmpty()) return question;
         return null;

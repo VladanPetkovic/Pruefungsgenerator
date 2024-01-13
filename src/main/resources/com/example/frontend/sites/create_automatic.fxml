@@ -124,7 +124,7 @@
                                     </Label>
                                     <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <MenuButton mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
+                                          <MenuButton mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose category...">
                                              <items>
                                                 <MenuItem mnemonicParsing="false" text="Action 1" />
                                                 <MenuItem mnemonicParsing="false" text="Action 2" />

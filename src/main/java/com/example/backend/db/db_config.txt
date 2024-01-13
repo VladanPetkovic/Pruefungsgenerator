@@ -1,1 +1,0 @@
-jdbc:sqlite:C:/Users/HP/Desktop/FH Technikum/LV Innovation Lab/Pruefungsgenerator/src/main/java/com/example/backend/db/mydatabase.db

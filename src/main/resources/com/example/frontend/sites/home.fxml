@@ -41,7 +41,6 @@
                <children>
                   <MenuButton fx:id="studyProgramMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Study programs">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#onStudyProgramBtnClick" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
                     </items>
                      <font>

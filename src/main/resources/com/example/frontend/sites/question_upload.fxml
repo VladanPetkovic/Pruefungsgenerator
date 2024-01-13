@@ -106,7 +106,7 @@
                               </Label>
                               <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="upload_question_vbox" stylesheets="@../css/main.css">
                                  <children>
-                                    <MenuButton fx:id="topic" mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
+                                    <MenuButton fx:id="category" mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose category...">
                                     </MenuButton>
                                  </children>
                               </VBox>
