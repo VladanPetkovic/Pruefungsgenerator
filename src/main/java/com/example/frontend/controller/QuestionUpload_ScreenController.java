@@ -109,10 +109,12 @@ public class QuestionUpload_ScreenController extends ScreenController implements
             buttonRemove.setOnAction(e -> {
                 answers.remove(textAreaAnswer);
                 multibleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
+                if(answers.size() == 10) createMultibleChoiceButton();
             });
             hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
             multibleChoiceVBox.getChildren().add(hBoxAnswerRemove);
             multibleChoiceVBox.getChildren().remove(button);
+            if(answers.size() > 10) return;
             createMultibleChoiceButton();
         });
         multibleChoiceVBox.getChildren().add(button);
