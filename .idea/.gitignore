@@ -5,8 +5,9 @@
 /httpRequests/
 # Datasource local storage ignored files
 /dataSources/
-# /dataSources.local.xml
+/dataSources.local.xml
 /misc.xml
 ../src/main/java/com/example/backend/db/db_config.txt
+src/main/java/com/example/backend/db/db_config.txt
 
 

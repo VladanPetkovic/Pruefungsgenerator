@@ -2,6 +2,7 @@ package com.example.frontend.controller;
 
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.models.StudyProgram;
 import javafx.event.ActionEvent;
@@ -23,14 +24,7 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     private void initialize() {
         loadStudyPrograms();
-        // You can also load courses here if needed
-        // loadCourses();
-    }
-
-    @FXML
-    public void onContinueBtnClick(ActionEvent event) throws IOException {
-        System.out.println("continue Button Click");
-        switchScene(createTestAutomatic, true);
+        loadCourses();
     }
 
     @FXML
@@ -46,7 +40,7 @@ public class Home_ScreenController extends ScreenController {
             System.out.println(question.getQuestion_id());
             System.out.println(question.getQuestionString());
             System.out.println(question.getAnswers());
-            System.out.println(question.getCategory().getTopic());
+            System.out.println(question.getCategory().getCategory());
         }
 
         // set random Question-values to get all questions for a new test
@@ -60,14 +54,18 @@ public class Home_ScreenController extends ScreenController {
             System.out.println(question.getQuestion_id());
             System.out.println(question.getQuestionString());
             System.out.println(question.getAnswers());
-            System.out.println(question.getCategory().getTopic());
+            System.out.println(question.getCategory().getCategory());
         }
     }
 
     @FXML
     public void onCoursesBtnClick(ActionEvent event) {
-        // Implement loading courses here if needed
-        // loadCourses();
+        loadCourses();
+    }
+
+    @FXML
+    public void onContinueBtnClick(ActionEvent event) throws IOException {
+        switchScene(createTestAutomatic, true);
     }
 
     private void loadStudyPrograms() {
@@ -77,10 +75,22 @@ public class Home_ScreenController extends ScreenController {
         for (StudyProgram studyProgram : studyPrograms) {
             MenuItem menuItem = new MenuItem(studyProgram.getProgram_name());
             menuItem.setOnAction(e -> {
-                // Handle the selection of a study program if needed
-                // For example: setSelectedStudyProgram(studyProgram);
+                studyProgramMenuButton.setText(studyProgram.getProgram_name());
             });
             studyProgramMenuButton.getItems().add(menuItem);
+        }
+    }
+
+    private void loadCourses() {
+        ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll();
+        coursesMenuButton.getItems().clear(); // Clear existing items
+
+        for (Course course : courses) {
+            MenuItem menuItem = new MenuItem(course.getCourse_name());
+            menuItem.setOnAction(e -> {
+                coursesMenuButton.setText(course.getCourse_name());
+            });
+            coursesMenuButton.getItems().add(menuItem);
         }
     }
 }

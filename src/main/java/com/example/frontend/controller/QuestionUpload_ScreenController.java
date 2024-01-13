@@ -54,7 +54,7 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
-        fillTopicWithTopics();
+        fillCategoryWithCategories();
         difficulty.setValue(5);
         fillLanguageWithLanguages();
         question.setText("");
@@ -62,7 +62,7 @@ public class QuestionUpload_ScreenController extends ScreenController implements
         //TODO Set all
     }
 
-    private void fillTopicWithTopics() {
+    private void fillCategoryWithCategories() {
         for (Category category : categories) {
             MenuItem menuItem = createMenuItem(category.getCategory());
             menuItem.setOnAction(event -> selectedCategory = category);
