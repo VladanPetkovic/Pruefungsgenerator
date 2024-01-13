@@ -31,11 +31,18 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().readAll();
     }
 
+    // getting all questions for one category
     public ArrayList<Question> getAll(Category category) {
         return getQuestionDAO().readAll(category);
     }
 
-    public ArrayList<Question> getAll(Question question_searchOptions, String courseName) {
+    // getting all questions for one course
+    public ArrayList<Question> getAll(Course course) {
+        return getQuestionDAO().readAll(course);
+    }
+
+    // getting all questions for a dynamic search
+    public ArrayList<Question> getAll(Question question_searchOptions, String courseName, boolean considerMC) {
         Field[] searchFields = Question.class.getDeclaredFields();
         ArrayList<SearchObject<?>> searchOptions = new ArrayList<>();
         Course course = new CourseDAO().read(courseName);
@@ -56,13 +63,28 @@ public class QuestionRepository implements Repository<Question> {
             try {
                 // value of class-variable
                 Object field_value = field.get(question_searchOptions);
+                String field_name = field.getName();
 
                 if(field_value == null) {
-                    searchOptions.add(new SearchObject<>(columnName, null, false));
-                } else if(field_value instanceof Integer && (int) field_value == 0) {
-                    searchOptions.add(new SearchObject<>(columnName, field_value, false));
-                } else {
-                    searchOptions.add(new SearchObject<>(columnName, field_value, true));
+                    // ArrayLists are null --> set them false
+                    searchOptions.add(new SearchObject<>(columnName, field_name, null, false));
+                }
+                else if(field_name.equals("multipleChoice") && !considerMC) {
+                    // field_name == MC and considerMC is false --> set false
+                    searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
+                }
+                else if(field_name.equals("points") && (float) field_value == 0) {
+                    // field_name == points and points = 0 --> set false
+                    searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
+                }
+                else if((field_name.equals("question_id") || field_name.equals("difficulty"))
+                        && (int) field_value == 0) {
+                    // difficulty and question_id not set --> set false
+                    searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
+                }
+                else {
+                    // field has a value --> set true
+                    searchOptions.add(new SearchObject<>(columnName, field_name, field_value, true));
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);

@@ -30,32 +30,6 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     public void onStudyProgramBtnClick(ActionEvent event) {
         loadStudyPrograms();
-        Question testQuestion = new Question();
-        testQuestion.setLanguage("Deutsch");
-
-        ArrayList<Question> list2 = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
-
-        for(Question question : list2) {
-            System.out.println("_----------------------------------_");
-            System.out.println(question.getQuestion_id());
-            System.out.println(question.getQuestionString());
-            System.out.println(question.getAnswers());
-            System.out.println(question.getCategory().getCategory());
-        }
-
-        // set random Question-values to get all questions for a new test
-        Question testQuestion2 = new Question();
-        testQuestion.setMultipleChoice(0);
-
-        ArrayList<Question> list3 = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
-
-        for(Question question : list3) {
-            System.out.println("_----------------------------------_");
-            System.out.println(question.getQuestion_id());
-            System.out.println(question.getQuestionString());
-            System.out.println(question.getAnswers());
-            System.out.println(question.getCategory().getCategory());
-        }
     }
 
     @FXML

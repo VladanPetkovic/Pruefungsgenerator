@@ -7,11 +7,13 @@ import lombok.Setter;
 @Setter
 public class SearchObject<T> {
     private String column_name;
+    private String objectName;
     private T valueOfObject;
     private boolean isSet;
 
-    public SearchObject(String column_name, T valueOfObject, boolean isSet) {
+    public SearchObject(String column_name, String objectName, T valueOfObject, boolean isSet) {
         setColumn_name(column_name);
+        setObjectName(objectName);
         setValueOfObject(valueOfObject);
         setSet(isSet);
     }

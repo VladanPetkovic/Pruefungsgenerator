@@ -33,6 +33,10 @@ public class CourseRepository implements Repository<Course> {
         return getCourseDAO().read(id);
     }
 
+    public Course get(String course_name) {
+        return getCourseDAO().read(course_name);
+    }
+
     @Override
     public void add(Course course) {
         getCourseDAO().create(course);

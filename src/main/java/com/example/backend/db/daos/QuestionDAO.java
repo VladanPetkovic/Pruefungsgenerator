@@ -59,16 +59,45 @@ public class QuestionDAO implements DAO<Question> {
         return questions;
     }
 
-    public ArrayList<Question> readAll(Category questionCategory) {
+    public ArrayList<Question> readAll(Category category) {
         ArrayList<Question> questions = new ArrayList<>();
 
         String selectQuestionsStmt = "SELECT * FROM Questions WHERE FK_Category_ID = ?;";
 
-        if (questionCategory != null) {
+        if (category != null) {
             try (Connection connection = SQLiteDatabaseConnection.connect();
                  PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
 
-                questionsStatement.setInt(1, questionCategory.getCategory_id());
+                questionsStatement.setInt(1, category.getCategory_id());
+                try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                    while (questionsResultSet.next()) {
+                        questions.add(createModelFromResultSet(questionsResultSet));
+                    }
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return questions;
+    }
+
+    public ArrayList<Question> readAll(Course course) {
+        ArrayList<Question> questions = new ArrayList<>();
+
+        String selectQuestionsStmt =
+                "SELECT Q.* " +
+                "FROM Questions Q " +
+                "JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID " +
+                "JOIN Courses C ON HCC.CourseID = C.CourseID " +
+                "WHERE C.CourseID = ?;";
+
+        if (course != null) {
+            try (Connection connection = SQLiteDatabaseConnection.connect();
+                 PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
+
+                questionsStatement.setInt(1, course.getCourse_id());
                 try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                     while (questionsResultSet.next()) {
                         questions.add(createModelFromResultSet(questionsResultSet));
@@ -87,25 +116,42 @@ public class QuestionDAO implements DAO<Question> {
         ArrayList<Question> questions = new ArrayList<>();
         // making a list of values for the preparedStmt
         ArrayList<Object> listForPreparedStmt = new ArrayList<>();
-        // if category is present, then set category
-        CategoryDAO categoryDAO = new CategoryDAO();
-        Category questionCategory = null;
 
         StringBuilder selectQuestionsStmt = new StringBuilder("SELECT * FROM Questions WHERE");
 
+        // TODO: make this a function
         for(SearchObject<?> searchObject : searchOptions) {
             // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
             if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
-                selectQuestionsStmt.append(" ").append(searchObject.getColumn_name()).append(" = ?,");
+                selectQuestionsStmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
                 listForPreparedStmt.add(searchObject.getValueOfObject());
             }
+
+            // keywords passed
+            if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "keywords")) {
+                int insertPosition = selectQuestionsStmt.indexOf("*");
+                String oldWhereClause = selectQuestionsStmt.substring(selectQuestionsStmt.indexOf("WHERE"));
+                selectQuestionsStmt.delete(insertPosition, selectQuestionsStmt.length());
+                selectQuestionsStmt.append(
+                        "Q.* " +
+                        "FROM Questions Q " +
+                        "JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
+                        "JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " + oldWhereClause);
+                selectQuestionsStmt.append(" ").append("K.KeywordID").append(" = ? AND");
+                ArrayList<Keyword> keywords = (ArrayList<Keyword>) searchObject.getValueOfObject();
+                listForPreparedStmt.add(keywords.get(0).getKeyword_id());
+            }
+
+            // images go like keywords
         }
 
-        // replace last char ',' to ';'
-        selectQuestionsStmt.deleteCharAt(selectQuestionsStmt.length() - 1);
+        // replace last ' AND' to ';'
+        selectQuestionsStmt.delete(selectQuestionsStmt.length() - 4, selectQuestionsStmt.length());
         selectQuestionsStmt.append(';');
 
-        // TODO: change this to get only questions for the course
+        System.out.println(selectQuestionsStmt);
+
+        // if no searchOptions passed --> return all Questions for the Course
         if(listForPreparedStmt.isEmpty()) {
             return readAll();
         }
@@ -120,6 +166,8 @@ public class QuestionDAO implements DAO<Question> {
                     questionsStatement.setString(count, (String) prepObjects);
                 } else if(prepObjects instanceof Integer) {
                     questionsStatement.setInt(count, (int) prepObjects);
+                } else if(prepObjects instanceof Float) {
+                    questionsStatement.setFloat(count, (Float) prepObjects);
                 }
 
                 count++;
@@ -227,9 +275,9 @@ public class QuestionDAO implements DAO<Question> {
 
         return new Question(
                 question_id,
-                new Category(questionCategory),
+                questionCategory,
                 resultSet.getInt("Difficulty"),
-                resultSet.getInt("Points"),
+                resultSet.getFloat("Points"),
                 resultSet.getString("Question"),
                 resultSet.getInt("MultipleChoice"),
                 resultSet.getString("Language"),

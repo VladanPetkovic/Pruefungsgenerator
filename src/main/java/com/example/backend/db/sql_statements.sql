@@ -16,6 +16,13 @@ FROM Questions
     JOIN StudyPrograms ON hasSC.ProgramID = StudyPrograms.ProgramID
 WHERE StudyPrograms.ProgramID = 1 AND Courses.CourseID = 2;
 
+-- Select all Questions for a certain course
+SELECT Q.*
+FROM Questions Q
+    JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID
+    JOIN Courses C ON HCC.CourseID = C.CourseID
+WHERE C.CourseName = 'MACS1';
+
 -- Select all Keywords for a certain Question
 Select Keywords.* FROM Keywords
     JOIN hasKQ ON Keywords.KeywordID = hasKQ.KeywordID
@@ -144,11 +151,11 @@ INSERT INTO Keywords (Keyword) VALUES('Heine-Matrix');
 INSERT INTO Keywords (Keyword) VALUES('Eigenwert');
 
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
-VALUES(5,6,7.5,'Berechnen Sie die Eigenwerte der Matrix:',0,'Deutsch',NULL,NULL);
+VALUES(4,6,7.5,'Berechnen Sie die Eigenwerte der Matrix:',0,'Deutsch',NULL,NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(2,8,7,'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x²',0,'Deutsch',NULL,NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
-VALUES(4,4,3.5,'Welche No-SQL datenbanken gibt es',0,'Deutsch',NULL,NULL);
+VALUES(3,4,3.5,'Welche No-SQL datenbanken gibt es',0,'Deutsch',NULL,NULL);
 
 INSERT INTO hasSC VALUES(1,1);
 INSERT INTO hasSC VALUES(1,2);
