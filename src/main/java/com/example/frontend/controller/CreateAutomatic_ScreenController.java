@@ -1,7 +1,10 @@
 package com.example.frontend.controller;
 
+import com.example.backend.db.daos.TopicDAO;
+import com.example.backend.db.models.Topic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -10,8 +13,26 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
+import org.controlsfx.control.action.Action;
 
-public class CreateAutomatic_ScreenController extends ScreenController {
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+public class CreateAutomatic_ScreenController extends ScreenController implements Initializable {
+
+    @FXML
+    private MenuButton topicMenuButton;
+    @FXML
+    private Slider difficultySlider;
+    @FXML
+    private Spinner<Integer> pointsSpinner;
+
+    private TopicDAO topicDAO;
 
     @FXML
     private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
@@ -71,11 +92,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         menuButton.getStyleClass().add("automatic_create_dropdown");
         menuButton.getStylesheets().add("@../css/main.css");
 
-        MenuItem action1 = new MenuItem("Action 1");
-        MenuItem action2 = new MenuItem("Action 2");
-
-        menuButton.getItems().addAll(action1, action2);
-
         VBox innerVBox = new VBox(menuButton);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
@@ -122,8 +138,43 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         parentVBox.getChildren().add(innerVBox);
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        topicDAO = new TopicDAO();
+        ArrayList<Topic> topics = topicDAO.readAll();
+        for (Topic topic: topics
+        ) {
+            MenuItem menuItem = new MenuItem(topic.getTopic());
+            menuItem.setOnAction(e -> {
+                topicMenuButton.setText(topic.getTopic());
+            });
+            topicMenuButton.getItems().add(menuItem);
+        }
+        //difficultySlider.setMajorTickUnit(10);
+        //difficultySlider.setMinorTickCount(10);
+        difficultySlider.setSnapToTicks(true);
+        difficultySlider.setOnMouseReleased(this::onDifficultySliderMouseReleased);
+    }
+
+    private void onDifficultySliderMouseReleased(MouseEvent mouseEvent) {
+        System.out.println((int)difficultySlider.getValue());
+    }
+
+    @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
-        // Handle the "Create Automatic Test" button click
-        // ...
+        // Abrufen der ausgewählten Filterparameter
+        String selectedTopic = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
+        int selectedDifficulty = (int) difficultySlider.getValue();
+        int selectedPoints = pointsSpinner.getValue();
+
+        // Hier sollte die Logik für die Datenbankabfrage erfolgen
+        // Verwende questionRepository.getAll(selectedTopic, selectedDifficulty, selectedPoints)
+
+        // Nach der Datenbankabfrage weiter zur manuellen Erstellung
+        switchToManualCreateScreen(); // Implementiere diese Methode entsprechend
+    }
+
+    private void switchToManualCreateScreen() {
+        // Implementiere die Navigation zur manuellen Erstellung (loadFXML, setScene, etc.)
     }
 }

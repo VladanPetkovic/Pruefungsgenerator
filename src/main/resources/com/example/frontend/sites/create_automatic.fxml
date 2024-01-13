@@ -124,11 +124,8 @@
                                     </Label>
                                     <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <MenuButton mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
-                                             <items>
-                                                <MenuItem mnemonicParsing="false" text="Action 1" />
-                                                <MenuItem mnemonicParsing="false" text="Action 2" />
-                                             </items>
+                                          <MenuButton fx:id="topicMenuButton" mnemonicParsing="false" styleClass="automatic_create_dropdown" stylesheets="@../css/main.css" text="Choose topic...">
+
                                           </MenuButton>
                                        </children>
                                     </VBox>
@@ -143,7 +140,7 @@
                                     </Label>
                                     <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <Spinner editable="true" styleClass="automatic_create_spinner" stylesheets="@../css/main.css" />
+                                          <Spinner fx:id="pointsSpinner" editable="true" styleClass="automatic_create_spinner" stylesheets="@../css/main.css" />
                                        </children>
                                     </VBox>
                                  </children>
@@ -157,7 +154,7 @@
                                     </Label>
                                     <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="difficultySlider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.5" />
                                        </children>
                                     </VBox>
                                  </children>
