@@ -17,4 +17,8 @@ public class StudyProgram {
         setProgram_name(program_name);
         setProgram_abbr(program_abbr);
     }
+
+    public StudyProgram() {
+
+    }
 }

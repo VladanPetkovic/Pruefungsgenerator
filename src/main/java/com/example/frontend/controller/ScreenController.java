@@ -14,10 +14,10 @@ public abstract class ScreenController {
     public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
     public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
+    public static Screen<QuestionEdit_ScreenController> addStudyProgram = new Screen<>("sites/add_studyProgram.fxml");
 
 
     public static void switchScene(Screen screen, boolean refresh){
-        System.out.println("inside switchScene");
         if(refresh){
             screen.loadComponents();
         }

@@ -126,6 +126,13 @@ button
     -fx-background-color: #434343;
 }
 
+/* addCourse / addProgram Scene */
+
+.addCourseAndProgram_label
+{
+    -fx-text-fill: white;
+}
+
 /* Automatic Test Creation Scene*/
 
 .automatic_create_label

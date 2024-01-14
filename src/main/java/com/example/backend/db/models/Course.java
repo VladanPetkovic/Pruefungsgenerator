@@ -19,4 +19,8 @@ public class Course {
         setCourse_number(course_number);
         setLector(lector);
     }
+
+    public Course() {
+
+    }
 }
