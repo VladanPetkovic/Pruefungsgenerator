@@ -27,4 +27,8 @@ public class Screen<T> {
         }
         controller = fxmlLoader.getController();
     }
+
+    public void disableScene(boolean state){
+        scene.getRoot().setDisable(state);
+    }
 }

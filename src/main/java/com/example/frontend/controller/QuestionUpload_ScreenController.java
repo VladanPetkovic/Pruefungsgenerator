@@ -1,9 +1,12 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -20,8 +23,6 @@ public class QuestionUpload_ScreenController extends ScreenController implements
 
     private static final String[] LANGUAGES = {"Deutsch", "Englisch", "Spanisch", "Französisch"};
 
-    @FXML
-    private Label categoryLabel;
     @FXML
     private MenuButton category;
     @FXML
@@ -61,7 +62,11 @@ public class QuestionUpload_ScreenController extends ScreenController implements
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id());
+        if(categories.size() == 0){
+            questionUpload.disableScene(true);
+            showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
+        }
         fillCategoryWithCategories();
         difficulty.setValue(5);
         points.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
@@ -71,6 +76,14 @@ public class QuestionUpload_ScreenController extends ScreenController implements
         remarks.setText("");
         keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
         fillKeywordWithKeywords();
+    }
+
+    public void showErrorAlert(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
     }
 
     private void fillCategoryWithCategories() {
@@ -153,15 +166,11 @@ public class QuestionUpload_ScreenController extends ScreenController implements
         return button;
     }
 
-    private void scrollToNode(Node targetNode) {
-        // TODO: Scroll to node when necessary and not filled out
-    }
-
     @FXML
     private void onActionUpload() {
         Node n = checkIfFilled();
         if (n != null) {
-            scrollToNode(n);
+            showErrorAlert("Error","Not all fields filled","Fill out: "+n);
             return;
         }
         Question q = new Question(
@@ -194,13 +203,13 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     }
 
     private Node checkIfFilled() {
-        if (selectedCategory == null) return categoryLabel;
+        if (selectedCategory == null) return category;
         if (multipleChoice.isSelected()) {
             for (TextArea t : answers) {
                 if (t.getText().isEmpty()) return multipleChoice;
             }
         }
-        if (currentLanguage == null) return languageLabel;
+        if (currentLanguage == null) return language;
         if (question.getText().isEmpty()) return question;
         return null;
     }

@@ -51,11 +51,11 @@ public class CategoryDAO implements DAO<Category> {
         ArrayList<Category> categories = new ArrayList<>();
 
         String selectStmt =
-                "SELECT CategoryID, Category " +
-                "FROM Categories " +
-                "JOIN hasCC ON Categories.CategoryID = hasCC.CategoryID " +
-                "JOIN Courses ON hasCC.CourseID = Courses.CourseID " +
-                "WHERE hasCC.CourseID = ?;";
+                "SELECT Categories.CategoryID, Categories.Category " +
+                        "FROM Categories " +
+                        "JOIN hasCC ON Categories.CategoryID = hasCC.CategoryID " +
+                        "JOIN Courses ON hasCC.CourseID = Courses.CourseID " +
+                        "WHERE hasCC.CourseID = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
