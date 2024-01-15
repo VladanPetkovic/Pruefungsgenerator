@@ -239,7 +239,8 @@ public class Home_ScreenController extends ScreenController {
             if (!exists) {
                 Course newCourse= new Course(enteredName,enteredNumber,enteredLecturer);
                 SQLiteDatabaseConnection.courseRepository.add(newCourse);
-                SQLiteDatabaseConnection.courseRepository.addConnection(SharedData.getSelectedStudyProgram(), newCourse);
+                Course newlyAddedCOurse = SQLiteDatabaseConnection.courseRepository.get(newCourse.getCourse_name());
+                SQLiteDatabaseConnection.courseRepository.addConnection(SharedData.getSelectedStudyProgram(), newlyAddedCOurse);
             }
             //closes the windows
             inputStage.close();
