@@ -1,6 +1,7 @@
 package com.example.backend.db.daos;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
@@ -32,7 +33,27 @@ public class QuestionDAOTests {
     }
 
     @Test
-    void readAll_checkResult() {
+    void read_getOneQuestion() {
+        System.out.println("Check: Get question with id = 1");
+        // REMINDER: question with this id can be deleted
+
+        // arrange
+        Question question = SQLiteDatabaseConnection.questionRepository.get(1);
+        ArrayList<Question> questions = new ArrayList<>();
+        questions.add(question);
+
+        // show results
+        printQuestions(questions);
+
+        // act
+        // done in arrange
+
+        // assert
+        assertNotNull(question);
+    }
+
+    @Test
+    void readAll_forOneCourse() {
         System.out.println("Check: Count of Questions for one course");
         // REMINDER: expectedLength changes overtime, when new questions have been added
 
@@ -40,6 +61,26 @@ public class QuestionDAOTests {
         Course course = SQLiteDatabaseConnection.courseRepository.get("MACS1");
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(course);
         int expectedLength = 2;
+
+        // show results
+        printQuestions(questions);
+
+        // act
+        // done in arrange
+
+        // assert
+        assertEquals(expectedLength, questions.size());
+    }
+
+    @Test
+    void readAll_forOneCategory() {
+        System.out.println("Check: Count of Questions for one category");
+        // REMINDER: expectedLength changes overtime, when new questions have been added
+
+        // arrange
+        Category category = new Category(4, "Algebra");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(category);
+        int expectedLength = 1;
 
         // show results
         printQuestions(questions);
@@ -78,7 +119,7 @@ public class QuestionDAOTests {
         // arrange
         Question testQuestion = new Question();
         ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-        keywords.add(new Keyword(7, "Vektoren"));
+        keywords.add(new Keyword("Vektoren"));
         testQuestion.setLanguage("Deutsch");
         testQuestion.setKeywords(keywords);
         int expectedResult = 1;
@@ -112,6 +153,46 @@ public class QuestionDAOTests {
         assertEquals(expectedResult, questions.size());
     }
 
+    @Test
+    void readAll_dynamicCategoryPointsDiff() {
+        System.out.println("Check: search Questions based on input criteria");
+
+        // arrange
+        Question question1 = new Question();
+        question1.setCategory(new Category(2, "Analysis"));
+        question1.setPoints(7);
+        question1.setDifficulty(8);
+        int expectedQuestionsCount = 1;
+
+        // act
+        ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.questionRepository.getAll(question1, "MACS1", false);
+
+        // show results
+        printQuestions(actualQuestions);
+
+        // assert
+        assertEquals(expectedQuestionsCount, actualQuestions.size());
+    }
+
+    @Test
+    void readAll_newPerformance() {
+        System.out.println("Check: performance of getting all questions with keywords, ...");
+
+        // arrange
+        int expectedResult = 3;
+
+        // act
+        long startTime = System.currentTimeMillis();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
+        long stopTime = System.currentTimeMillis();
+
+        printQuestions(questions);
+
+        // assert
+        System.out.println("Time spent: " + (stopTime - startTime));
+        assertEquals(expectedResult, questions.size());
+    }
+
     void printQuestions(ArrayList<Question> questions) {
         if(questions.isEmpty()) {
             System.out.println("No questions found");
@@ -122,7 +203,13 @@ public class QuestionDAOTests {
             System.out.println("_----------------------------------_");
             System.out.println("ID: " + question.getQuestion_id());
             System.out.println("QuestionString: " + question.getQuestionString());
+            System.out.print("Keywords: ");
+            for(Keyword keyword : question.getKeywords()) {
+                System.out.print(keyword.getKeyword_text() + " ");
+            }
+            System.out.println();
             System.out.println("Answer: " + question.getAnswers());
+            System.out.println("MC: " + question.getMultipleChoice());
             System.out.println("Category: " + question.getCategory().getCategory());
             System.out.println("Language: " + question.getLanguage());
             System.out.println("Difficulty: " + question.getDifficulty());

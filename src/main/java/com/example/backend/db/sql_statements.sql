@@ -1,6 +1,18 @@
 -----------------------------------------------------------------------------
 -- Selecting
 
+SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question,
+       Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers,
+       C.Category, I.ImageID, I.Link, I.ImageName, I.Position,
+       K.KeywordID, K.Keyword
+FROM Questions Q
+         JOIN Categories C ON Q.FK_Category_ID = C.CategoryID
+         LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID
+         LEFT JOIN Images I ON HIQ.ImageID = I.ImageID
+         LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID
+         LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID
+WHERE Q.QuestionID = 1;
+
 -- Select all Courses for a certain studyprogram
 Select * FROM Courses
 JOIN hasSC ON Courses.CourseID = hasSC.CourseID
