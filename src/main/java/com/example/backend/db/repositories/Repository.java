@@ -1,4 +1,4 @@
-package com.example.backend.db.repository;
+package com.example.backend.db.repositories;
 
 import java.util.ArrayList;
 

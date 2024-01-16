@@ -1,174 +1,290 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.*;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
-import com.example.backend.app.Question;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-/*
 public class QuestionDAO implements DAO<Question> {
-    @Setter(AccessLevel.PRIVATE)
-    @Getter(AccessLevel.PRIVATE)
-    Connection connection;
-
-    @Setter(AccessLevel.PRIVATE)
-    ArrayList<Question> questionsCache;
-
-    public QuestionDAO(Connection connection) {
-        setConnection(connection);
-    }
+    public QuestionDAO() {}
 
     @Override
     public void create(Question question) {
+        String insertStmt =
+                "INSERT INTO Questions " +
+                "(FK_Category_ID, Difficulty, Points, Question, MultipleChoice, Language, Remarks, Answers) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
-        // Suche nach FK_Topic_ID muss implementiert werden
-        // die gefundene Topic_ID muss im INSERT Statement eingefügt werden
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
 
-        String searchStmt = "SELECT TopicID FROM Topics WHERE Topic = ?; ";
-        try{
-            PreparedStatement preparedStatement = getConnection().prepareStatement(searchStmt);
-            preparedStatement.setString(1, question.getTopic());
+            preparedStatement.setInt(1, question.getCategory().getCategory_id());
+            preparedStatement.setInt(2, question.getDifficulty());
+            preparedStatement.setFloat(3, question.getPoints());
+            preparedStatement.setString(4, question.getQuestionString());
+            preparedStatement.setInt(5, question.getMultipleChoice());
+            preparedStatement.setString(6, question.getLanguage());
+            preparedStatement.setString(7, question.getRemarks());
+            preparedStatement.setString(8, question.getAnswers());
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // check if a record was found
-            if (resultSet.next()) {
-                int topicId = resultSet.getInt("TopicID");
-
-                String insertStmt = "INSERT into Questions (FK_Topic_ID, Difficulty, Points, Question, MultipleChoice, Language, Remarks) VALUES (?, ?, ?, ?, ?, ?, ?);";
-                try {
-                    preparedStatement = getConnection().prepareStatement(insertStmt);
-                    // use the retrieved TopicID
-                    preparedStatement.setInt(1, topicId);
-                    preparedStatement.setInt(2, question.getDifficulty());
-                    preparedStatement.setInt(3, question.getPoints());
-                    preparedStatement.setString(4, question.getQuestionString());
-                    preparedStatement.setInt(5, question.getMultipleChoice());
-                    preparedStatement.setBoolean(6, question.getLanguage());
-                    preparedStatement.setString(7, question.getRemarks());
-
-                    preparedStatement.execute();
-                    getConnection().close();
-                    setQuestionsCache(null);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // handle the case when the topic is not found in the db
-                // in this case we should create a new entry in the Topics table
-                System.out.println("Topic not found.");
-            }
-
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public ArrayList<Question> readAll(String subject) {
+    public ArrayList<Question> readAll() {
         ArrayList<Question> questions = new ArrayList<>();
 
-        if (questionsCache != null) {
-            System.out.println("TEST");
-            return questionsCache;
+        String selectQuestionsStmt = "SELECT * FROM Questions;";
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt);
+             ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+
+            while (questionsResultSet.next()) {
+                questions.add(createModelFromResultSet(questionsResultSet));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        String selectTopicIdStmt = "SELECT TopicID FROM Topics WHERE Topic = ?;"; // Query to get TopicID
-        String selectQuestionsStmt = "SELECT * FROM Questions WHERE FK_Topic_ID = ?;"; // Query to get Questions
+        return questions;
+    }
 
-        try {
-            // step 1: get TopicID
-            PreparedStatement topicIdStatement = getConnection().prepareStatement(selectTopicIdStmt);
-            topicIdStatement.setString(1, subject);
+    public ArrayList<Question> readAll(Category category) {
+        ArrayList<Question> questions = new ArrayList<>();
 
-            ResultSet topicIdResultSet = topicIdStatement.executeQuery();
+        String selectQuestionsStmt = "SELECT * FROM Questions WHERE FK_Category_ID = ?;";
 
-            if (topicIdResultSet.next()) {
-                int topicId = topicIdResultSet.getInt("TopicID");
+        if (category != null) {
+            try (Connection connection = SQLiteDatabaseConnection.connect();
+                 PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
 
-                // step 2: get questions for the TopicID
-                PreparedStatement questionsStatement = getConnection().prepareStatement(selectQuestionsStmt);
-                questionsStatement.setInt(1, topicId);
-
-                ResultSet questionsResultSet = questionsStatement.executeQuery();
-
-                while (questionsResultSet.next()) {
-                    Question question = new Question(
-                            questionsResultSet.getInt("Difficulty"),
-                            questionsResultSet.getInt("Points"),
-                            questionsResultSet.getString("Question"),
-                            questionsResultSet.getBoolean("MultipleChoice"),
-                            subject,
-                            // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
-                            questionsResultSet.getString("Language"),
-                            questionsResultSet.getString("Remarks"),
-                    );
-                    questions.add(question);
+                questionsStatement.setInt(1, category.getCategory_id());
+                try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                    while (questionsResultSet.next()) {
+                        questions.add(createModelFromResultSet(questionsResultSet));
+                    }
                 }
 
-                setQuestionsCache(questions);
-                getConnection().close();
-                return questions;
-            } else {
-                System.out.println("Topic not found.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return questions;
+    }
+
+    public ArrayList<Question> readAll(Course course) {
+        ArrayList<Question> questions = new ArrayList<>();
+
+        String selectQuestionsStmt =
+                "SELECT Q.* " +
+                "FROM Questions Q " +
+                "JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID " +
+                "JOIN Courses C ON HCC.CourseID = C.CourseID " +
+                "WHERE C.CourseID = ?;";
+
+        if (course != null) {
+            try (Connection connection = SQLiteDatabaseConnection.connect();
+                 PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
+
+                questionsStatement.setInt(1, course.getCourse_id());
+                try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                    while (questionsResultSet.next()) {
+                        questions.add(createModelFromResultSet(questionsResultSet));
+                    }
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return questions;
+    }
+
+    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course) {
+        ArrayList<Question> questions = new ArrayList<>();
+        // making a list of values for the preparedStmt
+        ArrayList<Object> listForPreparedStmt = new ArrayList<>();
+
+        StringBuilder selectQuestionsStmt = new StringBuilder("SELECT * FROM Questions WHERE");
+
+        // TODO: make this a function
+        for(SearchObject<?> searchObject : searchOptions) {
+            // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
+            if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
+                selectQuestionsStmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                listForPreparedStmt.add(searchObject.getValueOfObject());
             }
 
+            // keywords passed
+            if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "keywords")) {
+                int insertPosition = selectQuestionsStmt.indexOf("*");
+                String oldWhereClause = selectQuestionsStmt.substring(selectQuestionsStmt.indexOf("WHERE"));
+                selectQuestionsStmt.delete(insertPosition, selectQuestionsStmt.length());
+                selectQuestionsStmt.append(
+                        "Q.* " +
+                        "FROM Questions Q " +
+                        "JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
+                        "JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " + oldWhereClause);
+                selectQuestionsStmt.append(" ").append("K.KeywordID").append(" = ? AND");
+                ArrayList<Keyword> keywords = (ArrayList<Keyword>) searchObject.getValueOfObject();
+                listForPreparedStmt.add(keywords.get(0).getKeyword_id());
+            }
+
+            // images go like keywords
+        }
+
+        // replace last ' AND' to ';'
+        selectQuestionsStmt.delete(selectQuestionsStmt.length() - 4, selectQuestionsStmt.length());
+        selectQuestionsStmt.append(';');
+
+        System.out.println(selectQuestionsStmt);
+
+        // if no searchOptions passed --> return all Questions for the Course
+        if(listForPreparedStmt.isEmpty()) {
+            return readAll();
+        }
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(String.valueOf(selectQuestionsStmt))) {
+
+            // insert into prepared stmt
+            int count = 1;
+            for(Object prepObjects : listForPreparedStmt) {
+                if(prepObjects instanceof String) {
+                    questionsStatement.setString(count, (String) prepObjects);
+                } else if(prepObjects instanceof Integer) {
+                    questionsStatement.setInt(count, (int) prepObjects);
+                } else if(prepObjects instanceof Float) {
+                    questionsStatement.setFloat(count, (Float) prepObjects);
+                }
+
+                count++;
+            }
+
+            try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                while (questionsResultSet.next()) {
+                    questions.add(createModelFromResultSet(questionsResultSet));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return questions;
     }
-
 
     @Override
-    public Question read(int id) {
+    public Question read(int questionId) {
+        Question question = null;
+
         String selectStmt = "SELECT * FROM Questions WHERE QuestionID = ?;";
 
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(selectStmt);
-            preparedStatement.setInt(1, id);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                Question question = new Question(
-                        resultSet.getInt("Difficulty"),
-                        resultSet.getInt("Points"),
-                        resultSet.getString("Question"),
-                        resultSet.getBoolean("MultipleChoice"),
-                        // topic muss abgerufen und hier eingefügt werden
-                        // keywords müssen für die jeweilige frage abgerufen werden und hier eingefügt werden
-                        resultSet.getString("Language"),
-                        resultSet.getString("Remarks"),
-                );
-                getConnection().close();
-                return question;
-            } else {
-                System.out.println("Question not found with ID: " + id);
+            preparedStatement.setInt(1, questionId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    question = createModelFromResultSet(resultSet);
+                } else {
+                    System.out.println("Question not found with ID: " + questionId);
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return question;
     }
-
 
     @Override
     public void update(Question question) {
+        String updateStmt =
+                "UPDATE Questions " +
+                        "SET FK_Category_ID = ?, Difficulty = ?, Points = ?, Question = ?, " +
+                        "MultipleChoice = ?, Language = ?, Remarks = ?, Answers = ? " +
+                        "WHERE QuestionID = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
 
+            preparedStatement.setInt(1, question.getCategory().getCategory_id());
+            preparedStatement.setInt(2, question.getDifficulty());
+            preparedStatement.setFloat(3, question.getPoints());
+            preparedStatement.setString(4, question.getQuestionString());
+            preparedStatement.setInt(5, question.getMultipleChoice());
+            preparedStatement.setString(6, question.getLanguage());
+            preparedStatement.setString(7, question.getRemarks());
+            preparedStatement.setString(8, question.getAnswers());
+            preparedStatement.setInt(9, question.getQuestion_id());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(int id) {
-    
+        String deleteStmt = "DELETE FROM Questions WHERE QuestionID = ?;";
+        String deleteHasIQStmt = "DELETE FROM hasIQ WHERE QuestionID = ?;";
+        String deleteHasKQStmt = "DELETE FROM hasKQ WHERE QuestionID = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
+             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt);
+             PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasKQStmt)) {
+
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+            secondPreparedStatement.setInt(1, id);
+            secondPreparedStatement.executeUpdate();
+
+            thirdPreparedStatement.setInt(1, id);
+            thirdPreparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Question createModelFromResultSet(ResultSet resultSet) throws SQLException {
+        int question_id = resultSet.getInt("QuestionID");
+
+        CategoryDAO categoryDAO = new CategoryDAO();
+        Category questionCategory = categoryDAO.read(resultSet.getInt("FK_Category_ID"));
+
+        KeywordDAO keywordDAO = new KeywordDAO();
+        ArrayList<Keyword> keywords = keywordDAO.readAllForOneQuestion(question_id);
+
+        ImageDAO imageDAO = new ImageDAO();
+        ArrayList<Image> images = imageDAO.readAllForOneQuestion(question_id);
+
+        return new Question(
+                question_id,
+                questionCategory,
+                resultSet.getInt("Difficulty"),
+                resultSet.getFloat("Points"),
+                resultSet.getString("Question"),
+                resultSet.getInt("MultipleChoice"),
+                resultSet.getString("Language"),
+                resultSet.getString("Remarks"),
+                resultSet.getString("Answers"),
+                keywords,
+                images
+        );
     }
 }
-*/

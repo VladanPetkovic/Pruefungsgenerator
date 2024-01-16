@@ -10,10 +10,14 @@ public abstract class Question {
     private int difficulty;
     private int points;
     private String questionString;
-    private Boolean multipleChoice;
-    private String topic;
+    private int multipleChoice;
+    private String category;
     private ArrayList<String> keywords;
     private String course;
+
+    //
+    // THIS IS DEPRECATED --> USE WITH CAUTION & REFACTOR BEFORE USAGE
+    //
 
     // language
     /*
@@ -28,13 +32,13 @@ public abstract class Question {
 
     // constructor with values
     public Question(int difficulty, int points, String questionString,
-                    Boolean multipleChoice, String topic, ArrayList<String> keywords,
+                    int multipleChoice, String category, ArrayList<String> keywords,
                     String course, Boolean lang, String remarks) {
         setDifficulty(difficulty);
         setPoints(points);
         setQuestionString(questionString);
         setMultipleChoice(multipleChoice);
-        setTopic(topic);
+        setCategory(category);
         setKeywords(keywords);
         setCourse(course);
         setLanguage(lang);

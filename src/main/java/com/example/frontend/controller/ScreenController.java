@@ -2,56 +2,46 @@ package com.example.frontend.controller;
 
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public abstract class ScreenController {
+
+    public static Screen<CreateAutomatic_ScreenController> createTestAutomatic = new Screen<>("sites/create_automatic.fxml");
+    public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
+    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
+    public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
+    public static Screen<QuestionEdit_ScreenController> addStudyProgram = new Screen<>("sites/add_studyProgram.fxml");
+
+
+    public static void switchScene(Screen screen, boolean refresh){
+        if(refresh){
+            screen.loadComponents();
+        }
+        MainApp.stage.setScene(screen.scene);
+        MainApp.stage.show();
+    }
+
     @FXML
-    protected Label someText;
-    @FXML
-    protected Stage stage;
-    @FXML
-    protected Scene scene;
-    @FXML
-    protected Parent root;
-    @FXML
-    protected void onHomeButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
-        root  = fxmlLoader.load();
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
+        switchScene(createTestAutomatic,true);
     }
     @FXML
-    protected void onCreateTestButtonClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/test_create.fxml"));
-        root  = fxmlLoader.load();
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    protected void onCreateManTestNavBtnClick(MouseEvent event) throws IOException {
+        switchScene(createTestManual,true);
     }
     @FXML
-    protected void onUploadQuestionButtonClick()
+    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-        someText.setText("Uploading some question");
+        System.out.println("question Upload Button Clicked");
+        switchScene(questionUpload,true);
     }
     @FXML
-    protected void onEditQuestionButtonClick(ActionEvent event) throws IOException
+    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"));
-        root  = fxmlLoader.load();
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        switchScene(questionEdit,true);
     }
 }

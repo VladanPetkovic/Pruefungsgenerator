@@ -36,3 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+../src/main/java/com/example/backend/db/db_config.txt
+src/main/java/com/example/backend/db/db_config.txt
+.idea/dataSources.local.xml
+.idea/dataSources/
