@@ -64,7 +64,7 @@ public class QuestionUpload_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id());
         if(categories.size() == 0){
-            questionUpload.disableScene(true);
+            //questionUpload.disableScene(true);
             showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
         }
         fillCategoryWithCategories();
