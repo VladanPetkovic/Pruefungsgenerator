@@ -194,7 +194,6 @@ public class QuestionDAO implements DAO<Question> {
             // insert into prepared stmt
             int count = 1;
             for(Object prepObjects : listForPreparedStmt) {
-                System.out.println(prepObjects);
                 if(prepObjects instanceof String) {
                     questionsStatement.setString(count, (String) prepObjects);
                 } else if(prepObjects instanceof Integer) {
@@ -224,6 +223,9 @@ public class QuestionDAO implements DAO<Question> {
     }
 
     public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt) {
+        int countKeywords = 0;
+        int countImages = 0;
+
         for(SearchObject<?> searchObject : searchOptions) {
             // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
             if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
@@ -233,12 +235,30 @@ public class QuestionDAO implements DAO<Question> {
 
             // keywords passed
             if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "keywords")) {
-                stmt.append(" ").append("K.Keyword").append(" = ? OR");
                 ArrayList<Keyword> keywords = (ArrayList<Keyword>) searchObject.getValueOfObject();
-                listForPreparedStmt.add(keywords.get(0).getKeyword_text());
+                stmt.append("(");
+                while(keywords.size() > countKeywords) {
+                    stmt.append(" ").append("K.Keyword").append(" = ? OR");
+                    listForPreparedStmt.add(keywords.get(countKeywords).getKeyword_text());
+                    countKeywords++;
+                }
+                stmt.delete(stmt.length() - 3, stmt.length());
+                stmt.append(")").append(" AND");
             }
 
             // images go like keywords
+            if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "images")) {
+                ArrayList<Image> images = (ArrayList<Image>) searchObject.getValueOfObject();
+                stmt.append("(");
+                while(images.size() > countImages) {
+                    stmt.append(" ").append("I.ImageName").append(" = ? OR");
+                    listForPreparedStmt.add(images.get(countImages).getImageName());
+                    countImages++;
+                }
+                stmt.delete(stmt.length() - 3, stmt.length());
+                stmt.append(")").append(" AND");
+            }
+
         }
 
         // replace last ' AND' to ';'
