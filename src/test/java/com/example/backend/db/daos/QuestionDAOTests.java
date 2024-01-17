@@ -135,6 +135,30 @@ public class QuestionDAOTests {
     }
 
     @Test
+    void readAll_dynamicKeywordThreeTimes() {
+        System.out.println("Check: return all Questions, these three keywords are set");
+
+        // arrange
+        Question testQuestion = new Question();
+        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
+        keywords.add(new Keyword("Vektoren"));
+        keywords.add(new Keyword("Heine-Matrix"));
+        keywords.add(new Keyword("Eigenwert"));
+        testQuestion.setLanguage("Deutsch");
+        testQuestion.setKeywords(keywords);
+        int expectedResult = 1;
+        // all other field are not set
+
+        // act
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", false);
+        // show results
+        printQuestions(questions);
+
+        // assert
+        assertEquals(expectedResult, questions.size());
+    }
+
+    @Test
     void readAll_dynamicMCTrue() {
         System.out.println("Check: return all Questions, were multiplechoice = true is set");
 
