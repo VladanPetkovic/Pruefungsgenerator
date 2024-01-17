@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.daos.CategoryDAO;
 import com.example.backend.db.models.Category;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -27,19 +29,25 @@ import java.util.ResourceBundle;
 
 public class CreateAutomatic_ScreenController extends ScreenController implements Initializable {
 
+    /*
     @FXML
     private MenuButton topicMenuButton;
     @FXML
     private Slider difficultySlider;
     @FXML
     private Spinner<Integer> pointsSpinner;
+     */
 
     private CategoryDAO categoryDAO;
 
     @FXML
     private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
 
-    private int questionCount = 1; // Variable to keep track of the question count
+    private int questionCount = 0; // Variable to keep track of the question count
+
+    private List<VBox> vBoxList;
+
+
 
     @FXML
     private void onAddQuestionBtnClick() {
@@ -60,7 +68,12 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
         // Add the new VBox just before the addQuestionVBox
         grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
+
+        vBoxList.add(newQuestionVBox);
     }
+
+
+
 
     private void setEventHandlers(VBox questionVBox) {
         for (Node node : questionVBox.getChildren()) {
@@ -79,9 +92,11 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         }
     }
 
+
+
     private void setMenuButtonHandler(MenuButton menuButton) {
         menuButton.getItems().clear();
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        ArrayList<Category> categories = categoryDAO.readAll();
         for (Category category : categories) {
             MenuItem menuItem = new MenuItem(category.getCategory());
             menuItem.setOnAction(e -> {
@@ -99,6 +114,11 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
     private void setSliderHandler(Slider slider) {
         // Add event handlers for the slider if needed
         // Example: slider.setOnMouseReleased(event -> handleSliderMouseReleased(event, slider));
+        /*
+        slider.setOnMouseReleased(e -> {
+            System.out.println((int)slider.getValue());
+        });
+        */
     }
 
     private VBox createNewQuestionVBox() {
@@ -131,6 +151,7 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         parentVBox.getChildren().add(label);
     }
 
+
     private void createMenuButton(VBox parentVBox) {
         MenuButton menuButton = new MenuButton("Choose category...");
         menuButton.getStyleClass().add("automatic_create_dropdown");
@@ -145,9 +166,14 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         parentVBox.getChildren().add(innerVBox);
     }
 
+
     private void createSpinner(VBox parentVBox) {
-        Spinner spinner = new Spinner();
+        Spinner<Double> spinner = new Spinner<>();
         spinner.setEditable(true);
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.5, 20, 0.5, 0.5);
+        spinner.setValueFactory(valueFactory);
+        //TextFormatter<Double> textFormatter = new TextFormatter<>(new DoubleStringConverter());
+        //spinner.getEditor().setTextFormatter(textFormatter);
         spinner.getStyleClass().add("automatic_create_spinner");
         spinner.getStylesheets().add("@../css/main.css");
 
@@ -160,18 +186,20 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         parentVBox.getChildren().add(innerVBox);
     }
 
+
     private void createSlider(VBox parentVBox) {
         Slider slider = new Slider();
         slider.setId("difficulty_slider");
-        slider.setMajorTickUnit(2.0);
+        slider.setMajorTickUnit(1.0);
         slider.setMax(10.0);
         slider.setMin(1.0);
-        slider.setMinorTickCount(1);
+        slider.setMinorTickCount(0);
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
+        slider.setSnapToTicks(true);
         slider.setStyle("-fx-background-color: #2f2f2f;");
         slider.getStyleClass().add("slider-tool");
-        slider.setValue(5.5);
+        slider.setValue(5.0);
 
         VBox innerVBox = new VBox(slider);
         innerVBox.setPrefHeight(33.0);
@@ -184,33 +212,43 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
-        for (Category category: categories) {
-            MenuItem menuItem = new MenuItem(category.getCategory());
-            menuItem.setOnAction(e -> {
-                topicMenuButton.setText(category.getCategory());
-            });
-            topicMenuButton.getItems().add(menuItem);
-        }
-        //difficultySlider.setMajorTickUnit(10);
-        //difficultySlider.setMinorTickCount(10);
-        difficultySlider.setSnapToTicks(true);
-        difficultySlider.setOnMouseReleased(this::onDifficultySliderMouseReleased);
-    }
-
-    private void onDifficultySliderMouseReleased(MouseEvent mouseEvent) {
-        System.out.println((int)difficultySlider.getValue());
+        vBoxList = new ArrayList<>();
+        categoryDAO = new CategoryDAO();
+        onAddQuestionBtnClick();
     }
 
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
         // Abrufen der ausgewählten Filterparameter
-        String selectedCategory = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
-        int selectedDifficulty = (int) difficultySlider.getValue();
-        int selectedPoints = pointsSpinner.getValue();
+        //String selectedTopic = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
+        //int selectedDifficulty = (int) difficultySlider.getValue();
+        //int selectedPoints = pointsSpinner.getValue();
+
+
+        for (VBox vbox : vBoxList)
+        {
+            for (Node node1 : vbox.getChildren()) {
+                if (node1 instanceof VBox)
+                {
+                    for (Node node2 : ((VBox)node1).getChildren()) {
+                        if (node2 instanceof MenuButton) {
+                            MenuButton menuButton = (MenuButton) node2;
+                            System.out.println(menuButton.getText());
+                        } else if (node2 instanceof Spinner) {
+                            Spinner spinner = (Spinner) node2;
+                            System.out.println(spinner.getValue());
+                        } else if (node2 instanceof Slider) {
+                            Slider slider = (Slider) node2;
+                            System.out.println((int)slider.getValue());
+                        }
+                    }
+                }
+            }
+            System.out.println("----------------------");
+        }
 
         // Hier sollte die Logik für die Datenbankabfrage erfolgen
-        // Verwende questionRepository.getAll(selectedCategory, selectedDifficulty, selectedPoints)
+        // Verwende questionRepository.getAll(selectedTopic, selectedDifficulty, selectedPoints)
 
         // Nach der Datenbankabfrage weiter zur manuellen Erstellung
         switchToManualCreateScreen(); // Implementiere diese Methode entsprechend
@@ -218,5 +256,7 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
 
     private void switchToManualCreateScreen() {
         // Implementiere die Navigation zur manuellen Erstellung (loadFXML, setScene, etc.)
+
     }
+
 }
