@@ -65,7 +65,7 @@ public class Home_ScreenController extends ScreenController {
 
     private void loadStudyPrograms() {
         ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
-        studyProgramMenuButton.getItems().clear(); // Clear existing items
+        studyProgramMenuButton.getItems().clear();
 
         for (StudyProgram studyProgram : studyPrograms) {
             MenuItem menuItem = new MenuItem(studyProgram.getProgram_name());
@@ -159,6 +159,7 @@ public class Home_ScreenController extends ScreenController {
            }
             //closes the windows
             inputStage.close();
+           loadStudyPrograms();
         });
         inputLayout.getChildren().add(confirmButton);
         Scene inputScene = new Scene(inputLayout, 300, 100);
@@ -244,6 +245,8 @@ public class Home_ScreenController extends ScreenController {
             }
             //closes the windows
             inputStage.close();
+            resetCourseMenuButton();
+            loadCourses();
         });
         inputLayout.getChildren().add(confirmButton);
 
