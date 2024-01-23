@@ -31,7 +31,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setInt(5, question.getMultipleChoice());
+            preparedStatement.setBoolean(5, question.getMultipleChoice());
             preparedStatement.setString(6, question.getLanguage());
             preparedStatement.setString(7, question.getRemarks());
             preparedStatement.setString(8, question.getAnswers());
@@ -66,7 +66,7 @@ public class QuestionDAO implements DAO<Question> {
             while (questionsResultSet.next()) {
                 Question newQuestion = createModelFromResultSet(questionsResultSet);
                 if(newQuestion != null) {
-                    this.questionCache.add(createModelFromResultSet(questionsResultSet));
+                    this.questionCache.add(newQuestion);
                 }
             }
 
@@ -103,7 +103,7 @@ public class QuestionDAO implements DAO<Question> {
                     while (questionsResultSet.next()) {
                         Question newQuestion = createModelFromResultSet(questionsResultSet);
                         if(newQuestion != null) {
-                            this.questionCache.add(createModelFromResultSet(questionsResultSet));
+                            this.questionCache.add(newQuestion);
                         }
                     }
                 }
@@ -322,7 +322,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setInt(5, question.getMultipleChoice());
+            preparedStatement.setBoolean(5, question.getMultipleChoice());
             preparedStatement.setString(6, question.getLanguage());
             preparedStatement.setString(7, question.getRemarks());
             preparedStatement.setString(8, question.getAnswers());
@@ -416,7 +416,7 @@ public class QuestionDAO implements DAO<Question> {
                 resultSet.getInt("Difficulty"),
                 resultSet.getFloat("Points"),
                 resultSet.getString("Question"),
-                resultSet.getInt("MultipleChoice"),
+                resultSet.getBoolean("MultipleChoice"),
                 resultSet.getString("Language"),
                 resultSet.getString("Remarks"),
                 resultSet.getString("Answers"),

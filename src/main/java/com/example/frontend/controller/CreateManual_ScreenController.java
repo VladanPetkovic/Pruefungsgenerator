@@ -1,53 +1,104 @@
 package com.example.frontend.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.example.backend.app.SharedData;
+import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Category;
+import com.example.backend.db.models.Keyword;
+import com.example.backend.db.models.Question;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.control.Slider;
 
+import java.util.ArrayList;
 
-public class CreateManual_ScreenController extends ScreenController
-{
-    @FXML
-    private Label label_question_count;
-    @FXML
-    private Label label_difficulty;
-    @FXML
-    private Slider difficulty_slider;
-    @FXML
-    private Slider question_count_slider;
-    int difficulty = 5;
-    int question_count = 5;
-    /*@Override
-    protected void onCreateManTestNavBtnClick(ActionEvent event) {
+public class CreateManual_ScreenController extends ScreenController {
 
+    @FXML
+    private TextField categoryTextField;
+
+    @FXML
+    private TextField keywordTextField;
+
+    @FXML
+    private Slider difficultySlider;
+
+    @FXML
+    private Slider pointsSlider;
+
+    @FXML
+    private CheckBox multipleChoiceCheckBox;
+
+    @FXML
+    private Button applyFilterButton;
+
+    @FXML
+    private void initialize() {
+        // Set up the event handler for the "Apply Filter" button
+        applyFilterButton.setOnAction(this::applyFilterButtonClicked);
     }
-*/
-    public void initialize() {
-/*
-        label_difficulty.setText("5");
-        label_question_count.setText("10");
 
-        difficulty = (int) difficulty_slider.getValue();
-        question_count = (int) question_count_slider.getValue();
+    @FXML
+    private void applyFilterButtonClicked(ActionEvent event) {
+        searchQuestions();
+    }
 
-        difficulty_slider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                difficulty = (int) difficulty_slider.getValue();
-                label_difficulty.setText(Integer.toString(difficulty));
+    @FXML
+    private void searchQuestions() {
+        // Get filter values
+        String categoryName = categoryTextField.getText().trim();
+        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
+        String keywordText = keywordTextField.getText().trim();
+
+        int difficulty = (int) difficultySlider.getValue();
+        float points = (float) pointsSlider.getValue();
+        boolean multipleChoice = multipleChoiceCheckBox.isSelected();
+
+        // Create a Question object with filter values
+        Question filterQuestion = new Question();
+        filterQuestion.setCategory(category);
+
+        // Handle multiple keywords as ArrayList<Keyword>
+        ArrayList<Keyword> keywordsList = new ArrayList<>();
+
+        String[] keywordsArray = keywordText.split(","); // Split by commas
+        if (keywordsArray.length == 1) {
+            // If there is only one keyword without commas
+            Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keywordText.trim());
+            if (keywordObj != null) {
+                keywordsList.add(keywordObj);
             }
-        });
-        question_count_slider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                question_count = (int) question_count_slider.getValue();
-                label_question_count.setText(Integer.toString(question_count));
+        } else {
+            // If there are multiple keywords
+            for (String keyword : keywordsArray) {
+                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
+                if (keywordObj != null) {
+                    keywordsList.add(keywordObj);
+                }
             }
-        });
-        */
+        }
 
+        filterQuestion.setKeywords(keywordsList);
+
+        filterQuestion.setDifficulty(difficulty);
+        filterQuestion.setPoints(points);
+        filterQuestion.setQuestionString("");
+        filterQuestion.setMultipleChoice(multipleChoice);
+        filterQuestion.setLanguage("");
+        filterQuestion.setRemarks("");
+        filterQuestion.setAnswers("");
+
+        // Call Repository to search for questions
+        ArrayList<Question> result;
+        if (multipleChoice) {
+            result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), true);
+        } else {
+            result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), false);
+        }
+
+        // Display result in the console
+        for (Question question : result) {
+            System.out.println("Found Question: " + question);
+        }
     }
 }

@@ -115,13 +115,13 @@
                               <VBox prefHeight="78.0" prefWidth="378.0">
                                  <children>
                                     <Label styleClass="option_label" text="Select Category:" />
-                                    <TextField minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="298.0" promptText="Search Category..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                                    <TextField fx:id="categoryTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="298.0" promptText="Search Category..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                  <children>
                                     <Label styleClass="option_label" text="Select Keywords:" />
-                                    <TextField prefHeight="32.0" prefWidth="367.0" promptText="Search Keyword..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                                    <TextField fx:id="keywordTextField" prefHeight="32.0" prefWidth="367.0" promptText="Search Keyword..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0">
@@ -129,7 +129,7 @@
                                     <Label styleClass="option_label" text="Set Difficulty:" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Slider fx:id="difficulty_slider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="difficultySlider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -139,20 +139,21 @@
                                     <Label styleClass="option_label" text="Set Points:" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Slider fx:id="difficulty_slider1" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="pointsSlider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
                                        </children>
                                     </HBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                    <CheckBox mnemonicParsing="false" text="Multiple Choice" textFill="WHITE">
+                                    <CheckBox fx:id="multipleChoiceCheckBox" mnemonicParsing="false" text="Multiple Choice" textFill="WHITE">
                                        <padding>
                                           <Insets bottom="20.0" top="20.0" />
-                                       </padding></CheckBox>
+                                       </padding>
+                                    </CheckBox>
                                  </children>
                               </VBox>
-                              <Button mnemonicParsing="false" text="Apply Filter" />
+                              <Button fx:id="applyFilterButton" mnemonicParsing="false" text="Apply Filter" onAction="#applyFilterButtonClicked" />
                            </children>
                         </VBox>
                      </content>

@@ -102,6 +102,29 @@ public class KeywordDAO implements DAO<Keyword> {
         return keyword;
     }
 
+    public Keyword read(String keywordName) {
+        Keyword keyword = null;
+
+        String readStmt =
+                "SELECT KeywordID, Keyword " +
+                        "FROM Keywords " +
+                        "WHERE Keyword = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+            preparedStatement.setString(1, keywordName);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    keyword = createModelFromResultSet(result);
+                }
+                setKeywordCache(null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return keyword;
+    }
+
     @Override
     public void update(Keyword keyword) {
         String updateStmt = "UPDATE Keywords SET Keyword = ? WHERE KeywordID = ?";
