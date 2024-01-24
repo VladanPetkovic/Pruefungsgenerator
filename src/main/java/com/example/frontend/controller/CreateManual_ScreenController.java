@@ -49,9 +49,6 @@ public class CreateManual_ScreenController extends ScreenController {
         String categoryName = categoryTextField.getText().trim();
         Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
         String keywordText = keywordTextField.getText().trim();
-
-        int difficulty = (int) difficultySlider.getValue();
-        float points = (float) pointsSlider.getValue();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
         // Create a Question object with filter values
@@ -61,32 +58,45 @@ public class CreateManual_ScreenController extends ScreenController {
         // Handle multiple keywords as ArrayList<Keyword>
         ArrayList<Keyword> keywordsList = new ArrayList<>();
 
-        String[] keywordsArray = keywordText.split(","); // Split by commas
-        if (keywordsArray.length == 1) {
-            // If there is only one keyword without commas
-            Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keywordText.trim());
-            if (keywordObj != null) {
-                keywordsList.add(keywordObj);
-            }
-        } else {
-            // If there are multiple keywords
-            for (String keyword : keywordsArray) {
-                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
+        if (!keywordText.isEmpty()) {
+            // Split by commas or spaces
+            String[] keywordsArray = keywordText.split("[,\\s]+");
+
+            if (keywordsArray.length == 1) {
+                // If there is only one keyword without commas or spaces
+                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keywordsArray[0].trim());
                 if (keywordObj != null) {
                     keywordsList.add(keywordObj);
+                }
+            } else {
+                // If there are multiple keywords
+                for (String keyword : keywordsArray) {
+                    Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
+                    if (keywordObj != null) {
+                        keywordsList.add(keywordObj);
+                    }
                 }
             }
         }
 
         filterQuestion.setKeywords(keywordsList);
 
-        filterQuestion.setDifficulty(difficulty);
-        filterQuestion.setPoints(points);
-        filterQuestion.setQuestionString("");
-        filterQuestion.setMultipleChoice(multipleChoice);
-        filterQuestion.setLanguage("");
-        filterQuestion.setRemarks("");
-        filterQuestion.setAnswers("");
+        // Set difficulty and points only if sliders are moved
+        if (difficultySlider.isValueChanging()) {
+            int difficulty = (int) difficultySlider.getValue();
+            filterQuestion.setDifficulty(difficulty);
+        }
+
+        if (pointsSlider.isValueChanging()) {
+            float points = (float) pointsSlider.getValue();
+            filterQuestion.setPoints(points);
+        }
+
+        if (multipleChoice) {
+            filterQuestion.setMultipleChoice(1);
+        } else {
+            filterQuestion.setMultipleChoice(0);
+        }
 
         // Call Repository to search for questions
         ArrayList<Question> result;
@@ -97,8 +107,31 @@ public class CreateManual_ScreenController extends ScreenController {
         }
 
         // Display result in the console
-        for (Question question : result) {
-            System.out.println("Found Question: " + question);
+        printQuestions(result);
+    }
+
+    @FXML
+    void printQuestions(ArrayList<Question> questions) {
+        if(questions.isEmpty()) {
+            System.out.println("No questions found");
+            return;
+        }
+
+        for(Question question : questions) {
+            System.out.println("_----------------------------------_");
+            System.out.println("ID: " + question.getQuestion_id());
+            System.out.println("QuestionString: " + question.getQuestionString());
+            System.out.print("Keywords: ");
+            for(Keyword keyword : question.getKeywords()) {
+                System.out.print(keyword.getKeyword_text() + " ");
+            }
+            System.out.println();
+            System.out.println("Answer: " + question.getAnswers());
+            System.out.println("MC: " + question.getMultipleChoice());
+            System.out.println("Category: " + question.getCategory().getCategory());
+            System.out.println("Language: " + question.getLanguage());
+            System.out.println("Difficulty: " + question.getDifficulty());
+            System.out.println("Points: " + question.getPoints());
         }
     }
 }

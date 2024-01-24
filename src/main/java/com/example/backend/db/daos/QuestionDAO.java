@@ -31,7 +31,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setBoolean(5, question.getMultipleChoice());
+            preparedStatement.setInt(5, question.getMultipleChoice());
             preparedStatement.setString(6, question.getLanguage());
             preparedStatement.setString(7, question.getRemarks());
             preparedStatement.setString(8, question.getAnswers());
@@ -166,17 +166,17 @@ public class QuestionDAO implements DAO<Question> {
 
         // doing this for performance --> avoiding "n+1-select"
         StringBuilder selectQuestionsStmt = new StringBuilder(
-            "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                "K.KeywordID, K.Keyword " +
-            "FROM Questions Q " +
-                "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-            "WHERE ");
+                "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
+                        "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
+                        "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
+                        "K.KeywordID, K.Keyword " +
+                        "FROM Questions Q " +
+                        "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
+                        "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
+                        "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
+                        "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
+                        "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
+                        "WHERE ");
 
         // init selectSTMT and listForPreparedStmt
         prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt);
@@ -322,7 +322,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setBoolean(5, question.getMultipleChoice());
+            preparedStatement.setInt(5, question.getMultipleChoice());
             preparedStatement.setString(6, question.getLanguage());
             preparedStatement.setString(7, question.getRemarks());
             preparedStatement.setString(8, question.getAnswers());
@@ -416,7 +416,7 @@ public class QuestionDAO implements DAO<Question> {
                 resultSet.getInt("Difficulty"),
                 resultSet.getFloat("Points"),
                 resultSet.getString("Question"),
-                resultSet.getBoolean("MultipleChoice"),
+                resultSet.getInt("MultipleChoice"),
                 resultSet.getString("Language"),
                 resultSet.getString("Remarks"),
                 resultSet.getString("Answers"),

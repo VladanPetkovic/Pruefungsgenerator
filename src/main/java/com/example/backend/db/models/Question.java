@@ -15,7 +15,7 @@ public class Question {
     int difficulty;
     float points;
     String questionString;
-    boolean multipleChoice;
+    int multipleChoice;
     String language;
     String remarks;
     String answers;
@@ -25,7 +25,7 @@ public class Question {
     public Question() {}
 
     public Question(Category category, int difficulty, float points, String questionString,
-                    boolean multipleChoice, String lang, String remarks,
+                    int multipleChoice, String lang, String remarks,
                     String answers, ArrayList<Keyword> keywords,
                     ArrayList<Image> images) {
         setCategory(category);
@@ -38,13 +38,5 @@ public class Question {
         setAnswers(answers);
         setKeywords(keywords);
         setImages(images);
-    }
-
-    public boolean getMultipleChoice() {
-        if (multipleChoice){
-            return true;
-        } else {
-            return false;
-        }
     }
 }
