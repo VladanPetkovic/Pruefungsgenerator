@@ -65,31 +65,11 @@ class Image {
     +Setter()
 }
 
-class SharedData {
-    -Course selectedCourse
-    -Course newCourse
-    -StudyProgram selectedStudyProgram
-    -StudyProgram newStudyProgram
-    +Getter()
-    +Setter()
-}
-
-class SearchObject {
-    -String column_name;
-    -String objectName;
-    -T valueOfObject;
-    -boolean isSet;
-    +Getter()
-    +Setter()
-}
-
 Test "1..*" o-- "1..*" Question : "has"
-Test "1..*" o-- "1" SharedData : "belongs to"
 StudyProgram "1..*" o-- "1..*" Course : "has"
 Course "1..*" o-- "1..*" Question : "has"
 Question "1..*" *-- "0..*" Image : has
 Question "1..*" *-- "0..*" Keyword : has
 Question "1..*" *-- "1" Category : has
-Question "1..*" *-- "1..*" SearchObject : used to search for
 
 @enduml
