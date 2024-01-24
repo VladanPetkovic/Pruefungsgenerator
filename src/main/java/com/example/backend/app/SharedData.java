@@ -5,6 +5,9 @@ import com.example.backend.db.models.StudyProgram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+@Getter
+@Setter
 @AllArgsConstructor
 public class SharedData {
     @Getter
@@ -26,7 +29,6 @@ public class SharedData {
     @Setter
     //stores the study program the user wants to add
     private static StudyProgram newStudyProgram = new StudyProgram();
-
 
 
 

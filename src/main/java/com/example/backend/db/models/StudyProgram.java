@@ -1,13 +1,14 @@
 package com.example.backend.db.models;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class StudyProgram {
     private int program_id;
     private String program_name;
@@ -18,7 +19,4 @@ public class StudyProgram {
         setProgram_abbr(program_abbr);
     }
 
-    public StudyProgram() {
-
-    }
 }

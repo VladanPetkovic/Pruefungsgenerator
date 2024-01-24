@@ -1,6 +1,7 @@
 package com.example.backend.db.models;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Question {
     int question_id;
     Category category;
@@ -22,10 +24,8 @@ public class Question {
     ArrayList<Keyword> keywords;
     ArrayList<Image> images;
 
-    public Question() {}
-
     public Question(Category category, int difficulty, float points, String questionString,
-                    int multipleChoice, String lang, String remarks,
+                    int multipleChoice, String language, String remarks,
                     String answers, ArrayList<Keyword> keywords,
                     ArrayList<Image> images) {
         setCategory(category);
@@ -33,7 +33,7 @@ public class Question {
         setPoints(points);
         setQuestionString(questionString);
         setMultipleChoice(multipleChoice);
-        setLanguage(lang);
+        setLanguage(language);
         setRemarks(remarks);
         setAnswers(answers);
         setKeywords(keywords);
