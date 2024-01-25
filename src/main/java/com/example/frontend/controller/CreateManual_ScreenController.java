@@ -5,10 +5,13 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Slider;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 
@@ -34,8 +37,32 @@ public class CreateManual_ScreenController extends ScreenController {
 
     @FXML
     private void initialize() {
+        // init points and difficulty from the slider by a listener
+        // --> only when the value changes, the value is updated
+        getPointsFromSlider();
+        getDifficultyFromSlider();
         // Set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
+    }
+
+    private void getPointsFromSlider() {
+        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                int points = (int) pointsSlider.getValue();
+                SharedData.getFilterQuestion().setPoints(points);
+            }
+        });
+    }
+
+    private void getDifficultyFromSlider() {
+        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                int difficulty = (int) difficultySlider.getValue();
+                SharedData.getFilterQuestion().setDifficulty(difficulty);
+            }
+        });
     }
 
     @FXML
@@ -45,15 +72,20 @@ public class CreateManual_ScreenController extends ScreenController {
 
     @FXML
     private void searchQuestions() {
+        // Create a Question object with filter values
+        Question filterQuestion = new Question();
+
         // Get filter values
         String categoryName = categoryTextField.getText().trim();
-        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
         String keywordText = keywordTextField.getText().trim();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
-        // Create a Question object with filter values
-        Question filterQuestion = new Question();
-        filterQuestion.setCategory(category);
+        if(!categoryName.isEmpty()) {
+            Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
+            if(category != null) {
+                filterQuestion.setCategory(category);
+            }
+        }
 
         // Handle multiple keywords as ArrayList<Keyword>
         ArrayList<Keyword> keywordsList = new ArrayList<>();
@@ -79,18 +111,30 @@ public class CreateManual_ScreenController extends ScreenController {
             }
         }
 
-        filterQuestion.setKeywords(keywordsList);
-
-        // Set difficulty and points only if sliders are moved
-        if (difficultySlider.isValueChanging()) {
-            int difficulty = (int) difficultySlider.getValue();
-            filterQuestion.setDifficulty(difficulty);
+        if(!keywordsList.isEmpty()) {
+            filterQuestion.setKeywords(keywordsList);
         }
 
-        if (pointsSlider.isValueChanging()) {
-            float points = (float) pointsSlider.getValue();
-            filterQuestion.setPoints(points);
+        // not needed anymore
+//        // Set difficulty and points only if sliders are moved
+//        if (difficultySlider.isValueChanging()) {
+//            int difficulty = (int) difficultySlider.getValue();
+//            filterQuestion.setDifficulty(difficulty);
+//        }
+//
+//        if (pointsSlider.isValueChanging()) {
+//            float points = (float) pointsSlider.getValue();
+//            filterQuestion.setPoints(points);
+//        }
+
+        // setting points and difficulty, if it was set
+        if(SharedData.getFilterQuestion().getPoints() != 0) {
+            filterQuestion.setPoints(SharedData.getFilterQuestion().getPoints());
         }
+        if(SharedData.getFilterQuestion().getDifficulty() != 0) {
+            filterQuestion.setDifficulty(SharedData.getFilterQuestion().getDifficulty());
+        }
+
 
         if (multipleChoice) {
             filterQuestion.setMultipleChoice(1);

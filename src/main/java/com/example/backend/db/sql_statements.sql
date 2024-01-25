@@ -161,6 +161,7 @@ INSERT INTO Keywords (Keyword) VALUES('Pipes');
 INSERT INTO Keywords (Keyword) VALUES('Vektoren');
 INSERT INTO Keywords (Keyword) VALUES('Heine-Matrix');
 INSERT INTO Keywords (Keyword) VALUES('Eigenwert');
+INSERT INTO Keywords (Keyword) VALUES('NoSQL');
 
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(4,6,7.5,'Berechnen Sie die Eigenwerte der Matrix:',0,'Deutsch',NULL,NULL);
@@ -168,6 +169,47 @@ INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleCho
 VALUES(2,8,7,'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x²',0,'Deutsch',NULL,NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(3,4,3.5,'Welche No-SQL datenbanken gibt es',0,'Deutsch',NULL,NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(1, 6, 8.0, 'Was ist der Unterschied zwischen INNER JOIN und LEFT JOIN in SQL?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(3, 7, 9.5, 'Nennen Sie drei Vorteile von NoSQL-Datenbanken gegenüber relationalen Datenbanken.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2, 5, 6.5, 'Lösen Sie die folgende Gleichung: 2x + 5 = 15', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(4, 8, 7.0, 'Definieren Sie den Begriff "Eigenvector" in der linearen Algebra.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(1, 4, 5.5, 'Was ist der Zweck von SQL-Indizes?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(3, 6, 8.0, 'Erklären Sie den Begriff "Sharding" in Bezug auf NoSQL-Datenbanken.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2, 7, 9.0, 'Berechnen Sie das bestimmte Integral von sin(x) von 0 bis π.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(4, 5, 6.0, 'Was sind Gruppen in der Algebra?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(1, 8, 7.5, 'Erklären Sie den Begriff "Subquery" in SQL.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(3, 4, 4.5, 'Welche NoSQL-Datenbank wird häufig für die Speicherung von Dokumenten verwendet?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2, 6, 7.0, 'Was ist die Ableitung von ln(x)?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(4, 7, 8.5, 'Erläutern Sie den Begriff "Polynomdivision" in der Algebra.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(3, 5, 6.5, 'Was sind die Vor- und Nachteile von dokumentenorientierten NoSQL-Datenbanken?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(1, 8, 9.0, 'Wie erstellt man eine gespeicherte Prozedur in SQL?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2, 4, 5.0, 'Lösen Sie die Gleichungssysteme: 2x + y = 5 und 3x - 2y = 1', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(4, 6, 7.5, 'Was ist eine invertierbare Matrix?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(3, 7, 8.0, 'Erklären Sie den Begriff "Caching" in Bezug auf NoSQL-Datenbanken.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(1, 5, 6.0, 'Was sind Joins in SQL?', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2, 8, 9.5, 'Berechnen Sie das unbestimmte Integral von e^(2x)dx.', 0, 'Deutsch', NULL, NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(4, 4, 5.5, 'Was sind komplexe Zahlen?', 0, 'Deutsch', NULL, NULL);
+
 
 INSERT INTO hasSC VALUES(1,1);
 INSERT INTO hasSC VALUES(1,2);
@@ -193,6 +235,27 @@ INSERT INTO hasKQ VALUES(8,1);
 INSERT INTO hasKQ VALUES(9,1);
 INSERT INTO hasKQ VALUES(1,2);
 INSERT INTO hasKQ VALUES(2,3);
+INSERT INTO hasKQ VALUES(3, 23);
+INSERT INTO hasKQ VALUES(1, 22);
+INSERT INTO hasKQ VALUES(2, 21);
+INSERT INTO hasKQ VALUES(10, 20);
+INSERT INTO hasKQ VALUES(7, 19);
+INSERT INTO hasKQ VALUES(1, 18);
+INSERT INTO hasKQ VALUES(2, 17);
+INSERT INTO hasKQ VALUES(10, 16);
+INSERT INTO hasKQ VALUES(3, 15);
+INSERT INTO hasKQ VALUES(1, 14);
+INSERT INTO hasKQ VALUES(10, 13);
+INSERT INTO hasKQ VALUES(2, 12);
+INSERT INTO hasKQ VALUES(3, 11);
+INSERT INTO hasKQ VALUES(1, 10);
+INSERT INTO hasKQ VALUES(10, 9);
+INSERT INTO hasKQ VALUES(2, 8);
+INSERT INTO hasKQ VALUES(9, 7);
+INSERT INTO hasKQ VALUES(1, 6);
+INSERT INTO hasKQ VALUES(10, 5);
+INSERT INTO hasKQ VALUES(2, 5);
+INSERT INTO hasKQ VALUES(2, 4);
 
 -----------------------------------------------------------------------------
 -- Dropping tables
