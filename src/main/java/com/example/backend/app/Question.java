@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
-public abstract class Question {
+public class Question {
     private int difficulty;
-    private int points;
+    private float points;
     private String questionString;
     private int multipleChoice;
     private String category;
@@ -31,7 +31,7 @@ public abstract class Question {
     public Question() {}
 
     // constructor with values
-    public Question(int difficulty, int points, String questionString,
+    public Question(int difficulty, float points, String questionString,
                     int multipleChoice, String category, ArrayList<String> keywords,
                     String course, Boolean lang, String remarks) {
         setDifficulty(difficulty);

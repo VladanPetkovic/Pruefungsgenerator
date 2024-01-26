@@ -168,6 +168,8 @@ INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleCho
 VALUES(2,8,7,'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x²',0,'Deutsch',NULL,NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(3,4,3.5,'Welche No-SQL datenbanken gibt es',0,'Deutsch',NULL,NULL);
+INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
+VALUES(2,8,7,'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x² + 2',0,'Deutsch',NULL,NULL);
 
 INSERT INTO hasSC VALUES(1,1);
 INSERT INTO hasSC VALUES(1,2);

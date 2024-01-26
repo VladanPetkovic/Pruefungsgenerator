@@ -186,7 +186,7 @@ public class QuestionDAOTests {
         question1.setCategory(new Category(2, "Analysis"));
         question1.setPoints(7);
         question1.setDifficulty(8);
-        int expectedQuestionsCount = 1;
+        int expectedQuestionsCount = 2;
 
         // act
         ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.questionRepository.getAll(question1, "MACS1", false);
