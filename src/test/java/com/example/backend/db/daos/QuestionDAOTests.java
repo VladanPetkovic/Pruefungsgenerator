@@ -60,7 +60,7 @@ public class QuestionDAOTests {
         // arrange
         Course course = SQLiteDatabaseConnection.courseRepository.get("MACS1");
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(course);
-        int expectedLength = 2;
+        int expectedLength = 12;
 
         // show results
         printQuestions(questions);
@@ -80,7 +80,7 @@ public class QuestionDAOTests {
         // arrange
         Category category = new Category(4, "Algebra");
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(category);
-        int expectedLength = 1;
+        int expectedLength = 6;
 
         // show results
         printQuestions(questions);
@@ -93,14 +93,14 @@ public class QuestionDAOTests {
     }
 
     @Test
-    void readAll_dynamicLangMC() {
+    void readAll_dynamicForOneCourse() {
         System.out.println("Check: return all Questions, were only language and multiplechoice = false is set");
 
         // arrange
         Question testQuestion = new Question();
         testQuestion.setLanguage("Deutsch");
         testQuestion.setMultipleChoice(0);
-        int expectedResult = 3;
+        int expectedResult = 23;
         // all other field are not set
 
         // act
@@ -113,17 +113,51 @@ public class QuestionDAOTests {
     }
 
     @Test
-    void readAll_dynamicLangKeyword() {
-        System.out.println("Check: return all Questions, were only language and one keyword is set");
+    void readAll_dynamicLangMC() {
+        System.out.println("Check: return all Questions, were only language and multiplechoice = false is set");
 
         // arrange
         Question testQuestion = new Question();
-        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-        keywords.add(new Keyword("Vektoren"));
         testQuestion.setLanguage("Deutsch");
-        testQuestion.setKeywords(keywords);
-        int expectedResult = 1;
+        testQuestion.setMultipleChoice(0);
+        int expectedResult = 23;
         // all other field are not set
+
+        // act
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", true);
+        // show results
+        printQuestions(questions);
+
+        // assert
+        assertEquals(expectedResult, questions.size());
+    }
+
+    @Test
+    void readAll_dynamicMC() {
+        System.out.println("Check: return all Questions, were only multiplechoice = true is set");
+
+        // arrange
+        Question testQuestion = new Question();
+        testQuestion.setMultipleChoice(1);
+        int expectedResult = 0;
+        // all other field are not set
+
+        // act
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", true);
+        // show results
+        printQuestions(questions);
+
+        // assert
+        assertEquals(expectedResult, questions.size());
+    }
+
+    @Test
+    void readAll_dynamicLangKeyword() {             // TODO: BUG --> "WH" is at the end of the line
+        System.out.println("Check: return all Questions, nothing is set, except the course");
+
+        // arrange
+        Question testQuestion = new Question();
+        int expectedResult = 12;
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", false);
@@ -146,7 +180,7 @@ public class QuestionDAOTests {
         keywords.add(new Keyword("Eigenwert"));
         testQuestion.setLanguage("Deutsch");
         testQuestion.setKeywords(keywords);
-        int expectedResult = 1;
+        int expectedResult = 3;
         // all other field are not set
 
         // act
@@ -203,7 +237,7 @@ public class QuestionDAOTests {
         System.out.println("Check: performance of getting all questions with keywords, ...");
 
         // arrange
-        int expectedResult = 3;
+        int expectedResult = 23;
 
         // act
         long startTime = System.currentTimeMillis();

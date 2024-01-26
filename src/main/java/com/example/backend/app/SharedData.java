@@ -1,10 +1,14 @@
 package com.example.backend.app;
 
 import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Question;
 import com.example.backend.db.models.StudyProgram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+@Getter
+@Setter
 @AllArgsConstructor
 public class SharedData {
     @Getter
@@ -27,7 +31,8 @@ public class SharedData {
     //stores the study program the user wants to add
     private static StudyProgram newStudyProgram = new StudyProgram();
 
-
-
+    @Getter
+    @Setter
+    private static com.example.backend.db.models.Question filterQuestion = new Question();
 
 }

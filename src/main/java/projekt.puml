@@ -1,58 +1,75 @@
 @startuml
 'https://plantuml.com/class-diagram
+
+class StudyProgram {
+    -int program_id;
+    -String program_name;
+    -String program_abbr;
+    +Getter()
+    +Setter()
+}
+
+class Course {
+    -int course_id;
+    -String course_name;
+    -int course_number;
+    -String lector;
+    +Getter()
+    +Setter()
+}
+
 class Test {
     -int countOfQuestions
     -int overallPoints
-    -String subject
     -Question[] questions
     +Getter()
     +Setter()
 }
+
 class Question {
+    -int question_id
+    -Category category
     -int difficulty
-    -int points
+    -float points
     -String questionString
-    -String subject
-    -String[] keywords
-    -String[] topics
-    -Boolean language
-    -String course
+    -int multipleChoice
+    -String language
+    -String remarks
+    -String answers
+    -ArrayList<Keyword> keywords
+    -ArrayList<Image> images
     +Getter()
     +Setter()
-}
-class Question_open {
-    -String answer
-    +Getter()
-    +Setter()
-}
-class Question_mc {
-    -int countOfAnswers
-    -String[] answers
-    +Getter()
-    +Setter()
-}
-class Image {
-    -int position
-    -String path
-    -String name
-    +Getter()
-    +Setter()
-}
-class Menu {
-    +Test makeNewTest()
-    +Question addNewQuestion()
-    +Question getQuestion(int id)
-    +Question[] getAllQuestions(String subject)
-    +void editQuestion(Question newQuestion)
-    +String selectSubject()
-    +void editTestHeader()
 }
 
-Menu "1" *-- "0..*" Test : "produce"
-Question "0..*" --* "1" Menu : "produce & add"
+class Category {
+    -int category_id;
+    -String category;
+    +Getter()
+    +Setter()
+}
+
+class Keyword {
+    -int keyword_id;
+    -String keyword_text;
+    +Getter()
+    +Setter()
+}
+
+class Image {
+    -int image_id;
+    -String link;
+    -String imageName;
+    -int position;
+    +Getter()
+    +Setter()
+}
+
 Test "1..*" o-- "1..*" Question : "has"
+StudyProgram "1..*" o-- "1..*" Course : "has"
+Course "1..*" o-- "1..*" Question : "has"
 Question "1..*" *-- "0..*" Image : has
-Question_mc <|-- Question
-Question_open <|-- Question
+Question "1..*" *-- "0..*" Keyword : has
+Question "1..*" *-- "1" Category : has
 
 @enduml

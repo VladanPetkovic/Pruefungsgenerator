@@ -1,10 +1,8 @@
 package com.example.frontend.controller;
 
 import com.example.frontend.MainApp;
-import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -12,7 +10,7 @@ public abstract class ScreenController {
 
     public static Screen<CreateAutomatic_ScreenController> createTestAutomatic = new Screen<>("sites/create_automatic.fxml");
     public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
-    public static Screen<QuestionUpload_ScreenController> questionUpload = new Screen<>("sites/question_upload.fxml");
+    public static Screen<QuestionCreate_ScreenController> questionUpload = new Screen<>("sites/question_create.fxml");
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
     public static Screen<QuestionEdit_ScreenController> addStudyProgram = new Screen<>("sites/add_studyProgram.fxml");
 

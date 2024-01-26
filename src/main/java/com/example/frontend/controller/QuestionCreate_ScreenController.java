@@ -5,11 +5,8 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -19,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class QuestionUpload_ScreenController extends ScreenController implements Initializable {
+public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
 
     private static final String[] LANGUAGES = {"Deutsch", "Englisch", "Spanisch", "Französisch"};
 

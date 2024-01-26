@@ -32,6 +32,10 @@ public class CategoryRepository implements Repository<Category> {
         return getCategoryDAO().read(id);
     }
 
+    public Category get(String categoryName) {
+        return getCategoryDAO().read(categoryName);
+    }
+
     @Override
     public void add(Category category) {
         getCategoryDAO().create(category);
