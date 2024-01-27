@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,6 +37,10 @@ public class SharedData {
     @Setter
     private static com.example.backend.db.models.Question filterQuestion = new Question();
 
+    @Getter
+    @Setter
+    private static ArrayList<Question> testQuestions = new ArrayList<>();
+
 
     public static void reset() {
         selectedCourse = null;
@@ -42,6 +48,7 @@ public class SharedData {
         selectedStudyProgram = null;
         newStudyProgram = new StudyProgram();
         filterQuestion = new Question();
+        testQuestions = new ArrayList<>();
     }
 
 }

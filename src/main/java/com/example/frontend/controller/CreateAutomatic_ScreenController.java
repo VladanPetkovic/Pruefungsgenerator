@@ -1,9 +1,9 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.daos.CategoryDAO;
 import com.example.backend.db.models.Category;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,54 +22,21 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class CreateAutomatic_ScreenController extends ScreenController {
-
-    private CategoryDAO categoryDAO;
-
     @FXML
     private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
-
     private int questionCount = 0; // Variable to keep track of the question count
-
     private List<VBox> vBoxList;
-
-    private Question selectedQuestion;
-
     @FXML
     private CreateManual_ScreenController createManualScreenController;
 
-    /*@FXML
-    public void initialize() {
-        vBoxList = new ArrayList<>();
-        categoryDAO = new CategoryDAO();
-        onAddQuestionBtnClick();
-
-        createManualScreenController = new CreateManual_ScreenController();
-    }*/
-
     @FXML
     public void initialize() {
         vBoxList = new ArrayList<>();
-        categoryDAO = new CategoryDAO();
-        createManualScreenController = new CreateManual_ScreenController();
-        VBox vbox_labels = createManualScreenController.getVbox_labels();
         onAddQuestionBtnClick();
     }
-
-    /*@FXML
-    public void initialize() {
-        vBoxList = new ArrayList<>();
-        categoryDAO = new CategoryDAO();
-        createManualScreenController = new CreateManual_ScreenController();
-        VBox vbox_labels = createManualScreenController.getVbox_labels();
-        // Weitere Initialisierung, wenn erforderlich
-        onAddQuestionBtnClick();
-    }*/
 
     @FXML
     private void onAddQuestionBtnClick() {
@@ -113,7 +80,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     private void setMenuButtonHandler(MenuButton menuButton) {
         menuButton.getItems().clear();
-        ArrayList<Category> categories = categoryDAO.readAll();
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
         for (Category category : categories) {
             MenuItem menuItem = new MenuItem(category.getCategory());
             menuItem.setOnAction(e -> {
@@ -159,7 +126,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private void createLabel(String labelText, VBox parentVBox) {
         Label label = new Label(labelText);
         label.getStyleClass().add("automatic_create_label");
-        label.getStylesheets().add("@../css/main.css");
+        label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
@@ -171,32 +138,32 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private void createMenuButton(VBox parentVBox) {
         MenuButton menuButton = new MenuButton("Choose category...");
         menuButton.getStyleClass().add("automatic_create_dropdown");
-        menuButton.getStylesheets().add("@../css/main.css");
+        menuButton.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         VBox innerVBox = new VBox(menuButton);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
 
     private void createSpinner(VBox parentVBox) {
         Spinner<Double> spinner = new Spinner<>();
-        spinner.setEditable(true);
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.5, 20, 0.5, 0.5);
+
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
+
         spinner.setValueFactory(valueFactory);
-        //TextFormatter<Double> textFormatter = new TextFormatter<>(new DoubleStringConverter());
-        //spinner.getEditor().setTextFormatter(textFormatter);
+
         spinner.getStyleClass().add("automatic_create_spinner");
-        spinner.getStylesheets().add("@../css/main.css");
+        spinner.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         VBox innerVBox = new VBox(spinner);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
@@ -219,18 +186,16 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
 
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
-        VBox vbox_labels = createManualScreenController.getVbox_labels();
         // Loop through each VBox in the list
         for (VBox vbox : vBoxList) {
             String selectedCategory = "";
-            int selectedCategoryId = 0;
             int selectedDifficulty = 0;
             double selectedPoints = 0;
 
@@ -243,7 +208,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
                             for (int i = 0; i < menuButton.getItems().size(); i++) {
                                 MenuItem menuItem = menuButton.getItems().get(i);
                                 if (menuItem.getText().equals(selectedCategory)) {
-                                    selectedCategoryId = i + 1;
                                     break;
                                 }
                             }
@@ -258,87 +222,26 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
             // Perform the database query based on the selected values
             Question queryQuestion = new Question();
-            queryQuestion.setCategory(new Category(selectedCategoryId, selectedCategory)); // Assuming Category has an appropriate constructor
+            if(!Objects.equals(selectedCategory, "")) {
+                queryQuestion.setCategory(SQLiteDatabaseConnection.CategoryRepository.get(selectedCategory));
+            }
+
 
             queryQuestion.setPoints((float) selectedPoints);
             queryQuestion.setDifficulty(selectedDifficulty);
 
             // Perform the database query and print the results
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, "MACS1", true);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, "MACS1", false);
 
-            if (queryResult.isEmpty()) {
-                System.out.println("No questions found");
-            } else {
+            if (!queryResult.isEmpty()) {
                 Random random = new Random();
                 int randomIndex = random.nextInt(queryResult.size());
-                selectedQuestion = queryResult.get(randomIndex);
-                printQuestion(selectedQuestion);
-
-                // NEW
-                createManualScreenController.addLabelToVBox(selectedQuestion.getPoints() + "\n" + selectedQuestion.getQuestionString());
-                // switchToManualCreateScreen(); // Implement this method accordingly.
-
-                Label label = new Label(selectedQuestion.getPoints() + "\n" +
-                        selectedQuestion.getQuestionString());
-                label.getStyleClass().add("automatic_create_label");
-                label.getStylesheets().add("@../css/main.css");
-                vbox_labels.getChildren().add(label);
+                Question newQuestion = queryResult.get(randomIndex);
+                SharedData.getTestQuestions().add(newQuestion);
             }
         }
 
-        // After handling the database query results, you can proceed with other actions as needed.
-        switchToManualCreateScreen(); // Implement this method accordingly.
-    }
-
-    private void printQuestion(Question question) {
-        System.out.println("_----------------------------------_");
-        System.out.println("ID: " + question.getQuestion_id());
-        System.out.println("QuestionString: " + question.getQuestionString());
-        System.out.print("Keywords: ");
-        for(Keyword keyword : question.getKeywords()) {
-            System.out.print(keyword.getKeyword_text() + " ");
-        }
-        System.out.println();
-        System.out.println("Answer: " + question.getAnswers());
-        System.out.println("MC: " + question.getMultipleChoice());
-        System.out.println("Category: " + question.getCategory().getCategory());
-        System.out.println("Language: " + question.getLanguage());
-        System.out.println("Difficulty: " + question.getDifficulty());
-        System.out.println("Points: " + question.getPoints());
-    }
-
-    /*private void switchToManualCreateScreen() {
-        // Implementiere die Navigation zur manuellen Erstellung (loadFXML, setScene, etc.)
+        // switch scene to createTestManual
         switchScene(createTestManual, true);
-    }*/
-
-    @FXML
-    private void switchToManualCreateScreen() {
-        try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/frontend/sites/create_manual.fxml"));
-            Parent root = loader.load();
-
-            // Get the controller for the CreateManual_Screen.fxml
-            CreateManual_ScreenController createManualController = loader.getController();
-
-            // Perform any other actions before switching screens
-
-            // Iterate through vBoxList and add labels to vbox_labels
-            for (VBox vbox : vBoxList) {
-                // Your other actions...
-
-                createManualController.addLabelToVBox(selectedQuestion.getPoints() + "\n" + selectedQuestion.getQuestionString());
-            }
-
-            // Finally, switch the scene to the new screen
-            Scene scene = new Scene(root);
-            Stage stage = new Stage(); // Create a new stage
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace(); // Handle the exception appropriately in your application
-        }
     }
-
 }
