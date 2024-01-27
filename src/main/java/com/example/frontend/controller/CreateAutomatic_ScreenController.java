@@ -159,7 +159,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private void createLabel(String labelText, VBox parentVBox) {
         Label label = new Label(labelText);
         label.getStyleClass().add("automatic_create_label");
-        label.getStylesheets().add("@../css/main.css");
+        label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
@@ -171,13 +171,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private void createMenuButton(VBox parentVBox) {
         MenuButton menuButton = new MenuButton("Choose category...");
         menuButton.getStyleClass().add("automatic_create_dropdown");
-        menuButton.getStylesheets().add("@../css/main.css");
+        menuButton.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         VBox innerVBox = new VBox(menuButton);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
@@ -190,13 +190,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         //TextFormatter<Double> textFormatter = new TextFormatter<>(new DoubleStringConverter());
         //spinner.getEditor().setTextFormatter(textFormatter);
         spinner.getStyleClass().add("automatic_create_spinner");
-        spinner.getStylesheets().add("@../css/main.css");
+        spinner.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         VBox innerVBox = new VBox(spinner);
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
@@ -219,7 +219,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         parentVBox.getChildren().add(innerVBox);
     }
@@ -281,7 +281,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
                 Label label = new Label(selectedQuestion.getPoints() + "\n" +
                         selectedQuestion.getQuestionString());
                 label.getStyleClass().add("automatic_create_label");
-                label.getStylesheets().add("@../css/main.css");
+                label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
                 vbox_labels.getChildren().add(label);
             }
         }

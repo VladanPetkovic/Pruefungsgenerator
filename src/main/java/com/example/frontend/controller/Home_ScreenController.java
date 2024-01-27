@@ -80,10 +80,10 @@ public class Home_ScreenController extends ScreenController {
             studyProgramMenuButton.getItems().add(menuItem);
         }
         //MenuItem menuItem = new MenuItem("add StudyProgram");
-        Button customButton = new Button("add StudyProgram");
+        Button customButton = new Button("add Study Program");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
-            studyProgramMenuButton.setText("add StudyProgram");
+            studyProgramMenuButton.setText("add Study Program");
             addStudyProgram();
         });
         //studyProgramMenuButton.getItems().add(menuItem);
@@ -121,7 +121,7 @@ public class Home_ScreenController extends ScreenController {
 
         //create new stage
         Stage inputStage = new Stage();
-        inputStage.setTitle("Add StudyProgram");
+        inputStage.setTitle("Add Study Program");
 
         //create layout
         VBox inputLayout = new VBox();

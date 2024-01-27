@@ -36,7 +36,6 @@ public abstract class ScreenController {
     @FXML
     protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-        System.out.println("question Upload Button Clicked");
         switchScene(questionUpload,true);
     }
     @FXML
