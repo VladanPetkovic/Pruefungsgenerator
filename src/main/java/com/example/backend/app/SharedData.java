@@ -35,4 +35,13 @@ public class SharedData {
     @Setter
     private static com.example.backend.db.models.Question filterQuestion = new Question();
 
+
+    public static void reset() {
+        selectedCourse = null;
+        newCourse = new Course();
+        selectedStudyProgram = null;
+        newStudyProgram = new StudyProgram();
+        filterQuestion = new Question();
+    }
+
 }

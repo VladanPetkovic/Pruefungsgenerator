@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ public abstract class ScreenController {
     public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
     public static Screen<QuestionCreate_ScreenController> questionUpload = new Screen<>("sites/question_create.fxml");
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
+    public static Screen<QuestionEdit_ScreenController> home = new Screen<>("sites/home.fxml");
     public static Screen<QuestionEdit_ScreenController> addStudyProgram = new Screen<>("sites/add_studyProgram.fxml");
 
 
@@ -41,5 +43,10 @@ public abstract class ScreenController {
     protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
     {
         switchScene(questionEdit,true);
+    }
+
+    public void onFHTWLogoClick() {
+        switchScene(home,true);
+        SharedData.reset();
     }
 }

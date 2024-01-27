@@ -79,13 +79,15 @@ public class Home_ScreenController extends ScreenController {
             });
             studyProgramMenuButton.getItems().add(menuItem);
         }
-        MenuItem menuItem = new MenuItem("add StudyProgram");
-        menuItem.setOnAction(e -> {
+        //MenuItem menuItem = new MenuItem("add StudyProgram");
+        Button customButton = new Button("add StudyProgram");
+        CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
+        customButton.setOnAction(e -> {
             studyProgramMenuButton.setText("add StudyProgram");
             addStudyProgram();
         });
-        studyProgramMenuButton.getItems().add(menuItem);
-
+        //studyProgramMenuButton.getItems().add(menuItem);
+        studyProgramMenuButton.getItems().add(customMenuItem);
     }
 
     private void loadCourses() {
@@ -104,11 +106,15 @@ public class Home_ScreenController extends ScreenController {
 
         }
         MenuItem menuItem = new MenuItem("add Course");
+        menuItem.getStyleClass().add("homeScreen_addButton_menu_item");
         menuItem.setOnAction(e -> {
             coursesMenuButton.setText("add Course");
+
             addCourse();
         });
         coursesMenuButton.getItems().add(menuItem);
+
+
     }
 
     private void addStudyProgram() {
