@@ -7,6 +7,7 @@ module com.example.demo {
     requires lombok;
     requires java.sql;
     requires java.desktop;
+    requires org.apache.pdfbox;
 
     opens com.example.frontend to javafx.fxml;
     exports com.example.frontend;

@@ -183,7 +183,7 @@ VALUES(1, 4, 5.5, 'Was ist der Zweck von SQL-Indizes?', 0, 'Deutsch', NULL, NULL
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(3, 6, 8.0, 'Erklären Sie den Begriff "Sharding" in Bezug auf NoSQL-Datenbanken.', 0, 'Deutsch', NULL, NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
-VALUES(2, 7, 9.0, 'Berechnen Sie das bestimmte Integral von sin(x) von 0 bis π.', 0, 'Deutsch', NULL, NULL);
+VALUES(2, 7, 9.0, 'Berechnen Sie das bestimmte Integral von sin(x) von 0 bis pi.', 0, 'Deutsch', NULL, NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)
 VALUES(4, 5, 6.0, 'Was sind Gruppen in der Algebra?', 0, 'Deutsch', NULL, NULL);
 INSERT INTO Questions (FK_Category_ID, Difficulty, Points, Question, MultipleChoice, "Language", Remarks, Answers)

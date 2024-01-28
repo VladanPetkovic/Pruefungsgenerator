@@ -2,7 +2,6 @@ package com.example.backend.db.daos;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import org.junit.jupiter.api.*;

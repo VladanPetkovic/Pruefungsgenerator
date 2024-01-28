@@ -18,6 +18,12 @@ button
 
 }
 
+.exportBtn
+{
+    -fx-background-color: red;
+    -fx-text-fill: #fff;
+}
+
 .optionAreaBox
 {
     -fx-background-color: #3a3a3a; /* medium dark grey background color */

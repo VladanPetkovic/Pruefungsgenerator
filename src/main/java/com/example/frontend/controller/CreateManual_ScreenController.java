@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.Export;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
@@ -93,6 +94,15 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     @FXML
+    private void applyExportButtonClicked(ActionEvent event) {
+        if (!SharedData.getTestQuestions().isEmpty()) {
+            Export export = new Export();
+            export.exportToPdf(SharedData.getTestQuestions(), "Test: " + SharedData.getSelectedCourse().getCourse_name());
+            SharedData.resetQuestions();
+        }
+    }
+
+    @FXML
     private void searchQuestions() {
         // Create a Question object with filter values
         Question filterQuestion = new Question();
@@ -137,18 +147,6 @@ public class CreateManual_ScreenController extends ScreenController {
             filterQuestion.setKeywords(keywordsList);
         }
 
-        // not needed anymore
-//        // Set difficulty and points only if sliders are moved
-//        if (difficultySlider.isValueChanging()) {
-//            int difficulty = (int) difficultySlider.getValue();
-//            filterQuestion.setDifficulty(difficulty);
-//        }
-//
-//        if (pointsSlider.isValueChanging()) {
-//            float points = (float) pointsSlider.getValue();
-//            filterQuestion.setPoints(points);
-//        }
-
         // setting points and difficulty, if it was set
         if(SharedData.getFilterQuestion().getPoints() != 0) {
             filterQuestion.setPoints(SharedData.getFilterQuestion().getPoints());
@@ -179,8 +177,6 @@ public class CreateManual_ScreenController extends ScreenController {
 
     @FXML
     private void showQuestionsInPreview() {
-
-        // TODO: show the questions in the preview tab
         //vbox_labels.getChildren().clear();
         //spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;

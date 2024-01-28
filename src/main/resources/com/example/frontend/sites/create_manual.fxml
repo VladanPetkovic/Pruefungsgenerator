@@ -164,6 +164,9 @@
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
+                     <children>
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="exportBtn" text="Export" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                     </children>
                   </GridPane>
                   <ScrollPane fx:id="scrollPane_testQuestionsPreview" prefHeight="570.0" prefWidth="633.0">
                     <!--  <content> -->
