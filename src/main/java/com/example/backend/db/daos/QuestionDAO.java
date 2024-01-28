@@ -116,47 +116,6 @@ public class QuestionDAO implements DAO<Question> {
         return this.questionCache;
     }
 
-    public ArrayList<Question> readAll(Course course) {
-        // deleting old questions, if they are existing in this cache
-        this.questionCache.clear();
-
-        String selectQuestionsStmt =
-            "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                "K.KeywordID, K.Keyword " +
-            "FROM Questions Q " +
-                "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-                "LEFT JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID " +
-                "LEFT JOIN Courses Co ON HCC.CourseID = Co.CourseID " +
-            "WHERE Co.CourseID = ?";
-
-        if (course != null) {
-            try (Connection connection = SQLiteDatabaseConnection.connect();
-                 PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
-
-                questionsStatement.setInt(1, course.getCourse_id());
-                try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
-                    while (questionsResultSet.next()) {
-                        Question newQuestion = createModelFromResultSet(questionsResultSet);
-                        if(newQuestion != null) {
-                            this.questionCache.add(createModelFromResultSet(questionsResultSet));
-                        }
-                    }
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return this.questionCache;
-    }
-
     public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course) {
         // deleting old questions, if they are existing in this cache
         this.questionCache.clear();
@@ -176,17 +135,14 @@ public class QuestionDAO implements DAO<Question> {
                         "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
                         "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
                         "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-                        "WHERE ");
+                        "LEFT JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID " +
+                        "LEFT JOIN Courses Co ON HCC.CourseID = Co.CourseID " +
+                        "WHERE Co.CourseID = ?");
 
         // init selectSTMT and listForPreparedStmt
-        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt);
+        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getCourse_id());
 
         System.out.println(selectQuestionsStmt);
-
-        // if no searchOptions passed --> return all Questions for the Course
-        if(listForPreparedStmt.isEmpty()) {
-            return readAll(course);
-        }
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(String.valueOf(selectQuestionsStmt))) {
@@ -222,9 +178,13 @@ public class QuestionDAO implements DAO<Question> {
         return this.questionCache;
     }
 
-    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt) {
+    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id) {
         int countKeywords = 0;
         int countImages = 0;
+
+        // append course_id to the listForPreparedStmt
+        listForPreparedStmt.add(course_id);
+        stmt.append(" AND");
 
         for(SearchObject<?> searchObject : searchOptions) {
             // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
