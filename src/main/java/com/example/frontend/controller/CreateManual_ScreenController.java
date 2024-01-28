@@ -5,17 +5,25 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
+import com.example.frontend.MainApp;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 
 public class CreateManual_ScreenController extends ScreenController {
+
+    @FXML
+    private Label label_selectedCourse;
 
     @FXML
     private TextField categoryTextField;
@@ -36,6 +44,12 @@ public class CreateManual_ScreenController extends ScreenController {
     private Button applyFilterButton;
 
     @FXML
+    private VBox vbox_testQuestionsPreview;
+
+    @FXML
+    private VBox vbox_filteredQuestionsPreview;
+
+    @FXML
     private void initialize() {
         // init points and difficulty from the slider by a listener
         // --> only when the value changes, the value is updated
@@ -44,8 +58,11 @@ public class CreateManual_ScreenController extends ScreenController {
         // Set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
 
-        // check whether questions are availabe for showing in testPreview
+        label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
+
+        // check whether questions from automaticTestCreate are available for showing in testPreview
         if (!SharedData.getTestQuestions().isEmpty()) {
+            //display the questions from automaticTestCreate in the testPreviewArea
             showQuestionsInPreview();
         }
     }
@@ -159,15 +176,41 @@ public class CreateManual_ScreenController extends ScreenController {
         printQuestions(result);
     }
 
+
+    @FXML
     private void showQuestionsInPreview() {
-        System.out.println("showing questions in test-preview window");
 
-//        TODO: show the questions in the preview tab
-//        for(Question question : SharedData.getTestQuestions()) {
-//            show question in preview tab
-//        }
+        // TODO: show the questions in the preview tab
+        //vbox_labels.getChildren().clear();
+        //spacing between each spacing (serves as an area for the answers)
+        double spacing = 100.0;
 
-        // after the test creation the questions must be deleted from the testQuestions array
+        int i = 1;
+        if (!SharedData.getTestQuestions().isEmpty()) {
+            for (Question question : SharedData.getTestQuestions()) {
+                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
+                //create the Vbox and the component for the question
+                VBox questionVbox = new VBox();
+                Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
+                Label questionTextLabel = new Label(question.getQuestionString());
+
+                System.out.println("question String:" + SharedData.getTestQuestions().get(0).getQuestionString());
+                //add elements to the Vbox
+                questionVbox.getChildren().add(questionNumberLabel);
+                questionVbox.getChildren().add(questionTextLabel);
+
+
+                //add the question Vbox to the testPreview area (vbox)
+                vbox_testQuestionsPreview.getChildren().add(questionVbox);
+
+                //set spacing between questions (serves as answer area)
+                vbox_testQuestionsPreview.setSpacing(spacing);
+                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
+                i++;
+            }
+            // after the questions are displayed delete the questions from the sharedData class
+            SharedData.resetQuestions();
+        }
     }
 
     @FXML
@@ -176,8 +219,10 @@ public class CreateManual_ScreenController extends ScreenController {
             System.out.println("No questions found");
             return;
         }
-
+        double spacing = 10.0;
         for(Question question : questions) {
+
+            /*
             System.out.println("_----------------------------------_");
             System.out.println("ID: " + question.getQuestion_id());
             System.out.println("QuestionString: " + question.getQuestionString());
@@ -192,6 +237,52 @@ public class CreateManual_ScreenController extends ScreenController {
             System.out.println("Language: " + question.getLanguage());
             System.out.println("Difficulty: " + question.getDifficulty());
             System.out.println("Points: " + question.getPoints());
+
+             */
+
+            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
+            //create the Vbox and the elements for the question
+            VBox questionVbox = new VBox();
+
+            Label questionNumberLabel = new Label("(Erreichbare Punkte: "+ question.getPoints() + ")");
+            questionNumberLabel.setTextFill(Color.WHITE);
+
+            Label questionDifficultyLabel = new Label("Difficulty: " + question.getDifficulty());
+            questionDifficultyLabel.setTextFill(Color.WHITE);
+
+            Label questionTextLabel = new Label(question.getQuestionString());
+            questionTextLabel.setTextFill(Color.WHITE);
+
+            //adds a newline if text is too long
+            questionTextLabel.setWrapText(true);
+
+            Label questionAnswersLabel = null;
+            if (question.getAnswers() != null) {
+                questionAnswersLabel = new Label(question.getAnswers());
+                questionAnswersLabel.setTextFill(Color.WHITE);
+            }
+
+            Label questionRemarksLabel = null;
+            if(question.getRemarks() != null) {
+                questionRemarksLabel = new Label(question.getRemarks());
+                questionRemarksLabel.setTextFill(Color.WHITE);
+            }
+
+            //add elements to the Vbox
+            questionVbox.getChildren().add(questionNumberLabel);
+            questionVbox.getChildren().add(questionDifficultyLabel);
+            questionVbox.getChildren().add(questionTextLabel);
+            if (questionAnswersLabel!= null) {
+                questionVbox.getChildren().add(questionAnswersLabel);
+            }
+            if (questionRemarksLabel!= null) {
+                questionVbox.getChildren().add(questionAnswersLabel);
+            }
+
+            //add the question Vbox to the testPreview area (vbox)
+            vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
+            vbox_filteredQuestionsPreview.setSpacing(spacing);
+            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
         }
     }
 }

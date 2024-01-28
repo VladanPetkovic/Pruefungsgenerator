@@ -46,6 +46,6 @@ public abstract class ScreenController {
 
     public void onFHTWLogoClick() {
         switchScene(home,true);
-        SharedData.reset();
+        SharedData.resetAll();
     }
 }

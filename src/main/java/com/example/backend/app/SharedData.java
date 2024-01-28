@@ -47,11 +47,20 @@ public class SharedData {
     private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
 
 
-    public static void reset() {
+    //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
+    public static void resetAll() {
         selectedCourse = null;
         newCourse = new Course();
         selectedStudyProgram = null;
         newStudyProgram = new StudyProgram();
+        filterQuestion = new Question();
+        testQuestions = new ArrayList<>();
+        searchObjectsAutTestCreate = new ArrayList<>();
+    }
+
+    //reset the Questions stored from the Automatic Test Create (mainly created for use in CreateManual_ScreenController)
+    public static void resetQuestions() {
+
         filterQuestion = new Question();
         testQuestions = new ArrayList<>();
         searchObjectsAutTestCreate = new ArrayList<>();
