@@ -58,8 +58,8 @@ public class CreateManual_ScreenController extends ScreenController {
         // Set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
 
+        //displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
-
         // check whether questions from automaticTestCreate are available for showing in testPreview
         if (!SharedData.getTestQuestions().isEmpty()) {
             //display the questions from automaticTestCreate in the testPreviewArea
@@ -184,7 +184,9 @@ public class CreateManual_ScreenController extends ScreenController {
         //vbox_labels.getChildren().clear();
         //spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
-
+        System.out.println("questions: ");
+        System.out.println("questions: "+ SharedData.getTestQuestions().get(0).getQuestionString());
+        //counter for question number
         int i = 1;
         if (!SharedData.getTestQuestions().isEmpty()) {
             for (Question question : SharedData.getTestQuestions()) {
@@ -199,7 +201,6 @@ public class CreateManual_ScreenController extends ScreenController {
                 questionVbox.getChildren().add(questionNumberLabel);
                 questionVbox.getChildren().add(questionTextLabel);
 
-
                 //add the question Vbox to the testPreview area (vbox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
 
@@ -209,7 +210,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 i++;
             }
             // after the questions are displayed delete the questions from the sharedData class
-            SharedData.resetQuestions();
+            //SharedData.resetQuestions();
         }
     }
 
@@ -282,7 +283,6 @@ public class CreateManual_ScreenController extends ScreenController {
             //add the question Vbox to the testPreview area (vbox)
             vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
             vbox_filteredQuestionsPreview.setSpacing(spacing);
-            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
         }
     }
 }

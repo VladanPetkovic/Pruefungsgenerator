@@ -244,7 +244,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             }
 
             // Perform the database query and print the results
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, "MACS1", false);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getCourse_name(), false);
 
             if (!queryResult.isEmpty()) {
                 Random random = new Random();
