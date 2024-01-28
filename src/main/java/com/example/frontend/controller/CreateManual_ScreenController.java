@@ -99,6 +99,7 @@ public class CreateManual_ScreenController extends ScreenController {
             Export export = new Export();
             export.exportToPdf(SharedData.getTestQuestions(), "Test: " + SharedData.getSelectedCourse().getCourse_name());
             SharedData.resetQuestions();
+            switchScene(createTestAutomatic, true);
         }
     }
 
