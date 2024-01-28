@@ -43,6 +43,11 @@ public class CreateManual_ScreenController extends ScreenController {
         getDifficultyFromSlider();
         // Set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
+
+        // check whether questions are availabe for showing in testPreview
+        if (!SharedData.getTestQuestions().isEmpty()) {
+            showQuestionsInPreview();
+        }
     }
 
     private void getPointsFromSlider() {
@@ -152,6 +157,17 @@ public class CreateManual_ScreenController extends ScreenController {
 
         // Display result in the console
         printQuestions(result);
+    }
+
+    private void showQuestionsInPreview() {
+        System.out.println("showing questions in test-preview window");
+
+//        TODO: show the questions in the preview tab
+//        for(Question question : SharedData.getTestQuestions()) {
+//            show question in preview tab
+//        }
+
+        // after the test creation the questions must be deleted from the testQuestions array
     }
 
     @FXML

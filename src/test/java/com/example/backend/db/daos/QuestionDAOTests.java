@@ -60,7 +60,7 @@ public class QuestionDAOTests {
         // arrange
         Course course = SQLiteDatabaseConnection.courseRepository.get("MACS1");
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(course);
-        int expectedLength = 12;
+        int expectedLength = 13;
 
         // show results
         printQuestions(questions);
@@ -157,7 +157,7 @@ public class QuestionDAOTests {
 
         // arrange
         Question testQuestion = new Question();
-        int expectedResult = 12;
+        int expectedResult = 13;
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", false);

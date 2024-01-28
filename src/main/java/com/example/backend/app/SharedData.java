@@ -2,10 +2,13 @@ package com.example.backend.app;
 
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Question;
+import com.example.backend.db.models.SearchObject;
 import com.example.backend.db.models.StudyProgram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -35,6 +38,14 @@ public class SharedData {
     @Setter
     private static com.example.backend.db.models.Question filterQuestion = new Question();
 
+    @Getter
+    @Setter
+    private static ArrayList<Question> testQuestions = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
+
 
     public static void reset() {
         selectedCourse = null;
@@ -42,6 +53,8 @@ public class SharedData {
         selectedStudyProgram = null;
         newStudyProgram = new StudyProgram();
         filterQuestion = new Question();
+        testQuestions = new ArrayList<>();
+        searchObjectsAutTestCreate = new ArrayList<>();
     }
 
 }

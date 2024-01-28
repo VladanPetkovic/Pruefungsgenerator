@@ -17,4 +17,9 @@ public class SearchObject<T> {
         setValueOfObject(valueOfObject);
         setSet(isSet);
     }
+
+    // needed for createAutomaticTest
+    public SearchObject() {
+
+    }
 }
