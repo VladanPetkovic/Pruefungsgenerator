@@ -162,10 +162,19 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 new ArrayList<>()
         );
         SQLiteDatabaseConnection.questionRepository.add(q);
-        for (Keyword k : selectedKeywords) {
-            SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
+        Question questionSearch = new Question();
+        questionSearch.setCategory(selectedCategory);
+        questionSearch.setDifficulty((int)difficulty.getValue());
+        questionSearch.setQuestionString(question.getText());
+        questionSearch.setMultipleChoice(multipleChoice.isSelected() ? 1 : 0);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(questionSearch,SharedData.getSelectedCourse().getCourse_name(),multipleChoice.isSelected());
+        if(questions.size() != 0){
+            q.setQuestion_id(questions.get(0).getQuestion_id());
+            for (Keyword k : selectedKeywords) {
+                SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
+            }
+            switchScene(questionUpload, true);
         }
-        switchScene(questionUpload, true);
     }
 
     private String answersToDatabaseString() {

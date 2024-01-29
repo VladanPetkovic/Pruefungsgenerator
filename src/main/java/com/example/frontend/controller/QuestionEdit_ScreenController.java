@@ -140,16 +140,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private Question createFilterQuestion() {
         Question filterQuestion = new Question();
 
-        // Get filter values
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
         setCategoryFilter(categoryName, filterQuestion);
         setKeywordFilter(keywordText, filterQuestion);
-        //setPointsAndDifficultyFilter(filterQuestion);
-
-        // Set multiple choice filter
+        setPointsAndDifficultyFilter(filterQuestion);
         filterQuestion.setMultipleChoice(multipleChoice ? 1 : 0);
 
         return filterQuestion;
