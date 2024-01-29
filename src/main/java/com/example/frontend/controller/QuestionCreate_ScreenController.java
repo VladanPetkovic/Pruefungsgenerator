@@ -5,20 +5,18 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
-
-    private static final String[] LANGUAGES = {"Deutsch", "Englisch", "Spanisch", "Französisch"};
 
     @FXML
     private MenuButton category;
@@ -31,10 +29,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private VBox multipleChoiceVBox;
     @FXML
-    private Label languageLabel;
-    @FXML
-    private MenuButton language;
-    @FXML
     private TextArea question;
     @FXML
     private TextArea remarks;
@@ -43,16 +37,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private ArrayList<Keyword> keywords;
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
-    private VBox keywordVBox;
-    @FXML
-    private Button upload;
-    @FXML
-    private ScrollPane scrollPane;
-
-    @FXML
     private HBox keywordsHBox;
-
-    private String currentLanguage = null;
     private ArrayList<Category> categories;
     private Category selectedCategory = null;
     private ArrayList<TextArea> answers = new ArrayList<>();
@@ -61,14 +46,12 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id());
         if(categories.size() == 0){
-            //questionUpload.disableScene(true);
             showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
         }
         fillCategoryWithCategories();
         difficulty.setValue(5);
         points.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
         points.getValueFactory().setValue(10);
-        fillLanguageWithLanguages();
         question.setText("");
         remarks.setText("");
         keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
@@ -101,22 +84,17 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 if (!selectedKeywords.contains(k)) {
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword_text() + " X");
-                    b.setOnAction(actionEvent -> keywordsHBox.getChildren().remove(b));
+                    b.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            keywordsHBox.getChildren().remove(b);
+                            selectedKeywords.remove(k);
+                        }
+                    });
                     keywordsHBox.getChildren().add(b);
                 }
             });
             keyword.getItems().add(menuItem);
-        }
-    }
-
-    private void fillLanguageWithLanguages() {
-        for (String l : LANGUAGES) {
-            MenuItem menuItem = createMenuItem(l);
-            menuItem.setOnAction(event -> {
-                currentLanguage = l;
-                language.setText(l);
-            });
-            language.getItems().add(menuItem);
         }
     }
 
@@ -160,14 +138,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     private Button createButton(String text) {
         Button button = new Button(text);
+        button.setFocusTraversable(false);
         return button;
     }
 
     @FXML
     private void onActionUpload() {
-        Node n = checkIfFilled();
-        if (n != null) {
-            showErrorAlert("Error","Not all fields filled","Fill out: "+n);
+        String s = checkIfFilled();
+        if (s != null) {
+            showErrorAlert("Error","Not all fields filled",s);
             return;
         }
         Question q = new Question(
@@ -176,7 +155,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 points.getValue(),
                 question.getText(),
                 multipleChoice.isSelected() ? 1 : 0,
-                currentLanguage,
+                "",
                 remarks.getText(),
                 answersToDatabaseString(),
                 selectedKeywords,
@@ -199,15 +178,23 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         return s.toString();
     }
 
-    private Node checkIfFilled() {
-        if (selectedCategory == null) return category;
-        if (multipleChoice.isSelected()) {
-            for (TextArea t : answers) {
-                if (t.getText().isEmpty()) return multipleChoice;
+    private boolean checkIfEmptyAnswers(){
+        if(multipleChoice.isSelected()){
+            for(TextArea t : answers){
+                if(t.getText().isEmpty()) return true;
             }
         }
-        if (currentLanguage == null) return language;
-        if (question.getText().isEmpty()) return question;
+        return false;
+    }
+
+    private boolean checkIfQuestionIsEmpty(){
+        return question.getText().isEmpty();
+    }
+
+    private String checkIfFilled() {
+        if (selectedCategory == null) return "Category needs to be selected.";
+        if (checkIfEmptyAnswers()) return "You selected multiple choice but at least one answer is not filled out.";
+        if (checkIfQuestionIsEmpty()) return "Question needs to be filled out.";
         return null;
     }
 }
