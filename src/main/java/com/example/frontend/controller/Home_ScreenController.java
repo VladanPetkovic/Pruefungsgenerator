@@ -88,7 +88,6 @@ public class Home_ScreenController extends ScreenController {
         }
 
         // add option to add a new study program
-        //MenuItem menuItem = new MenuItem("add StudyProgram");
         Button customButton = new Button("add Study Program");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
@@ -114,14 +113,14 @@ public class Home_ScreenController extends ScreenController {
             coursesMenuButton.getItems().add(menuItem);
         }
 
-        // add option to add a new course
-        MenuItem menuItem = new MenuItem("add Course");
-        menuItem.getStyleClass().add("homeScreen_addButton_menu_item");
-        menuItem.setOnAction(e -> {
+        // add button to add a new course
+        Button customButton = new Button("add Course");
+        CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
+        customButton.setOnAction(e -> {
             coursesMenuButton.setText("add Course");
             addCourse();
         });
-        coursesMenuButton.getItems().add(menuItem);
+       coursesMenuButton.getItems().add(customMenuItem);
     }
 
     // method to add a new study program
