@@ -133,7 +133,7 @@
                               </Label>
                               <VBox fx:id="multipleChoiceVBox" prefHeight="33.0" prefWidth="1000.0" styleClass="upload_question_vbox" stylesheets="@../css/main.css">
                                  <children>
-                                    <CheckBox fx:id="multipleChoice" mnemonicParsing="false" onAction="#onActionMultipleChoice" text="CheckBox" />
+                                    <CheckBox fx:id="multipleChoice" mnemonicParsing="false" onAction="#onActionMultipleChoice" text="Is multiple choice" textFill="WHITE" />
                                  </children>
                               </VBox>
                            </children>

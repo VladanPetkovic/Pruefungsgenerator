@@ -103,7 +103,7 @@
                                     <Label styleClass="option_label" text="Set Difficulty:" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Slider fx:id="difficultySlider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="difficultySlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -113,7 +113,7 @@
                                     <Label styleClass="option_label" text="Set Points:" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Slider fx:id="pointsSlider" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="pointsSlider" blockIncrement="0.5" majorTickUnit="0.5" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -172,7 +172,7 @@
                                     </Label>
                                     <VBox prefHeight="33.0" prefWidth="500.0" styleClass="edit_question_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <Slider fx:id="chooseDifficulty" majorTickUnit="0.5" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.5" />
+                                          <Slider fx:id="chooseDifficulty" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.0" />
                                        </children>
                                     </VBox>
                                  </children>
@@ -200,7 +200,7 @@
                                     </Label>
                                     <VBox fx:id="multipleChoiceVBox" prefHeight="33.0" prefWidth="1000.0" styleClass="edit_question_vbox" stylesheets="@../css/main.css">
                                        <children>
-                                          <CheckBox fx:id="chooseMultipleChoice" mnemonicParsing="false" />
+                                          <CheckBox fx:id="chooseMultipleChoice" mnemonicParsing="false" onAction="#onActionChooseMultipleChoice" text="Is multiple choice" textFill="WHITE" />
                                        </children>
                                     </VBox>
                                  </children>

@@ -23,7 +23,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private Slider difficulty;
     @FXML
-    private Spinner<Integer> points;
+    private Spinner<Double> points;
     @FXML
     private CheckBox multipleChoice;
     @FXML
@@ -50,8 +50,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
         fillCategoryWithCategories();
         difficulty.setValue(5);
-        points.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
-        points.getValueFactory().setValue(10);
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
+        points.setValueFactory(valueFactory);
         question.setText("");
         remarks.setText("");
         keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
@@ -152,7 +152,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         Question q = new Question(
                 selectedCategory,
                 (int) difficulty.getValue(),
-                points.getValue(),
+                points.getValue().floatValue(),
                 question.getText(),
                 multipleChoice.isSelected() ? 1 : 0,
                 "",

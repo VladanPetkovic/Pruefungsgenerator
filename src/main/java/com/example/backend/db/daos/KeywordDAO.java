@@ -171,6 +171,19 @@ public class KeywordDAO implements DAO<Keyword> {
         }
     }
 
+    public void removeKQConnection(int keywordId, int questionId) {
+        String deleteStmt = "DELETE FROM hasKQ WHERE KeywordID = ? AND QuestionID = ?";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            preparedStatement.setInt(1, keywordId);
+            preparedStatement.setInt(2, questionId);
+            preparedStatement.executeUpdate();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public Keyword createModelFromResultSet(ResultSet resultSet) throws SQLException {
         return new Keyword(

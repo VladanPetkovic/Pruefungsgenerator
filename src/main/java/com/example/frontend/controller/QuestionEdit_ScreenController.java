@@ -77,6 +77,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private ArrayList<Keyword> keywords;
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
 
+    private ArrayList<Keyword> startState = new ArrayList<>();
+
     private ArrayList<Category> categories;
     private Category selectedCategory = null;
 
@@ -92,6 +94,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private VBox multipleChoiceVBox;
 
+    private int questionId;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         chooseScrollPane.setMouseTransparent(true);
@@ -104,7 +108,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         fillKeywordWithKeywords();
         SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
         choosePoints.setValueFactory(valueFactory);
-
     }
     public void showErrorAlert(String title, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -230,7 +233,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     @FXML
-    private void onActionMultipleChoice() {
+    private void onActionChooseMultipleChoice() {
         if (chooseMultipleChoice.isSelected()) {
             createMultipleChoiceButton();
         } else {
@@ -247,6 +250,17 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     private void createMultipleChoiceButton() {
         createAndAddMultipleChoiceButton("Add answer", "");
+    }
+
+    private void createMultipleChoiceEntry(String initialAnswer){
+        HBox hBoxAnswerRemove = new HBox();
+        TextArea textAreaAnswer = new TextArea();
+        textAreaAnswer.setText(initialAnswer);
+        answers.add(textAreaAnswer);
+        Button buttonRemove = createButton("X");
+        setButtonRemoveAction(buttonRemove, textAreaAnswer, hBoxAnswerRemove);
+        hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
+        multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
     }
 
     private void createAndAddMultipleChoiceButton(String buttonText, String initialAnswer) {
@@ -332,17 +346,22 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             chooseDifficulty.setValue(question.getDifficulty());
             choosePoints.getValueFactory().setValue((double)question.getPoints());
 
+
             if (question.getMultipleChoice() == 1) {
-                Arrays.stream(question.getAnswers().split("\n")).forEach(this::createMultipleChoiceButton);
+                chooseMultipleChoice.setSelected(true);
+                Arrays.stream(question.getAnswers().split("\n")).forEach(this::createMultipleChoiceEntry);
+                createMultipleChoiceButton();
             }
 
             chooseQuestion.setText(question.getQuestionString());
             chooseRemarks.setText(question.getRemarks());
 
             selectedKeywords.clear();
+            startState.clear();
             keywordsHBox.getChildren().clear();
 
             for(Keyword k : question.getKeywords()){
+                startState.add(k);
                 selectedKeywords.add(k);
                 Button b = createButton(k.getKeyword_text() + " X");
                 b.setOnAction(e -> {
@@ -351,6 +370,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 });
                 keywordsHBox.getChildren().add(b);
             }
+
+            questionId = question.getQuestion_id();
         });
     }
 
@@ -376,9 +397,36 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             showErrorAlert("Error", "Not all fields filled", errorMessage);
             return;
         }
-
         Question question = createQuestionFromInputs();
+        question.setQuestion_id(questionId);
         SQLiteDatabaseConnection.questionRepository.update(question);
+        compareAndAddOrRemove(question);
+        switchScene(questionEdit,true);
+    }
+
+    private void compareAndAddOrRemove(Question question){
+        for (Keyword keyword1 : startState){
+            boolean keywordFound = false;
+            for(Keyword keyword2 : selectedKeywords){
+                if(keyword1.getKeyword_text().equals(keyword2.getKeyword_text()))
+                    keywordFound = true;
+
+            }
+            if(!keywordFound){
+                SQLiteDatabaseConnection.keywordRepository.removeConnection(keyword1,question);
+            }
+        }
+
+        for (Keyword keyword1 : selectedKeywords){
+            boolean keywordNotFound = true;
+            for(Keyword keyword2 : startState){
+                if(keyword1.getKeyword_text().equals(keyword2.getKeyword_text()))
+                    keywordNotFound = false;
+            }
+            if(keywordNotFound){
+                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1,question);
+            }
+        }
     }
 
     private String validateInput() {
