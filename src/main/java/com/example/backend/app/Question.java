@@ -1,47 +1,45 @@
 package com.example.backend.app;
 
+import com.example.backend.db.models.Category;
+import com.example.backend.db.models.Image;
+import com.example.backend.db.models.Keyword;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
 
 @Getter
 @Setter
-public abstract class Question {
-    private int difficulty;
-    private int points;
-    private String questionString;
-    private int multipleChoice;
-    private String category;
-    private ArrayList<String> keywords;
-    private String course;
+@AllArgsConstructor
+@NoArgsConstructor
+public class Question {
+    int question_id;
+    Category category;
+    int difficulty;
+    float points;
+    String questionString;
+    int multipleChoice;
+    String language;
+    String remarks;
+    String answers;
+    ArrayList<Keyword> keywords;
+    ArrayList<Image> images;
 
-    //
-    // THIS IS DEPRECATED --> USE WITH CAUTION & REFACTOR BEFORE USAGE
-    //
-
-    // language
-    /*
-    *   german = 0
-    *   english = 1
-    */
-    private Boolean language;
-    private String remarks;
-
-    // default constructor
-    public Question() {}
-
-    // constructor with values
-    public Question(int difficulty, int points, String questionString,
-                    int multipleChoice, String category, ArrayList<String> keywords,
-                    String course, Boolean lang, String remarks) {
+    public Question(Category category, int difficulty, float points, String questionString,
+                    int multipleChoice, String language, String remarks,
+                    String answers, ArrayList<Keyword> keywords,
+                    ArrayList<Image> images) {
+        setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);
         setQuestionString(questionString);
         setMultipleChoice(multipleChoice);
-        setCategory(category);
-        setKeywords(keywords);
-        setCourse(course);
-        setLanguage(lang);
+        setLanguage(language);
         setRemarks(remarks);
+        setAnswers(answers);
+        setKeywords(keywords);
+        setImages(images);
     }
 }

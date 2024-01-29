@@ -16,11 +16,11 @@
    <children>
       <HBox maxHeight="100.0" maxWidth="1120.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" prefWidth="1120.0" styleClass="main_navigation" stylesheets="@../css/main.css">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../icons/FH_logo.png" />
                </image></ImageView>
-            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Prüfungsgenerator" textFill="WHITE">
+            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Exam Generator" textFill="WHITE">
                <font>
                   <Font size="35.0" />
                </font>
@@ -38,13 +38,13 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                   <MenuButton fx:id="studyProgramMenuButton" onAction="#onStudyProgramBtnClick" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Study programs">
+                   <MenuButton fx:id="studyProgramMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onStudyProgramBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Studyprograms">
                        <!-- Items will be dynamically loaded by the controller -->
                        <font>
                            <Font size="20.0" />
                        </font>
                    </MenuButton>
-                   <MenuButton fx:id="coursesMenuButton" onAction="#onCoursesBtnClick" maxWidth="270.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Courses" GridPane.columnIndex="1">
+                   <MenuButton fx:id="coursesMenuButton" maxWidth="270.0" mnemonicParsing="false" onAction="#onCoursesBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="homeScreen_dropdown" stylesheets="@../css/main.css" text="Courses" GridPane.columnIndex="1">
                        <!-- Items will be dynamically loaded by the controller -->
                        <font>
                            <Font size="20.0" />

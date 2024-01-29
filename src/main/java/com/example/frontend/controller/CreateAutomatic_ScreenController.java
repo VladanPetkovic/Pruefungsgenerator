@@ -1,13 +1,17 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.SharedData;
+import com.example.backend.db.models.Keyword;
+import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.daos.CategoryDAO;
 import com.example.backend.db.models.Category;
+import com.example.backend.db.models.SearchObject;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -15,100 +19,134 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import org.controlsfx.control.action.Action;
+import java.util.*;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-public class CreateAutomatic_ScreenController extends ScreenController implements Initializable {
+public class CreateAutomatic_ScreenController extends ScreenController {
+    @FXML
+    private VBox addQuestionVBox; // reference to the VBox containing the "Add Question" button
+    private int questionCount = 0; // variable to keep track of the question count
 
     @FXML
-    private MenuButton topicMenuButton;
-    @FXML
-    private Slider difficultySlider;
-    @FXML
-    private Spinner<Integer> pointsSpinner;
-
-    private CategoryDAO categoryDAO;
-
-    @FXML
-    private VBox addQuestionVBox; // Reference to the VBox containing the "Add Question" button
-
-    private int questionCount = 1; // Variable to keep track of the question count
+    public void initialize() {
+        onAddQuestionBtnClick();
+    }
 
     @FXML
     private void onAddQuestionBtnClick() {
-        // Increment the question count
+        // increment the question count
         questionCount++;
 
-        // Create a new VBox with the required structure
+        // create a new VBox with the required structure
         VBox newQuestionVBox = createNewQuestionVBox();
 
-        // Set the event handlers for the components within the new VBox
-        setEventHandlers(newQuestionVBox);
+        // add new ArrayList of SearchObjects to our searchData-array in SharedData
+        SharedData.getSearchObjectsAutTestCreate().add(new ArrayList<>());
 
-        // Get the parent of the parent (grandparent) of addQuestionVBox
+        // set the event handlers for the components within the new VBox
+        setEventHandlers(newQuestionVBox, this.questionCount);
+
+        // get the parent of the parent (grandparent) of addQuestionVBox
         VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
 
-        // Get the index of the parent of addQuestionVBox in its grandparent
+        // get the index of the parent of addQuestionVBox in its grandparent
         int parentIndex = grandparentVBox.getChildren().indexOf(addQuestionVBox.getParent());
 
-        // Add the new VBox just before the addQuestionVBox
+        // add the new VBox just before the addQuestionVBox
         grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
     }
 
-    private void setEventHandlers(VBox questionVBox) {
+    // set event handlers recursively for components within a VBox
+    private void setEventHandlers(VBox questionVBox, int vBoxNumber) {
+        // iterate over all nodes within the VBox
         for (Node node : questionVBox.getChildren()) {
             if (node instanceof VBox) {
-                setEventHandlers((VBox) node);
+                // if the node is another VBox, recursively set event handlers for its children
+                setEventHandlers((VBox) node, vBoxNumber);
             } else if (node instanceof MenuButton) {
+                // if the node is a MenuButton, set its event handler to select a category
                 MenuButton menuButton = (MenuButton) node;
-                setMenuButtonHandler(menuButton);
+                setMenuButtonHandler(menuButton, vBoxNumber);
             } else if (node instanceof Spinner) {
+                // if the node is a Spinner, set its event handler to select points
                 Spinner spinner = (Spinner) node;
-                setSpinnerHandler(spinner);
+                setSpinnerHandler(spinner, vBoxNumber);
             } else if (node instanceof Slider) {
+                // if the node is a Slider, set its event handler to select difficulty
                 Slider slider = (Slider) node;
-                setSliderHandler(slider);
+                setSliderHandler(slider, vBoxNumber);
             }
         }
     }
 
-    private void setMenuButtonHandler(MenuButton menuButton) {
+    // set event handler for MenuButton to select category
+    private void setMenuButtonHandler(MenuButton menuButton, int vBoxNumber) {
+        // create a new SearchObject to store category selection
+        SearchObject<String> searchObject = new SearchObject<>();
         menuButton.getItems().clear();
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        // retrieve categories for the selected course
+        int course_id = SharedData.getSelectedCourse().getCourse_id();
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
+        // populate the MenuButton with category options and set event handlers for selection
         for (Category category : categories) {
             MenuItem menuItem = new MenuItem(category.getCategory());
             menuItem.setOnAction(e -> {
-                menuButton.setText(category.getCategory());
+                String categoryName = category.getCategory();
+                menuButton.setText(categoryName);
+                searchObject.setObjectName("CAT");
+                searchObject.setValueOfObject(categoryName);
+                searchObject.setSet(true);
             });
             menuButton.getItems().add(menuItem);
         }
+        // add the selected category to the appropriate ArrayList in SharedData
+        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
     }
 
-    private void setSpinnerHandler(Spinner<Integer> spinner) {
-        // Add event handlers for the spinner if needed
-        // Example: spinner.setOnMouseClicked(event -> handleSpinnerClick(event, spinner));
+    // set event handler for Spinner to select points
+    private void setSpinnerHandler(Spinner<Double> spinner, int vBoxNumber) {
+        // create a new SearchObject to store points selection
+        SearchObject<Float> searchObject = new SearchObject<>();
+        // listen for changes in the spinner value and update the SearchObject accordingly
+        spinner.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                double points = (Double) spinner.getValue();
+                searchObject.setObjectName("POINT");
+                searchObject.setValueOfObject((float) points);
+                searchObject.setSet(true);
+            }
+        });
+        // add the selected points to the appropriate ArrayList in SharedData
+        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
     }
 
-    private void setSliderHandler(Slider slider) {
-        // Add event handlers for the slider if needed
-        // Example: slider.setOnMouseReleased(event -> handleSliderMouseReleased(event, slider));
+    // set event handler for Slider to select difficulty
+    private void setSliderHandler(Slider slider, int vBoxNumber) {
+        // create a new SearchObject to store difficulty selection
+        SearchObject<Integer> searchObject = new SearchObject<>();
+        // listen for changes in the slider value and update the SearchObject accordingly
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                int difficulty = (int) slider.getValue();
+                searchObject.setObjectName("DIFF");
+                searchObject.setValueOfObject(difficulty);
+                searchObject.setSet(true);
+            }
+        });
+        // add the selected difficulty to the appropriate ArrayList in SharedData
+        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
     }
 
+    // create a new VBox for adding a question with required components
     private VBox createNewQuestionVBox() {
-        // Create a new VBox with the specified structure
+        // create a new VBox with the specified structure
         VBox questionVBox = new VBox();
 
-        // Create and add the label indicating the question number
+        // create and add the label indicating the question number
         createLabel("Question " + questionCount, questionVBox);
 
-        // Create and add components to the new VBox
+        // create and add components to the new VBox
         createLabel("Category", questionVBox);
         createMenuButton(questionVBox);
         createLabel("Points", questionVBox);
@@ -119,104 +157,176 @@ public class CreateAutomatic_ScreenController extends ScreenController implement
         return questionVBox;
     }
 
+    // helper method to create a label with custom styling
     private void createLabel(String labelText, VBox parentVBox) {
+        // create a new label with the specified text
         Label label = new Label(labelText);
+        // add custom styling to the label
         label.getStyleClass().add("automatic_create_label");
-        label.getStylesheets().add("@../css/main.css");
+        // load external CSS file for additional styling
+        label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
+        // set preferred height and width for the label
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
+        // set text color
         label.setTextFill(Paint.valueOf("#e8e4e4"));
 
+        // add the label to the parent VBox
         parentVBox.getChildren().add(label);
     }
 
+    // helper method to create a MenuButton with custom styling
     private void createMenuButton(VBox parentVBox) {
+        // create a new MenuButton with default text
         MenuButton menuButton = new MenuButton("Choose category...");
+        // add custom styling to the MenuButton
         menuButton.getStyleClass().add("automatic_create_dropdown");
-        menuButton.getStylesheets().add("@../css/main.css");
+        // load external CSS file for additional styling
+        menuButton.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
+        // create a new VBox to contain the MenuButton
         VBox innerVBox = new VBox(menuButton);
+        // set preferred height and width for the VBox
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        // load external CSS file for additional styling
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
+        // add the VBox containing the MenuButton to the parent VBox
         parentVBox.getChildren().add(innerVBox);
     }
 
+    // helper method to create a Spinner with custom styling
     private void createSpinner(VBox parentVBox) {
-        Spinner spinner = new Spinner();
-        spinner.setEditable(true);
-        spinner.getStyleClass().add("automatic_create_spinner");
-        spinner.getStylesheets().add("@../css/main.css");
+        // create a new Spinner
+        Spinner<Double> spinner = new Spinner<>();
 
+        // set up the Spinner with a value factory and default values
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
+        spinner.setValueFactory(valueFactory);
+
+        // add custom styling to the Spinner
+        spinner.getStyleClass().add("automatic_create_spinner");
+        // load external CSS file for additional styling
+        spinner.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
+
+        // create a new VBox to contain the Spinner
         VBox innerVBox = new VBox(spinner);
+        // set preferred height and width for the VBox
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        // load external CSS file for additional styling
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
+        // add the VBox containing the Spinner to the parent VBox
         parentVBox.getChildren().add(innerVBox);
     }
 
+    // helper method to create a Slider with custom styling
     private void createSlider(VBox parentVBox) {
+        // create a new Slider
         Slider slider = new Slider();
+        // set the ID for the slider
         slider.setId("difficulty_slider");
-        slider.setMajorTickUnit(2.0);
+        // set major tick unit, max, min, and other properties for the Slider
+        slider.setMajorTickUnit(1.0);
         slider.setMax(10.0);
         slider.setMin(1.0);
-        slider.setMinorTickCount(1);
+        slider.setMinorTickCount(0);
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
+        slider.setSnapToTicks(true);
         slider.setStyle("-fx-background-color: #2f2f2f;");
+        // add custom styling to the Slider
         slider.getStyleClass().add("slider-tool");
-        slider.setValue(5.5);
+        // set default value for the Slider
+        slider.setValue(5.0);
 
+        // create a new VBox to contain the Slider
         VBox innerVBox = new VBox(slider);
+        // set preferred height and width for the VBox
         innerVBox.setPrefHeight(33.0);
         innerVBox.setPrefWidth(1000.0);
+        // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        innerVBox.getStylesheets().add("@../css/main.css");
+        // load external CSS file for additional styling
+        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
+        // add the VBox containing the Slider to the parent VBox
         parentVBox.getChildren().add(innerVBox);
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
-        for (Category category: categories) {
-            MenuItem menuItem = new MenuItem(category.getCategory());
-            menuItem.setOnAction(e -> {
-                topicMenuButton.setText(category.getCategory());
-            });
-            topicMenuButton.getItems().add(menuItem);
-        }
-        //difficultySlider.setMajorTickUnit(10);
-        //difficultySlider.setMinorTickCount(10);
-        difficultySlider.setSnapToTicks(true);
-        difficultySlider.setOnMouseReleased(this::onDifficultySliderMouseReleased);
-    }
-
-    private void onDifficultySliderMouseReleased(MouseEvent mouseEvent) {
-        System.out.println((int)difficultySlider.getValue());
-    }
-
+    // method triggered when the "Create Test" button is clicked
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
-        // Abrufen der ausgewählten Filterparameter
-        String selectedCategory = topicMenuButton.getText(); // Hier musst du den ausgewählten Wert richtig abrufen
-        int selectedDifficulty = (int) difficultySlider.getValue();
-        int selectedPoints = pointsSpinner.getValue();
+        // remove any empty elements from the searchObjectArray
+        SharedData.getSearchObjectsAutTestCreate().removeIf(ArrayList::isEmpty);
 
-        // Hier sollte die Logik für die Datenbankabfrage erfolgen
-        // Verwende questionRepository.getAll(selectedCategory, selectedDifficulty, selectedPoints)
+        // loop through each array of searchOptions
+        for (ArrayList<SearchObject<?>> searchObjectArrayList : SharedData.getSearchObjectsAutTestCreate()) {
+            // initialize variables to store selected category, difficulty, and points
+            String selectedCategory = "";
+            int selectedDifficulty = 0;
+            float selectedPoints = 0;
 
-        // Nach der Datenbankabfrage weiter zur manuellen Erstellung
-        switchToManualCreateScreen(); // Implementiere diese Methode entsprechend
-    }
+            // iterate through each searchObject in the current array
+            for (SearchObject<?> searchObject : searchObjectArrayList) {
+                // check if the searchObject represents points and is set
+                if (Objects.equals(searchObject.getObjectName(), "POINT") && searchObject.isSet()) {
+                    // set the selected points
+                    selectedPoints = (float) searchObject.getValueOfObject();
+                } else if (Objects.equals(searchObject.getObjectName(), "DIFF") && searchObject.isSet()) {
+                    // set the selected difficulty
+                    selectedDifficulty = (int) searchObject.getValueOfObject();
+                } else if (Objects.equals(searchObject.getObjectName(), "CAT") && searchObject.isSet()) {
+                    // set the selected category
+                    selectedCategory = (String) searchObject.getValueOfObject();
+                }
+            }
 
-    private void switchToManualCreateScreen() {
-        // Implementiere die Navigation zur manuellen Erstellung (loadFXML, setScene, etc.)
+            // create a new Question object to query the database
+            Question queryQuestion = new Question();
+            // check if a category is selected
+            if (!Objects.equals(selectedCategory, "")) {
+                // set the category of the query question from the database
+                queryQuestion.setCategory(SQLiteDatabaseConnection.CategoryRepository.get(selectedCategory));
+            }
+            // check if points are selected
+            if (selectedPoints != 0) {
+                // set the points of the query question
+                queryQuestion.setPoints(selectedPoints);
+            }
+            // check if difficulty is selected
+            if (selectedDifficulty != 0) {
+                // set the difficulty of the query question
+                queryQuestion.setDifficulty(selectedDifficulty);
+            }
+
+            // perform the database query to retrieve questions based on the criteria
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getCourse_name(), false);
+
+            // check if query result is not empty
+            if (!queryResult.isEmpty()) {
+                // generate a random index to select a question from the result
+                Random random = new Random();
+                int randomIndex = random.nextInt(queryResult.size());
+                // get the randomly selected question
+                Question newQuestion = queryResult.get(randomIndex);
+                // add the selected question to the test questions list
+                SharedData.getTestQuestions().add(newQuestion);
+            }
+        }
+
+        // clear the search options from the SearchObjects array
+        SharedData.getSearchObjectsAutTestCreate().clear();
+        // reset the question count to zero
+        this.questionCount = 0;
+        // switch scene to createTestManual
+        switchScene(createTestManual, true);
     }
 }

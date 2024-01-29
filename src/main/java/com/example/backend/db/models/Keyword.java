@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-
 public class Keyword {
     private int keyword_id;
     private String keyword_text;

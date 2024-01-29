@@ -28,6 +28,10 @@ public class KeywordRepository implements Repository<Keyword> {
         return getKeywordDAO().read(id);
     }
 
+    public Keyword get(String keywordName) {
+        return getKeywordDAO().read(keywordName);
+    }
+
     // needed for adding keywords to a question, when searching for a question
     // return all keywords for a certain question
     public ArrayList<Keyword> getAll(int question_id) {
@@ -41,6 +45,10 @@ public class KeywordRepository implements Repository<Keyword> {
 
     public void addConnection(Keyword keyword, Question question) {
         getKeywordDAO().addKQConnection(keyword.getKeyword_id(), question.getQuestion_id());
+    }
+
+    public void removeConnection(Keyword keyword, Question question){
+        getKeywordDAO().removeKQConnection(keyword.getKeyword_id(),question.getQuestion_id());
     }
 
     @Override

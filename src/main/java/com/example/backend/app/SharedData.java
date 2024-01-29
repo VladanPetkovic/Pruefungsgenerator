@@ -1,10 +1,17 @@
 package com.example.backend.app;
 
 import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Question;
+import com.example.backend.db.models.SearchObject;
 import com.example.backend.db.models.StudyProgram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+
+@Getter
+@Setter
 @AllArgsConstructor
 public class SharedData {
     @Getter
@@ -27,7 +34,36 @@ public class SharedData {
     //stores the study program the user wants to add
     private static StudyProgram newStudyProgram = new StudyProgram();
 
+    @Getter
+    @Setter
+    private static com.example.backend.db.models.Question filterQuestion = new Question();
+
+    @Getter
+    @Setter
+    private static ArrayList<Question> testQuestions = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
 
 
+    //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
+    public static void resetAll() {
+        selectedCourse = null;
+        newCourse = new Course();
+        selectedStudyProgram = null;
+        newStudyProgram = new StudyProgram();
+        filterQuestion = new Question();
+        testQuestions = new ArrayList<>();
+        searchObjectsAutTestCreate = new ArrayList<>();
+    }
+
+    //reset the Questions stored from the Automatic Test Create (mainly created for use in CreateManual_ScreenController)
+    public static void resetQuestions() {
+
+        filterQuestion = new Question();
+        testQuestions = new ArrayList<>();
+        searchObjectsAutTestCreate = new ArrayList<>();
+    }
 
 }

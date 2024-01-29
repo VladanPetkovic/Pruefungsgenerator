@@ -36,11 +36,6 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().readAll(category);
     }
 
-    // getting all questions for one course
-    public ArrayList<Question> getAll(Course course) {
-        return getQuestionDAO().readAll(course);
-    }
-
     // getting all questions for a dynamic search
     public ArrayList<Question> getAll(Question question_searchOptions, String courseName, boolean considerMC) {
         Field[] searchFields = Question.class.getDeclaredFields();

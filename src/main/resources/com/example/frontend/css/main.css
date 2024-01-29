@@ -18,6 +18,12 @@ button
 
 }
 
+.exportBtn
+{
+    -fx-background-color: red;
+    -fx-text-fill: #fff;
+}
+
 .optionAreaBox
 {
     -fx-background-color: #3a3a3a; /* medium dark grey background color */
@@ -126,6 +132,13 @@ button
     -fx-background-color: #434343;
 }
 
+.homeScreen_addButton_menu_item {
+    -fx-border-style: solid;
+    -fx-border-width: 1 0 0 0; /* top, right, bottom, left */
+    -fx-border-color: black;
+}
+
+
 /* addCourse / addProgram Scene */
 
 .addCourseAndProgram_label
@@ -195,3 +208,7 @@ button
 {
     -fx-padding: 20px 50px 20px 50px;
 }
+
+
+
+
