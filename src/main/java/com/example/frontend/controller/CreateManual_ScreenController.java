@@ -66,23 +66,29 @@ public class CreateManual_ScreenController extends ScreenController {
         }
     }
 
-    // method to get points value from slider
+    // method to update points value when the slider value changes
     private void getPointsFromSlider() {
+        // add a listener to the value property of the points slider
         pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new points value from the slider
                 int points = (int) pointsSlider.getValue();
+                // update the points value in the filter question object stored in SharedData
                 SharedData.getFilterQuestion().setPoints(points);
             }
         });
     }
 
-    // method to get difficulty value from slider
+    // method to update difficulty value when the slider value changes
     private void getDifficultyFromSlider() {
+        // add a listener to the value property of the difficulty slider
         difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new difficulty value from the slider
                 int difficulty = (int) difficultySlider.getValue();
+                // update the difficulty value in the filter question object stored in SharedData
                 SharedData.getFilterQuestion().setDifficulty(difficulty);
             }
         });
@@ -91,15 +97,22 @@ public class CreateManual_ScreenController extends ScreenController {
     // event handler for the "Apply Filter" button click
     @FXML
     private void applyFilterButtonClicked(ActionEvent event) {
+        // call the searchQuestions method to apply the filter
         searchQuestions();
     }
 
+    // event handler for the "Apply Export" button click
     @FXML
     private void applyExportButtonClicked(ActionEvent event) {
+        // check if there are test questions to export
         if (!SharedData.getTestQuestions().isEmpty()) {
+            // create an Export object
             Export export = new Export();
+            // export the test questions to PDF with a title based on the selected course
             export.exportToPdf(SharedData.getTestQuestions(), "Test: " + SharedData.getSelectedCourse().getCourse_name());
+            // reset the stored test questions
             SharedData.resetQuestions();
+            // switch the scene to the createTestAutomatic screen
             switchScene(createTestAutomatic, true);
         }
     }
@@ -107,15 +120,15 @@ public class CreateManual_ScreenController extends ScreenController {
     // event handler to search questions based on filters
     @FXML
     private void searchQuestions() {
-        // create a new Question object with filter values
+        // create a new Question object to hold filter values
         Question filterQuestion = new Question();
 
-        // get filter values
+        // get filter values from text fields and checkboxes
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
-        // set category value, if provided
+        // set category value if provided
         if (!categoryName.isEmpty()) {
             Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
             if (category != null) {
@@ -123,36 +136,24 @@ public class CreateManual_ScreenController extends ScreenController {
             }
         }
 
-        // set keyword value, if provided
+        // set keyword value if provided
         // handle multiple keywords as ArrayList<Keyword>
         ArrayList<Keyword> keywordsList = new ArrayList<>();
-
         if (!keywordText.isEmpty()) {
             // split by commas or spaces
             String[] keywordsArray = keywordText.split("[,\\s]+");
-
-            if (keywordsArray.length == 1) {
-                // if there is only one keyword without commas or spaces
-                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keywordsArray[0].trim());
+            for (String keyword : keywordsArray) {
+                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
                 if (keywordObj != null) {
                     keywordsList.add(keywordObj);
                 }
-            } else {
-                // if there are multiple keywords
-                for (String keyword : keywordsArray) {
-                    Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
-                    if (keywordObj != null) {
-                        keywordsList.add(keywordObj);
-                    }
-                }
             }
         }
-
-        if(!keywordsList.isEmpty()) {
+        if (!keywordsList.isEmpty()) {
             filterQuestion.setKeywords(keywordsList);
         }
 
-        // setting points and difficulty, if it was set
+        // set points and difficulty if set
         if (SharedData.getFilterQuestion().getPoints() != 0) {
             filterQuestion.setPoints(SharedData.getFilterQuestion().getPoints());
         }
@@ -161,19 +162,10 @@ public class CreateManual_ScreenController extends ScreenController {
         }
 
         // set multiple choice value
-        if (multipleChoice) {
-            filterQuestion.setMultipleChoice(1);
-        } else {
-            filterQuestion.setMultipleChoice(0);
-        }
+        filterQuestion.setMultipleChoice(multipleChoice ? 1 : 0);
 
-        // call Repository to search for questions corresponding to given filter values
-        ArrayList<Question> result;
-        if (multipleChoice) {
-            result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), true);
-        } else {
-            result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), false);
-        }
+        // call Repository to search for questions corresponding to filter values
+        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), multipleChoice);
 
         // display filtered questions in filter window
         showFilteredQuestions(result);
@@ -183,27 +175,33 @@ public class CreateManual_ScreenController extends ScreenController {
     // method to display test questions in preview area
     @FXML
     private void showTestQuestionsInPreview() {
+        // clear the existing content
         // vbox_labels.getChildren().clear();
+
         // spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
         System.out.println("questions: ");
         System.out.println("questions: "+ SharedData.getTestQuestions().get(0).getQuestionString());
+
         // counter for question number
         int i = 1;
+
+        // check if there are test questions available
         if (!SharedData.getTestQuestions().isEmpty()) {
+            // iterate through each test question
             for (Question question : SharedData.getTestQuestions()) {
                 System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
-                // create the Vbox and the component for the question
+                // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
                 Label questionTextLabel = new Label(question.getQuestionString());
 
                 System.out.println("question String:" + SharedData.getTestQuestions().get(0).getQuestionString());
-                // add elements to the Vbox
+                // add labels to the VBox
                 questionVbox.getChildren().add(questionNumberLabel);
                 questionVbox.getChildren().add(questionTextLabel);
 
-                // add the question Vbox to the testPreview area (vbox)
+                // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
 
                 // set spacing between questions (serves as answer area)
@@ -219,15 +217,20 @@ public class CreateManual_ScreenController extends ScreenController {
     // method to display filtered questions in filter window
     @FXML
     void showFilteredQuestions(ArrayList<Question> questions) {
+        // check if the list of questions is empty
         if (questions.isEmpty()) {
             System.out.println("No questions found");
             return;
         }
+
+        // spacing between each question
         double spacing = 10.0;
+
+        // iterate through each filtered question
         for (Question question : questions) {
 
+            // create the VBox and labels for the question
             System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
-            // create the Vbox and the elements for the question
             VBox questionVbox = new VBox();
 
             Label questionPointsLabel = new Label("(Erreichbare Punkte: "+ question.getPoints() + ")");
@@ -242,19 +245,21 @@ public class CreateManual_ScreenController extends ScreenController {
             // adds a newline if text is too long
             questionTextLabel.setWrapText(true);
 
+            // add answers label if available
             Label questionAnswersLabel = null;
             if (question.getAnswers() != null) {
                 questionAnswersLabel = new Label(question.getAnswers());
                 questionAnswersLabel.setTextFill(Color.WHITE);
             }
 
+            // add remarks label if available
             Label questionRemarksLabel = null;
             if (question.getRemarks() != null) {
                 questionRemarksLabel = new Label(question.getRemarks());
                 questionRemarksLabel.setTextFill(Color.WHITE);
             }
 
-            // add elements to the Vbox
+            // add labels to the VBox
             questionVbox.getChildren().add(questionPointsLabel);
             questionVbox.getChildren().add(questionDifficultyLabel);
             questionVbox.getChildren().add(questionTextLabel);
@@ -265,7 +270,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 questionVbox.getChildren().add(questionRemarksLabel);
             }
 
-            // add the question Vbox to the testPreview area (vbox)
+            // add the question VBox to the filter window preview area (VBox)
             vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
             vbox_filteredQuestionsPreview.setSpacing(spacing);
         }
