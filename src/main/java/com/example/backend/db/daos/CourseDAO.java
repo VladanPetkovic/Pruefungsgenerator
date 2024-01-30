@@ -9,11 +9,19 @@ import lombok.Setter;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Data Access Object (DAO) for managing Course objects in the database.
+ */
 public class CourseDAO implements DAO<Course> {
 
     @Setter(AccessLevel.PRIVATE)
     ArrayList<Course> courseCache;
 
+    /**
+     * Creates a new course record in the database.
+     *
+     * @param course The Course object to create.
+     */
     @Override
     public void create(Course course) {
         String insertStmt = "INSERT INTO Courses (CourseName, CourseNumber, Lector) VALUES (?, ?, ?);";
@@ -29,6 +37,11 @@ public class CourseDAO implements DAO<Course> {
         }
     }
 
+    /**
+     * Retrieves all courses from the database.
+     *
+     * @return An ArrayList containing all courses.
+     */
     @Override
     public ArrayList<Course> readAll() {
         String selectStmt = "SELECT CourseID, CourseName, CourseNumber, Lector FROM Courses;";
@@ -53,6 +66,12 @@ public class CourseDAO implements DAO<Course> {
         return null;
     }
 
+    /**
+     * Retrieves all courses associated with a specific study program.
+     *
+     * @param studyProgramId The ID of the study program.
+     * @return An ArrayList containing courses associated with the specified study program.
+     */
     public ArrayList<Course> readAllForOneProgram(int studyProgramId) {
         String selectStmt =
                 "SELECT Courses.CourseID, CourseName, CourseNumber, Lector " +
@@ -80,6 +99,12 @@ public class CourseDAO implements DAO<Course> {
         return null;
     }
 
+    /**
+     * Retrieves a course by its ID from the database.
+     *
+     * @param id The ID of the course to retrieve.
+     * @return The Course object corresponding to the given ID.
+     */
     @Override
     public Course read(int id) {
         Course course = null;
@@ -101,6 +126,12 @@ public class CourseDAO implements DAO<Course> {
         return course;
     }
 
+    /**
+     * Retrieves a course by its name from the database.
+     *
+     * @param course_name The name of the course to retrieve.
+     * @return The Course object corresponding to the given name.
+     */
     public Course read(String course_name) {
         Course course = null;
 
@@ -121,6 +152,11 @@ public class CourseDAO implements DAO<Course> {
         return course;
     }
 
+    /**
+     * Updates an existing course record in the database.
+     *
+     * @param course The Course object with updated information.
+     */
     @Override
     public void update(Course course) {
         String updateStmt =
@@ -140,6 +176,11 @@ public class CourseDAO implements DAO<Course> {
         }
     }
 
+    /**
+     * Deletes a course record from the database by its ID.
+     *
+     * @param id The ID of the course to delete.
+     */
     @Override
     public void delete(int id) {
         String deleteStmt = "DELETE FROM Courses WHERE CourseID = ?;";
@@ -164,6 +205,12 @@ public class CourseDAO implements DAO<Course> {
         }
     }
 
+    /**
+     * Adds a connection between a study program and a course in the database.
+     *
+     * @param programId The ID of the study program.
+     * @param courseId  The ID of the course.
+     */
     public void addSCConnection(int programId, int courseId) {
         String insertStmt = "INSERT INTO hasSC (ProgramID, CourseID) VALUES (?, ?);";
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -176,6 +223,14 @@ public class CourseDAO implements DAO<Course> {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Creates a Course object from a ResultSet obtained from the database.
+     *
+     * @param resultSet The ResultSet containing course data.
+     * @return A Course object created from the ResultSet.
+     * @throws SQLException If a database access error occurs or the column labels are not valid.
+     */
     @Override
     public Course createModelFromResultSet (ResultSet resultSet) throws SQLException {
         return new Course(
