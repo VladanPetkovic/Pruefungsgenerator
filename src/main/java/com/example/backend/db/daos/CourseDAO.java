@@ -153,6 +153,32 @@ public class CourseDAO implements DAO<Course> {
     }
 
     /**
+     * Retrieves a course by its course number from the database.
+     *
+     * @param courseNumber The course number of the course to retrieve.
+     * @return The Course object corresponding to the given course number.
+     */
+    public Course readByCourseNumber(int courseNumber) {
+        Course course = null;
+
+        String readStmt = "SELECT CourseID, CourseName, CourseNumber, Lector FROM Courses WHERE CourseNumber = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+            preparedStatement.setInt(1, courseNumber);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    course = createModelFromResultSet(result);
+                }
+                setCourseCache(null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return course;
+    }
+
+    /**
      * Updates an existing course record in the database.
      *
      * @param course The Course object with updated information.
@@ -215,6 +241,25 @@ public class CourseDAO implements DAO<Course> {
         String insertStmt = "INSERT INTO hasSC (ProgramID, CourseID) VALUES (?, ?);";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
+            preparedStatement.setInt(1, programId);
+            preparedStatement.setInt(2, courseId);
+            preparedStatement.executeUpdate();
+            setCourseCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Removes a connection between a study program and a course from the database.
+     *
+     * @param programId The ID of the study program.
+     * @param courseId  The ID of the course.
+     */
+    public void removeSCConnection(int programId, int courseId) {
+        String deleteStmt = "DELETE FROM hasSC WHERE ProgramID = ? AND CourseID = ?";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, programId);
             preparedStatement.setInt(2, courseId);
             preparedStatement.executeUpdate();

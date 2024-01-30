@@ -261,6 +261,24 @@ public class CategoryDAO implements DAO<Category> {
     }
 
     /**
+     * Removes a connection between a course and a category from the database.
+     *
+     * @param course_id   The ID of the course.
+     * @param category_id The ID of the category.
+     */
+    public void removeCCConnection(int course_id, int category_id) {
+        String deleteStmt = "DELETE FROM hasCC WHERE CourseID = ? AND CategoryID = ?;";
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            preparedStatement.setInt(1, course_id);
+            preparedStatement.setInt(2, category_id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Creates a Category object from the ResultSet.
      *
      * @param resultSet The ResultSet containing category data.
