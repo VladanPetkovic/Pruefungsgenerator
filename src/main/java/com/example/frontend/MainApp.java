@@ -1,6 +1,5 @@
 package com.example.frontend;
 
-import com.example.frontend.controller.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -8,8 +7,15 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
+    /** The primary stage of the application. */
     public static Stage stage;
 
+    /**
+     * Starts the JavaFX application.
+     *
+     * @param stage The primary stage for the application.
+     * @throws IOException If an error occurs while loading the FXML file.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
@@ -20,6 +26,11 @@ public class MainApp extends Application {
         stage.show();
     }
 
+    /**
+     * Sets the minimum and maximum sizes for the application window.
+     *
+     * @param stage The primary stage for the application.
+     */
     public void setWindowsSize(Stage stage) {
         // setting window sizes
         // min. window
@@ -31,6 +42,11 @@ public class MainApp extends Application {
         stage.setMaxHeight(1080);
     }
 
+    /**
+     * Launches the JavaFX application.
+     *
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         launch();
     }

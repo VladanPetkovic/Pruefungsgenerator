@@ -787,7 +787,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private boolean checkIfEmptyAnswers() {
         return answers.stream().anyMatch(answerTextArea -> answerTextArea.getText().isEmpty()); // Checking if any answer text area is empty
     }
-    
+
     /**
      * Checks if the question field is empty.
      *
