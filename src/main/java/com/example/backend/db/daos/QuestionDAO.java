@@ -17,6 +17,11 @@ public class QuestionDAO implements DAO<Question> {
         this.questionCache = new ArrayList<>();
     }
 
+    /**
+     * Creates a new question in the database.
+     *
+     * @param question The question to be created.
+     */
     @Override
     public void create(Question question) {
         String insertStmt =
@@ -42,6 +47,11 @@ public class QuestionDAO implements DAO<Question> {
         }
     }
 
+    /**
+     * Retrieves all questions from the database.
+     *
+     * @return ArrayList of all questions.
+     */
     @Override
     public ArrayList<Question> readAll() {
         // deleting old questions, if they are existing in this cache
@@ -77,6 +87,12 @@ public class QuestionDAO implements DAO<Question> {
         return this.questionCache;
     }
 
+    /**
+     * Retrieves all questions belonging to a specific category from the database.
+     *
+     * @param category The category for which questions are to be retrieved.
+     * @return ArrayList of questions belonging to the specified category.
+     */
     public ArrayList<Question> readAll(Category category) {
         // deleting old questions, if they are existing in this cache
         this.questionCache.clear();
@@ -116,6 +132,13 @@ public class QuestionDAO implements DAO<Question> {
         return this.questionCache;
     }
 
+    /**
+     * Retrieves questions based on search options and a course from the database.
+     *
+     * @param searchOptions List of search options.
+     * @param course        The course for which questions are to be retrieved.
+     * @return ArrayList of questions based on the search options and course.
+     */
     public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course) {
         // deleting old questions, if they are existing in this cache
         this.questionCache.clear();
@@ -178,6 +201,14 @@ public class QuestionDAO implements DAO<Question> {
         return this.questionCache;
     }
 
+    /**
+     * Prepares a SQL query based on search options.
+     *
+     * @param searchOptions       List of search options.
+     * @param stmt                StringBuilder to construct the SQL query.
+     * @param listForPreparedStmt List to hold values for the prepared statement.
+     * @param course_id           The ID of the course.
+     */
     public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id) {
         int countKeywords = 0;
         int countImages = 0;
@@ -226,6 +257,12 @@ public class QuestionDAO implements DAO<Question> {
         stmt.append(';');
     }
 
+    /**
+     * Retrieves a question by its ID from the database.
+     *
+     * @param questionId The ID of the question to retrieve.
+     * @return The Question object corresponding to the given ID.
+     */
     @Override
     public Question read(int questionId) {
         // deleting old questions, if they are existing in this cache
@@ -268,6 +305,61 @@ public class QuestionDAO implements DAO<Question> {
         return null;
     }
 
+    /**
+     * Retrieves a question by its question text from the database.
+     *
+     * @param questionText The question text to search for.
+     * @return The Question object corresponding to the given question text.
+     */
+    public Question readByQuestionText(String questionText) {
+        // Clearing old questions from the cache
+        this.questionCache.clear();
+
+        // SQL statement to select the question based on its text
+        String selectStmt =
+                "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
+                        "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
+                        "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
+                        "K.KeywordID, K.Keyword " +
+                        "FROM Questions Q " +
+                        "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
+                        "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
+                        "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
+                        "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
+                        "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
+                        "WHERE Q.Question = ?;";
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
+
+            preparedStatement.setString(1, questionText);
+            try (ResultSet questionsResultSet = preparedStatement.executeQuery()) {
+                while (questionsResultSet.next()) {
+                    // Creating a new question object from the result set
+                    Question newQuestion = createModelFromResultSet(questionsResultSet);
+                    if (newQuestion != null) {
+                        this.questionCache.add(createModelFromResultSet(questionsResultSet));
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Returning the first question from the cache if found
+        if (!this.questionCache.isEmpty()) {
+            return this.questionCache.get(0);
+        }
+
+        return null;
+    }
+
+    /**
+     * Updates an existing question in the database.
+     *
+     * @param question The question to be updated.
+     */
     @Override
     public void update(Question question) {
         String updateStmt =
@@ -295,6 +387,11 @@ public class QuestionDAO implements DAO<Question> {
         }
     }
 
+    /**
+     * Deletes a question from the database.
+     *
+     * @param id The ID of the question to delete.
+     */
     @Override
     public void delete(int id) {
         String deleteStmt = "DELETE FROM Questions WHERE QuestionID = ?;";
@@ -319,6 +416,12 @@ public class QuestionDAO implements DAO<Question> {
         }
     }
 
+    /**
+     * Creates a Question object from a ResultSet.
+     *
+     * @param resultSet The ResultSet containing question data.
+     * @return The Question object created from the ResultSet.
+     */
     public Question createModelFromResultSet(ResultSet resultSet) throws SQLException {
         int question_id = resultSet.getInt("QuestionID");
 
