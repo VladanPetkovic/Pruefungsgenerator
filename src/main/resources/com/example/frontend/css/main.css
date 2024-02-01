@@ -209,6 +209,22 @@ button
     -fx-padding: 20px 50px 20px 50px;
 }
 
+/* Used for ComboBox - input (keyword, category)*/
+.combo-box .arrow, .combo-box .arrow-button{
+    -fx-background-color: transparent;
+}
 
-
-
+.input-combobox {
+    -fx-control-inner-background: #2f2f2f;
+    -fx-background-color: #434343;
+    -fx-prompt-text-fill: black;
+    -fx-text-inner-fill: white;
+    -fx-fill: white;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 300px;
+}
+.input-combobox > .label {
+    -fx-text-fill: white;
+}

@@ -1,9 +1,7 @@
 package com.example.backend.app;
 
-import com.example.backend.db.models.Course;
+import com.example.backend.db.models.*;
 import com.example.backend.db.models.Question;
-import com.example.backend.db.models.SearchObject;
-import com.example.backend.db.models.StudyProgram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +44,11 @@ public class SharedData {
     @Setter
     private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
 
+    @Getter
+    @Setter
+    // stores all keywords for searching and displaying in the keyword-dropdown
+    private static ArrayList<Keyword> keywordsList = new ArrayList<>();
+
 
     //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
     public static void resetAll() {
@@ -56,6 +59,7 @@ public class SharedData {
         filterQuestion = new Question();
         testQuestions = new ArrayList<>();
         searchObjectsAutTestCreate = new ArrayList<>();
+        keywordsList = new ArrayList<>();
     }
 
     //reset the Questions stored from the Automatic Test Create (mainly created for use in CreateManual_ScreenController)
