@@ -5,6 +5,8 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -271,9 +273,37 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private void setPointsAndDifficultyFilter(Question filterQuestion) {
         // Sets the difficulty filter to the current value of the difficulty slider.
-        filterQuestion.setDifficulty((int) difficultySlider.getValue());
+        getDifficultyFromSlider(filterQuestion);
         // Sets the points filter to the current value of the points slider.
-        filterQuestion.setPoints((float) pointsSlider.getValue());
+        getPointsFromSlider(filterQuestion);
+    }
+
+    // method to update points value when the slider value changes
+    private void getPointsFromSlider(Question filterQuestion) {
+        // add a listener to the value property of the points slider
+        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new points value from the slider
+                int points = (int) pointsSlider.getValue();
+                // update the points value in the filter question object stored in SharedData
+                filterQuestion.setPoints(points);
+            }
+        });
+    }
+
+    // method to update difficulty value when the slider value changes
+    private void getDifficultyFromSlider(Question filterQuestion) {
+        // add a listener to the value property of the difficulty slider
+        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new difficulty value from the slider
+                int difficulty = (int) difficultySlider.getValue();
+                // update the difficulty value in the filter question object stored in SharedData
+                filterQuestion.setDifficulty(difficulty);
+            }
+        });
     }
 
     /**
@@ -616,14 +646,16 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : question.getKeywords()) {
-                startState.add(k);
-                selectedKeywords.add(k);
-                Button b = createButton(k.getKeyword_text() + " X");
-                b.setOnAction(e -> {
-                    keywordsHBox.getChildren().remove(b);
-                    selectedKeywords.remove(k);
-                });
-                keywordsHBox.getChildren().add(b);
+                if(k.getKeyword_text() != null) {
+                    startState.add(k);
+                    selectedKeywords.add(k);
+                    Button b = createButton(k.getKeyword_text() + " X");
+                    b.setOnAction(e -> {
+                        keywordsHBox.getChildren().remove(b);
+                        selectedKeywords.remove(k);
+                    });
+                    keywordsHBox.getChildren().add(b);
+                }
             }
 
             // Set the question ID.
