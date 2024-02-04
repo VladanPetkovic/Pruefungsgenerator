@@ -5,13 +5,14 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import org.controlsfx.control.textfield.TextFields;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -121,6 +122,14 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Sets the value factory for the choosePoints spinner.
         choosePoints.setValueFactory(valueFactory);
+
+        // Sets the difficulty filter to the current value of the difficulty slider.
+        getDifficultyFromSlider(this.difficultySlider);
+        // Sets the points filter to the current value of the points slider.
+        getPointsFromSlider(this.pointsSlider);
+
+        initializeKeywords();
+        initializeCategories();
     }
 
     /**
@@ -174,11 +183,30 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(
                 filterQuestion,
                 SharedData.getSelectedCourse().getCourse_name(),
-                multipleChoiceCheckBox.isSelected()
+                true
         );
 
         // Displays the filtered questions in the console.
         printQuestions(result);
+    }
+
+    /**
+     * Initializes the auto-completion of the keywords in the search-area of edit-question
+     */
+    private void initializeKeywords() {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (Keyword k : keywords) {
+            items.add(k.getKeyword_text());
+        }
+        TextFields.bindAutoCompletion(keywordTextField, items);
+    }
+
+    private void initializeCategories() {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (Category c : categories) {
+            items.add(c.getCategory());
+        }
+        TextFields.bindAutoCompletion(categoryTextField, items);
     }
 
     /**
@@ -244,7 +272,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private void setKeywordFilter(String keywordText, Question filterQuestion) {
         // Checks if the provided keyword text is not empty.
-        if (!keywordText.isEmpty()) {
+        if (keywordText != null) {
             // Splits the keyword text into an array of keywords using comma or whitespace as delimiters.
             String[] keywordsArray = keywordText.split("[,\\s]+");
             // Initializes a list to store keyword objects.
@@ -261,49 +289,27 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             }
 
             // Sets the list of keywords as the keyword filter for the filter question.
-            filterQuestion.setKeywords(keywordsList);
+            if(!keywordsList.isEmpty()) {
+                filterQuestion.setKeywords(keywordsList);
+            }
         }
     }
 
     /**
      * Sets the difficulty and points filter for the filter question.
-     * Sets the difficulty filter to the current value of the difficulty slider.
-     * Sets the points filter to the current value of the points slider.
+     * Sets the difficulty filter to the current value of the difficulty slider, if the slider-value was changed.
+     * Sets the points filter to the current value of the points slider, if the slider-value was changed.
      * @param filterQuestion The filter question object to set the difficulty and points filters.
      */
     private void setPointsAndDifficultyFilter(Question filterQuestion) {
-        // Sets the difficulty filter to the current value of the difficulty slider.
-        getDifficultyFromSlider(filterQuestion);
-        // Sets the points filter to the current value of the points slider.
-        getPointsFromSlider(filterQuestion);
-    }
-
-    // method to update points value when the slider value changes
-    private void getPointsFromSlider(Question filterQuestion) {
-        // add a listener to the value property of the points slider
-        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new points value from the slider
-                int points = (int) pointsSlider.getValue();
-                // update the points value in the filter question object stored in SharedData
-                filterQuestion.setPoints(points);
-            }
-        });
-    }
-
-    // method to update difficulty value when the slider value changes
-    private void getDifficultyFromSlider(Question filterQuestion) {
-        // add a listener to the value property of the difficulty slider
-        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new difficulty value from the slider
-                int difficulty = (int) difficultySlider.getValue();
-                // update the difficulty value in the filter question object stored in SharedData
-                filterQuestion.setDifficulty(difficulty);
-            }
-        });
+        int points = (int) SharedData.getFilterQuestion().getPoints();
+        int difficulty = SharedData.getFilterQuestion().getDifficulty();
+        if(points != 0) {
+            filterQuestion.setPoints(points);
+        }
+        if(difficulty != 0) {
+            filterQuestion.setDifficulty(difficulty);
+        }
     }
 
     /**

@@ -1,7 +1,11 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
+import com.example.backend.db.models.Question;
 import com.example.frontend.MainApp;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 
@@ -31,6 +35,9 @@ public abstract class ScreenController {
         if(refresh){
             screen.loadComponents();
         }
+
+        // resetting filterquestion
+        SharedData.setFilterQuestion(new Question());
         // set the scene and display it
         MainApp.stage.setScene(screen.scene);
         MainApp.stage.show();
@@ -85,5 +92,33 @@ public abstract class ScreenController {
         // navigate to the home screen and reset shared data
         switchScene(home,true);
         SharedData.resetAll();
+    }
+
+    // method to update points value when the slider value changes
+    protected void getPointsFromSlider(Slider pointsSlider) {
+        // add a listener to the value property of the points slider
+        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new points value from the slider
+                int points = (int) pointsSlider.getValue();
+                // update the points value in the filter question object stored in SharedData
+                SharedData.getFilterQuestion().setPoints(points);
+            }
+        });
+    }
+
+    // method to update difficulty value when the slider value changes
+    protected void getDifficultyFromSlider(Slider difficultySlider) {
+        // add a listener to the value property of the difficulty slider
+        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
+                // retrieve the new difficulty value from the slider
+                int difficulty = (int) difficultySlider.getValue();
+                // update the difficulty value in the filter question object stored in SharedData
+                SharedData.getFilterQuestion().setDifficulty(difficulty);
+            }
+        });
     }
 }

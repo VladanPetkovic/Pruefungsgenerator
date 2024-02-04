@@ -215,16 +215,12 @@ button
 }
 
 .input-combobox {
-    -fx-control-inner-background: #2f2f2f;
-    -fx-background-color: #434343;
+    -fx-control-inner-background: #D3D3D3;
+    -fx-background-color: #D3D3D3;
     -fx-prompt-text-fill: black;
     -fx-text-inner-fill: white;
-    -fx-fill: white;
     -fx-pref-width: 300px;
     -fx-min-width: 200px;
     -fx-pref-height: 32px;
     -fx-max-width: 300px;
-}
-.input-combobox > .label {
-    -fx-text-fill: white;
 }

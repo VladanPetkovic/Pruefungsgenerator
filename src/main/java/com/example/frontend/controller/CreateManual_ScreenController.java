@@ -50,8 +50,8 @@ public class CreateManual_ScreenController extends ScreenController {
     private void initialize() {
         // initialize points and difficulty from the slider by a listener
         // --> only when the value changes, the value is updated
-        getPointsFromSlider();
-        getDifficultyFromSlider();
+        getPointsFromSlider(this.pointsSlider);
+        getDifficultyFromSlider(this.difficultySlider);
 
         // set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
@@ -64,34 +64,6 @@ public class CreateManual_ScreenController extends ScreenController {
             // display the questions from automaticTestCreate in the testPreviewArea
             showTestQuestionsInPreview();
         }
-    }
-
-    // method to update points value when the slider value changes
-    private void getPointsFromSlider() {
-        // add a listener to the value property of the points slider
-        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new points value from the slider
-                int points = (int) pointsSlider.getValue();
-                // update the points value in the filter question object stored in SharedData
-                SharedData.getFilterQuestion().setPoints(points);
-            }
-        });
-    }
-
-    // method to update difficulty value when the slider value changes
-    private void getDifficultyFromSlider() {
-        // add a listener to the value property of the difficulty slider
-        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new difficulty value from the slider
-                int difficulty = (int) difficultySlider.getValue();
-                // update the difficulty value in the filter question object stored in SharedData
-                SharedData.getFilterQuestion().setDifficulty(difficulty);
-            }
-        });
     }
 
     // event handler for the "Apply Filter" button click
