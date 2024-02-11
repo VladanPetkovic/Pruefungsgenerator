@@ -9,6 +9,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -69,15 +70,29 @@ public class pdfPreview_ScreenController extends ScreenController {
 
         double targetWidth = this.vbox_previewPane.getWidth();
 
-        for (Image image : images) {
-            ImageView imageView = new ImageView(image);
+        for (int i = 0; i < images.size(); i++) {
+            ImageView imageView = new ImageView(images.get(i));
 
             // Set the fit width and preserve the aspect ratio
             imageView.setFitWidth(targetWidth);
             imageView.setPreserveRatio(true);
 
             this.vbox_previewPane.getChildren().add(imageView);
+
+            // adding a black line between pages
+            if (i < images.size() - 1) {
+                this.vbox_previewPane.getChildren().add(createBlackSeparator());
+            }
         }
+    }
+
+    private Region createBlackSeparator() {
+        // creating a black separator
+        Region separator = new Region();
+        separator.setMinHeight(5);
+        separator.setBackground(javafx.scene.layout.Background.EMPTY);
+        separator.setStyle("-fx-background-color: black;");
+        return separator;
     }
 
     private String getTestHeader() {
