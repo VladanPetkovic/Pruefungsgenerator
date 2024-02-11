@@ -1,15 +1,23 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
+import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Category;
+import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import com.example.frontend.MainApp;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * the base class for all screen controllers
@@ -94,7 +102,12 @@ public abstract class ScreenController {
         SharedData.resetAll();
     }
 
-    // method to update points value when the slider value changes
+    /**
+     * Method to update points value when the slider value changes.
+     * The value of the slider is saved in SharedData filterQuestion.
+     * Use this function in the init()-function of your screen - otherwise it won't listen to the user input.
+     * @param pointsSlider
+     */
     protected void getPointsFromSlider(Slider pointsSlider) {
         // add a listener to the value property of the points slider
         pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -108,7 +121,12 @@ public abstract class ScreenController {
         });
     }
 
-    // method to update difficulty value when the slider value changes
+    /**
+     * Method to update difficulty value when the slider value changes.
+     * The value of the slider is saved in SharedData filterQuestion.
+     * Use this function in the init()-function of your screen - otherwise it won't listen to the user input.
+     * @param difficultySlider
+     */
     protected void getDifficultyFromSlider(Slider difficultySlider) {
         // add a listener to the value property of the difficulty slider
         difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -120,5 +138,40 @@ public abstract class ScreenController {
                 SharedData.getFilterQuestion().setDifficulty(difficulty);
             }
         });
+    }
+
+    /**
+     * Initializes the auto-completion of the keywords in the search-area of edit-question
+     */
+    protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords) {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (Keyword k : keywords) {
+            items.add(k.getKeyword_text());
+        }
+        TextFields.bindAutoCompletion(keywordTextField, items);
+    }
+
+    /**
+     * Initializes the auto-completion of the categories in the search-area of edit-question.
+     */
+    protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories) {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (Category c : categories) {
+            items.add(c.getCategory());
+        }
+        TextFields.bindAutoCompletion(categoryTextField, items);
+    }
+
+    /**
+     * Initializes the auto-completion of the questions in the search-area of edit-question.
+     */
+    protected void initializeQuestions(TextField questionTextField) {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        String course_name = SharedData.getSelectedCourse().getCourse_name();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name, false);
+        for (Question q : questions) {
+            items.add(q.getQuestionString());
+        }
+        TextFields.bindAutoCompletion(questionTextField, items);
     }
 }

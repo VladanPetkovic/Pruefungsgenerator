@@ -20,6 +20,7 @@ import javafx.scene.paint.Paint;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
@@ -32,6 +33,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     @FXML
     private TextField keywordTextField;
+
+    @FXML
+    private TextField questionTextField;
 
     @FXML
     private Slider difficultySlider;
@@ -128,8 +132,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Sets the points filter to the current value of the points slider.
         getPointsFromSlider(this.pointsSlider);
 
-        initializeKeywords();
-        initializeCategories();
+        initializeKeywords(keywordTextField, keywords);
+        initializeCategories(categoryTextField, categories);
+        initializeQuestions(questionTextField);
     }
 
     /**
@@ -191,28 +196,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     /**
-     * Initializes the auto-completion of the keywords in the search-area of edit-question
-     */
-    private void initializeKeywords() {
-        ObservableList<String> items = FXCollections.observableArrayList();
-        for (Keyword k : keywords) {
-            items.add(k.getKeyword_text());
-        }
-        TextFields.bindAutoCompletion(keywordTextField, items);
-    }
-
-    private void initializeCategories() {
-        ObservableList<String> items = FXCollections.observableArrayList();
-        for (Category c : categories) {
-            items.add(c.getCategory());
-        }
-        TextFields.bindAutoCompletion(categoryTextField, items);
-    }
-
-    /**
      * Creates a filter question based on the selected filter criteria.
-     * Retrieves the category name, keyword text, and multiple choice checkbox status.
-     * Sets the category filter, keyword filter, points and difficulty filter, and multiple choice status.
+     * Retrieves the category name, keyword text, question text and multiple choice checkbox status.
+     * Sets the category filter, keyword filter, question filter, points and difficulty filter, and multiple choice status.
      * @return The constructed filter question.
      */
     private Question createFilterQuestion() {
@@ -222,6 +208,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Retrieves the category name, keyword text, and multiple choice checkbox status.
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
+        String questionText = questionTextField.getText();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
         // Sets the category filter based on the provided category name.
@@ -229,6 +216,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Sets the keyword filter based on the provided keyword text.
         setKeywordFilter(keywordText, filterQuestion);
+
+        // Sets the question filter based on the provided question text.
+        setQuestionFilter(questionText, filterQuestion);
 
         // Sets the points and difficulty filter.
         setPointsAndDifficultyFilter(filterQuestion);
@@ -293,6 +283,19 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 filterQuestion.setKeywords(keywordsList);
             }
         }
+    }
+
+    /**
+     * Sets the filterQuestion with the provided questionText-String.
+     * @param questionText the question text inputted for getting all questions.
+     * @param filterQuestion the filter question used for SQL-query.
+     */
+    private void setQuestionFilter(String questionText, Question filterQuestion) {
+        if (Objects.equals(questionText, "") || questionText == null) {
+            return;
+        }
+
+        filterQuestion.setQuestionString(questionText);
     }
 
     /**

@@ -8,14 +8,18 @@ import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class CreateManual_ScreenController extends ScreenController {
 
@@ -24,6 +28,9 @@ public class CreateManual_ScreenController extends ScreenController {
 
     @FXML
     private TextField categoryTextField;
+
+    @FXML
+    private TextField questionTextField;
 
     @FXML
     private TextField keywordTextField;
@@ -52,6 +59,11 @@ public class CreateManual_ScreenController extends ScreenController {
         // --> only when the value changes, the value is updated
         getPointsFromSlider(this.pointsSlider);
         getDifficultyFromSlider(this.difficultySlider);
+
+        // init auto-completion
+        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAll());
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id()));
+        initializeQuestions(this.questionTextField);
 
         // set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
@@ -98,6 +110,7 @@ public class CreateManual_ScreenController extends ScreenController {
         // get filter values from text fields and checkboxes
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
+        String questionText = questionTextField.getText();
         boolean multipleChoice = multipleChoiceCheckBox.isSelected();
 
         // set category value if provided
@@ -123,6 +136,11 @@ public class CreateManual_ScreenController extends ScreenController {
         }
         if (!keywordsList.isEmpty()) {
             filterQuestion.setKeywords(keywordsList);
+        }
+
+        // set the question text
+        if (!(Objects.equals(questionText, "") || questionText == null)) {
+            filterQuestion.setQuestionString(questionText);
         }
 
         // set points and difficulty if set
@@ -152,8 +170,8 @@ public class CreateManual_ScreenController extends ScreenController {
 
         // spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
-        System.out.println("questions: ");
-        System.out.println("questions: "+ SharedData.getTestQuestions().get(0).getQuestionString());
+//        System.out.println("questions: ");
+//        System.out.println("questions: "+ SharedData.getTestQuestions().get(0).getQuestionString());
 
         // counter for question number
         int i = 1;
@@ -162,13 +180,13 @@ public class CreateManual_ScreenController extends ScreenController {
         if (!SharedData.getTestQuestions().isEmpty()) {
             // iterate through each test question
             for (Question question : SharedData.getTestQuestions()) {
-                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
+//                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
                 Label questionTextLabel = new Label(question.getQuestionString());
 
-                System.out.println("question String:" + SharedData.getTestQuestions().get(0).getQuestionString());
+//                System.out.println("question String:" + SharedData.getTestQuestions().get(0).getQuestionString());
                 // add labels to the VBox
                 questionVbox.getChildren().add(questionNumberLabel);
                 questionVbox.getChildren().add(questionTextLabel);
@@ -178,7 +196,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 // set spacing between questions (serves as answer area)
                 vbox_testQuestionsPreview.setSpacing(spacing);
-                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
+//                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
                 i++;
             }
             // after the questions are displayed delete the questions from the sharedData class
@@ -202,7 +220,7 @@ public class CreateManual_ScreenController extends ScreenController {
         for (Question question : questions) {
 
             // create the VBox and labels for the question
-            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
+//            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
             VBox questionVbox = new VBox();
 
             Label questionPointsLabel = new Label("(Erreichbare Punkte: "+ question.getPoints() + ")");
