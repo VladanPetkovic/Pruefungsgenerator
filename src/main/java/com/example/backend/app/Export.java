@@ -1,6 +1,7 @@
 package com.example.backend.app;
 
 import com.example.backend.db.models.Question;
+import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -8,12 +9,16 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import javafx.embed.swing.SwingFXUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -21,14 +26,46 @@ public class Export {
     private float pageWidth;
     private float pageHeight;
     private float margin = 50;
-    private final int questionsPerSite = 5;
+    private int questionsPerSite = 5;
     private int questionNumber = 0;
+    private String testHeader = "";
+    private String destinationFolder = "";
 
-    public boolean exportToPdf(ArrayList<Question> testQuestions, String testHeader) {
+    /**
+     * This functions exports a pdf with given testQuestions.
+     * @param testQuestions ArrayList of testQuestions for making the pdf-File.
+     * @return True, if export was successful and false, if something failed.
+     */
+    public boolean exportToPdf(ArrayList<Question> testQuestions) {
+        boolean returnValue = false;
+
+        try {
+            PDDocument document = buildPdfDocument(testQuestions);
+            if (document == null) {
+                return false;
+            }
+
+            document.save(this.destinationFolder + createFileName());
+            document.close();
+            returnValue = true;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return returnValue;    // needed later for confirming user the creation of the pdf document
+    }
+
+    /**
+     * This functions builds the pdf-document. It is used for exporting and preview of the pdf-file.
+     * @param testQuestions ArrayList of Questions needed for creating the pdf-document.
+     * @return A document will be returned. Returns null, when something fails.
+     */
+    private PDDocument buildPdfDocument(ArrayList<Question> testQuestions) {
+        this.questionNumber = 0;
+
         try {
             // Create a new PDF document
             PDDocument document = new PDDocument();
-            String outputPath = getOutPutPath();
             PDPageContentStream contentStream = null;
 
             for (int i = 0; i < getNumberOfPages(testQuestions.size()); i++) {
@@ -57,13 +94,78 @@ public class Export {
                 contentStream.close(); // Close the last content stream
             }
 
-            document.save(outputPath + "test.pdf");
-            document.close();
+            return document;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
-        return true;    // needed later for confirming user the creation of the pdf document
+
+        return null;
+    }
+
+    /**
+     * This functions makes an ArrayList of images (page of pdf-document) and returns it for the frontend-controller.
+     * @param testQuestions ArrayList of questions needed for building the pdf-document.
+     * @return ArrayList of images - these images are going to be used in the GUI.
+     */
+    public ArrayList<Image> getPdfPreviewImages(ArrayList<Question> testQuestions) {
+        ArrayList<Image> images = new ArrayList<>();
+
+        try {
+            PDDocument document = buildPdfDocument(testQuestions);
+            if (document == null) {
+                return images;
+            }
+
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+
+            for (int i = 0; i < document.getNumberOfPages(); i++) {
+                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(i, 300);
+
+                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                images.add(image);
+            }
+
+            document.close();
+            return images;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return images;
+    }
+
+    /**
+     * !!!Use this function before exportToPdf()!!!
+     * Sets important parameters for the export-function.
+     * @param testHeader The Title of the test
+     * @param questionsPerSite The amount of questions on one page
+     * @param destFolder The destination folder, where the user saves the test
+     */
+    public void setOptions(String testHeader, int questionsPerSite, String destFolder) {
+        this.testHeader = testHeader;
+        this.questionsPerSite = questionsPerSite;
+
+        if (!(Objects.equals(destFolder, "") || destFolder == null)) {
+            // TODO: set the destination folder
+        }
+        this.destinationFolder = getOutPutPath();
+    }
+
+    /**
+     * Creates the fileName with the current DateTime.
+     * @return String, for example: test_2024-02-11_18-38-27.pdf
+     */
+    public String createFileName() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        int year = currentDateTime.getYear();
+        int month = currentDateTime.getMonthValue();
+        int day = currentDateTime.getDayOfMonth();
+        int hour = currentDateTime.getHour();
+        int minute = currentDateTime.getMinute();
+        int second = currentDateTime.getSecond();
+
+        return String.format("test_%04d-%02d-%02d_%02d-%02d-%02d.pdf", year, month, day, hour, minute, second);
     }
 
     private int getNumberOfPages(int numberOfQuestions) {

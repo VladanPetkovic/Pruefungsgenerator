@@ -8,6 +8,7 @@ module com.example.demo {
     requires java.sql;
     requires java.desktop;
     requires org.apache.pdfbox;
+    requires javafx.swing;
 
     opens com.example.frontend to javafx.fxml;
     exports com.example.frontend;

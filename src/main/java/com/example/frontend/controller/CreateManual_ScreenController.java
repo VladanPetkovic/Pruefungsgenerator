@@ -1,22 +1,16 @@
 package com.example.frontend.controller;
 
-import com.example.backend.app.Export;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.textfield.TextFields;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -90,14 +84,8 @@ public class CreateManual_ScreenController extends ScreenController {
     private void applyExportButtonClicked(ActionEvent event) {
         // check if there are test questions to export
         if (!SharedData.getTestQuestions().isEmpty()) {
-            // create an Export object
-            Export export = new Export();
-            // export the test questions to PDF with a title based on the selected course
-            export.exportToPdf(SharedData.getTestQuestions(), "Test: " + SharedData.getSelectedCourse().getCourse_name());
-            // reset the stored test questions
-            SharedData.resetQuestions();
-            // switch the scene to the createTestAutomatic screen
-            switchScene(createTestAutomatic, true);
+            // switch the scene to the pdf-preview screen
+            switchScene(pdf_preview, true);
         }
     }
 

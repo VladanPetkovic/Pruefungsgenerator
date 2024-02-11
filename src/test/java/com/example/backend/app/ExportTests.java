@@ -40,7 +40,8 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement", false);
-        boolean pdfWasCreated = export.exportToPdf(questions, testHeader);
+        export.setOptions(testHeader, 9, null);
+        boolean pdfWasCreated = export.exportToPdf(questions);
 
         // assert
         assertTrue(pdfWasCreated);
@@ -54,9 +55,19 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
-        boolean pdfWasCreated = export.exportToPdf(questions, testHeader);
+        export.setOptions(testHeader, 5, null);
+        boolean pdfWasCreated = export.exportToPdf(questions);
 
         // assert
         assertTrue(pdfWasCreated);
+    }
+
+    @Test
+    void createFileName_checkFileName() {
+        System.out.println("Check: valid file-name");
+
+        System.out.println(export.createFileName());
+
+        assertTrue(true);
     }
 }

@@ -1,7 +1,6 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
-import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
