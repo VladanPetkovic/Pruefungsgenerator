@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
@@ -153,13 +155,8 @@ public class CreateManual_ScreenController extends ScreenController {
     // method to display test questions in preview area
     @FXML
     private void showTestQuestionsInPreview() {
-        // clear the existing content
-        // vbox_labels.getChildren().clear();
-
         // spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
-//        System.out.println("questions: ");
-//        System.out.println("questions: "+ SharedData.getTestQuestions().get(0).getQuestionString());
 
         // counter for question number
         int i = 1;
@@ -168,13 +165,11 @@ public class CreateManual_ScreenController extends ScreenController {
         if (!SharedData.getTestQuestions().isEmpty()) {
             // iterate through each test question
             for (Question question : SharedData.getTestQuestions()) {
-//                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
                 Label questionTextLabel = new Label(question.getQuestionString());
 
-//                System.out.println("question String:" + SharedData.getTestQuestions().get(0).getQuestionString());
                 // add labels to the VBox
                 questionVbox.getChildren().add(questionNumberLabel);
                 questionVbox.getChildren().add(questionTextLabel);
@@ -184,73 +179,60 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 // set spacing between questions (serves as answer area)
                 vbox_testQuestionsPreview.setSpacing(spacing);
-//                System.out.println("this is the vbox: "+ vbox_testQuestionsPreview.getChildren());
                 i++;
             }
-            // after the questions are displayed delete the questions from the sharedData class
-            //SharedData.resetQuestions();
         }
     }
 
     // method to display filtered questions in filter window
     @FXML
     void showFilteredQuestions(ArrayList<Question> questions) {
-        // check if the list of questions is empty
+        // Check if the list of questions is empty.
         if (questions.isEmpty()) {
-            System.out.println("No questions found");
+            // If the list is empty, print a message indicating no questions found.
+            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
+            this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
         }
 
-        // spacing between each question
-        double spacing = 10.0;
+        // Define the spacing between question boxes.
+        double spacing = 20.0;
 
-        // iterate through each filtered question
+        // Clear the existing content in the preview VBox.
+        this.vbox_filteredQuestionsPreview.getChildren().clear();
+
+        // Iterate through each question in the list.
         for (Question question : questions) {
-
-            // create the VBox and labels for the question
-//            System.out.println("this is the vbox: "+ vbox_filteredQuestionsPreview.getChildren());
-            VBox questionVbox = new VBox();
-
-            Label questionPointsLabel = new Label("(Erreichbare Punkte: "+ question.getPoints() + ")");
-            questionPointsLabel.setTextFill(Color.WHITE);
-
-            Label questionDifficultyLabel = new Label("Difficulty: " + question.getDifficulty());
-            questionDifficultyLabel.setTextFill(Color.WHITE);
-
-            Label questionTextLabel = new Label(question.getQuestionString());
-            questionTextLabel.setTextFill(Color.WHITE);
-
-            // adds a newline if text is too long
-            questionTextLabel.setWrapText(true);
-
-            // add answers label if available
-            Label questionAnswersLabel = null;
-            if (question.getAnswers() != null) {
-                questionAnswersLabel = new Label(question.getAnswers());
-                questionAnswersLabel.setTextFill(Color.WHITE);
-            }
-
-            // add remarks label if available
-            Label questionRemarksLabel = null;
-            if (question.getRemarks() != null) {
-                questionRemarksLabel = new Label(question.getRemarks());
-                questionRemarksLabel.setTextFill(Color.WHITE);
-            }
-
-            // add labels to the VBox
-            questionVbox.getChildren().add(questionPointsLabel);
-            questionVbox.getChildren().add(questionDifficultyLabel);
-            questionVbox.getChildren().add(questionTextLabel);
-            if (questionAnswersLabel!= null) {
-                questionVbox.getChildren().add(questionAnswersLabel);
-            }
-            if (questionRemarksLabel!= null) {
-                questionVbox.getChildren().add(questionRemarksLabel);
-            }
-
-            // add the question VBox to the filter window preview area (VBox)
-            vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
-            vbox_filteredQuestionsPreview.setSpacing(spacing);
+            // Create a VBox to hold the question details.
+            VBox questionVbox = createQuestionVBox(question);
+            questionVbox.getStyleClass().add("filter_question_preview_vbox");
+            // display the clicked question in the test_preview_pane
+            displayClickQuestion(questionVbox, question);
+            // Add the question VBox to the preview VBox.
+            this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
+            // Set the spacing between question boxes.
+            this.vbox_filteredQuestionsPreview.setSpacing(spacing);
         }
+    }
+
+    @FXML
+    private void displayClickQuestion(VBox questionVbox, Question question) {
+        questionVbox.setOnMouseClicked(event -> {
+            double spacing = 100;
+            int numberOfQuestions = this.vbox_testQuestionsPreview.getChildren().size();
+            // Create a VBox to hold the question details.
+            VBox newQuestionVbox = new VBox();
+            Label questionNumberLabel = new Label("Question "+ (numberOfQuestions + 1) +" (Erreichbare Punkte: "+ question.getPoints() + ")");
+            Label questionTextLabel = new Label(question.getQuestionString());
+            // add labels to the VBox
+            newQuestionVbox.getChildren().add(questionNumberLabel);
+            newQuestionVbox.getChildren().add(questionTextLabel);
+
+            // add this question to the vbox_testQuestionsPreview
+            this.vbox_testQuestionsPreview.getChildren().add(newQuestionVbox);
+            this.vbox_testQuestionsPreview.setSpacing(spacing);
+
+            SharedData.getTestQuestions().add(question);
+        });
     }
 }

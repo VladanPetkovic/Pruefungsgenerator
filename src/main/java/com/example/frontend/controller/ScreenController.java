@@ -10,10 +10,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.io.IOException;
@@ -174,5 +179,61 @@ public abstract class ScreenController {
             items.add(q.getQuestionString());
         }
         TextFields.bindAutoCompletion(questionTextField, items);
+    }
+
+    /**
+     * Creates a label with the specified text and text fill color.
+     *
+     * @param text The text content of the label.
+     * @param textFill The color used to fill the label's text.
+     * @return The created label with the specified text and text fill color, or null if the text is null.
+     */
+    protected Label createLabel(String text, Paint textFill) {
+        if (text != null) {
+            Label label = new Label(text);
+            label.setTextFill(textFill);
+            return label;
+        }
+        return null;
+    }
+
+    /**
+     * Adds the specified node to the VBox if it is not null.
+     *
+     * @param vBox The VBox container to which the node will be added.
+     * @param node The node to add to the VBox.
+     */
+    protected void addIfNotNull(VBox vBox, Node node) {
+        if (node != null) {
+            vBox.getChildren().add(node);
+        }
+    }
+
+    /**
+     * Creates a VBox to display the details of a question.
+     *
+     * @param question The question object containing the details to be displayed.
+     * @return The VBox containing the question details.
+     */
+    protected VBox createQuestionVBox(Question question) {
+        // Create a new VBox to hold the question details.
+        VBox questionVbox = new VBox();
+
+        // Create labels to display question information.
+        Label questionNumberLabel = createLabel("Erreichbare Punkte: " + question.getPoints(), Color.WHITE);
+        Label questionDifficultyLabel = createLabel("Difficulty: " + question.getDifficulty(), Color.WHITE);
+        Label questionTextLabel = createLabel(question.getQuestionString(), Color.WHITE);
+        Label questionAnswersLabel = createLabel(question.getAnswers(), Color.WHITE);
+        Label questionRemarksLabel = createLabel(question.getRemarks(), Color.WHITE);
+
+        // Allow the question text label to wrap text if necessary.
+        questionTextLabel.setWrapText(true);
+
+        // Add question details to the VBox.
+        questionVbox.getChildren().addAll(questionNumberLabel, questionDifficultyLabel, questionTextLabel);
+        addIfNotNull(questionVbox, questionAnswersLabel);
+        addIfNotNull(questionVbox, questionRemarksLabel);
+
+        return questionVbox;
     }
 }
