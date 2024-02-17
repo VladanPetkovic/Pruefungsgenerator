@@ -1,9 +1,11 @@
-button
+Button, CheckBox
 {
-    -fx-padding: 0;
-    -fx-border: none;
-    -fx-outline: none;
-    -fx-text-decoration: none;
+    -fx-cursor: HAND;
+}
+
+Slider
+{
+    -fx-cursor: OPEN_HAND;
 }
 
 .menu_btn
@@ -15,13 +17,25 @@ button
     -fx-pref-width: 50px;
     -fx-max-height: 50px;
     -fx-max-width: 50px;
-
+    -fx-cursor: HAND;
 }
 
 .exportBtn
 {
     -fx-background-color: red;
     -fx-text-fill: #fff;
+    -fx-cursor: HAND;
+}
+
+.btn_dark
+{
+    -fx-background-color: #2f2f2f;
+    -fx-text-fill: white;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 300px;
+    -fx-cursor: HAND;
 }
 
 .optionAreaBox
@@ -51,6 +65,12 @@ button
     -fx-text-fill: white;
     -fx-padding: 8px;
     -fx-font-size: medium;
+}
+.error_label
+{
+    -fx-alignment: center;
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
 }
 .scroll-box
 {
@@ -209,18 +229,3 @@ button
     -fx-padding: 20px 50px 20px 50px;
 }
 
-/* Used for ComboBox - input (keyword, category)*/
-.combo-box .arrow, .combo-box .arrow-button{
-    -fx-background-color: transparent;
-}
-
-.input-combobox {
-    -fx-control-inner-background: #D3D3D3;
-    -fx-background-color: #D3D3D3;
-    -fx-prompt-text-fill: black;
-    -fx-text-inner-fill: white;
-    -fx-pref-width: 300px;
-    -fx-min-width: 200px;
-    -fx-pref-height: 32px;
-    -fx-max-width: 300px;
-}

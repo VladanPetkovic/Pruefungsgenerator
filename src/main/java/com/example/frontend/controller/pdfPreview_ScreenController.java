@@ -2,8 +2,10 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.Export;
 import com.example.backend.app.SharedData;
+import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -11,7 +13,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -23,15 +27,22 @@ public class pdfPreview_ScreenController extends ScreenController {
     private TextField titleTextField;
 
     @FXML
-    private TextField destFolderTextField;
-
-    @FXML
     private VBox vbox_previewPane;
 
     @FXML
     private Label label_selectedCourse;
 
+    @FXML
+    private Label label_error_folderMissing;
+
+    @FXML
+    private CheckBox checkbox_applyHeader;
+
+    @FXML
+    private CheckBox checkbox_showPageNumber;
+
     private Export export;
+    public Label label_selectedDirectory;
 
     @FXML
     private void initialize() {
@@ -42,22 +53,56 @@ public class pdfPreview_ScreenController extends ScreenController {
         label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
     }
 
+    /**
+     * This functions only exports to pdf, if a folder was selected to save the file.
+     * @param actionEvent not used
+     */
     public void applyExportBtnClicked(ActionEvent actionEvent) {
-        // set the latest options
-        this.export.setOptions(getTestHeader(), getQuestionCount(), getDestinationFolder());
-        // export the test questions to PDF
-        this.export.exportToPdf(SharedData.getTestQuestions());
-        // reset the stored test questions
-        SharedData.resetQuestions();
-        // returning to the automatic-test-create-scene
-        switchScene(createTestAutomatic, true);
+        if (!this.label_selectedDirectory.getText().equals("\"\"")) {
+            // set the latest options
+            this.export.setOptions(getTestHeader(),
+                    getQuestionCount(),
+                    this.label_selectedDirectory.getText(),
+                    this.checkbox_applyHeader.isSelected(),
+                    this.checkbox_showPageNumber.isSelected());
+            // export the test questions to PDF
+            this.export.exportToPdf(SharedData.getTestQuestions());
+            // reset the stored test questions
+            SharedData.resetQuestions();
+            // returning to the automatic-test-create-scene
+            switchScene(createTestAutomatic, true);
+        } else {
+            this.label_error_folderMissing.setText("Select a folder, where to save the file!");
+        }
     }
 
     public void applyFormattingBtnClicked(ActionEvent actionEvent) {
         // set the latest options
-        this.export.setOptions(getTestHeader(), getQuestionCount(), getDestinationFolder());
+        this.export.setOptions(getTestHeader(),
+                getQuestionCount(),
+                this.label_selectedDirectory.getText(),
+                this.checkbox_applyHeader.isSelected(),
+                this.checkbox_showPageNumber.isSelected());
         // get and insert the images (each page is one image) into the vbox
         showPreview(this.export.getPdfPreviewImages(SharedData.getTestQuestions()));
+    }
+
+    /**
+     * This function opens a new Dialog to get the destination folder for saving the export-file.
+     * If a folder was chosen previously, then it will set the previous choice as default.
+     * @param actionEvent never used
+     */
+    public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select Folder to Save File");
+        if (!this.label_selectedDirectory.getText().equals("\"\"")) {
+            chooser.setInitialDirectory(new File(this.label_selectedDirectory.getText()));
+        }
+        File directory = chooser.showDialog(MainApp.stage);
+        if (directory != null) {
+            this.label_selectedDirectory.setText(directory.toString());
+            System.out.println(this.label_selectedDirectory.getText());
+        }
     }
 
     /**
@@ -105,13 +150,5 @@ public class pdfPreview_ScreenController extends ScreenController {
 
     private int getQuestionCount() {
         return (int) questionCountSlider.getValue();
-    }
-
-    private String getDestinationFolder() {
-        if (!Objects.equals(destFolderTextField.getText(), "")) {
-            return destFolderTextField.getText();
-        } else {
-            return "";
-        }
     }
 }

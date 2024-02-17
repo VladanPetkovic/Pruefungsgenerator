@@ -28,8 +28,10 @@ public class Export {
     private float margin = 50;
     private int questionsPerSite = 5;
     private int questionNumber = 0;
-    private String testHeader = "";
+    private String title = "";
     private String destinationFolder = "";
+    private boolean setHeader = true;
+    private boolean setPageNumber = true;
 
     /**
      * This functions exports a pdf with given testQuestions.
@@ -45,7 +47,7 @@ public class Export {
                 return false;
             }
 
-            document.save(this.destinationFolder + createFileName());
+            document.save(this.destinationFolder + "/" + createFileName());
             document.close();
             returnValue = true;
 
@@ -81,13 +83,20 @@ public class Export {
                 this.pageWidth = page.getMediaBox().getWidth();
                 this.pageHeight = page.getMediaBox().getHeight();
 
-                // setting our title only on the first page
-                if(i == 0) {
-                    setTitle(contentStream, testHeader);
+                // setting our title and header only on the first page
+                if (i == 0) {
+                    setTitle(contentStream, this.title);
+                    if (this.setHeader) {
+                        setContentHeader(contentStream);
+                    }
                 }
 
                 // set content with questions
                 setContent(contentStream, testQuestions);
+                // set pageNumber
+                if (this.setPageNumber) {
+                    setContentPageNumber(contentStream, i + 1);
+                }
             }
 
             if (contentStream != null) {
@@ -141,19 +150,17 @@ public class Export {
      * @param questionsPerSite The amount of questions on one page
      * @param destFolder The destination folder, where the user saves the test
      */
-    public void setOptions(String testHeader, int questionsPerSite, String destFolder) {
-        this.testHeader = testHeader;
+    public void setOptions(String testHeader, int questionsPerSite, String destFolder, boolean setHeader, boolean setPageNumber) {
+        this.title = testHeader;
         this.questionsPerSite = questionsPerSite;
-
-        if (!(Objects.equals(destFolder, "") || destFolder == null)) {
-            // TODO: set the destination folder
-        }
-        this.destinationFolder = getOutPutPath();
+        this.destinationFolder = destFolder;
+        this.setHeader = setHeader;
+        this.setPageNumber = setPageNumber;
     }
 
     /**
      * Creates the fileName with the current DateTime.
-     * @return String, for example: test_2024-02-11_18-38-27.pdf
+     * @return String, for example: "test_2024-02-11_18-38-27.pdf"
      */
     public String createFileName() {
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -174,23 +181,53 @@ public class Export {
     }
 
     private void setTitle(PDPageContentStream contentStream, String title) throws IOException {
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 16);
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16);
         float titleWidth = new PDType1Font(Standard14Fonts.FontName.HELVETICA).getStringWidth(title) / 1000f * 16;
         float titlePositionX = (this.pageWidth - titleWidth) / 2;
         contentStream.beginText();
-        contentStream.newLineAtOffset(titlePositionX, this.pageHeight - this.margin - 10); // getting the title at correct height
+        contentStream.newLineAtOffset(titlePositionX, this.pageHeight - this.margin - 20); // getting the title at correct height
         contentStream.showText(title);
         contentStream.endText();
     }
 
+    private void setContentHeader(PDPageContentStream contentStream) throws IOException {
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 11);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(this.margin, this.pageHeight - this.margin + 15);
+        contentStream.showText("Date:________________");
+        contentStream.endText();
+        contentStream.beginText();
+        contentStream.newLineAtOffset(this.pageWidth - 4 * this.margin, this.pageHeight - this.margin + 15);
+        contentStream.showText("Name:________________");
+        contentStream.endText();
+        contentStream.beginText();
+        contentStream.newLineAtOffset(this.pageWidth - 4 * this.margin, this.pageHeight - this.margin);
+        contentStream.showText("UID:________________");
+        contentStream.endText();
+    }
+
+    private void setContentPageNumber(PDPageContentStream contentStream, int pageNumber) throws IOException {
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 11);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(this.pageWidth - 40, 40);
+        contentStream.showText(String.valueOf(pageNumber));
+        contentStream.endText();
+    }
+
     private void setContent(PDPageContentStream contentStream, ArrayList<Question> testQuestions) throws IOException {
-        float contentCoordinateY = 680;
+        float contentCoordinateY;
+        if (questionNumber == 0) {
+            contentCoordinateY = 680;
+        } else {
+            contentCoordinateY = (this.pageHeight - this.margin - 10);
+        }
+
         int counter = 0;
 
         for (int i = 0; i < this.questionsPerSite; i ++) {
             counter++;
             // stop when all questions have been printed or the max-amount of questions-per-size hast been printed
-            if(questionNumber == testQuestions.size() || (counter % this.questionsPerSite + 1) == 0) {
+            if (questionNumber == testQuestions.size() || (counter % this.questionsPerSite + 1) == 0) {
                 break;
             }
 
@@ -222,7 +259,7 @@ public class Export {
     }
 
     private float getParagraphDistance() {
-        float pageSize = this.pageHeight - 2 * this.margin - 70;
+        float pageSize = this.pageHeight - (2 * this.margin) - 70;
         return pageSize/this.questionsPerSite;
     }
 
@@ -269,12 +306,12 @@ public class Export {
         return -1; // Return -1 if no space or hyphen is found within the specified length
     }
 
-    private String getOutPutPath() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/java/com/example/backend/app/output_config.txt"))) {
-            return reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    private String getOutPutPath() {
+//        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/java/com/example/backend/app/output_config.txt"))) {
+//            return reader.readLine();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 }

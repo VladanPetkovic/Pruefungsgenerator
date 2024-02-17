@@ -40,7 +40,7 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement", false);
-        export.setOptions(testHeader, 9, null);
+        export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
         boolean pdfWasCreated = export.exportToPdf(questions);
 
         // assert
@@ -55,7 +55,7 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
-        export.setOptions(testHeader, 5, null);
+        export.setOptions(testHeader, 5, "C:\\Users\\vlada\\Downloads", false, false);
         boolean pdfWasCreated = export.exportToPdf(questions);
 
         // assert
