@@ -316,8 +316,10 @@ public class CreateAutomatic_ScreenController extends ScreenController {
                 int randomIndex = random.nextInt(queryResult.size());
                 // get the randomly selected question
                 Question newQuestion = queryResult.get(randomIndex);
-                // add the selected question to the test questions list
-                SharedData.getTestQuestions().add(newQuestion);
+                if (!containsQuestionWithId(newQuestion.getQuestion_id())) {
+                    // add the selected question to the test questions list, if not already existing in the testQuestions-array
+                    SharedData.getTestQuestions().add(newQuestion);
+                }
             }
         }
 

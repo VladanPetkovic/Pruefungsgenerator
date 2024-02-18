@@ -236,4 +236,18 @@ public abstract class ScreenController {
 
         return questionVbox;
     }
+
+    /**
+     * Check, if the testQuestions-Array contains a question.
+     * @param question_id ID of the question, that is going to be checked.
+     * @return true, if testQuestions contains this question with id = question_id, return false otherwise.
+     */
+    protected boolean containsQuestionWithId(int question_id) {
+        for (Question question : SharedData.getTestQuestions()) {
+            if (question.getQuestion_id() == question_id) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

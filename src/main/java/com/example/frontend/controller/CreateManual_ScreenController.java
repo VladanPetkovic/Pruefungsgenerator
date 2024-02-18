@@ -206,17 +206,20 @@ public class CreateManual_ScreenController extends ScreenController {
             // Create a VBox to hold the question details.
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
-            // display the clicked question in the test_preview_pane
-            displayClickQuestion(questionVbox, question);
-            // Add the question VBox to the preview VBox.
-            this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
-            // Set the spacing between question boxes.
-            this.vbox_filteredQuestionsPreview.setSpacing(spacing);
+
+            if (!containsQuestionWithId(question.getQuestion_id())) {
+                // Add the question VBox to the preview VBox, if the question is not already in preview.
+                this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
+                // display the clicked question in the test_preview_pane
+                displayClickedQuestion(questionVbox, question);
+                // Set the spacing between question boxes.
+                this.vbox_filteredQuestionsPreview.setSpacing(spacing);
+            }
         }
     }
 
     @FXML
-    private void displayClickQuestion(VBox questionVbox, Question question) {
+    private void displayClickedQuestion(VBox questionVbox, Question question) {
         questionVbox.setOnMouseClicked(event -> {
             double spacing = 100;
             int numberOfQuestions = this.vbox_testQuestionsPreview.getChildren().size();
@@ -228,11 +231,12 @@ public class CreateManual_ScreenController extends ScreenController {
             newQuestionVbox.getChildren().add(questionNumberLabel);
             newQuestionVbox.getChildren().add(questionTextLabel);
 
-            // add this question to the vbox_testQuestionsPreview
-            this.vbox_testQuestionsPreview.getChildren().add(newQuestionVbox);
-            this.vbox_testQuestionsPreview.setSpacing(spacing);
-
-            SharedData.getTestQuestions().add(question);
+            if (!containsQuestionWithId(question.getQuestion_id())) {
+                // add this question to the vbox_testQuestionsPreview, if not added
+                this.vbox_testQuestionsPreview.getChildren().add(newQuestionVbox);
+                this.vbox_testQuestionsPreview.setSpacing(spacing);
+                SharedData.getTestQuestions().add(question);
+            }
         });
     }
 }

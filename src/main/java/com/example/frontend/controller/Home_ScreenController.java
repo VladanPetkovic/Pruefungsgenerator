@@ -1,6 +1,8 @@
 package com.example.frontend.controller;
 
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
@@ -61,10 +63,10 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
-            System.out.println("Selected Study Program: " + SharedData.getSelectedStudyProgram().getProgram_name());
-            System.out.println("Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getProgram_id());
-            System.out.println("Selected Course: " + SharedData.getSelectedCourse().getCourse_name());
-            System.out.println("Selected CourseID: " + SharedData.getSelectedCourse().getCourse_id());
+            Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getProgram_name(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getProgram_id(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getCourse_name(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getCourse_id(), LogLevel.INFO);
             switchScene(createTestAutomatic, true);
         }
     }
