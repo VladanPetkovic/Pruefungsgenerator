@@ -60,6 +60,24 @@
       <artifactId>pdfbox</artifactId>
       <version>3.0.0</version>
     </dependency>
+    <!-- Apache POI for Word -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>4.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>4.1.2</version>
+    </dependency>
+    <!-- this is some example logger - can be deleted -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.3</version>
+    </dependency>
+
   </dependencies>
 
   <build>

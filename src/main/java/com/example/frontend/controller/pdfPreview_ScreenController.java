@@ -1,6 +1,7 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.Export;
+import com.example.backend.app.ExportPdf;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
@@ -41,13 +42,13 @@ public class pdfPreview_ScreenController extends ScreenController {
     @FXML
     private CheckBox checkbox_showPageNumber;
 
-    private Export export;
+    private ExportPdf export;
     public Label label_selectedDirectory;
 
     @FXML
     private void initialize() {
         // create an Export object with
-        this.export = new Export();
+        this.export = new ExportPdf();
 
         // displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
@@ -66,7 +67,7 @@ public class pdfPreview_ScreenController extends ScreenController {
                     this.checkbox_applyHeader.isSelected(),
                     this.checkbox_showPageNumber.isSelected());
             // export the test questions to PDF
-            this.export.exportToPdf(SharedData.getTestQuestions());
+            this.export.exportDocument(SharedData.getTestQuestions());
             // reset the stored test questions
             SharedData.resetQuestions();
             // returning to the automatic-test-create-scene
@@ -84,7 +85,7 @@ public class pdfPreview_ScreenController extends ScreenController {
                 this.checkbox_applyHeader.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
         // get and insert the images (each page is one image) into the vbox
-        showPreview(this.export.getPdfPreviewImages(SharedData.getTestQuestions()));
+        showPreview(this.export.getPreviewImages(SharedData.getTestQuestions()));
     }
 
     /**

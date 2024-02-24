@@ -10,7 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExportTests {
-    Export export = new Export();
+    Export export = new ExportPdf();
+    Export exportDocx = new ExportDocx();
 
     @BeforeAll
     void beforeAll() {
@@ -41,7 +42,7 @@ public class ExportTests {
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement", false);
         export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
-        boolean pdfWasCreated = export.exportToPdf(questions);
+        boolean pdfWasCreated = export.exportDocument(questions);
 
         // assert
         assertTrue(pdfWasCreated);
@@ -56,10 +57,25 @@ public class ExportTests {
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
         export.setOptions(testHeader, 5, "C:\\Users\\vlada\\Downloads", false, false);
-        boolean pdfWasCreated = export.exportToPdf(questions);
+        boolean pdfWasCreated = export.exportDocument(questions);
 
         // assert
         assertTrue(pdfWasCreated);
+    }
+
+    @Test
+    void exportToDocx_createDocxWithAllQuestions() {
+        System.out.println("Check: creation of the docx document");
+        // arrange
+        String testHeader = "Test: all questions";
+
+        // act
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
+        exportDocx.setOptions(testHeader, 10, "C:\\Users\\vlada\\Downloads", true, true);
+        boolean docxWasCreated = exportDocx.exportDocument(questions);
+
+        // assert
+        assertTrue(docxWasCreated);
     }
 
     @Test
