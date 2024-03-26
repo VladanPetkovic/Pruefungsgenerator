@@ -35,7 +35,7 @@ public class MainApp extends Application {
         // setting window sizes
         // min. window
         stage.setMinWidth(720);
-        stage.setMinHeight(405);
+        stage.setMinHeight(550);
 
         // max. window
         stage.setMaxWidth(1920);
