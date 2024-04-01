@@ -5,11 +5,16 @@ import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.SearchObject;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -18,6 +23,11 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.IOException;
 import java.util.*;
 
 public class CreateAutomatic_ScreenController extends ScreenController {
@@ -260,6 +270,40 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         parentVBox.getChildren().add(innerVBox);
     }
 
+    /*
+    private void showSuccessModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/success_modal.fxml"));
+            Parent root = loader.load();
+            SuccessModalController controller = loader.getController();
+            controller.setMessage("Test created successfully!");
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showErrorModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/error_modal.fxml"));
+            Parent root = loader.load();
+            ErrorModalController controller = loader.getController();
+            controller.setMessage("Test creation failed!");
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+     */
+
     // method triggered when the "Create Test" button is clicked
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
@@ -327,7 +371,28 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         SharedData.getSearchObjectsAutTestCreate().clear();
         // reset the question count to zero
         this.questionCount = 0;
-        // switch scene to createTestManual
+
+        /*
+        // Assume isSuccess indicates whether the test creation was successful
+        boolean isSuccess = true;
+
+        if(isSuccess){
+            showSuccessModal();
+        } else {
+            showErrorModal();
+        }
+
+        // Clear banners after 3 seconds
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), evt -> {
+            // switch scene to createTestManual
+            switchScene(createTestManual, true);
+        }));
+        timeline.play();
+
+         */
+
         switchScene(createTestManual, true);
+
     }
+
 }
