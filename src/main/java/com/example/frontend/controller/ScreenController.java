@@ -170,13 +170,14 @@ public abstract class ScreenController {
 
     /**
      * Initializes the auto-completion of the questions in the search-area of edit-question.
+     * Shows only 10 questions max
      */
     protected void initializeQuestions(TextField questionTextField) {
         ObservableList<String> items = FXCollections.observableArrayList();
         String course_name = SharedData.getSelectedCourse().getCourse_name();
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name, false);
-        for (Question q : questions) {
-            items.add(q.getQuestionString());
+        for (int i = 0; i < 10; i++) {
+            items.add(questions.get(i).getQuestionString());
         }
         TextFields.bindAutoCompletion(questionTextField, items);
     }

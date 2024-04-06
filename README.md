@@ -1,25 +1,24 @@
 # Prüfungsgenerator
-### INNO-LAB 1
+### INNO-LAB
 
 
->3rd Semester \
+>Semester 3-5 \
 >University of Applied Sciences Technikum Wien
 
-Project-members: Mehdi Erdem, Matthias Fichtinger, Simon Heider, Vladan Petkovic, Peter Tavaszi
+Project-members: 
+- Mehdi Erdem 
+- Matthias Fichtinger 
+- Simon Heider 
+- Vladan Petkovic 
+- Peter Tavaszi
 
 Supervisor: Christoph Redl
 
-### Adding controlsfx to the project
+### Configuration
+[<kbd>**Check out the configuration** &rarr;</kbd>](docs/sites/config.md)
 
-- Navigate to the "Run" menu at the top of IntelliJ IDEA.
+### Database & ER-Diagram
+[<kbd>**View ER-Diagram** &rarr;</kbd>](docs/sites/er_diagram.md)
 
-- Select "Edit Configurations..."
-
-- In the "Run/Debug Configurations" dialog that appears, find your Java application configuration on the left side under "Application."
-
-- Under the "Configuration" tab, locate the "VM options" field.
-
-- Enter the VM option provided by ControlsFX into the "VM options" field. In your case, it would be:
-```
---add-exports javafx.base/com.sun.javafx.event=org.controlsfx.controls
-```
+### Project-Uml & Class-Diagram
+[<kbd>**View project-uml** &rarr;</kbd>](docs/sites/projekt.puml)
