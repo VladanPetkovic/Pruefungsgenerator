@@ -1,9 +1,7 @@
 package com.example.backend.db.daos;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
+import com.example.backend.db.models.*;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public class QuestionDAOTests {
     @Test
     void read_getOneQuestion() {
         System.out.println("Check: Get question with id = 1");
-        // REMINDER: question with this id can be deleted
+        // REMINDER: question with this id can be deleted or changed, so tests will fail in the future, when db changes
 
         // arrange
         Question question = SQLiteDatabaseConnection.questionRepository.get(1);
@@ -77,11 +75,11 @@ public class QuestionDAOTests {
 
         // arrange
         Question testQuestion = new Question();
-        int expectedResult = 10;
+        int expectedResult = 11;
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement", false);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement");
         // show results
         printQuestions(questions);
 
@@ -91,17 +89,17 @@ public class QuestionDAOTests {
 
     @Test
     void readAll_dynamicLangMC() {
-        System.out.println("Check: return all Questions, were only language and multiplechoice = false is set");
+        System.out.println("Check: return all Questions, were only question_type = open is set");
 
         // arrange
         Question testQuestion = new Question();
-        testQuestion.setLanguage("Deutsch");
-        testQuestion.setMultipleChoice(0);
+        QuestionType type = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get("open");
+        testQuestion.setType(type);
         int expectedResult = 13;
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", true);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -119,13 +117,12 @@ public class QuestionDAOTests {
         keywords.add(new Keyword("Vektoren"));
         keywords.add(new Keyword("Heine-Matrix"));
         keywords.add(new Keyword("Eigenwert"));
-        testQuestion.setLanguage("Deutsch");
         testQuestion.setKeywords(keywords);
         int expectedResult = 3;
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", false);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -135,16 +132,16 @@ public class QuestionDAOTests {
 
     @Test
     void readAll_dynamicMCTrue() {
-        System.out.println("Check: return all Questions, were multiplechoice = true is set");
+        System.out.println("Check: return all Questions, were question_type = multiple-choice is set");
 
         // arrange
         Question testQuestion = new Question();
-        testQuestion.setMultipleChoice(1);
+        testQuestion.setType(new QuestionType(Type.MULTIPLE_CHOICE));
         int expectedResult = 0;
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1", true);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -164,7 +161,7 @@ public class QuestionDAOTests {
         int expectedQuestionsCount = 2;
 
         // act
-        ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.questionRepository.getAll(question1, "MACS1", false);
+        ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.questionRepository.getAll(question1, "MACS1");
 
         // show results
         printQuestions(actualQuestions);
@@ -178,7 +175,7 @@ public class QuestionDAOTests {
         System.out.println("Check: performance of getting all questions with keywords, ...");
 
         // arrange
-        int expectedResult = 23;
+        int expectedResult = 24;
 
         // act
         long startTime = System.currentTimeMillis();
@@ -200,19 +197,21 @@ public class QuestionDAOTests {
 
         for(Question question : questions) {
             System.out.println("_----------------------------------_");
-            System.out.println("ID: " + question.getQuestion_id());
-            System.out.println("QuestionString: " + question.getQuestionString());
-            System.out.print("Keywords: ");
-            for(Keyword keyword : question.getKeywords()) {
-                System.out.print(keyword.getKeyword_text() + " ");
-            }
-            System.out.println();
-            System.out.println("Answer: " + question.getAnswers());
-            System.out.println("MC: " + question.getMultipleChoice());
-            System.out.println("Category: " + question.getCategory().getCategory());
-            System.out.println("Language: " + question.getLanguage());
+            System.out.println("ID: " + question.getId());
+            System.out.println("Category: " + question.getCategory().getName());
             System.out.println("Difficulty: " + question.getDifficulty());
             System.out.println("Points: " + question.getPoints());
+            System.out.println("QuestionString: " + question.getQuestion());
+            System.out.println("Type: " + question.getType().getName());
+            System.out.println("Remark: " + question.getRemark());
+            System.out.println("created_at: " + question.getCreated_at());
+            System.out.println("updated_at: " + question.getUpdated_at());
+            System.out.println("Answer: " + question.getAnswersAsString());
+            System.out.print("Keywords: ");
+            for(Keyword keyword : question.getKeywords()) {
+                System.out.print(keyword.getKeyword() + " ");
+            }
+            System.out.println();
         }
     }
 }

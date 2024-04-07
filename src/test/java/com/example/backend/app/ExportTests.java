@@ -40,7 +40,7 @@ public class ExportTests {
         String testHeader = "Test: Datenmanagement";
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement", false);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement");
         export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
         boolean pdfWasCreated = export.exportDocument(questions);
 

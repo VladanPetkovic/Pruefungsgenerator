@@ -193,7 +193,7 @@ public class ExportPdf extends Export<PDDocument> {
             contentStream.showText((questionNumber + 1) + ". ");
             contentStream.endText();
 
-            for (String line : splitLongQuestion(testQuestions.get(questionNumber).getQuestionString())) {
+            for (String line : splitLongQuestion(testQuestions.get(questionNumber).getQuestion())) {
                 contentStream.beginText();
                 contentStream.newLineAtOffset(this.margin + 20, contentCoordinateY); // Set Y-coordinate for Line 1
                 contentStream.showText(line);

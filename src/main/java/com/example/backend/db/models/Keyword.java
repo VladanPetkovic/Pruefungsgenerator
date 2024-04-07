@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Keyword {
-    private int keyword_id;
-    private String keyword_text;
+    private int id;
+    private String keyword;
 
     public Keyword(String keyword) {
-        setKeyword_text(keyword);
+        setKeyword(keyword);
     }
 }

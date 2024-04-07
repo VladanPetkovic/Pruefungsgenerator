@@ -10,13 +10,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudyProgram {
-    private int program_id;
-    private String program_name;
-    private String program_abbr;
+    private int id;
+    private String name;
+    private String abbreviation;
 
-    public StudyProgram(String program_name, String program_abbr) {
-        setProgram_name(program_name);
-        setProgram_abbr(program_abbr);
+    public StudyProgram(String name, String abbreviation) {
+        setName(name);
+        setAbbreviation(abbreviation);
     }
 
 }

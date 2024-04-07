@@ -44,7 +44,7 @@ public class CourseRepository implements Repository<Course> {
 
     // addConnection: used for adding a new hasSC entry
     public void addConnection(StudyProgram studyProgram, Course course) {
-        getCourseDAO().addSCConnection(studyProgram.getProgram_id(), course.getCourse_id());
+        getCourseDAO().addSCConnection(studyProgram.getId(), course.getId());
     }
 
     @Override
@@ -54,6 +54,6 @@ public class CourseRepository implements Repository<Course> {
 
     @Override
     public void remove(Course course) {
-        getCourseDAO().delete(course.getCourse_id());
+        getCourseDAO().delete(course.getId());
     }
 }

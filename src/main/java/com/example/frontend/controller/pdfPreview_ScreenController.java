@@ -1,6 +1,5 @@
 package com.example.frontend.controller;
 
-import com.example.backend.app.Export;
 import com.example.backend.app.ExportPdf;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
@@ -51,7 +50,7 @@ public class pdfPreview_ScreenController extends ScreenController {
         this.export = new ExportPdf();
 
         // displays the selected course above the filter window
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
+        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
     }
 
     /**
@@ -145,7 +144,7 @@ public class pdfPreview_ScreenController extends ScreenController {
         if (!Objects.equals(titleTextField.getText(), "")) {
             return titleTextField.getText();
         } else {
-            return "Test: " + SharedData.getSelectedCourse().getCourse_name();
+            return "Test: " + SharedData.getSelectedCourse().getName();
         }
     }
 

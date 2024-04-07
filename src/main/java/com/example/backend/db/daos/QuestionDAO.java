@@ -1,5 +1,7 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 
@@ -8,9 +10,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 public class QuestionDAO implements DAO<Question> {
+    private final String selectColumns =
+            "SELECT q.id AS question_id, q.fk_category_id, q.difficulty, q.points, q.question, q.fk_question_type_id, q.remark, q.created_at, q.updated_at, " +
+            "       a.id AS answer_id, a.answer, c.name AS category_name, " +
+            "       k.id AS keyword_id, k.keyword, qt.name AS question_type, " +
+            "       i.id AS image_id, i.image, i.name AS image_name, i.position, i.comment ";
+
     // questionCache needed for staging questions before sending them to the user
     ArrayList<Question> questionCache;
     public QuestionDAO() {
@@ -25,21 +34,20 @@ public class QuestionDAO implements DAO<Question> {
     @Override
     public void create(Question question) {
         String insertStmt =
-                "INSERT INTO Questions " +
-                "(FK_Category_ID, Difficulty, Points, Question, MultipleChoice, Language, Remarks, Answers) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+                "INSERT INTO questions " +
+                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark) " +
+                "VALUES (?, ?, ?, ?, ?, ?);";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
 
-            preparedStatement.setInt(1, question.getCategory().getCategory_id());
+            preparedStatement.setInt(1, question.getCategory().getId());
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
-            preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setInt(5, question.getMultipleChoice());
-            preparedStatement.setString(6, question.getLanguage());
-            preparedStatement.setString(7, question.getRemarks());
-            preparedStatement.setString(8, question.getAnswers());
+            preparedStatement.setString(4, question.getQuestion());
+            preparedStatement.setInt(5, question.getType().getId());
+            preparedStatement.setString(6, question.getRemark());
+            // TODO: add answers
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -58,16 +66,16 @@ public class QuestionDAO implements DAO<Question> {
         this.questionCache.clear();
 
         String selectQuestionsStmt =
-            "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-            "       Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-            "       C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-            "       K.KeywordID, K.Keyword " +
-            "FROM Questions Q " +
-            "         JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-            "         LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-            "         LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-            "         LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-            "         LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID;";
+            this.selectColumns +
+            "FROM Questions q " +
+            "         JOIN categories c ON q.fk_category_id = c.id " +
+            "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+            "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+            "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+            "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+            "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+            "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+            "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt);
@@ -98,23 +106,25 @@ public class QuestionDAO implements DAO<Question> {
         this.questionCache.clear();
 
         String selectQuestionsStmt =
-            "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                "K.KeywordID, K.Keyword " +
-            "FROM Questions Q " +
-                "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-            "WHERE FK_Category_ID = ?;";
+                this.selectColumns +
+                "FROM Questions q " +
+                "         JOIN categories c ON q.fk_category_id = c.id " +
+                "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+                "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+                "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+                "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+                "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+                "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+                "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+                "WHERE q.fk_category_id = ?;";
+
+        Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
         if (category != null) {
             try (Connection connection = SQLiteDatabaseConnection.connect();
                  PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
 
-                questionsStatement.setInt(1, category.getCategory_id());
+                questionsStatement.setInt(1, category.getId());
                 try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                     while (questionsResultSet.next()) {
                         Question newQuestion = createModelFromResultSet(questionsResultSet);
@@ -148,24 +158,24 @@ public class QuestionDAO implements DAO<Question> {
 
         // doing this for performance --> avoiding "n+1-select"
         StringBuilder selectQuestionsStmt = new StringBuilder(
-                "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                        "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                        "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                        "K.KeywordID, K.Keyword " +
-                        "FROM Questions Q " +
-                        "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                        "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                        "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                        "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                        "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-                        "LEFT JOIN hasCC HCC ON Q.FK_Category_ID = HCC.CategoryID " +
-                        "LEFT JOIN Courses Co ON HCC.CourseID = Co.CourseID " +
-                        "WHERE Co.CourseID = ?");
+                this.selectColumns +
+                "FROM Questions q " +
+                "         JOIN categories c ON q.fk_category_id = c.id " +
+                "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+                "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+                "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+                "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+                "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+                "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+                "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+                "         LEFT JOIN has_cc hcc ON q.fk_category_id = hcc.fk_category_id " +
+                "         LEFT JOIN courses co ON hcc.fk_course_id = co.id " +
+                "WHERE co.id = ?");
 
         // init selectSTMT and listForPreparedStmt
-        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getCourse_id());
+        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getId());
 
-        System.out.println(selectQuestionsStmt);
+        Logger.log(getClass().getName(), String.valueOf(selectQuestionsStmt), LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(String.valueOf(selectQuestionsStmt))) {
@@ -180,7 +190,7 @@ public class QuestionDAO implements DAO<Question> {
                 } else if(prepObjects instanceof Float) {
                     questionsStatement.setFloat(count, (Float) prepObjects);
                 } else if(prepObjects instanceof Category) {
-                    questionsStatement.setInt(count, (int) ((Category) prepObjects).getCategory_id());
+                    questionsStatement.setInt(count, (int) ((Category) prepObjects).getId());
                 }
 
                 count++;
@@ -218,38 +228,35 @@ public class QuestionDAO implements DAO<Question> {
         stmt.append(" AND");
 
         for(SearchObject<?> searchObject : searchOptions) {
-            // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
-            if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
-                stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
-                listForPreparedStmt.add(searchObject.getValueOfObject());
-            }
-
-            // keywords passed
             if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "keywords")) {
+                // keywords passed
                 ArrayList<Keyword> keywords = (ArrayList<Keyword>) searchObject.getValueOfObject();
                 stmt.append("(");
                 while(keywords.size() > countKeywords) {
-                    stmt.append(" ").append("K.Keyword").append(" = ? OR");
-                    listForPreparedStmt.add(keywords.get(countKeywords).getKeyword_text());
+                    stmt.append(" ").append("k.keyword").append(" = ? OR");
+                    listForPreparedStmt.add(keywords.get(countKeywords).getKeyword());
                     countKeywords++;
                 }
                 stmt.delete(stmt.length() - 3, stmt.length());
                 stmt.append(")").append(" AND");
             }
-
-            // images go like keywords
-            if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "images")) {
+            else if(searchObject.isSet() && Objects.equals(searchObject.getObjectName(), "images")) {
+                // images go like keywords
                 ArrayList<Image> images = (ArrayList<Image>) searchObject.getValueOfObject();
                 stmt.append("(");
                 while(images.size() > countImages) {
-                    stmt.append(" ").append("I.ImageName").append(" = ? OR");
-                    listForPreparedStmt.add(images.get(countImages).getImageName());
+                    stmt.append(" ").append("i.name").append(" = ? OR");
+                    listForPreparedStmt.add(images.get(countImages).getName());
                     countImages++;
                 }
                 stmt.delete(stmt.length() - 3, stmt.length());
                 stmt.append(")").append(" AND");
             }
-
+            else if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
+                // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
+                stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                listForPreparedStmt.add(searchObject.getValueOfObject());
+            }
         }
 
         // replace last ' AND' to ';'
@@ -269,17 +276,19 @@ public class QuestionDAO implements DAO<Question> {
         this.questionCache.clear();
 
         String selectStmt =
-            "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                "K.KeywordID, K.Keyword " +
-            "FROM Questions Q " +
-                "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-            "WHERE Q.QuestionID = ?;";
+            this.selectColumns +
+            "FROM Questions q " +
+            "         JOIN categories c ON q.fk_category_id = c.id " +
+            "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+            "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+            "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+            "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+            "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+            "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+            "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+            "WHERE q.id = ?;";
+
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -306,79 +315,33 @@ public class QuestionDAO implements DAO<Question> {
     }
 
     /**
-     * Retrieves a question by its question text from the database.
-     *
-     * @param questionText The question text to search for.
-     * @return The Question object corresponding to the given question text.
-     */
-    public Question readByQuestionText(String questionText) {
-        // Clearing old questions from the cache
-        this.questionCache.clear();
-
-        // SQL statement to select the question based on its text
-        String selectStmt =
-                "SELECT Q.QuestionID, Q.FK_Category_ID, Q.Difficulty, Q.Points, Q.Question, " +
-                        "Q.MultipleChoice, Q.Language, Q.Remarks, Q.Answers, " +
-                        "C.Category, I.ImageID, I.Link, I.ImageName, I.Position, " +
-                        "K.KeywordID, K.Keyword " +
-                        "FROM Questions Q " +
-                        "JOIN Categories C ON Q.FK_Category_ID = C.CategoryID " +
-                        "LEFT JOIN hasIQ HIQ ON Q.QuestionID = HIQ.QuestionID " +
-                        "LEFT JOIN Images I ON HIQ.ImageID = I.ImageID " +
-                        "LEFT JOIN hasKQ HKQ ON Q.QuestionID = HKQ.QuestionID " +
-                        "LEFT JOIN Keywords K ON HKQ.KeywordID = K.KeywordID " +
-                        "WHERE Q.Question = ?;";
-
-        try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
-
-            preparedStatement.setString(1, questionText);
-            try (ResultSet questionsResultSet = preparedStatement.executeQuery()) {
-                while (questionsResultSet.next()) {
-                    // Creating a new question object from the result set
-                    Question newQuestion = createModelFromResultSet(questionsResultSet);
-                    if (newQuestion != null) {
-                        this.questionCache.add(createModelFromResultSet(questionsResultSet));
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        // Returning the first question from the cache if found
-        if (!this.questionCache.isEmpty()) {
-            return this.questionCache.get(0);
-        }
-
-        return null;
-    }
-
-    /**
      * Updates an existing question in the database.
      *
      * @param question The question to be updated.
      */
     @Override
     public void update(Question question) {
+
+        // TODO: update answers
         String updateStmt =
-                "UPDATE Questions " +
-                        "SET FK_Category_ID = ?, Difficulty = ?, Points = ?, Question = ?, " +
-                        "MultipleChoice = ?, Language = ?, Remarks = ?, Answers = ? " +
-                        "WHERE QuestionID = ?;";
+                "UPDATE questions " +
+                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
+                "fk_question_type_id = ?, remark = ?, updated_at = ? " +
+                "WHERE id = ?;";
+
+        Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
 
-            preparedStatement.setInt(1, question.getCategory().getCategory_id());
+            preparedStatement.setInt(1, question.getCategory().getId());
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
-            preparedStatement.setString(4, question.getQuestionString());
-            preparedStatement.setInt(5, question.getMultipleChoice());
-            preparedStatement.setString(6, question.getLanguage());
-            preparedStatement.setString(7, question.getRemarks());
-            preparedStatement.setString(8, question.getAnswers());
-            preparedStatement.setInt(9, question.getQuestion_id());
+            preparedStatement.setString(4, question.getQuestion());
+            preparedStatement.setInt(5, question.getType().getId());
+            preparedStatement.setString(6, question.getRemark());
+            preparedStatement.setString(7, String.valueOf(question.getUpdated_at()));
+            preparedStatement.setInt(8, question.getId());
 
             preparedStatement.executeUpdate();
 
@@ -394,13 +357,15 @@ public class QuestionDAO implements DAO<Question> {
      */
     @Override
     public void delete(int id) {
-        String deleteStmt = "DELETE FROM Questions WHERE QuestionID = ?;";
-        String deleteHasIQStmt = "DELETE FROM hasIQ WHERE QuestionID = ?;";
-        String deleteHasKQStmt = "DELETE FROM hasKQ WHERE QuestionID = ?;";
+        String deleteStmt = "DELETE FROM questions WHERE id = ?;";
+        String deleteHasIQStmt = "DELETE FROM has_iq WHERE fk_question_id = ?;";
+        String deleteHasKQStmt = "DELETE FROM has_kq WHERE fk_question_id = ?;";
+        String deleteHasAQStmt = "DELETE FROM has_aq WHERE fk_question_id = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt);
-             PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasKQStmt)) {
+             PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasKQStmt);
+             PreparedStatement fourthPreparedStatement = connection.prepareStatement(deleteHasAQStmt)) {
 
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -411,6 +376,8 @@ public class QuestionDAO implements DAO<Question> {
             thirdPreparedStatement.setInt(1, id);
             thirdPreparedStatement.executeUpdate();
 
+            fourthPreparedStatement.setInt(1, id);
+            fourthPreparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -423,29 +390,35 @@ public class QuestionDAO implements DAO<Question> {
      * @return The Question object created from the ResultSet.
      */
     public Question createModelFromResultSet(ResultSet resultSet) throws SQLException {
-        int question_id = resultSet.getInt("QuestionID");
+        int question_id = resultSet.getInt("question_id");
 
         // checking, if question exists in our questionCache
         for(Question question : this.questionCache) {
-            // adding keyword and image if one question has multiple keywords and images
-            if(question.getQuestion_id() == question_id) {
+            // adding keyword & image and answers if one question has multiple keywords and images
+            if (question.getId() == question_id) {
                 // keyword not null
-                if(resultSet.getInt("KeywordID") != 0) {
+                if (resultSet.getInt("keyword_id") != 0) {
                     Keyword newKeyword = new Keyword(
-                            resultSet.getInt("KeywordID"),
-                            resultSet.getString("Keyword")
-                    );
+                            resultSet.getInt("keyword_id"),
+                            resultSet.getString("keyword"));
                     question.getKeywords().add(newKeyword);
                 }
                 // image not null
-                if(resultSet.getInt("ImageID") != 0) {
+                if (resultSet.getInt("image_id") != 0) {
                     Image newImage = new Image(
-                            resultSet.getInt("ImageID"),
-                            resultSet.getString("Link"),
-                            resultSet.getString("ImageName"),
-                            resultSet.getInt("Position")
-                    );
+                            resultSet.getInt("image_id"),
+                            resultSet.getBytes("image"),
+                            resultSet.getString("image_name"),
+                            resultSet.getInt("position"),
+                            resultSet.getString("comment"));
                     question.getImages().add(newImage);
+                }
+                // answer not null
+                if (resultSet.getInt("answer_id") != 0) {
+                    Answer newAnswer = new Answer(
+                            resultSet.getInt("answer_id"),
+                            resultSet.getString("answer"));
+                    question.getAnswers().add(newAnswer);
                 }
                 // we do not want to create a duplicate question
                 // so, we return here
@@ -454,35 +427,45 @@ public class QuestionDAO implements DAO<Question> {
         }
 
         Category questionCategory = new Category(
-                resultSet.getInt("FK_Category_ID"),
-                resultSet.getString("Category"));
+                resultSet.getInt("fk_category_id"),
+                resultSet.getString("category_name"));
+
+        QuestionType questionType = new QuestionType(
+                resultSet.getInt("fk_question_type_id"),
+                resultSet.getString("question_type"));
 
         ArrayList<Keyword> keywords = new ArrayList<>();
         Keyword newKeyword = new Keyword(
-                resultSet.getInt("KeywordID"),
-                resultSet.getString("Keyword")
-        );
+                resultSet.getInt("keyword_id"),
+                resultSet.getString("keyword"));
         keywords.add(newKeyword);
 
         ArrayList<Image> images = new ArrayList<>();
         Image newImage = new Image(
-                resultSet.getInt("ImageID"),
-                resultSet.getString("Link"),
-                resultSet.getString("ImageName"),
-                resultSet.getInt("Position")
-        );
+                resultSet.getInt("image_id"),
+                resultSet.getBytes("image"),
+                resultSet.getString("image_name"),
+                resultSet.getInt("position"),
+                resultSet.getString("comment"));
         images.add(newImage);
+
+        ArrayList<Answer> answers = new ArrayList<>();
+        Answer newAnswer = new Answer(
+                resultSet.getInt("answer_id"),
+                resultSet.getString("answer"));
+        answers.add(newAnswer);
 
         return new Question(
                 question_id,
                 questionCategory,
-                resultSet.getInt("Difficulty"),
-                resultSet.getFloat("Points"),
-                resultSet.getString("Question"),
-                resultSet.getInt("MultipleChoice"),
-                resultSet.getString("Language"),
-                resultSet.getString("Remarks"),
-                resultSet.getString("Answers"),
+                resultSet.getInt("difficulty"),
+                resultSet.getFloat("points"),
+                resultSet.getString("question"),
+                questionType,
+                resultSet.getString("remark"),
+                resultSet.getTimestamp("created_at"),
+                resultSet.getTimestamp("updated_at"),
+                answers,
                 keywords,
                 images
         );

@@ -26,6 +26,10 @@ public class StudyProgramRepository implements Repository<StudyProgram> {
         return getStudyProgramDAO().read(id);
     }
 
+    public StudyProgram get(String name) {
+        return getStudyProgramDAO().read(name);
+    }
+
     @Override
     public void add(StudyProgram program) {
         getStudyProgramDAO().create(program);
@@ -38,6 +42,6 @@ public class StudyProgramRepository implements Repository<StudyProgram> {
 
     @Override
     public void remove(StudyProgram program) {
-        getStudyProgramDAO().delete(program.getProgram_id());
+        getStudyProgramDAO().delete(program.getId());
     }
 }

@@ -4,15 +4,12 @@ import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
+import com.example.backend.db.models.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -58,14 +55,14 @@ public class CreateManual_ScreenController extends ScreenController {
 
         // init auto-completion
         initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAll());
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id()));
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField);
 
         // set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
 
         // displays the selected course above the filter window
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
+        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
 
         // check whether questions from automaticTestCreate are available for showing in testPreview
         if (!SharedData.getTestQuestions().isEmpty()) {
@@ -130,7 +127,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
         // set the question text
         if (!(Objects.equals(questionText, "") || questionText == null)) {
-            filterQuestion.setQuestionString(questionText);
+            filterQuestion.setQuestion(questionText);
         }
 
         // set points and difficulty if set
@@ -142,10 +139,10 @@ public class CreateManual_ScreenController extends ScreenController {
         }
 
         // set multiple choice value
-        filterQuestion.setMultipleChoice(multipleChoice ? 1 : 0);
+        filterQuestion.setType(multipleChoice ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
 
         // call Repository to search for questions corresponding to filter values
-        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getCourse_name(), multipleChoice);
+        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
 
         // display filtered questions in filter window
         showFilteredQuestions(result);
@@ -168,7 +165,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
-                Label questionTextLabel = new Label(question.getQuestionString());
+                Label questionTextLabel = new Label(question.getQuestion());
 
                 // add labels to the VBox
                 questionVbox.getChildren().add(questionNumberLabel);
@@ -207,7 +204,7 @@ public class CreateManual_ScreenController extends ScreenController {
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
 
-            if (!containsQuestionWithId(question.getQuestion_id())) {
+            if (!containsQuestionWithId(question.getId())) {
                 // Add the question VBox to the preview VBox, if the question is not already in preview.
                 this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
                 // display the clicked question in the test_preview_pane
@@ -226,12 +223,12 @@ public class CreateManual_ScreenController extends ScreenController {
             // Create a VBox to hold the question details.
             VBox newQuestionVbox = new VBox();
             Label questionNumberLabel = new Label("Question "+ (numberOfQuestions + 1) +" (Erreichbare Punkte: "+ question.getPoints() + ")");
-            Label questionTextLabel = new Label(question.getQuestionString());
+            Label questionTextLabel = new Label(question.getQuestion());
             // add labels to the VBox
             newQuestionVbox.getChildren().add(questionNumberLabel);
             newQuestionVbox.getChildren().add(questionTextLabel);
 
-            if (!containsQuestionWithId(question.getQuestion_id())) {
+            if (!containsQuestionWithId(question.getId())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
                 this.vbox_testQuestionsPreview.getChildren().add(newQuestionVbox);
                 this.vbox_testQuestionsPreview.setSpacing(spacing);

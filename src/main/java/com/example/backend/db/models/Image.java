@@ -8,14 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Image {
-    private int image_id;
-    private String link;
-    private String imageName;
+    private int id;
+    private byte[] image;
+    private String name;
     private int position;
-
-    public Image(String link, String imageName, int position) {
-        setLink(link);
-        setImageName(imageName);
-        setPosition(position);
-    }
+    private String comment;
 }

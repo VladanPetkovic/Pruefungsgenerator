@@ -5,16 +5,11 @@ import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.SearchObject;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -23,11 +18,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.io.IOException;
 import java.util.*;
 
 public class CreateAutomatic_ScreenController extends ScreenController {
@@ -93,13 +84,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         SearchObject<String> searchObject = new SearchObject<>();
         menuButton.getItems().clear();
         // retrieve categories for the selected course
-        int course_id = SharedData.getSelectedCourse().getCourse_id();
+        int course_id = SharedData.getSelectedCourse().getId();
         ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
         // populate the MenuButton with category options and set event handlers for selection
         for (Category category : categories) {
-            MenuItem menuItem = new MenuItem(category.getCategory());
+            MenuItem menuItem = new MenuItem(category.getName());
             menuItem.setOnAction(e -> {
-                String categoryName = category.getCategory();
+                String categoryName = category.getName();
                 menuButton.setText(categoryName);
                 searchObject.setObjectName("CAT");
                 searchObject.setValueOfObject(categoryName);
@@ -351,7 +342,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             }
 
             // perform the database query to retrieve questions based on the criteria
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getCourse_name(), false);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getName());
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {
@@ -360,7 +351,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
                 int randomIndex = random.nextInt(queryResult.size());
                 // get the randomly selected question
                 Question newQuestion = queryResult.get(randomIndex);
-                if (!containsQuestionWithId(newQuestion.getQuestion_id())) {
+                if (!containsQuestionWithId(newQuestion.getId())) {
                     // add the selected question to the test questions list, if not already existing in the testQuestions-array
                     SharedData.getTestQuestions().add(newQuestion);
                 }

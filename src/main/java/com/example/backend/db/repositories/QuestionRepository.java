@@ -2,10 +2,7 @@ package com.example.backend.db.repositories;
 
 import com.example.backend.db.daos.CourseDAO;
 import com.example.backend.db.daos.QuestionDAO;
-import com.example.backend.db.models.Course;
-import com.example.backend.db.models.Question;
-import com.example.backend.db.models.SearchObject;
-import com.example.backend.db.models.Category;
+import com.example.backend.db.models.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +16,8 @@ public class QuestionRepository implements Repository<Question> {
     @Getter(AccessLevel.PRIVATE)
     QuestionDAO questionDAO;
     final ArrayList<String> columnNames = new ArrayList<>(List.of(
-            "QuestionID", "FK_Category_ID", "Difficulty", "Points",
-            "Question", "MultipleChoice", "Language", "Remarks", "Answers"));
+            "q.id", "q.fk_category_id", "difficulty", "points", "question", "fk_question_type_id",
+            "remark", "created_at", "updated_at", "fk_answer_id", "fk_keyword_id", "fk_image_id"));
 
     public QuestionRepository(QuestionDAO questionDAO) {
         setQuestionDAO(questionDAO);
@@ -37,7 +34,7 @@ public class QuestionRepository implements Repository<Question> {
     }
 
     // getting all questions for a dynamic search
-    public ArrayList<Question> getAll(Question question_searchOptions, String courseName, boolean considerMC) {
+    public ArrayList<Question> getAll(Question question_searchOptions, String courseName) {
         Field[] searchFields = Question.class.getDeclaredFields();
         ArrayList<SearchObject<?>> searchOptions = new ArrayList<>();
         Course course = new CourseDAO().read(courseName);
@@ -61,18 +58,22 @@ public class QuestionRepository implements Repository<Question> {
                 String field_name = field.getName();
 
                 if(field_value == null) {
-                    // ArrayLists are null --> set them false
+                    // ArrayLists & Date are null --> set them false
                     searchOptions.add(new SearchObject<>(columnName, field_name, null, false));
                 }
-                else if(field_name.equals("multipleChoice") && !considerMC) {
-                    // field_name == MC and considerMC is false --> set false
-                    searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
+                else if (field_value instanceof QuestionType type) {
+                    if (type.getId() == 0) {
+                        searchOptions.add(new SearchObject<>(columnName, field_name, 0, false));
+                    } else {
+                        // pass the id and not the object "QuestionType"
+                        searchOptions.add(new SearchObject<>(columnName, field_name, type.getId(), true));
+                    }
                 }
                 else if(field_name.equals("points") && (float) field_value == 0) {
                     // field_name == points and points = 0 --> set false
                     searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
                 }
-                else if((field_name.equals("question_id") || field_name.equals("difficulty"))
+                else if((field_name.equals("id") || field_name.equals("difficulty"))
                         && (int) field_value == 0) {
                     // difficulty and question_id not set --> set false
                     searchOptions.add(new SearchObject<>(columnName, field_name, field_value, false));
@@ -108,6 +109,6 @@ public class QuestionRepository implements Repository<Question> {
 
     @Override
     public void remove(Question question) {
-        getQuestionDAO().delete(question.getQuestion_id());
+        getQuestionDAO().delete(question.getId());
     }
 }

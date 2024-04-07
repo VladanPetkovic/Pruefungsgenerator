@@ -55,7 +55,7 @@ public class Home_ScreenController extends ScreenController {
     // event handler for courses button click
     @FXML
     public void onCoursesBtnClick(ActionEvent event) {
-        System.out.println("Selected Study Program ID (loadCourses): " + SharedData.getSelectedStudyProgram().getProgram_id());
+        System.out.println("Selected Study Program ID (loadCourses): " + SharedData.getSelectedStudyProgram().getId());
         loadCourses();
     }
 
@@ -63,10 +63,10 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
-            Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getProgram_name(), LogLevel.INFO);
-            Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getProgram_id(), LogLevel.INFO);
-            Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getCourse_name(), LogLevel.INFO);
-            Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getCourse_id(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getName(), LogLevel.INFO);
+            Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
             switchScene(createTestAutomatic, true);
         }
     }
@@ -77,9 +77,9 @@ public class Home_ScreenController extends ScreenController {
         studyProgramMenuButton.getItems().clear();
 
         for (StudyProgram studyProgram : studyPrograms) {
-            MenuItem menuItem = new MenuItem(studyProgram.getProgram_name());
+            MenuItem menuItem = new MenuItem(studyProgram.getName());
             menuItem.setOnAction(e -> {
-                studyProgramMenuButton.setText(studyProgram.getProgram_name());
+                studyProgramMenuButton.setText(studyProgram.getName());
                 SharedData.setSelectedStudyProgram(studyProgram);
                 // if the study program menu item is selected then the course menu and the course selection (variable)
                 // is cleared/reset and the associated courses will get loaded in the course menu
@@ -102,14 +102,14 @@ public class Home_ScreenController extends ScreenController {
 
     // loads available courses into the menu
     private void loadCourses() {
-        ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getProgram_id());
+        ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
         //System.out.println("Selected Study ProgramID in loadCourses(): " + courses.get(0).getCourse_name());
         //coursesMenuButton.getItems().clear(); // Clear existing items
 
         for (Course course : courses) {
-            MenuItem menuItem = new MenuItem(course.getCourse_name());
+            MenuItem menuItem = new MenuItem(course.getName());
             menuItem.setOnAction(e -> {
-                coursesMenuButton.setText(course.getCourse_name());
+                coursesMenuButton.setText(course.getName());
                 SharedData.setSelectedCourse(course);
             });
             coursesMenuButton.getItems().add(menuItem);
@@ -155,14 +155,14 @@ public class Home_ScreenController extends ScreenController {
         confirmButton.setOnAction(event -> {
             String enteredName = inputName.getText();
             String enteredAbbr = inputAbbr.getText();
-            SharedData.getNewStudyProgram().setProgram_name(enteredName);
-            SharedData.getNewStudyProgram().setProgram_abbr(enteredAbbr);
+            SharedData.getNewStudyProgram().setName(enteredName);
+            SharedData.getNewStudyProgram().setAbbreviation(enteredAbbr);
 
             // check if name or abbreviation already exists in the database
             ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
             boolean exists = false;
             for(StudyProgram studyProgram : studyPrograms) {
-                if (studyProgram.getProgram_name().equals(enteredName)  || studyProgram.getProgram_abbr().equals(enteredAbbr)) {
+                if (studyProgram.getName().equals(enteredName)  || studyProgram.getAbbreviation().equals(enteredAbbr)) {
                     exists = true;
                     break;
                 }
@@ -243,14 +243,14 @@ public class Home_ScreenController extends ScreenController {
             });
             */
 
-            SharedData.getNewCourse().setCourse_name(enteredName);
-            SharedData.getNewCourse().setCourse_number(enteredNumber);
+            SharedData.getNewCourse().setName(enteredName);
+            SharedData.getNewCourse().setNumber(enteredNumber);
 
             // check if course name or course number already exists in the database
-            ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getProgram_id());
+            ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
             boolean exists = false;
             for(Course course : courses) {
-                if (course.getCourse_name().equals(enteredName)  || course.getCourse_number() == enteredNumber) {
+                if (course.getName().equals(enteredName)  || course.getNumber() == enteredNumber) {
                     exists = true;
                     break;
                 }
@@ -259,7 +259,7 @@ public class Home_ScreenController extends ScreenController {
             if (!exists) {
                 Course newCourse= new Course(enteredName, enteredNumber, enteredLecturer);
                 SQLiteDatabaseConnection.courseRepository.add(newCourse);
-                Course newlyAddedCOurse = SQLiteDatabaseConnection.courseRepository.get(newCourse.getCourse_name());
+                Course newlyAddedCOurse = SQLiteDatabaseConnection.courseRepository.get(newCourse.getName());
                 SQLiteDatabaseConnection.courseRepository.addConnection(SharedData.getSelectedStudyProgram(), newlyAddedCOurse);
             }
             // close the window, reset course menu button, and reload courses

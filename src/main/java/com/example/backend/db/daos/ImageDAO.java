@@ -1,9 +1,10 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Image;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.*;
@@ -25,13 +26,16 @@ public class ImageDAO implements DAO<Image> {
     @Override
     public void create(Image image) {
         String insertStmt =
-                "INSERT INTO Images (Link, Imagename, Position) " +
-                        "VALUES (?, ?, ?);";
+                "INSERT INTO images (image, name, position, comment) " +
+                "VALUES (?, ?, ?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setString(1, image.getLink());
-            preparedStatement.setString(2, image.getImageName());
+            preparedStatement.setBytes(1, image.getImage());
+            preparedStatement.setString(2, image.getName());
             preparedStatement.setInt(3, image.getPosition());
+            preparedStatement.setString(4, image.getComment());
             preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
@@ -46,7 +50,8 @@ public class ImageDAO implements DAO<Image> {
      */
     @Override
     public ArrayList<Image> readAll() {
-        String selectStmt = "SELECT ImageID, Link, Imagename, Position FROM Images;";
+        String selectStmt = "SELECT * FROM images;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
@@ -76,11 +81,12 @@ public class ImageDAO implements DAO<Image> {
      */
     public ArrayList<Image> readAllForOneQuestion(int questionId) {
         String selectStmt =
-                "SELECT Images.ImageID, Link, Imagename, Position " +
-                        "FROM Images " +
-                        "JOIN hasIQ ON Images.ImageID = hasIQ.ImageID " +
-                        "JOIN Questions ON hasIQ.QuestionID = Questions.QuestionID " +
-                        "WHERE hasIQ.QuestionID = ?;";
+                "SELECT images.* " +
+                "FROM images " +
+                "JOIN has_iq ON images.id = has_iq.fk_image_id " +
+                "JOIN questions ON has_iq.fk_question_id = questions.id " +
+                "WHERE has_iq.fk_question_id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -111,10 +117,9 @@ public class ImageDAO implements DAO<Image> {
     public Image read(int id) {
         Image image = null;
 
-        String readStmt =
-                "SELECT ImageID, Link, Imagename, Position " +
-                        "FROM Images " +
-                        "WHERE ImageID = ?;";
+        String readStmt = "SELECT * FROM images WHERE id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setInt(1, id);
@@ -132,48 +137,18 @@ public class ImageDAO implements DAO<Image> {
     }
 
     /**
-     * Retrieves an image by its link from the database.
+     * Retrieves an image by its name from the database.
      *
-     * @param link The link of the image to retrieve.
-     * @return The Image object corresponding to the given link.
+     * @param name The name of the image to retrieve.
+     * @return The Image object corresponding to the given name.
      */
-    public Image readByLink(String link) {
+    public Image read(String imageName) {
         Image image = null;
 
         // SQL statement for selecting an image by link
-        String readStmt =
-                "SELECT ImageID, Link, Imagename, Position " +
-                        "FROM Images " +
-                        "WHERE Link = ?;";
-        try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
-            preparedStatement.setString(1, link);
-            try (ResultSet result = preparedStatement.executeQuery()) {
-                if (result.next()) {
-                    image = createModelFromResultSet(result);
-                }
-                setImageCache(null);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
+        String readStmt = "SELECT * FROM images WHERE name = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
 
-    /**
-     * Retrieves an image by its name from the database.
-     *
-     * @param imageName The name of the image to retrieve.
-     * @return The Image object corresponding to the given name.
-     */
-    public Image readByName(String imageName) {
-        Image image = null;
-
-        // SQL statement for selecting an image by name
-        String readStmt =
-                "SELECT ImageID, Link, Imagename, Position " +
-                        "FROM Images " +
-                        "WHERE Imagename = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setString(1, imageName);
@@ -197,15 +172,16 @@ public class ImageDAO implements DAO<Image> {
     @Override
     public void update(Image image) {
         String updateStmt =
-                "UPDATE Images " +
-                        "SET Link = ?, Imagename = ?, Position = ? " +
-                        "WHERE ImageID = ?";
+                "UPDATE images " +
+                "SET image = ?, name = ?, position = ?, comment = ? " +
+                "WHERE id = ?";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
-            preparedStatement.setString(1, image.getLink());
-            preparedStatement.setString(2, image.getImageName());
+            preparedStatement.setBytes(1, image.getImage());
+            preparedStatement.setString(2, image.getName());
             preparedStatement.setInt(3, image.getPosition());
-            preparedStatement.setInt(4, image.getImage_id());
+            preparedStatement.setString(4, image.getComment());
+            preparedStatement.setInt(5, image.getId());
             preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
@@ -220,15 +196,18 @@ public class ImageDAO implements DAO<Image> {
      */
     @Override
     public void delete(int id) {
-        String deleteStmt = "DELETE FROM Images WHERE ImageID = ?;";
-        String deleteHasIQStmt = "DELETE FROM hasIQ WHERE ImageID = ?;";
+        String deleteStmt = "DELETE FROM images WHERE id = ?;";
+        String deleteHasIQStmt = "DELETE FROM has_iq WHERE fk_image_id = ?;";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasIQStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt)) {
-            // deleting from Images table
+            // deleting from images table
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            // deleting from hasIQ table
+            // deleting from has_iq table
             secondPreparedStatement.setInt(1, id);
             secondPreparedStatement.executeUpdate();
             setImageCache(null);
@@ -244,7 +223,9 @@ public class ImageDAO implements DAO<Image> {
      * @param questionId The ID of the question.
      */
     public void addIQConnection(int imageId, int questionId) {
-        String insertStmt = "INSERT INTO hasIQ (ImageID, QuestionID) VALUES (?, ?);";
+        String insertStmt = "INSERT INTO has_iq (fk_image_id, fk_question_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, imageId);
@@ -263,7 +244,9 @@ public class ImageDAO implements DAO<Image> {
      * @param questionId The ID of the question.
      */
     public void removeIQConnection(int imageId, int questionId) {
-        String deleteStmt = "DELETE FROM hasIQ WHERE ImageID = ? AND QuestionID = ?;";
+        String deleteStmt = "DELETE FROM has_iq WHERE fk_image_id = ? AND fk_question_id = ?;";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, imageId);
@@ -285,10 +268,10 @@ public class ImageDAO implements DAO<Image> {
     @Override
     public Image createModelFromResultSet(ResultSet resultSet) throws SQLException {
         return new Image(
-                resultSet.getInt("ImageID"),
-                resultSet.getString("Link"),
-                resultSet.getString("Imagename"),
-                resultSet.getInt("Position")
-        );
+                resultSet.getInt("id"),
+                resultSet.getBytes("image"),
+                resultSet.getString("name"),
+                resultSet.getInt("position"),
+                resultSet.getString("comment"));
     }
 }

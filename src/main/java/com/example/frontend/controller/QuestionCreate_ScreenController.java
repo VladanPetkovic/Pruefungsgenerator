@@ -2,9 +2,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
+import com.example.backend.db.models.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -53,7 +51,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // retrieve categories from the database based on the selected course ID
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id());
+        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
 
         // display an error alert if no categories are found
         if(categories.size() == 0){
@@ -117,7 +115,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         // Iterate through the list of categories
         for (Category c : categories) {
             // Create a MenuItem for the category
-            MenuItem menuItem = createMenuItem(c.getCategory());
+            MenuItem menuItem = createMenuItem(c.getName());
 
             // Set the action event for the MenuItem
             menuItem.setOnAction(event -> {
@@ -125,7 +123,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 selectedCategory = c;
 
                 // Set the text of the MenuButton to the name of the selected category
-                category.setText(c.getCategory());
+                category.setText(c.getName());
             });
 
             // Add the MenuItem to the MenuButton's items
@@ -144,7 +142,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         // Iterate through the list of keywords
         for (Keyword k : keywords) {
             // Create a MenuItem for the keyword
-            MenuItem menuItem = createMenuItem(k.getKeyword_text());
+            MenuItem menuItem = createMenuItem(k.getKeyword());
 
             // Set the action event for the MenuItem
             menuItem.setOnAction(event -> {
@@ -154,7 +152,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                     selectedKeywords.add(k);
 
                     // Create a button to display the selected keyword with a removal option
-                    Button b = createButton(k.getKeyword_text() + " X");
+                    Button b = createButton(k.getKeyword() + " X");
 
                     // Set the action event for the removal button
                     b.setOnAction(new EventHandler<ActionEvent>() {
@@ -292,28 +290,30 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 (int) difficulty.getValue(),
                 points.getValue().floatValue(),
                 question.getText(),
-                multipleChoice.isSelected() ? 1 : 0,
-                "",
+                new QuestionType(Type.OPEN),            // TODO: change to not be hardcoded
                 remarks.getText(),
-                answersToDatabaseString(),
+                null,                         // TODO: this cannot be changed
+                null,                                   // TODO: this should be changed with the current TimeStamp
+                answersToDatabaseString(this.multipleChoice, this.answers),
                 selectedKeywords,
                 new ArrayList<>()
         );
+
         // Add the question to the database
         SQLiteDatabaseConnection.questionRepository.add(q);
         // Create a Question object to search for the uploaded question
         Question questionSearch = new Question();
         questionSearch.setCategory(selectedCategory);
         questionSearch.setDifficulty((int) difficulty.getValue());
-        questionSearch.setQuestionString(question.getText());
-        questionSearch.setMultipleChoice(multipleChoice.isSelected() ? 1 : 0);
+        questionSearch.setQuestion(question.getText());
+        questionSearch.setType(multipleChoice.isSelected() ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
         // Retrieve the uploaded question from the database
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(
-                questionSearch, SharedData.getSelectedCourse().getCourse_name(), multipleChoice.isSelected());
+                questionSearch, SharedData.getSelectedCourse().getName());
         // If the question upload was successful
         if (questions.size() != 0) {
             // Set the question ID for the uploaded question
-            q.setQuestion_id(questions.get(0).getQuestion_id());
+            q.setId(questions.get(0).getId());
             // Associate keywords with the uploaded question
             for (Keyword k : selectedKeywords) {
                 SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
@@ -321,28 +321,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             // Switch the scene to the question upload screen
             switchScene(questionUpload, true);
         }
-    }
-
-    /**
-     * Generates a string representation of the answers provided for the question, suitable for storing
-     * in the database. If multiple choice is selected, it iterates through the list of answers,
-     * appends each answer followed by a newline character to the StringBuilder, and returns the resulting string.
-     * If multiple choice is not selected, it returns an empty string.
-     *
-     * @return A string representing the answers for the question, formatted for database storage.
-     */
-    private String answersToDatabaseString() {
-        StringBuilder s = new StringBuilder();
-        // Check if multiple choice is selected
-        if (multipleChoice.isSelected()) {
-            // Iterate through the list of answers
-            for (TextArea t : answers) {
-                // Append each answer followed by a newline character
-                s.append(t.getText()).append("\n");
-            }
-        }
-        // Return the generated string
-        return s.toString();
     }
 
     /**

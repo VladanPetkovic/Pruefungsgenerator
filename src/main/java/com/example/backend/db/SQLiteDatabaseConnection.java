@@ -19,6 +19,8 @@ public class SQLiteDatabaseConnection {
     public static final QuestionRepository questionRepository = new QuestionRepository(new QuestionDAO());
     public static final StudyProgramRepository studyProgramRepository = new StudyProgramRepository(new StudyProgramDAO());
     public static final CategoryRepository CategoryRepository = new CategoryRepository(new CategoryDAO());
+    public static final QuestionTypeRepository QUESTION_TYPE_REPOSITORY = new QuestionTypeRepository(new QuestionTypeDAO());
+    public static final AnswerRepository ANSWER_REPOSITORY = new AnswerRepository(new AnswerDAO());
     public static Connection connect() {
         try{
             return DriverManager.getConnection(DATABASE_URL);

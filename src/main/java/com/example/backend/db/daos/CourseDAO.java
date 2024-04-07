@@ -1,9 +1,10 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.*;
@@ -24,11 +25,12 @@ public class CourseDAO implements DAO<Course> {
      */
     @Override
     public void create(Course course) {
-        String insertStmt = "INSERT INTO Courses (CourseName, CourseNumber, Lector) VALUES (?, ?, ?);";
+        String insertStmt = "INSERT INTO courses (name, number, lector) VALUES (?, ?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setString(1, course.getCourse_name());
-            preparedStatement.setInt(2, course.getCourse_number());
+            preparedStatement.setString(1, course.getName());
+            preparedStatement.setInt(2, course.getNumber());
             preparedStatement.setString(3, course.getLector());
             preparedStatement.executeUpdate();
             setCourseCache(null);
@@ -44,7 +46,8 @@ public class CourseDAO implements DAO<Course> {
      */
     @Override
     public ArrayList<Course> readAll() {
-        String selectStmt = "SELECT CourseID, CourseName, CourseNumber, Lector FROM Courses;";
+        String selectStmt = "SELECT * FROM courses;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
@@ -74,11 +77,12 @@ public class CourseDAO implements DAO<Course> {
      */
     public ArrayList<Course> readAllForOneProgram(int studyProgramId) {
         String selectStmt =
-                "SELECT Courses.CourseID, CourseName, CourseNumber, Lector " +
-                        "FROM Courses " +
-                        "JOIN hasSC ON Courses.CourseID = hasSC.CourseID " +
-                        "JOIN StudyPrograms ON hasSC.ProgramID = StudyPrograms.ProgramID " +
-                        "WHERE hasSC.ProgramID = ?;";
+                "SELECT courses.* " +
+                "FROM courses " +
+                "JOIN has_sc ON courses.id = has_sc.fk_course_id " +
+                "JOIN study_programs ON has_sc.fk_program_id = study_programs.id " +
+                "WHERE has_sc.fk_program_id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -109,7 +113,8 @@ public class CourseDAO implements DAO<Course> {
     public Course read(int id) {
         Course course = null;
 
-        String readStmt = "SELECT CourseID, CourseName, CourseNumber, Lector FROM Courses WHERE CourseID = ?;";
+        String readStmt = "SELECT * FROM courses WHERE id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setInt(1, id);
@@ -135,7 +140,8 @@ public class CourseDAO implements DAO<Course> {
     public Course read(String course_name) {
         Course course = null;
 
-        String readStmt = "SELECT * FROM Courses WHERE CourseName = ?;";
+        String readStmt = "SELECT * FROM courses WHERE name = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setString(1, course_name);
@@ -161,7 +167,8 @@ public class CourseDAO implements DAO<Course> {
     public Course readByCourseNumber(int courseNumber) {
         Course course = null;
 
-        String readStmt = "SELECT CourseID, CourseName, CourseNumber, Lector FROM Courses WHERE CourseNumber = ?;";
+        String readStmt = "SELECT * FROM courses WHERE number = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setInt(1, courseNumber);
@@ -186,15 +193,17 @@ public class CourseDAO implements DAO<Course> {
     @Override
     public void update(Course course) {
         String updateStmt =
-                "UPDATE Courses " +
-                        "SET CourseName = ?, CourseNumber = ?, Lector = ? " +
-                        "WHERE CourseID = ?";
+                "UPDATE courses " +
+                "SET name = ?, number = ?, lector = ? " +
+                "WHERE id = ?";
+        Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
-            preparedStatement.setString(1, course.getCourse_name());
-            preparedStatement.setInt(2, course.getCourse_number());
+            preparedStatement.setString(1, course.getName());
+            preparedStatement.setInt(2, course.getNumber());
             preparedStatement.setString(3, course.getLector());
-            preparedStatement.setInt(4, course.getCourse_id());
+            preparedStatement.setInt(4, course.getId());
             preparedStatement.executeUpdate();
             setCourseCache(null);
         } catch (SQLException e) {
@@ -209,9 +218,9 @@ public class CourseDAO implements DAO<Course> {
      */
     @Override
     public void delete(int id) {
-        String deleteStmt = "DELETE FROM Courses WHERE CourseID = ?;";
-        String deleteHasCCStmt = "DELETE FROM hasCC WHERE CourseID = ?;";
-        String deleteHasSCStmt = "DELETE FROM hasSC WHERE CourseID = ?;";
+        String deleteStmt = "DELETE FROM courses WHERE id = ?;";
+        String deleteHasCCStmt = "DELETE FROM has_cc WHERE fk_course_id = ?;";
+        String deleteHasSCStmt = "DELETE FROM has_sc WHERE fk_course_id = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasCCStmt);
@@ -238,7 +247,9 @@ public class CourseDAO implements DAO<Course> {
      * @param courseId  The ID of the course.
      */
     public void addSCConnection(int programId, int courseId) {
-        String insertStmt = "INSERT INTO hasSC (ProgramID, CourseID) VALUES (?, ?);";
+        String insertStmt = "INSERT INTO has_sc (fk_program_id, fk_course_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, programId);
@@ -257,7 +268,7 @@ public class CourseDAO implements DAO<Course> {
      * @param courseId  The ID of the course.
      */
     public void removeSCConnection(int programId, int courseId) {
-        String deleteStmt = "DELETE FROM hasSC WHERE ProgramID = ? AND CourseID = ?";
+        String deleteStmt = "DELETE FROM has_sc WHERE fk_program_id = ? AND fk_course_id = ?";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, programId);
@@ -279,10 +290,10 @@ public class CourseDAO implements DAO<Course> {
     @Override
     public Course createModelFromResultSet (ResultSet resultSet) throws SQLException {
         return new Course(
-                resultSet.getInt("CourseID"),
-                resultSet.getString("CourseName"),
-                resultSet.getInt("CourseNumber"),
-                resultSet.getString("Lector")
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getInt("number"),
+                resultSet.getString("lector")
         );
     }
 }

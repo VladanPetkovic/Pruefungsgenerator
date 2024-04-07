@@ -44,11 +44,11 @@ public class KeywordRepository implements Repository<Keyword> {
     }
 
     public void addConnection(Keyword keyword, Question question) {
-        getKeywordDAO().addKQConnection(keyword.getKeyword_id(), question.getQuestion_id());
+        getKeywordDAO().addKQConnection(keyword.getId(), question.getId());
     }
 
     public void removeConnection(Keyword keyword, Question question){
-        getKeywordDAO().removeKQConnection(keyword.getKeyword_id(),question.getQuestion_id());
+        getKeywordDAO().removeKQConnection(keyword.getId(),question.getId());
     }
 
     @Override
@@ -58,6 +58,6 @@ public class KeywordRepository implements Repository<Keyword> {
 
     @Override
     public void remove(Keyword keyword) {
-        getKeywordDAO().delete(keyword.getKeyword_id());
+        getKeywordDAO().delete(keyword.getId());
     }
 }

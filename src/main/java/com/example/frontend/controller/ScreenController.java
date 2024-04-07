@@ -2,6 +2,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
@@ -11,9 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -152,7 +151,7 @@ public abstract class ScreenController {
     protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords) {
         ObservableList<String> items = FXCollections.observableArrayList();
         for (Keyword k : keywords) {
-            items.add(k.getKeyword_text());
+            items.add(k.getKeyword());
         }
         TextFields.bindAutoCompletion(keywordTextField, items);
     }
@@ -163,7 +162,7 @@ public abstract class ScreenController {
     protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories) {
         ObservableList<String> items = FXCollections.observableArrayList();
         for (Category c : categories) {
-            items.add(c.getCategory());
+            items.add(c.getName());
         }
         TextFields.bindAutoCompletion(categoryTextField, items);
     }
@@ -174,10 +173,10 @@ public abstract class ScreenController {
      */
     protected void initializeQuestions(TextField questionTextField) {
         ObservableList<String> items = FXCollections.observableArrayList();
-        String course_name = SharedData.getSelectedCourse().getCourse_name();
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name, false);
+        String course_name = SharedData.getSelectedCourse().getName();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name);
         for (int i = 0; i < 10; i++) {
-            items.add(questions.get(i).getQuestionString());
+            items.add(questions.get(i).getQuestion());
         }
         TextFields.bindAutoCompletion(questionTextField, items);
     }
@@ -223,9 +222,9 @@ public abstract class ScreenController {
         // Create labels to display question information.
         Label questionNumberLabel = createLabel("Erreichbare Punkte: " + question.getPoints(), Color.WHITE);
         Label questionDifficultyLabel = createLabel("Difficulty: " + question.getDifficulty(), Color.WHITE);
-        Label questionTextLabel = createLabel(question.getQuestionString(), Color.WHITE);
-        Label questionAnswersLabel = createLabel(question.getAnswers(), Color.WHITE);
-        Label questionRemarksLabel = createLabel(question.getRemarks(), Color.WHITE);
+        Label questionTextLabel = createLabel(question.getQuestion(), Color.WHITE);
+        Label questionAnswersLabel = createLabel(question.getAnswersAsString(), Color.WHITE);
+        Label questionRemarksLabel = createLabel(question.getRemark(), Color.WHITE);
 
         // Allow the question text label to wrap text if necessary.
         questionTextLabel.setWrapText(true);
@@ -245,10 +244,24 @@ public abstract class ScreenController {
      */
     protected boolean containsQuestionWithId(int question_id) {
         for (Question question : SharedData.getTestQuestions()) {
-            if (question.getQuestion_id() == question_id) {
+            if (question.getId() == question_id) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Converts the answers provided in the multiple choice question to an ArrayList of Answers.
+     * @return An Arraylist of Answer-objects
+     */
+    protected ArrayList<Answer> answersToDatabaseString(CheckBox multipleChoice, ArrayList<TextArea> answers) {
+        ArrayList<Answer> answerArrayList = new ArrayList<>();
+        if (multipleChoice.isSelected()) {
+            for (TextArea answerTextArea : answers) {
+                answerArrayList.add(new Answer(answerTextArea.getText()));
+            }
+        }
+        return answerArrayList;
     }
 }

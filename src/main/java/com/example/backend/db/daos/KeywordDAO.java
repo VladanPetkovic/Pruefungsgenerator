@@ -1,9 +1,10 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Keyword;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.*;
@@ -24,10 +25,12 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     @Override
     public void create(Keyword keyword) {
-        String insertStmt = "INSERT INTO Keywords (Keyword) VALUES (?);";
+        String insertStmt = "INSERT INTO keywords (keyword) VALUES (?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setString(1, keyword.getKeyword_text());
+            preparedStatement.setString(1, keyword.getKeyword());
             preparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
@@ -42,7 +45,8 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     @Override
     public ArrayList<Keyword> readAll() {
-        String selectStmt = "SELECT KeywordID, Keyword FROM Keywords;";
+        String selectStmt = "SELECT * FROM keywords;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
@@ -72,11 +76,12 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     public ArrayList<Keyword> readAllForOneQuestion(int questionId) {
         String selectStmt =
-                "SELECT Keywords.KeywordID, Keyword " +
-                        "FROM Keywords " +
-                        "JOIN hasKQ ON Keywords.KeywordID = hasKQ.KeywordID " +
-                        "JOIN Questions ON hasKQ.QuestionID = Questions.QuestionID " +
-                        "WHERE hasKQ.QuestionID = ?;";
+                "SELECT keywords.* " +
+                "FROM keywords " +
+                "JOIN has_kq ON keywords.id = has_kq.fk_keyword_id " +
+                "JOIN questions ON has_kq.fk_question_id = questions.id " +
+                "WHERE has_kq.fk_question_id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -108,9 +113,11 @@ public class KeywordDAO implements DAO<Keyword> {
         Keyword keyword = null;
 
         String readStmt =
-                "SELECT KeywordID, Keyword " +
-                        "FROM Keywords " +
-                        "WHERE KeywordID = ?;";
+                "SELECT * " +
+                "FROM keywords " +
+                "WHERE id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setInt(1, id);
@@ -137,9 +144,11 @@ public class KeywordDAO implements DAO<Keyword> {
         Keyword keyword = null;
 
         String readStmt =
-                "SELECT KeywordID, Keyword " +
-                        "FROM Keywords " +
-                        "WHERE Keyword = ?;";
+                "SELECT * " +
+                "FROM keywords " +
+                "WHERE keyword = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
             preparedStatement.setString(1, keywordName);
@@ -163,11 +172,13 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     @Override
     public void update(Keyword keyword) {
-        String updateStmt = "UPDATE Keywords SET Keyword = ? WHERE KeywordID = ?";
+        String updateStmt = "UPDATE keywords SET keyword = ? WHERE id = ?";
+        Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
-            preparedStatement.setString(1, keyword.getKeyword_text());
-            preparedStatement.setInt(2, keyword.getKeyword_id());
+            preparedStatement.setString(1, keyword.getKeyword());
+            preparedStatement.setInt(2, keyword.getId());
             preparedStatement.executeUpdate();
             setKeywordCache(null);
         } catch (SQLException e) {
@@ -182,8 +193,11 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     @Override
     public void delete(int id) {
-        String deleteStmt = "DELETE FROM Keywords WHERE KeywordID = ?;";
-        String deleteHasKQStmt = "DELETE FROM hasKQ WHERE KeywordID = ?;";
+        String deleteStmt = "DELETE FROM keywords WHERE id = ?;";
+        String deleteHasKQStmt = "DELETE FROM has_kq WHERE fk_keyword_id = ?;";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasKQStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasKQStmt)) {
@@ -206,7 +220,9 @@ public class KeywordDAO implements DAO<Keyword> {
      * @param questionId The ID of the question.
      */
     public void addKQConnection(int keywordId, int questionId) {
-        String insertStmt = "INSERT INTO hasKQ (KeywordID, QuestionID) VALUES (?, ?);";
+        String insertStmt = "INSERT INTO has_kq (fk_keyword_id, fk_question_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
             preparedStatement.setInt(1, keywordId);
@@ -225,7 +241,9 @@ public class KeywordDAO implements DAO<Keyword> {
      * @param questionId The ID of the question.
      */
     public void removeKQConnection(int keywordId, int questionId) {
-        String deleteStmt = "DELETE FROM hasKQ WHERE KeywordID = ? AND QuestionID = ?";
+        String deleteStmt = "DELETE FROM has_kq WHERE fk_keyword_id = ? AND fk_question_id = ?";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, keywordId);
@@ -247,8 +265,7 @@ public class KeywordDAO implements DAO<Keyword> {
     @Override
     public Keyword createModelFromResultSet(ResultSet resultSet) throws SQLException {
         return new Keyword(
-                resultSet.getInt("KeywordID"),
-                resultSet.getString("Keyword")
-        );
+                resultSet.getInt("id"),
+                resultSet.getString("keyword"));
     }
 }

@@ -45,7 +45,7 @@ public class CategoryRepository implements Repository<Category> {
     // --> we are adding a Category to a Course and not vice versa
     // --> therefor addConnection is implemented in CategoryRepository and not in CourseRepository
     public void addConnection(Course course, Category category) {
-        getCategoryDAO().addCCConnection(course.getCourse_id(), category.getCategory_id());
+        getCategoryDAO().addCCConnection(course.getId(), category.getId());
     }
 
     @Override
@@ -55,6 +55,6 @@ public class CategoryRepository implements Repository<Category> {
 
     @Override
     public void remove(Category category) {
-        getCategoryDAO().delete(category.getCategory_id());
+        getCategoryDAO().delete(category.getId());
     }
 }

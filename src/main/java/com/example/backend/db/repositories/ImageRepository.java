@@ -33,13 +33,17 @@ public class ImageRepository implements Repository<Image> {
         return getImageDAO().read(id);
     }
 
+    public Image get(String imageName) {
+        return getImageDAO().read(imageName);
+    }
+
     @Override
     public void add(Image image) {
         getImageDAO().create(image);
     }
 
     public void addConnection(Image image, Question question) {
-        getImageDAO().addIQConnection(image.getImage_id(), question.getQuestion_id());
+        getImageDAO().addIQConnection(image.getId(), question.getId());
     }
 
     @Override
@@ -49,6 +53,6 @@ public class ImageRepository implements Repository<Image> {
 
     @Override
     public void remove(Image image) {
-        getImageDAO().delete(image.getImage_id());
+        getImageDAO().delete(image.getId());
     }
 }

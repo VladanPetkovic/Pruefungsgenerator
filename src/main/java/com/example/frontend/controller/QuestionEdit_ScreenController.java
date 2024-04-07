@@ -2,22 +2,16 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.example.backend.db.models.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import org.controlsfx.control.textfield.TextFields;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -103,10 +97,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         chooseScrollPane.setMouseTransparent(true);
 
         // Sets the text of the selected course label to the name of the selected course.
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getCourse_name());
+        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
 
         // Retrieves all categories for the selected course from the database.
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getCourse_id());
+        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
 
         // Displays an error alert if no categories are found for the selected course.
         if (categories.size() == 0)
@@ -187,9 +181,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Calls the question repository to retrieve the filtered questions.
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(
                 filterQuestion,
-                SharedData.getSelectedCourse().getCourse_name(),
-                true
-        );
+                SharedData.getSelectedCourse().getName());
 
         // Displays the filtered questions in the console.
         printQuestions(result);
@@ -223,8 +215,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Sets the points and difficulty filter.
         setPointsAndDifficultyFilter(filterQuestion);
 
-        // Sets the multiple choice status based on the checkbox selection.
-        filterQuestion.setMultipleChoice(multipleChoice ? 1 : 0);
+        // Sets the multiple choice type based on the checkbox selection.
+        filterQuestion.setType(multipleChoice ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
+
 
         // Returns the constructed filter question.
         return filterQuestion;
@@ -295,7 +288,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             return;
         }
 
-        filterQuestion.setQuestionString(questionText);
+        filterQuestion.setQuestion(questionText);
     }
 
     /**
@@ -323,7 +316,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void fillCategoryWithCategories() {
         for (Category category : categories) {
             // Create a menu item for the current category.
-            MenuItem menuItem = createMenuItem(category.getCategory());
+            MenuItem menuItem = createMenuItem(category.getName());
             // Associate an event handler with the menu item to handle category selection.
             menuItem.setOnAction(event -> handleCategorySelection(category));
             // Add the menu item to the category menu.
@@ -339,7 +332,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void fillKeywordWithKeywords() {
         for (Keyword keyword : keywords) {
             // Create a menu item for the current keyword.
-            MenuItem menuItem = createMenuItem(keyword.getKeyword_text());
+            MenuItem menuItem = createMenuItem(keyword.getKeyword());
             // Associate an event handler with the menu item to handle keyword selection.
             menuItem.setOnAction(event -> handleKeywordSelection(keyword));
             // Add the menu item to the keyword menu.
@@ -369,7 +362,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Set the selected category to the specified category.
         selectedCategory = category;
         // Set the text of the chooseCategory menu button to the name of the selected category.
-        chooseCategory.setText(category.getCategory());
+        chooseCategory.setText(category.getName());
     }
 
     /**
@@ -383,7 +376,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             // Add the selected keyword to the list of selected keywords.
             selectedKeywords.add(keyword);
             // Create a button with the keyword text and an "X" to remove it.
-            Button button = createButton(keyword.getKeyword_text() + " X");
+            Button button = createButton(keyword.getKeyword() + " X");
             // Set an action event for the button to handle the removal of the keyword.
             button.setOnAction(event -> handleKeywordRemoval(button, keyword));
             // Add the button to the keywordsHBox.
@@ -401,7 +394,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Iterate through the list of selected keywords.
         for (Keyword keyword : selectedKeywords) {
             // Check if the keyword IDs match.
-            if (keyword.getKeyword_id() == k.getKeyword_id())
+            if (keyword.getId() == k.getId())
                 return true;
         }
         return false;
@@ -606,21 +599,21 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             chooseScrollPane.setMouseTransparent(false);
 
             // Set category, difficulty, and points to the values of the selected question.
-            chooseCategory.setText(question.getCategory().getCategory());
+            chooseCategory.setText(question.getCategory().getName());
             selectedCategory = question.getCategory();
             chooseDifficulty.setValue(question.getDifficulty());
             choosePoints.getValueFactory().setValue((double) question.getPoints());
 
             // If the question is multiple choice, set the corresponding UI elements.
-            if (question.getMultipleChoice() == 1) {
+            if (question.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
                 chooseMultipleChoice.setSelected(true);
-                Arrays.stream(question.getAnswers().split("\n")).forEach(this::createMultipleChoiceEntry);
+                Arrays.stream(question.getAnswersAsString().split("\n")).forEach(this::createMultipleChoiceEntry);
                 createMultipleChoiceButton();
             }
 
             // Set the question text and remarks to the values of the selected question.
-            chooseQuestion.setText(question.getQuestionString());
-            chooseRemarks.setText(question.getRemarks());
+            chooseQuestion.setText(question.getQuestion());
+            chooseRemarks.setText(question.getRemark());
 
             // Clear and set up the keyword UI elements based on the selected question.
             selectedKeywords.clear();
@@ -628,10 +621,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : question.getKeywords()) {
-                if(k.getKeyword_text() != null) {
+                if(k.getKeyword() != null) {
                     startState.add(k);
                     selectedKeywords.add(k);
-                    Button b = createButton(k.getKeyword_text() + " X");
+                    Button b = createButton(k.getKeyword() + " X");
                     b.setOnAction(e -> {
                         keywordsHBox.getChildren().remove(b);
                         selectedKeywords.remove(k);
@@ -641,7 +634,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             }
 
             // Set the question ID.
-            questionId = question.getQuestion_id();
+            questionId = question.getId();
         });
     }
 
@@ -662,7 +655,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Create a Question object from the inputs
         Question question = createQuestionFromInputs();
-        question.setQuestion_id(questionId);
+        question.setId(questionId);
+        question.setType(new QuestionType(1, "OPEN")); // TODO: HARDCODED - MAKE A DROP-BOX FOR QUESTION-TYPE INSTEAD OF MC
+        question.setUpdated_at(new Timestamp(System.currentTimeMillis()));
 
         // Update the question in the database
         SQLiteDatabaseConnection.questionRepository.update(question);
@@ -685,7 +680,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         for (Keyword keyword1 : startState) {
             boolean keywordFound = false;
             for (Keyword keyword2 : selectedKeywords) {
-                if (keyword1.getKeyword_text().equals(keyword2.getKeyword_text()))
+                if (keyword1.getKeyword().equals(keyword2.getKeyword()))
                     keywordFound = true;
             }
             if (!keywordFound) {
@@ -697,7 +692,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         for (Keyword keyword1 : selectedKeywords) {
             boolean keywordNotFound = true;
             for (Keyword keyword2 : startState) {
-                if (keyword1.getKeyword_text().equals(keyword2.getKeyword_text()))
+                if (keyword1.getKeyword().equals(keyword2.getKeyword()))
                     keywordNotFound = false;
             }
             if (keywordNotFound) {
@@ -731,7 +726,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * Creates a Question object using the inputs provided by the user in the GUI.
-     *
      * @return A Question object initialized with the values from the input fields.
      */
     private Question createQuestionFromInputs() {
@@ -740,34 +734,18 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 (int) chooseDifficulty.getValue(),          // Difficulty level of the question
                 choosePoints.getValue().floatValue(),       // Points awarded for the question
                 chooseQuestion.getText(),                   // Text of the question
-                chooseMultipleChoice.isSelected() ? 1 : 0,  // Indicator if the question is multiple choice
-                "",                                         // Placeholder for additional information (unused)
+                new QuestionType(Type.OPEN),                // Indicator if the question is multiple choice // TODO: change to not be hardcoded
                 chooseRemarks.getText(),                    // Remarks or additional information for the question
-                answersToDatabaseString(),                  // Answers provided for the question
+                null,                                       // TODO: this cannot be changed
+                null,                                       // TODO: this should be changed with the current TimeStamp
+                answersToDatabaseString(this.chooseMultipleChoice, this.answers),  // Answers provided for the question
                 selectedKeywords,                           // Keywords associated with the question
                 new ArrayList<>()                           // Placeholder for additional attributes (unused)
         );
     }
 
     /**
-     * Converts the answers provided in the multiple choice question to a formatted string
-     * for storage in the database.
-     *
-     * @return A string representation of the answers separated by newline characters.
-     */
-    private String answersToDatabaseString() {
-        StringBuilder result = new StringBuilder();
-        if (chooseMultipleChoice.isSelected()) {
-            for (TextArea answerTextArea : answers) {
-                result.append(answerTextArea.getText()).append("\n"); // Appending each answer followed by a newline
-            }
-        }
-        return result.toString(); // Returning the formatted string
-    }
-
-    /**
      * Checks if any of the answers provided in the multiple choice question are empty.
-     *
      * @return {@code true} if at least one answer is empty, {@code false} otherwise.
      */
     private boolean checkIfEmptyAnswers() {
@@ -776,7 +754,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * Checks if the question field is empty.
-     *
      * @return {@code true} if the question field is empty, {@code false} otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {

@@ -21,12 +21,12 @@ public class CategoryDAO implements DAO<Category> {
      */
     @Override
     public void create(Category category) {
-        String insertStmt = "INSERT INTO Categories (Category) VALUES (?);";
+        String insertStmt = "INSERT INTO categories (name) VALUES (?);";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
 
-            preparedStatement.setString(1, category.getCategory());
+            preparedStatement.setString(1, category.getName());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -43,7 +43,7 @@ public class CategoryDAO implements DAO<Category> {
     public ArrayList<Category> readAll() {
         ArrayList<Category> categories = new ArrayList<>();
 
-        String selectStmt = "SELECT CategoryID, Category FROM Categories;";
+        String selectStmt = "SELECT * FROM categories;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
@@ -71,11 +71,11 @@ public class CategoryDAO implements DAO<Category> {
         ArrayList<Category> categories = new ArrayList<>();
 
         String selectStmt =
-                "SELECT Categories.CategoryID, Categories.Category " +
-                        "FROM Categories " +
-                        "JOIN hasCC ON Categories.CategoryID = hasCC.CategoryID " +
-                        "JOIN Courses ON hasCC.CourseID = Courses.CourseID " +
-                        "WHERE hasCC.CourseID = ?;";
+                "SELECT categories.* " +
+                "FROM categories " +
+                "JOIN has_cc ON categories.id = has_cc.fk_category_id " +
+                "JOIN courses ON has_cc.fk_course_id = courses.id " +
+                "WHERE has_cc.fk_course_id = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -106,9 +106,9 @@ public class CategoryDAO implements DAO<Category> {
         Category category = null;
 
         String readStmt =
-                "SELECT CategoryID, Category " +
-                "FROM Categories " +
-                "WHERE CategoryID = ?;";
+                "SELECT * " +
+                "FROM categories " +
+                "WHERE id = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -138,10 +138,10 @@ public class CategoryDAO implements DAO<Category> {
         Category category = null;
 
         String readStmt =
-                "SELECT Categories.CategoryID, Categories.Category " +
-                "FROM Questions " +
-                "INNER JOIN Categories ON Questions.FK_Category_ID = Categories.CategoryID " +
-                "WHERE Questions.QuestionID = ?;";
+                "SELECT categories.* " +
+                "FROM questions " +
+                "INNER JOIN categories ON questions.fk_category_id = categories.id " +
+                "WHERE questions.id = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -171,9 +171,9 @@ public class CategoryDAO implements DAO<Category> {
         Category category = null;
 
         String readStmt =
-                "SELECT CategoryID, Category " +
-                        "FROM Categories " +
-                        "WHERE Category = ?;";
+                "SELECT * " +
+                "FROM categories " +
+                "WHERE name = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -200,13 +200,13 @@ public class CategoryDAO implements DAO<Category> {
      */
     @Override
     public void update(Category category) {
-        String updateStmt = "UPDATE Categories SET Category = ? WHERE CategoryID = ?;";
+        String updateStmt = "UPDATE categories SET name = ? WHERE id = ?;";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
 
-            preparedStatement.setString(1, category.getCategory());
-            preparedStatement.setInt(2, category.getCategory_id());
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setInt(2, category.getId());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -221,8 +221,9 @@ public class CategoryDAO implements DAO<Category> {
      */
     @Override
     public void delete(int id) {
-        String deleteStmt = "DELETE FROM Categories WHERE CategoryID = ?;";
-        String deleteHasCCStmt = "DELETE FROM hasCC WHERE CategoryID = ?;";
+        String deleteStmt = "DELETE FROM categories WHERE id = ?;";
+        String deleteHasCCStmt = "DELETE FROM has_cc WHERE fk_category_id = ?;";
+        // TODO: what happens with the question, that has fk_category_id deleted?
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
@@ -246,7 +247,7 @@ public class CategoryDAO implements DAO<Category> {
      * @param category_id The ID of the category.
      */
     public void addCCConnection(int course_id, int category_id) {
-        String insertStmt = "INSERT INTO hasCC (CourseID, CategoryID) VALUES (?, ?);";
+        String insertStmt = "INSERT INTO has_cc (fk_course_id, fk_category_id) VALUES (?, ?);";
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
@@ -267,7 +268,7 @@ public class CategoryDAO implements DAO<Category> {
      * @param category_id The ID of the category.
      */
     public void removeCCConnection(int course_id, int category_id) {
-        String deleteStmt = "DELETE FROM hasCC WHERE CourseID = ? AND CategoryID = ?;";
+        String deleteStmt = "DELETE FROM has_cc WHERE fk_course_id = ? AND fk_category_id = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, course_id);
@@ -288,8 +289,8 @@ public class CategoryDAO implements DAO<Category> {
     @Override
     public Category createModelFromResultSet(ResultSet resultSet) throws SQLException {
         return new Category(
-                resultSet.getInt("CategoryID"),
-                resultSet.getString("Category")
+                resultSet.getInt("id"),
+                resultSet.getString("name")
         );
     }
 }

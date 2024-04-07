@@ -2,14 +2,12 @@ package com.example.backend.app;
 
 import com.example.backend.db.models.Question;
 import javafx.scene.image.Image;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -196,7 +194,7 @@ public class ExportDocx extends Export<XWPFDocument> {
             XWPFParagraph questionParagraph = document.createParagraph();
             XWPFRun questionRun = questionParagraph.createRun();
             questionRun.setBold(true);
-            questionRun.setText((questionNumber + 1) + ". " + testQuestions.get(questionNumber).getQuestionString());
+            questionRun.setText((questionNumber + 1) + ". " + testQuestions.get(questionNumber).getQuestion());
             questionRun.addCarriageReturn();
 
             // answer
