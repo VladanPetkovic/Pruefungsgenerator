@@ -43,6 +43,30 @@ Slider
     -fx-background-color: #3a3a3a; /* medium dark grey background color */
 }
 
+.menuButton_dark .label {
+    -fx-text-fill: white;
+}
+.menu-item .label {
+    -fx-text-fill: #2f2f2f;
+}
+.menuButton_dark {
+    -fx-background-color: #2f2f2f;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 300px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+}
+.menuButton_dark:hover {
+    -fx-background-color: #646464; /* Darker color on hover */
+}
+.menuButton_dark:pressed {
+    -fx-background-color: #2f2f2f; /* Even darker color when pressed */
+}
+
 .searchbar_dark
 {
     -fx-background-color: #434343;

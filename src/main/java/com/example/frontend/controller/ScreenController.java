@@ -2,10 +2,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Answer;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
+import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -179,6 +176,31 @@ public abstract class ScreenController {
             items.add(questions.get(i).getQuestion());
         }
         TextFields.bindAutoCompletion(questionTextField, items);
+    }
+
+    /**
+     * This function initializes the MenuButton with the QuestionTypes.
+     * TODO: make a way adding new questionTypes (if it makes sense..?)
+     * @param menuButton - the menuButton used in the scene
+     */
+    protected void initializeMenuButton(MenuButton menuButton) {
+        ArrayList<QuestionType> questionTypes = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.getAll();
+        menuButton.getItems().clear();
+
+        for (QuestionType questionType : questionTypes) {
+            MenuItem menuItem = new MenuItem(questionType.getName());
+            menuItem.setOnAction(e -> {
+                menuButton.setText(questionType.getName());
+            });
+            menuButton.getItems().add(menuItem);
+        }
+
+        // add "showAll" to showAll QuestionTypes
+        MenuItem menuItem = new MenuItem("all types");
+        menuItem.setOnAction(e -> {
+            menuButton.setText("all types");
+        });
+        menuButton.getItems().add(menuItem);
     }
 
     /**

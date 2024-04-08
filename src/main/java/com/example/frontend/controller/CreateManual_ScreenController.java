@@ -15,34 +15,24 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class CreateManual_ScreenController extends ScreenController {
-
     @FXML
     private Label label_selectedCourse;
-
     @FXML
     private TextField categoryTextField;
-
     @FXML
     private TextField questionTextField;
-
     @FXML
     private TextField keywordTextField;
-
     @FXML
     private Slider difficultySlider;
-
     @FXML
     private Slider pointsSlider;
-
     @FXML
-    private CheckBox multipleChoiceCheckBox;
-
+    public MenuButton questionTypeMenuButton;
     @FXML
     private Button applyFilterButton;
-
     @FXML
     private VBox vbox_testQuestionsPreview;
-
     @FXML
     private VBox vbox_filteredQuestionsPreview;
 
@@ -57,6 +47,7 @@ public class CreateManual_ScreenController extends ScreenController {
         initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAll());
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField);
+        initializeMenuButton(this.questionTypeMenuButton);
 
         // set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);
@@ -98,7 +89,7 @@ public class CreateManual_ScreenController extends ScreenController {
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
         String questionText = questionTextField.getText();
-        boolean multipleChoice = multipleChoiceCheckBox.isSelected();
+        String questionTypeString = questionTypeMenuButton.getText();
 
         // set category value if provided
         if (!categoryName.isEmpty()) {
@@ -138,8 +129,11 @@ public class CreateManual_ScreenController extends ScreenController {
             filterQuestion.setDifficulty(SharedData.getFilterQuestion().getDifficulty());
         }
 
-        // set multiple choice value
-        filterQuestion.setType(multipleChoice ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
+        // set questionType value
+        if (QuestionType.checkExistingType(questionTypeString)) {
+            QuestionType filterQuestionType = new QuestionType(questionTypeString);
+            filterQuestion.setType(filterQuestionType);
+        }
 
         // call Repository to search for questions corresponding to filter values
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());

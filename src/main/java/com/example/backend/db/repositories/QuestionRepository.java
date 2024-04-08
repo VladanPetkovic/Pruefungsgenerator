@@ -16,7 +16,7 @@ public class QuestionRepository implements Repository<Question> {
     @Getter(AccessLevel.PRIVATE)
     QuestionDAO questionDAO;
     final ArrayList<String> columnNames = new ArrayList<>(List.of(
-            "q.id", "q.fk_category_id", "difficulty", "points", "question", "fk_question_type_id",
+            "q.id", "q.fk_category_id", "difficulty", "points", "question", "question_type",
             "remark", "created_at", "updated_at", "fk_answer_id", "fk_keyword_id", "fk_image_id"));
 
     public QuestionRepository(QuestionDAO questionDAO) {
@@ -62,11 +62,11 @@ public class QuestionRepository implements Repository<Question> {
                     searchOptions.add(new SearchObject<>(columnName, field_name, null, false));
                 }
                 else if (field_value instanceof QuestionType type) {
-                    if (type.getId() == 0) {
+                    if (type.getName() == null) {
                         searchOptions.add(new SearchObject<>(columnName, field_name, 0, false));
                     } else {
-                        // pass the id and not the object "QuestionType"
-                        searchOptions.add(new SearchObject<>(columnName, field_name, type.getId(), true));
+                        // pass the name and not the object "QuestionType"
+                        searchOptions.add(new SearchObject<>(columnName, field_name, type.getName(), true));
                     }
                 }
                 else if(field_name.equals("points") && (float) field_value == 0) {

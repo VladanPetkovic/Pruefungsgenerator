@@ -23,6 +23,13 @@ public class QuestionType {
         setType(type);
     }
 
+    public QuestionType(String typeString) {
+        setType(typeString);
+        if (getType() != null) {
+            setName(getType().toString());
+        }
+    }
+
     public boolean checkQuestionType(Type givenType) {
         return this.type == givenType;
     }
@@ -51,5 +58,23 @@ public class QuestionType {
             default:
                 throw new IllegalArgumentException("Invalid question type: " + typeName);
         }
+    }
+
+    /**
+     * This function is used to check whether the questionType was set or not.
+     * @param typeName The string we are reading from the MenuButton
+     * @return A Boolean, true, if the typeName matches any enum Type; false otherwise.
+     */
+    public static boolean checkExistingType(String typeName) {
+        if (typeName == null) {
+            return false;
+        }
+
+        for (Type type : Type.values()) {
+            if (type.name().equalsIgnoreCase(typeName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

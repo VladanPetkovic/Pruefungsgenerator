@@ -18,48 +18,33 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
-
     @FXML
     private Label label_selectedCourse;
-
     @FXML
     private TextField categoryTextField;
-
     @FXML
     private TextField keywordTextField;
-
     @FXML
     private TextField questionTextField;
-
     @FXML
     private Slider difficultySlider;
-
     @FXML
     private Slider pointsSlider;
-
     @FXML
-    private CheckBox multipleChoiceCheckBox;
-
+    public MenuButton questionTypeMenuButton;
     private ArrayList<TextArea> answers = new ArrayList<>();
-
     @FXML
     private VBox previewVBox;
-
     @FXML
     private MenuButton chooseCategory;
-
     @FXML
     private Spinner<Double> choosePoints;
-
     @FXML
     private CheckBox chooseMultipleChoice;
-
     @FXML
     private Slider chooseDifficulty;
-
     @FXML
     private TextArea chooseQuestion;
-
     @FXML
     private TextArea chooseRemarks;
 
@@ -129,6 +114,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         initializeKeywords(keywordTextField, keywords);
         initializeCategories(categoryTextField, categories);
         initializeQuestions(questionTextField);
+        initializeMenuButton(questionTypeMenuButton);
     }
 
     /**
@@ -190,7 +176,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     /**
      * Creates a filter question based on the selected filter criteria.
      * Retrieves the category name, keyword text, question text and multiple choice checkbox status.
-     * Sets the category filter, keyword filter, question filter, points and difficulty filter, and multiple choice status.
+     * Sets the category filter, keyword filter, question filter, points and difficulty filter, and questionType.
      * @return The constructed filter question.
      */
     private Question createFilterQuestion() {
@@ -201,7 +187,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
         String questionText = questionTextField.getText();
-        boolean multipleChoice = multipleChoiceCheckBox.isSelected();
+        String questionTypeString = questionTypeMenuButton.getText();
 
         // Sets the category filter based on the provided category name.
         setCategoryFilter(categoryName, filterQuestion);
@@ -215,9 +201,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Sets the points and difficulty filter.
         setPointsAndDifficultyFilter(filterQuestion);
 
-        // Sets the multiple choice type based on the checkbox selection.
-        filterQuestion.setType(multipleChoice ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
-
+        // set questionType value
+        if (QuestionType.checkExistingType(questionTypeString)) {
+            QuestionType filterQuestionType = new QuestionType(questionTypeString);
+            filterQuestion.setType(filterQuestionType);
+        }
 
         // Returns the constructed filter question.
         return filterQuestion;
