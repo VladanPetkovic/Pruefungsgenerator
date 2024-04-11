@@ -37,6 +37,7 @@ public class ExportPdf extends Export<PDDocument> {
             document.save(this.destinationFolder + "/" + createFileName());
             document.close();
             returnValue = true;
+            Logger.log(getClass().getName(), "Pdf-file created successfully", LogLevel.INFO);
 
         } catch (IOException e) {
             throw new RuntimeException(e);

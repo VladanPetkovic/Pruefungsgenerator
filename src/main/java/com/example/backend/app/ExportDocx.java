@@ -30,6 +30,7 @@ public class ExportDocx extends Export<XWPFDocument> {
             FileOutputStream out = new FileOutputStream(new File(this.destinationFolder + "/" + createFileName()));
             document.write(out);
             out.close();
+            Logger.log(getClass().getName(), "Docx-file created successfully", LogLevel.INFO);
 
         } catch (Exception e) {
             e.printStackTrace();

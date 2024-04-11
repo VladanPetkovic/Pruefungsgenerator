@@ -1,7 +1,6 @@
 package com.example.frontend.controller;
 
-import com.example.backend.app.ExportPdf;
-import com.example.backend.app.SharedData;
+import com.example.backend.app.*;
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,32 +40,42 @@ public class pdfPreview_ScreenController extends ScreenController {
     @FXML
     private CheckBox checkbox_showPageNumber;
 
-    private ExportPdf export;
+    private ExportPdf exportPdf;
+    private ExportDocx exportDocx;
     public Label label_selectedDirectory;
 
     @FXML
     private void initialize() {
         // create an Export object with
-        this.export = new ExportPdf();
+        exportPdf = new ExportPdf();
+        exportDocx = new ExportDocx();
 
         // displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
     }
 
-    /**
-     * This functions only exports to pdf, if a folder was selected to save the file.
-     * @param actionEvent not used
-     */
     public void applyExportBtnClicked(ActionEvent actionEvent) {
+        exportFile(this.exportPdf);
+    }
+
+    public void onExportDocxBtnClick(ActionEvent actionEvent) {
+        exportFile(this.exportDocx);
+    }
+
+    /**
+     * This functions only exports to pdf or docx, if a folder was selected to save the file.
+     * @param export the base class - we are passing either exportDocx or exportPdf.
+     */
+    private void exportFile(Export export) {
         if (!this.label_selectedDirectory.getText().equals("\"\"")) {
             // set the latest options
-            this.export.setOptions(getTestHeader(),
+            export.setOptions(getTestHeader(),
                     getQuestionCount(),
                     this.label_selectedDirectory.getText(),
                     this.checkbox_applyHeader.isSelected(),
                     this.checkbox_showPageNumber.isSelected());
-            // export the test questions to PDF
-            this.export.exportDocument(SharedData.getTestQuestions());
+            // export the test questions to PDF/Docx
+            export.exportDocument(SharedData.getTestQuestions());
             // reset the stored test questions
             SharedData.resetQuestions();
             // returning to the automatic-test-create-scene
@@ -78,13 +87,13 @@ public class pdfPreview_ScreenController extends ScreenController {
 
     public void applyFormattingBtnClicked(ActionEvent actionEvent) {
         // set the latest options
-        this.export.setOptions(getTestHeader(),
+        this.exportPdf.setOptions(getTestHeader(),
                 getQuestionCount(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
         // get and insert the images (each page is one image) into the vbox
-        showPreview(this.export.getPreviewImages(SharedData.getTestQuestions()));
+        showPreview(this.exportPdf.getPreviewImages(SharedData.getTestQuestions()));
     }
 
     /**
@@ -101,7 +110,7 @@ public class pdfPreview_ScreenController extends ScreenController {
         File directory = chooser.showDialog(MainApp.stage);
         if (directory != null) {
             this.label_selectedDirectory.setText(directory.toString());
-            System.out.println(this.label_selectedDirectory.getText());
+            Logger.log(getClass().getName(), this.label_selectedDirectory.getText(), LogLevel.INFO);
         }
     }
 

@@ -135,14 +135,16 @@
                         <GridPane prefHeight="37.0" prefWidth="358.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                               <Button fx:id="applyFormattingBtn" mnemonicParsing="false" onAction="#applyFormattingBtnClicked" text="View PDF" />
-                               <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                               <Button mnemonicParsing="false" onAction="#applyFormattingBtnClicked" styleClass="btn_grey" text="View PDF" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                               <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                              <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" styleClass="btn_red" text="Export docx" />
                            </children>
                            <VBox.margin>
                               <Insets top="30.0" />

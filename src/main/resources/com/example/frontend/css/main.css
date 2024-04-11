@@ -20,13 +20,24 @@ Slider {
 .btn_red {
     -fx-background-color: red;
     -fx-text-fill: #fff;
-    -fx-cursor: HAND;
+    -fx-font-weight: bold;
 }
 .btn_red:hover {
     -fx-background-color: #ff6b6b;
 }
 .btn_red:pressed {
     -fx-background-color: red;
+}
+
+.btn_grey {
+    -fx-background-color: #646464;
+    -fx-text-fill: white;
+}
+.btn_grey:hover {
+    -fx-background-color: #2f2f2f;
+}
+.btn_grey:pressed {
+    -fx-background-color: #646464;
 }
 
 .btn_dark {
@@ -36,7 +47,6 @@ Slider {
     -fx-min-width: 200px;
     -fx-pref-height: 32px;
     -fx-max-width: 300px;
-    -fx-cursor: HAND;
 }
 .btn_dark:hover {
     -fx-background-color: #646464;
