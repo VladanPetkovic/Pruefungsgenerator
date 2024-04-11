@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
@@ -183,22 +185,17 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Creates a new instance of the filter question.
         Question filterQuestion = new Question();
 
-        // Retrieves the category name, keyword text, and multiple choice checkbox status.
         String categoryName = categoryTextField.getText().trim();
         String keywordText = keywordTextField.getText().trim();
         String questionText = questionTextField.getText();
         String questionTypeString = questionTypeMenuButton.getText();
 
-        // Sets the category filter based on the provided category name.
         setCategoryFilter(categoryName, filterQuestion);
 
-        // Sets the keyword filter based on the provided keyword text.
         setKeywordFilter(keywordText, filterQuestion);
 
-        // Sets the question filter based on the provided question text.
         setQuestionFilter(questionText, filterQuestion);
 
-        // Sets the points and difficulty filter.
         setPointsAndDifficultyFilter(filterQuestion);
 
         // set questionType value
@@ -207,7 +204,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             filterQuestion.setType(filterQuestionType);
         }
 
-        // Returns the constructed filter question.
         return filterQuestion;
     }
 
@@ -533,11 +529,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return      The created Button.
      */
     private Button createButton(String text) {
-        // Create a new Button with the specified text.
         Button button = new Button(text);
         // Set focus traversal to false to prevent the Button from being focused when navigating through UI controls.
         button.setFocusTraversable(false);
-        // Return the created Button.
         return button;
     }
 
@@ -550,8 +544,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     void printQuestions(ArrayList<Question> questions) {
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
-            // If the list is empty, print a message indicating no questions found.
-            System.out.println("No questions found");
+            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
             previewVBox.getChildren().clear();
             return;
         }
@@ -645,7 +638,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         Question question = createQuestionFromInputs();
         question.setId(questionId);
         question.setType(new QuestionType(1, "OPEN")); // TODO: HARDCODED - MAKE A DROP-BOX FOR QUESTION-TYPE INSTEAD OF MC
-        question.setUpdated_at(new Timestamp(System.currentTimeMillis()));
 
         // Update the question in the database
         SQLiteDatabaseConnection.questionRepository.update(question);
@@ -653,7 +645,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Compare the keywords and add/remove connections accordingly
         compareAndAddOrRemove(question);
 
-        // Switch to the question edit screen
         switchScene(questionEdit, true);
     }
 
@@ -700,11 +691,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (selectedCategory == null) {
             return "Category needs to be selected.";
         }
-
         if (chooseMultipleChoice.isSelected() && checkIfEmptyAnswers()) {
             return "You selected multiple choice but at least one answer is not filled out.";
         }
-
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
         }
@@ -718,17 +707,17 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private Question createQuestionFromInputs() {
         return new Question(
-                selectedCategory,                           // Selected category for the question
-                (int) chooseDifficulty.getValue(),          // Difficulty level of the question
-                choosePoints.getValue().floatValue(),       // Points awarded for the question
-                chooseQuestion.getText(),                   // Text of the question
-                new QuestionType(Type.OPEN),                // Indicator if the question is multiple choice // TODO: change to not be hardcoded
-                chooseRemarks.getText(),                    // Remarks or additional information for the question
-                null,                                       // TODO: this cannot be changed
-                null,                                       // TODO: this should be changed with the current TimeStamp
-                answersToDatabaseString(this.chooseMultipleChoice, this.answers),  // Answers provided for the question
-                selectedKeywords,                           // Keywords associated with the question
-                new ArrayList<>()                           // Placeholder for additional attributes (unused)
+                selectedCategory,
+                (int) chooseDifficulty.getValue(),
+                choosePoints.getValue().floatValue(),
+                chooseQuestion.getText(),
+                new QuestionType(Type.OPEN),                // TODO: change to not be hardcoded
+                chooseRemarks.getText(),
+                null,                             // created_at cannot be changed
+                new Timestamp(System.currentTimeMillis()),  // updated_at
+                getAnswerArrayList(Type.OPEN, this.answers), // TODO: change to not be hardcoded
+                selectedKeywords,
+                new ArrayList<>()                           // images // TODO: implement this here
         );
     }
 
@@ -737,7 +726,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return {@code true} if at least one answer is empty, {@code false} otherwise.
      */
     private boolean checkIfEmptyAnswers() {
-        return answers.stream().anyMatch(answerTextArea -> answerTextArea.getText().isEmpty()); // Checking if any answer text area is empty
+        return answers.stream().anyMatch(answerTextArea -> answerTextArea.getText().isEmpty());
     }
 
     /**
@@ -745,6 +734,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return {@code true} if the question field is empty, {@code false} otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {
-        return chooseQuestion.getText().isEmpty(); // Checking if the question text area is empty
+        return chooseQuestion.getText().isEmpty();
     }
 }

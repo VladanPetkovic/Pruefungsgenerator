@@ -116,7 +116,7 @@ CREATE TABLE question_types (
 
 CREATE TABLE answers (
     id INTEGER PRIMARY KEY,
-    answer TEXT NOT NULL
+    answer TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE has_aq (

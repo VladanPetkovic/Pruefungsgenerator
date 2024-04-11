@@ -36,6 +36,11 @@ public class AnswerRepository implements Repository<Answer> {
         getAnswerDAO().create(answer);
     }
 
+    public void add(ArrayList<Answer> answers, int question_id) {
+        getAnswerDAO().create(answers);
+        getAnswerDAO().addHasAQConnection(answers, question_id);
+    }
+
     @Override
     public void update(Answer answer) {
         getAnswerDAO().update(answer);

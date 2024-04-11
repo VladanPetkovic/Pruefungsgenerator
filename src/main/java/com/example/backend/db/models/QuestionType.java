@@ -77,4 +77,15 @@ public class QuestionType {
         }
         return false;
     }
+
+    public static boolean checkMultipleChoiceType(String typeName) {
+        if (typeName == null) {
+            return false;
+        }
+
+        if (Type.MULTIPLE_CHOICE.name().equals(typeName)) {
+            return true;
+        }
+        return false;
+    }
 }

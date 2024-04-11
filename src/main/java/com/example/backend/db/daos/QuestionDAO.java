@@ -5,10 +5,7 @@ import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -16,9 +13,9 @@ import java.util.Objects;
 public class QuestionDAO implements DAO<Question> {
     private final String selectColumns =
             "SELECT q.id AS question_id, q.fk_category_id, q.difficulty, q.points, q.question, q.fk_question_type_id, q.remark, q.created_at, q.updated_at, " +
-            "       a.id AS answer_id, a.answer, c.name AS category_name, " +
-            "       k.id AS keyword_id, k.keyword, qt.name AS question_type, " +
-            "       i.id AS image_id, i.image, i.name AS image_name, i.position, i.comment ";
+            "a.id AS answer_id, a.answer, c.name AS category_name, " +
+            "k.id AS keyword_id, k.keyword, qt.name AS question_type, " +
+            "i.id AS image_id, i.image, i.name AS image_name, i.position, i.comment ";
 
     // questionCache needed for staging questions before sending them to the user
     ArrayList<Question> questionCache;
@@ -37,6 +34,7 @@ public class QuestionDAO implements DAO<Question> {
                 "INSERT INTO questions " +
                 "(fk_category_id, difficulty, points, question, fk_question_type_id, remark) " +
                 "VALUES (?, ?, ?, ?, ?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
@@ -47,7 +45,6 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(4, question.getQuestion());
             preparedStatement.setInt(5, question.getType().getId());
             preparedStatement.setString(6, question.getRemark());
-            // TODO: add answers
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -68,14 +65,15 @@ public class QuestionDAO implements DAO<Question> {
         String selectQuestionsStmt =
             this.selectColumns +
             "FROM Questions q " +
-            "         JOIN categories c ON q.fk_category_id = c.id " +
-            "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
-            "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
-            "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
-            "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
-            "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
-            "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
-            "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id;";
+            "JOIN categories c ON q.fk_category_id = c.id " +
+            "LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+            "LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+            "LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+            "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+            "LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+            "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id;";
+        Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt);
@@ -108,16 +106,15 @@ public class QuestionDAO implements DAO<Question> {
         String selectQuestionsStmt =
                 this.selectColumns +
                 "FROM Questions q " +
-                "         JOIN categories c ON q.fk_category_id = c.id " +
-                "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
-                "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
-                "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
-                "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
-                "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
-                "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
-                "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+                "JOIN categories c ON q.fk_category_id = c.id " +
+                "LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+                "LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+                "LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+                "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+                "LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+                "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+                "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
                 "WHERE q.fk_category_id = ?;";
-
         Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
         if (category != null) {
@@ -160,16 +157,16 @@ public class QuestionDAO implements DAO<Question> {
         StringBuilder selectQuestionsStmt = new StringBuilder(
                 this.selectColumns +
                 "FROM Questions q " +
-                "         JOIN categories c ON q.fk_category_id = c.id " +
-                "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
-                "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
-                "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
-                "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
-                "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
-                "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
-                "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
-                "         LEFT JOIN has_cc hcc ON q.fk_category_id = hcc.fk_category_id " +
-                "         LEFT JOIN courses co ON hcc.fk_course_id = co.id " +
+                "JOIN categories c ON q.fk_category_id = c.id " +
+                "LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+                "LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+                "LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+                "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+                "LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+                "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+                "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+                "LEFT JOIN has_cc hcc ON q.fk_category_id = hcc.fk_category_id " +
+                "LEFT JOIN courses co ON hcc.fk_course_id = co.id " +
                 "WHERE co.id = ?");
 
         // init selectSTMT and listForPreparedStmt
@@ -278,16 +275,15 @@ public class QuestionDAO implements DAO<Question> {
         String selectStmt =
             this.selectColumns +
             "FROM Questions q " +
-            "         JOIN categories c ON q.fk_category_id = c.id " +
-            "         LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
-            "         LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
-            "         LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
-            "         LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
-            "         LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
-            "         LEFT JOIN images i ON hiq.fk_image_id = i.id " +
-            "         LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+            "JOIN categories c ON q.fk_category_id = c.id " +
+            "LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+            "LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+            "LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+            "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+            "LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
+            "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
+            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
             "WHERE q.id = ?;";
-
         Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -312,6 +308,30 @@ public class QuestionDAO implements DAO<Question> {
         }
 
         return null;
+    }
+
+    /**
+     * This function gets the id from the latest created question.
+     * @return the latest id, which was created.
+     */
+    public int getMaxQuestionId() {
+        this.questionCache.clear();
+
+        String selectStmt = "SELECT id FROM questions ORDER BY created_at DESC LIMIT 1;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectStmt)) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 
     /**

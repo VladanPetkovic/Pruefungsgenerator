@@ -19,7 +19,7 @@ public class AnswerDAO implements DAO<Answer> {
 
     @Override
     public void create(Answer answer) {
-        String insertStmt = "INSERT INTO answers (answer) VALUES (?);";
+        String insertStmt = "INSERT OR IGNORE INTO answers (answer) VALUES (?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -30,6 +30,87 @@ public class AnswerDAO implements DAO<Answer> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * ATTENTION: duplicate records will be ignored
+     * @param answers ArrayList of Answers, so one or multiple answers can be inserted at once into the answers table.
+     */
+    public void create(ArrayList<Answer> answers) {
+        int answerCounter = 1;
+
+        StringBuilder insertStmt = new StringBuilder("INSERT OR IGNORE INTO answers (answer) VALUES (?)");
+        prepareInsertAnswerQuery(insertStmt, answers);
+        Logger.log(getClass().getName(), String.valueOf(insertStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(insertStmt))) {
+
+            // insert new answers
+            for (Answer answer : answers) {
+                preparedStatement.setString(answerCounter, answer.getAnswer());
+                answerCounter++;
+            }
+
+            preparedStatement.executeUpdate();
+            setAnswerCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ATTENTION: duplicate records are ignored and no error will show up.
+     * @param answers ArrayList of Answers, inserting one or multiple answer_ids in the has_aq table
+     * @param question_id The id of the Question
+     */
+    public void addHasAQConnection(ArrayList<Answer> answers, int question_id) {
+        int answerCounter = 1;
+
+        StringBuilder insertHasAQStmt = new StringBuilder("" +
+                "INSERT OR IGNORE INTO has_aq (fk_answer_id, fk_question_id) " +
+                "SELECT (SELECT id FROM answers WHERE answer = ?), ? ");
+        prepareInsertConnectionQuery(insertHasAQStmt, answers);
+        Logger.log(getClass().getName(), String.valueOf(insertHasAQStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatementHasAQ = connection.prepareStatement(String.valueOf(insertHasAQStmt))) {
+
+            // insert new connections
+            for (Answer answer : answers) {
+                preparedStatementHasAQ.setString(answerCounter, answer.getAnswer());
+                answerCounter++;
+                preparedStatementHasAQ.setInt(answerCounter, question_id);
+                answerCounter++;
+            }
+
+            preparedStatementHasAQ.executeUpdate();
+            setAnswerCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void prepareInsertAnswerQuery(StringBuilder insertStmt, ArrayList<Answer> answers) {
+        if (answers.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < answers.size() - 1; i++) {
+                insertStmt.append(", (?)");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    public void prepareInsertConnectionQuery(StringBuilder insertStmt, ArrayList<Answer> answers) {
+        if (answers.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < answers.size() - 1; i++) {
+                insertStmt.append("UNION ALL SELECT (SELECT id FROM answers WHERE answer = ?), ? ");
+            }
+        }
+
+        insertStmt.append(";");
     }
 
     @Override
@@ -122,7 +203,6 @@ public class AnswerDAO implements DAO<Answer> {
     public void delete(int id) {
         String deleteStmt = "DELETE FROM answers WHERE id = ?;";
         String deleteHasAQStmt = "DELETE FROM has_aq WHERE fk_answer_id = ?;";
-        // TODO: what happens with the question, that has fk_answer_id deleted?
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);

@@ -121,7 +121,7 @@ public class QuestionTypeDAO implements DAO<QuestionType> {
     @Override
     public void delete(int id) {
         String deleteStmt = "DELETE FROM question_types WHERE id = ?;";
-        // TODO: what happens when the question_type gets deleted for the corresponding questions
+        // TODO: what happens when the question_type gets deleted for the corresponding questions --> should not get deleted
         Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();

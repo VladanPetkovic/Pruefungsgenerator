@@ -11,11 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
-
     @FXML
     private MenuButton category;
     @FXML
@@ -23,9 +24,11 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private Spinner<Double> points;
     @FXML
-    private CheckBox multipleChoice;
+    public MenuButton questionTypeMenuButton;
     @FXML
     private VBox multipleChoiceVBox;
+    @FXML
+    public VBox multipleChoiceAnswerVBox;
     @FXML
     private TextArea question;
     @FXML
@@ -50,33 +53,26 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // retrieve categories from the database based on the selected course ID
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
 
-        // display an error alert if no categories are found
-        if(categories.size() == 0){
+        if (categories.size() == 0){
             showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
         }
 
-        // fill the category menu button with retrieved categories
         fillCategoryWithCategories();
 
-        // set the default value for the difficulty slider
         difficulty.setValue(5);
 
-        // set up the spinner for points with a default value factory
         SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
         points.setValueFactory(valueFactory);
 
-        // clear the text areas for question and remarks
         question.setText("");
         remarks.setText("");
 
-        // retrieve keywords from the database
         keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
 
-        // fill the keyword menu button with retrieved keywords
         fillKeywordWithKeywords();
+        initializeMenuButton(questionTypeMenuButton);
     }
 
     /**
@@ -188,70 +184,51 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     /**
-     * Handles the action event when the multiple choice CheckBox is selected or deselected.
-     * If the CheckBox is selected, it calls the createMultipleChoiceButton() method.
-     * If the CheckBox is deselected, it clears the multipleChoiceVBox and adds the CheckBox back, while clearing the answers list.
+     * This function gets triggered when the questionTypeMenuButton is clicked on.
+     * @param actionEvent not used
      */
-    @FXML
-    private void onActionMultipleChoice() {
-        // Check if the multiple choice CheckBox is selected
-        if (multipleChoice.isSelected()) {
-            // If selected, call the method to create multiple choice buttons
-            createMultipleChoiceButton();
+    public void onQuestionTypeMenuBtnAction(ActionEvent actionEvent) {
+        if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
+            if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+                initMultipleChoiceVBox();
+            } else {
+                removeMultipleChoiceVBox();
+            }
         } else {
-            // If not selected, proceed with deselection handling
-            // Store the reference to the CheckBox
-            CheckBox checkBox = multipleChoice;
-            // Clear the contents of the multiple choice VBox
-            multipleChoiceVBox.getChildren().clear();
-            // Add the CheckBox back to the VBox
-            multipleChoiceVBox.getChildren().add(checkBox);
-            // Clear the list of answers
-            answers.clear();
+            removeMultipleChoiceVBox();
         }
     }
 
-    /**
-     * Creates multiple choice answer input fields dynamically.
-     * Adds a new TextArea for each answer and a corresponding removal button.
-     * Limits the number of answer fields to 10.
-     * Handles removal of answer fields when the removal button is clicked.
-     */
-    private void createMultipleChoiceButton() {
-        // Create a button for adding answers
-        Button button = createButton("Add answer");
-        // Set action event for the button
-        button.setOnAction(event -> {
+    public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
+        if (answers.size() <= 10) {
             // Create an HBox to contain each answer and its removal button
             HBox hBoxAnswerRemove = new HBox();
-            // Create a new TextArea for the answer
             TextArea textAreaAnswer = new TextArea();
-            // Add the answer TextArea to the answers list
             answers.add(textAreaAnswer);
-            // Create a removal button for the answer
             Button buttonRemove = createButton("X");
             // Set action event for the removal button
             buttonRemove.setOnAction(e -> {
-                // Remove the answer TextArea from the answers list
                 answers.remove(textAreaAnswer);
-                // Remove the HBox containing the answer and its removal button
                 multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-                // Check if the maximum number of answers (10) has been reached, and create a new button if necessary
-                if (answers.size() == 10) createMultipleChoiceButton();
             });
             // Add the answer TextArea and its removal button to the HBox
             hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
             // Add the HBox containing the answer and its removal button to the multiple choice VBox
             multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-            // Remove the "Add answer" button after adding a new answer field
-            multipleChoiceVBox.getChildren().remove(button);
-            // Check if the maximum number of answers (10) has been exceeded and prevent further creation if so
-            if (answers.size() > 10) return;
-            // Recursively call the method to create additional answer fields
-            createMultipleChoiceButton();
-        });
-        // Add the "Add answer" button to the multiple choice VBox
-        multipleChoiceVBox.getChildren().add(button);
+        }
+    }
+
+    private void initMultipleChoiceVBox() {
+        multipleChoiceVBox.setVisible(true);
+    }
+
+    /**
+     * This function hides the multipleChoiceVBox and resets our answers-ArrayList.
+     */
+    private void removeMultipleChoiceVBox() {
+        multipleChoiceVBox.setVisible(false);
+        // Clear the list of answers
+        answers.clear();
     }
 
     /**
@@ -284,29 +261,31 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             showErrorAlert("Error", "Not all fields filled", s);
             return;
         }
+
+        QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
+
         // Create a new Question object with the provided details
         Question q = new Question(
                 selectedCategory,
                 (int) difficulty.getValue(),
                 points.getValue().floatValue(),
                 question.getText(),
-                new QuestionType(Type.OPEN),            // TODO: change to not be hardcoded
+                questionType,
                 remarks.getText(),
-                null,                         // TODO: this cannot be changed
-                null,                                   // TODO: this should be changed with the current TimeStamp
-                answersToDatabaseString(this.multipleChoice, this.answers),
+                new Timestamp(System.currentTimeMillis()),
+                null,               // this can only be changed when editing a question
+                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), this.answers),
                 selectedKeywords,
-                new ArrayList<>()
+                new ArrayList<>()           // TODO: placeholder for photos
         );
 
-        // Add the question to the database
-        SQLiteDatabaseConnection.questionRepository.add(q);
+        Question.createNewQuestionInDatabase(q);
         // Create a Question object to search for the uploaded question
         Question questionSearch = new Question();
         questionSearch.setCategory(selectedCategory);
         questionSearch.setDifficulty((int) difficulty.getValue());
         questionSearch.setQuestion(question.getText());
-        questionSearch.setType(multipleChoice.isSelected() ? new QuestionType(Type.MULTIPLE_CHOICE) : new QuestionType(Type.OPEN));
+        questionSearch.setType(questionType);
         // Retrieve the uploaded question from the database
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(
                 questionSearch, SharedData.getSelectedCourse().getName());
@@ -314,7 +293,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (questions.size() != 0) {
             // Set the question ID for the uploaded question
             q.setId(questions.get(0).getId());
-            // Associate keywords with the uploaded question
+            // Associate keywords with the uploaded question // TODO: change this to be efficient
             for (Keyword k : selectedKeywords) {
                 SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
             }
@@ -332,7 +311,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     private boolean checkIfEmptyAnswers() {
         // Check if multiple choice is selected
-        if (multipleChoice.isSelected()) {
+        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
             // Iterate through the list of answers
             for (TextArea t : answers) {
                 // Check if the current answer is empty
@@ -348,7 +327,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     /**
      * Checks if the question text area is empty.
-     *
      * @return true if the question text area is empty, false otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {
@@ -357,13 +335,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     /**
      * Checks if all required fields are filled out.
-     *
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
         // Check if the category is selected
         if (selectedCategory == null) {
             return "Category needs to be selected.";
+        }
+        if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
+            return "Question-Type needs to be selected.";
         }
         // Check if multiple choice is selected and at least one answer is not filled out
         if (checkIfEmptyAnswers()) {
@@ -373,7 +353,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
         }
-        // Return null if all required fields are filled out
         return null;
     }
 }

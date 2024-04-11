@@ -9,10 +9,11 @@
 ## Warum answers eine n-to-n Beziehung zu questions hat
 
 Bei der Umsetzung haben wir zwei Möglichkeiten:
-1. eine 1-to-n Beziehung machen und bei questions für den foreign-key null-Werte akzeptieren
+1. eine 1-to-n Beziehung machen und bei answers den foreign-key von questions hinzufügen
 2. oder eine n-to-n Beziehung machen und bei questions mit keinen Antworten auf "" in answers verweisen
 
-Wir nehmen die zweite Möglichkeit, damit wir referenzielle Integrität in der Datenbank haben.
+Wir nehmen die zweite Möglichkeit, damit wir referenzielle Integrität in der Datenbank haben 
+und Werte nicht doppelt abgespeichert werden, auch wenn es in diesem Fall nur um "" geht.
 
 ## Normalisierung nach den 3 Normalformen
 ### 1. Normalform

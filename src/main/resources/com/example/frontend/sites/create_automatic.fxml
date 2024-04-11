@@ -92,7 +92,7 @@
                            <children>
                               <VBox fx:id="addQuestionVBox" alignment="CENTER" prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onAddQuestionBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="automatic_create_addQuestionButton" stylesheets="@../css/main.css" text="Add Question" textFill="WHITE">
+                                    <Button mnemonicParsing="false" onAction="#onAddQuestionBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="Add Question" textFill="WHITE">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -101,7 +101,7 @@
                               </VBox>
                               <VBox alignment="CENTER" prefHeight="150.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onCreateAutTestBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="automatic_create_uploadButton" stylesheets="@../css/main.css" text="Create Test" textFill="WHITE">
+                                    <Button mnemonicParsing="false" onAction="#onCreateAutTestBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="Create Test" textFill="WHITE">
                                        <font>
                                           <Font size="20.0" />
                                        </font>

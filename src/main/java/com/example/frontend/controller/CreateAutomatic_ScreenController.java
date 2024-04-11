@@ -181,9 +181,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // create a new MenuButton with default text
         MenuButton menuButton = new MenuButton("Choose category...");
         // add custom styling to the MenuButton
-        menuButton.getStyleClass().add("automatic_create_dropdown");
-        // load external CSS file for additional styling
-        menuButton.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
+        menuButton.getStyleClass().add("menuButton_dark");
 
         // create a new VBox to contain the MenuButton
         VBox innerVBox = new VBox(menuButton);
@@ -192,8 +190,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerVBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        // load external CSS file for additional styling
-        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         // add the VBox containing the MenuButton to the parent VBox
         parentVBox.getChildren().add(innerVBox);
@@ -210,8 +206,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // add custom styling to the Spinner
         spinner.getStyleClass().add("automatic_create_spinner");
-        // load external CSS file for additional styling
-        spinner.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         // create a new VBox to contain the Spinner
         VBox innerVBox = new VBox(spinner);
@@ -220,8 +214,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerVBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        // load external CSS file for additional styling
-        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         // add the VBox containing the Spinner to the parent VBox
         parentVBox.getChildren().add(innerVBox);
@@ -254,8 +246,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerVBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
         innerVBox.getStyleClass().add("automatic_create_vbox");
-        // load external CSS file for additional styling
-        innerVBox.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         // add the VBox containing the Slider to the parent VBox
         parentVBox.getChildren().add(innerVBox);

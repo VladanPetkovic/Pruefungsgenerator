@@ -149,7 +149,7 @@
                                     </MenuButton>
                                  </children>
                               </VBox>
-                              <Button fx:id="applyFilterButton" mnemonicParsing="false" onAction="#applyFilterButtonClicked" text="Apply Filter" />
+                              <Button fx:id="applyFilterButton" mnemonicParsing="false" onAction="#applyFilterButtonClicked" styleClass="btn_dark" text="Apply Filter" />
                            </children>
                         </VBox>
                      </content>
@@ -174,7 +174,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="exportBtn" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="btn_red" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
                      </children>
                   </GridPane>
                   <ScrollPane fx:id="scrollPane_testQuestionsPreview" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">

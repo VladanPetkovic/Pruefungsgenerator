@@ -277,9 +277,9 @@ public abstract class ScreenController {
      * Converts the answers provided in the multiple choice question to an ArrayList of Answers.
      * @return An Arraylist of Answer-objects
      */
-    protected ArrayList<Answer> answersToDatabaseString(CheckBox multipleChoice, ArrayList<TextArea> answers) {
+    protected ArrayList<Answer> getAnswerArrayList(Type type, ArrayList<TextArea> answers) {
         ArrayList<Answer> answerArrayList = new ArrayList<>();
-        if (multipleChoice.isSelected()) {
+        if (type == Type.MULTIPLE_CHOICE) {
             for (TextArea answerTextArea : answers) {
                 answerArrayList.add(new Answer(answerTextArea.getText()));
             }

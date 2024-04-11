@@ -1,5 +1,6 @@
 package com.example.backend.db.models;
 
+import com.example.backend.db.SQLiteDatabaseConnection;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -64,5 +65,14 @@ public class Question {
         return String.valueOf(answersCombined);
     }
 
+    public static void createNewQuestionInDatabase(Question question) {
+        QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
+        question.setType(qt);
+        SQLiteDatabaseConnection.questionRepository.add(question);
+        // get the created question_id
+        int new_question_id = SQLiteDatabaseConnection.questionRepository.getMaxQuestionId();
+        // create one or multiple answers
+        Answer.createAnswers(question, new_question_id);
+    }
 
 }

@@ -142,7 +142,7 @@
                           </rowConstraints>
                            <children>
                                <Button fx:id="applyFormattingBtn" mnemonicParsing="false" onAction="#applyFormattingBtnClicked" text="View PDF" />
-                               <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="exportBtn" text="Export PDF" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                               <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
                            </children>
                            <VBox.margin>
                               <Insets top="30.0" />

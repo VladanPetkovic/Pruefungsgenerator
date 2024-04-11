@@ -97,6 +97,10 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().read(id);
     }
 
+    public int getMaxQuestionId() {
+        return getQuestionDAO().getMaxQuestionId();
+    }
+
     @Override
     public void add(Question question) {
         getQuestionDAO().create(question);
