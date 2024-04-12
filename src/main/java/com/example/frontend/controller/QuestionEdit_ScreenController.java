@@ -96,8 +96,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories();
 
-        // Retrieves all keywords from the database.
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
+        // all keywords for the course
+        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
 
         // Fills the keyword menu with the retrieved keywords.
         fillKeywordWithKeywords();

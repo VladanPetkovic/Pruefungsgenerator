@@ -44,7 +44,7 @@ public class CreateManual_ScreenController extends ScreenController {
         getDifficultyFromSlider(this.difficultySlider);
 
         // init auto-completion
-        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAll());
+        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField);
         initializeMenuButton(this.questionTypeMenuButton);

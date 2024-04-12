@@ -38,6 +38,9 @@ public class KeywordRepository implements Repository<Keyword> {
         return getKeywordDAO().readAllForOneQuestion(question_id);
     }
 
+    public ArrayList<Keyword> getAllOneCourse(int course_id) {
+        return getKeywordDAO().readAllForOneCourse(course_id);
+    }
     @Override
     public void add(Keyword keyword) {
         getKeywordDAO().create(keyword);

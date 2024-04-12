@@ -102,6 +102,41 @@ public class KeywordDAO implements DAO<Keyword> {
         return null;
     }
 
+    public ArrayList<Keyword> readAllForOneCourse(int course_id) {
+        String selectStmt =
+                "SELECT DISTINCT keywords.* " +
+                "FROM keywords " +
+                "JOIN has_kq ON keywords.id = has_kq.fk_keyword_id " +
+                "JOIN (SELECT questions.id " +
+                "FROM questions " +
+                "JOIN has_kq ON questions.id = has_kq.fk_question_id " +
+                "WHERE questions.fk_category_id IN ( " +
+                "SELECT categories.id " +
+                "FROM categories " +
+                "JOIN has_cc ON has_cc.fk_category_id = categories.id " +
+                "WHERE has_cc.fk_course_id = ?)" +
+                ") AS filtered_questions ON has_kq.fk_question_id = filtered_questions.id;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
+            preparedStatement.setInt(1, course_id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                ArrayList<Keyword> keywords = new ArrayList<>();
+                while (resultSet.next()) {
+                    Keyword newKeyword = createModelFromResultSet(resultSet);
+                    keywords.add(newKeyword);
+                }
+                setKeywordCache(keywords);
+                return keywords;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /**
      * Retrieves a keyword by its ID from the database.
      *

@@ -69,7 +69,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         question.setText("");
         remarks.setText("");
 
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAll();
+        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
 
         fillKeywordWithKeywords();
         initializeMenuButton(questionTypeMenuButton);
