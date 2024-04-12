@@ -42,34 +42,31 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private Spinner<Double> choosePoints;
     @FXML
-    private CheckBox chooseMultipleChoice;
+    public VBox multipleChoiceAnswerVBox;
+    @FXML
+    public VBox multipleChoiceVBox;
+    @FXML
+    public MenuButton questionTypeMenuButtonEdit;
+    @FXML
+    public TextArea chooseAnswerTextArea;
     @FXML
     private Slider chooseDifficulty;
     @FXML
     private TextArea chooseQuestion;
     @FXML
     private TextArea chooseRemarks;
-
-    private ArrayList<Keyword> keywords;
-    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
-
-    private ArrayList<Keyword> startState = new ArrayList<>();
-
-    private ArrayList<Category> categories;
-    private Category selectedCategory = null;
-
     @FXML
     private ScrollPane chooseScrollPane;
-
     @FXML
     private HBox keywordsHBox;
-
     @FXML
     private MenuButton chooseKeywords;
 
-    @FXML
-    private VBox multipleChoiceVBox;
-
+    private ArrayList<Keyword> keywords;
+    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
+    private ArrayList<Keyword> startState = new ArrayList<>();
+    private ArrayList<Category> categories;
+    private Category selectedCategory = null;
     private int questionId;
 
     /**
@@ -96,27 +93,19 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories();
 
-        // all keywords for the course
         keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
-
-        // Fills the keyword menu with the retrieved keywords.
         fillKeywordWithKeywords();
 
-        // Configures the spinner value factory for choosing points.
         SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-
-        // Sets the value factory for the choosePoints spinner.
         choosePoints.setValueFactory(valueFactory);
 
-        // Sets the difficulty filter to the current value of the difficulty slider.
         getDifficultyFromSlider(this.difficultySlider);
-        // Sets the points filter to the current value of the points slider.
         getPointsFromSlider(this.pointsSlider);
 
         initializeKeywords(keywordTextField, keywords);
         initializeCategories(categoryTextField, categories);
         initializeQuestions(questionTextField);
-        initializeMenuButton(questionTypeMenuButton);
+        initializeMenuButton(questionTypeMenuButton, true);
     }
 
     /**
@@ -127,19 +116,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @param contentText The content text of the error alert dialog.
      */
     public void showErrorAlert(String title, String headerText, String contentText) {
-        // Creates a new Alert dialog with ERROR type.
         Alert alert = new Alert(Alert.AlertType.ERROR);
-
-        // Sets the title of the error alert dialog.
         alert.setTitle(title);
-
-        // Sets the header text of the error alert dialog.
         alert.setHeaderText(headerText);
-
-        // Sets the content text of the error alert dialog.
         alert.setContentText(contentText);
-
-        // Displays the error alert dialog and waits for user input.
         alert.showAndWait();
     }
 
@@ -151,7 +131,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     @FXML
     private void applyFilterButtonClicked(ActionEvent event) {
-        // Calls the searchQuestions method to perform filtering and searching.
         searchQuestions();
     }
 
@@ -398,141 +377,37 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     /**
-     * Handles the action when the multiple choice checkbox is selected or deselected.
-     * If selected, creates the UI elements for adding multiple choice answers.
-     * If deselected, resets the UI elements for multiple choice.
+     * This function initializes the questionType and answers, when a question is selected for editing.
+     * @param selectedQuestion the question, that was selected
      */
-    @FXML
-    private void onActionChooseMultipleChoice() {
-        // If the multiple choice checkbox is selected, create multiple choice UI elements.
-        if (chooseMultipleChoice.isSelected()) {
-            createMultipleChoiceButton();
+    private void initSelectedQuestionType(Question selectedQuestion) {
+        // question = MC
+        if (selectedQuestion.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
+            questionTypeMenuButton.textProperty().setValue(Type.MULTIPLE_CHOICE.name());
+            // TODO: we are using this already in ScreenController - refactor to dont duplicate code (maybe)
+            for (Answer answer : selectedQuestion.getAnswers()) {
+                HBox hBoxAnswerRemove = new HBox();
+                TextArea textAreaAnswer = new TextArea(answer.getAnswer());
+                answers.add(textAreaAnswer);
+                Button buttonRemove = createButton("X");
+                buttonRemove.setOnAction(e -> {
+                    answers.remove(textAreaAnswer);
+                    multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
+                });
+                hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
+                multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
+            }
+            multipleChoiceVBox.setVisible(true);
+            chooseAnswerTextArea.setDisable(true);
         } else {
-            // If deselected, reset the UI elements for multiple choice.
-            resetMultipleChoiceView();
+            multipleChoiceVBox.setVisible(false);
+            chooseAnswerTextArea.setDisable(false);
+            chooseAnswerTextArea.setText(selectedQuestion.getAnswersAsString());
         }
     }
 
-    /**
-     * Resets the view for multiple choice questions.
-     * Clears the existing UI elements and adds back the multiple choice checkbox.
-     * Clears the list of answers.
-     */
-    private void resetMultipleChoiceView() {
-        // Create a reference to the multiple choice checkbox.
-        CheckBox checkBox = chooseMultipleChoice;
-        // Clear the existing UI elements in the multiple choice VBox.
-        multipleChoiceVBox.getChildren().clear();
-        // Add the multiple choice checkbox back to the VBox.
-        multipleChoiceVBox.getChildren().add(checkBox);
-        // Clear the list of answers.
-        answers.clear();
-    }
-
-    /**
-     * Creates a button to add a new multiple choice answer entry.
-     * Calls the method createAndAddMultipleChoiceButton() with default parameters.
-     */
-    private void createMultipleChoiceButton() {
-        // Call createAndAddMultipleChoiceButton() with default parameters.
-        createAndAddMultipleChoiceButton("Add answer", "");
-    }
-
-    /**
-     * Creates a new multiple choice answer entry with the specified initial answer.
-     * Adds the created answer entry to the multipleChoiceVBox.
-     *
-     * @param initialAnswer The initial answer text for the answer entry.
-     */
-    private void createMultipleChoiceEntry(String initialAnswer) {
-        // Create an HBox to hold the answer entry and remove button.
-        HBox hBoxAnswerRemove = new HBox();
-        // Create a TextArea for the answer entry and set its initial text.
-        TextArea textAreaAnswer = new TextArea();
-        textAreaAnswer.setText(initialAnswer);
-        // Add the TextArea to the list of answers.
-        answers.add(textAreaAnswer);
-        // Create a button to remove the answer entry.
-        Button buttonRemove = createButton("X");
-        // Set the action for the remove button.
-        setButtonRemoveAction(buttonRemove, textAreaAnswer, hBoxAnswerRemove);
-        // Add the answer entry and remove button to the HBox.
-        hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-        // Add the HBox to the multipleChoiceVBox.
-        multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-    }
-
-    /**
-     * Creates and adds a new multiple choice answer entry to the multipleChoiceVBox.
-     * This method is called when the "Add answer" button is clicked.
-     *
-     * @param buttonText    The text to display on the button.
-     * @param initialAnswer The initial answer text for the answer entry.
-     */
-    private void createAndAddMultipleChoiceButton(String buttonText, String initialAnswer) {
-        // Create a button with the specified text.
-        Button button = createButton(buttonText);
-        // Set the action for the button.
-        button.setOnAction(event -> {
-            // Create an HBox to hold the answer entry and remove button.
-            HBox hBoxAnswerRemove = new HBox();
-            // Create a TextArea for the answer entry and set its initial text.
-            TextArea textAreaAnswer = new TextArea();
-            textAreaAnswer.setText(initialAnswer);
-            // Add the TextArea to the list of answers.
-            answers.add(textAreaAnswer);
-            // Create a button to remove the answer entry.
-            Button buttonRemove = createButton("X");
-            // Set the action for the remove button.
-            setButtonRemoveAction(buttonRemove, textAreaAnswer, hBoxAnswerRemove);
-            // Add the answer entry and remove button to the HBox.
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox to the multipleChoiceVBox.
-            multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-            // Remove the "Add answer" button if the maximum number of answers is reached.
-            multipleChoiceVBox.getChildren().remove(button);
-            // Create another "Add answer" button if the maximum number of answers is not reached.
-            if (answers.size() <= 10) {
-                createMultipleChoiceButton();
-            }
-        });
-        // Add the button to the multipleChoiceVBox.
-        multipleChoiceVBox.getChildren().add(button);
-    }
-
-    /**
-     * Sets the action for the remove button associated with a multiple choice answer entry.
-     * This method is called when a remove button is created.
-     *
-     * @param buttonRemove      The remove button.
-     * @param textAreaAnswer    The TextArea associated with the answer entry.
-     * @param hBoxAnswerRemove  The HBox containing the answer entry and remove button.
-     */
-    private void setButtonRemoveAction(Button buttonRemove, TextArea textAreaAnswer, HBox hBoxAnswerRemove) {
-        // Set the action for the remove button.
-        buttonRemove.setOnAction(e -> {
-            // Remove the answer entry from the list of answers.
-            answers.remove(textAreaAnswer);
-            // Remove the HBox containing the answer entry and remove button from the multipleChoiceVBox.
-            multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-            // Create another "Add answer" button if the maximum number of answers is not reached.
-            if (answers.size() <= 10) {
-                createMultipleChoiceButton();
-            }
-        });
-    }
-
-    /**
-     * Creates a Button with the specified text.
-     *
-     * @param text  The text to be displayed on the Button.
-     * @return      The created Button.
-     */
-    private Button createButton(String text) {
-        Button button = new Button(text);
-        // Set focus traversal to false to prevent the Button from being focused when navigating through UI controls.
-        button.setFocusTraversable(false);
-        return button;
+    public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
+        addMultipleChoiceAnswerBtnClicked(answers, multipleChoiceAnswerVBox);
     }
 
     /**
@@ -585,12 +460,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             chooseDifficulty.setValue(question.getDifficulty());
             choosePoints.getValueFactory().setValue((double) question.getPoints());
 
-            // If the question is multiple choice, set the corresponding UI elements.
-            if (question.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
-                chooseMultipleChoice.setSelected(true);
-                Arrays.stream(question.getAnswersAsString().split("\n")).forEach(this::createMultipleChoiceEntry);
-                createMultipleChoiceButton();
-            }
+            initSelectedQuestionType(question);
 
             // Set the question text and remarks to the values of the selected question.
             chooseQuestion.setText(question.getQuestion());
@@ -637,7 +507,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Create a Question object from the inputs
         Question question = createQuestionFromInputs();
         question.setId(questionId);
-        question.setType(new QuestionType(1, "OPEN")); // TODO: HARDCODED - MAKE A DROP-BOX FOR QUESTION-TYPE INSTEAD OF MC
 
         // Update the question in the database
         SQLiteDatabaseConnection.questionRepository.update(question);
@@ -691,7 +560,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (selectedCategory == null) {
             return "Category needs to be selected.";
         }
-        if (chooseMultipleChoice.isSelected() && checkIfEmptyAnswers()) {
+        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText()) && checkIfEmptyAnswers()) {
             return "You selected multiple choice but at least one answer is not filled out.";
         }
         if (checkIfQuestionIsEmpty()) {
@@ -711,11 +580,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 (int) chooseDifficulty.getValue(),
                 choosePoints.getValue().floatValue(),
                 chooseQuestion.getText(),
-                new QuestionType(Type.OPEN),                // TODO: change to not be hardcoded
+                null,                                  // questionType cannot be changed
                 chooseRemarks.getText(),
                 null,                             // created_at cannot be changed
                 new Timestamp(System.currentTimeMillis()),  // updated_at
-                getAnswerArrayList(Type.OPEN, this.answers), // TODO: change to not be hardcoded
+                getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
                 selectedKeywords,
                 new ArrayList<>()                           // images // TODO: implement this here
         );

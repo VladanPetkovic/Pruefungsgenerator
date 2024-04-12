@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
@@ -26,13 +25,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     public MenuButton questionTypeMenuButton;
     @FXML
-    private VBox multipleChoiceVBox;
+    private VBox multipleChoiceAnswerVBox;
     @FXML
-    public VBox multipleChoiceAnswerVBox;
+    private VBox multipleChoiceVBox;
     @FXML
     private TextArea question;
     @FXML
     private TextArea remarks;
+    @FXML
+    private TextArea answerTextArea;
     @FXML
     private MenuButton keyword;
     private ArrayList<Keyword> keywords;
@@ -55,7 +56,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
 
-        if (categories.size() == 0){
+        if (categories.isEmpty()){
             showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
         }
 
@@ -72,7 +73,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
 
         fillKeywordWithKeywords();
-        initializeMenuButton(questionTypeMenuButton);
+        initializeMenuButton(questionTypeMenuButton, false);
+        initQuestionTypeListener();
     }
 
     /**
@@ -185,65 +187,45 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     /**
      * This function gets triggered when the questionTypeMenuButton is clicked on.
-     * @param actionEvent not used
      */
-    public void onQuestionTypeMenuBtnAction(ActionEvent actionEvent) {
-        if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
-            if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
-                initMultipleChoiceVBox();
+    public void initQuestionTypeListener() {
+        questionTypeMenuButton.textProperty().addListener((observable) -> {
+            if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
+                switch (new QuestionType(questionTypeMenuButton.getText()).getType()) {
+                    case MULTIPLE_CHOICE:
+                        initMultipleChoiceVBox();
+                        break;
+                    case TRUE_FALSE:
+                        hideMultipleChoiceVBox();
+                        answerTextArea.setDisable(true);
+                        break;
+                    default:
+                        hideMultipleChoiceVBox();
+                }
             } else {
-                removeMultipleChoiceVBox();
+                hideMultipleChoiceVBox();
             }
-        } else {
-            removeMultipleChoiceVBox();
-        }
+        });
     }
 
     public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
-        if (answers.size() <= 10) {
-            // Create an HBox to contain each answer and its removal button
-            HBox hBoxAnswerRemove = new HBox();
-            TextArea textAreaAnswer = new TextArea();
-            answers.add(textAreaAnswer);
-            Button buttonRemove = createButton("X");
-            // Set action event for the removal button
-            buttonRemove.setOnAction(e -> {
-                answers.remove(textAreaAnswer);
-                multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-            });
-            // Add the answer TextArea and its removal button to the HBox
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox containing the answer and its removal button to the multiple choice VBox
-            multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-        }
+        addMultipleChoiceAnswerBtnClicked(answers, multipleChoiceAnswerVBox);
     }
 
     private void initMultipleChoiceVBox() {
         multipleChoiceVBox.setVisible(true);
+        answerTextArea.setDisable(true);
     }
 
     /**
      * This function hides the multipleChoiceVBox and resets our answers-ArrayList.
      */
-    private void removeMultipleChoiceVBox() {
+    private void hideMultipleChoiceVBox() {
         multipleChoiceVBox.setVisible(false);
         // Clear the list of answers
         answers.clear();
-    }
-
-    /**
-     * Creates a JavaFX Button with the given text and disables focus traversal.
-     *
-     * @param text The text to display on the button.
-     * @return The created Button with the specified text and disabled focus traversal.
-     */
-    private Button createButton(String text) {
-        // Create a new Button with the specified text
-        Button button = new Button(text);
-        // Disable focus traversal for the button
-        button.setFocusTraversable(false);
-        // Return the created Button
-        return button;
+        multipleChoiceAnswerVBox.getChildren().clear();
+        answerTextArea.setDisable(false);
     }
 
     /**
@@ -274,7 +256,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 remarks.getText(),
                 new Timestamp(System.currentTimeMillis()),
                 null,               // this can only be changed when editing a question
-                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), this.answers),
+                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
                 selectedKeywords,
                 new ArrayList<>()           // TODO: placeholder for photos
         );

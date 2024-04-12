@@ -2,6 +2,9 @@ Button, CheckBox {
     -fx-cursor: HAND;
 }
 
+Slider:pressed {
+    -fx-cursor: CLOSED_HAND;
+}
 Slider {
     -fx-cursor: OPEN_HAND;
 }
@@ -211,4 +214,10 @@ Slider {
     -fx-border-color: grey;
     -fx-border-radius: 2%;
     -fx-cursor: HAND;
+}
+.filter_question_preview_vbox:hover {
+    -fx-background-color: #646464;
+}
+.filter_question_preview_vbox:pressed {
+    -fx-background-color: #2f2f2f;
 }

@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -183,7 +184,7 @@ public abstract class ScreenController {
      * TODO: make a way adding new questionTypes (if it makes sense..?)
      * @param menuButton - the menuButton used in the scene
      */
-    protected void initializeMenuButton(MenuButton menuButton) {
+    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes) {
         ArrayList<QuestionType> questionTypes = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.getAll();
         menuButton.getItems().clear();
 
@@ -195,12 +196,14 @@ public abstract class ScreenController {
             menuButton.getItems().add(menuItem);
         }
 
-        // add "showAll" to showAll QuestionTypes
-        MenuItem menuItem = new MenuItem("all types");
-        menuItem.setOnAction(e -> {
-            menuButton.setText("all types");
-        });
-        menuButton.getItems().add(menuItem);
+        if (allowAllTypes) {
+            // add "showAll" to showAll QuestionTypes
+            MenuItem menuItem = new MenuItem("all types");
+            menuItem.setOnAction(e -> {
+                menuButton.setText("all types");
+            });
+            menuButton.getItems().add(menuItem);
+        }
     }
 
     /**
@@ -274,16 +277,50 @@ public abstract class ScreenController {
     }
 
     /**
-     * Converts the answers provided in the multiple choice question to an ArrayList of Answers.
+     * Converts the answers provided either in mc-TextAreas or in the one simple-answer-Textarea to
+     * an ArrayList of Answer/s.
      * @return An Arraylist of Answer-objects
      */
-    protected ArrayList<Answer> getAnswerArrayList(Type type, ArrayList<TextArea> answers) {
+    protected ArrayList<Answer> getAnswerArrayList(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
         ArrayList<Answer> answerArrayList = new ArrayList<>();
+
         if (type == Type.MULTIPLE_CHOICE) {
-            for (TextArea answerTextArea : answers) {
+            for (TextArea answerTextArea : mc_answers) {
                 answerArrayList.add(new Answer(answerTextArea.getText()));
             }
+        } else if (simple_answer != null) {
+            answerArrayList.add(new Answer(simple_answer.getText()));
         }
         return answerArrayList;
+    }
+
+    protected void addMultipleChoiceAnswerBtnClicked(ArrayList<TextArea> answers, VBox multipleChoiceAnswerVBox) {
+        if (answers.size() <= 10) {
+            // Create an HBox to contain each answer and its removal button
+            HBox hBoxAnswerRemove = new HBox();
+            TextArea textAreaAnswer = new TextArea();
+            answers.add(textAreaAnswer);
+            Button buttonRemove = createButton("X");
+            // Set action event for the removal button
+            buttonRemove.setOnAction(e -> {
+                answers.remove(textAreaAnswer);
+                multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
+            });
+            // Add the answer TextArea and its removal button to the HBox
+            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
+            // Add the HBox containing the answer and its removal button to the multiple choice VBox
+            multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
+        }
+    }
+
+    /**
+     * Creates a JavaFX Button with the given text and disables focus traversal.
+     * @param text The text to display on the button.
+     * @return The created Button
+     */
+    protected Button createButton(String text) {
+        Button button = new Button(text);
+        button.setFocusTraversable(false);
+        return button;
     }
 }

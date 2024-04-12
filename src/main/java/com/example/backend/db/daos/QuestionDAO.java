@@ -346,7 +346,7 @@ public class QuestionDAO implements DAO<Question> {
         String updateStmt =
                 "UPDATE questions " +
                 "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
-                "fk_question_type_id = ?, remark = ?, updated_at = ? " +
+                "remark = ?, updated_at = ? " +
                 "WHERE id = ?;";
 
         Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
@@ -358,10 +358,9 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestion());
-            preparedStatement.setInt(5, question.getType().getId());
-            preparedStatement.setString(6, question.getRemark());
-            preparedStatement.setString(7, String.valueOf(question.getUpdated_at()));
-            preparedStatement.setInt(8, question.getId());
+            preparedStatement.setString(5, question.getRemark());
+            preparedStatement.setString(6, String.valueOf(question.getUpdated_at()));
+            preparedStatement.setInt(7, question.getId());
 
             preparedStatement.executeUpdate();
 

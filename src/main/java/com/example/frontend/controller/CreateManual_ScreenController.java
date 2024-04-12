@@ -47,7 +47,7 @@ public class CreateManual_ScreenController extends ScreenController {
         initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField);
-        initializeMenuButton(this.questionTypeMenuButton);
+        initializeMenuButton(this.questionTypeMenuButton, true);
 
         // set up the event handler for the "Apply Filter" button
         applyFilterButton.setOnAction(this::applyFilterButtonClicked);

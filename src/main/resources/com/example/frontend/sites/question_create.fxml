@@ -139,6 +139,20 @@
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">
                            <children>
+                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Question Text" textFill="#e8e4e4">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <VBox minHeight="200.0" styleClass="question_vbox">
+                                 <children>
+                                    <TextArea fx:id="question" prefWidth="500.0" promptText="Type..." />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                           <children>
                               <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Question-Type" textFill="#e8e4e4">
                                  <font>
                                     <Font size="20.0" />
@@ -146,16 +160,15 @@
                               </Label>
                               <VBox prefHeight="200.0" prefWidth="100.0" styleClass="question_vbox">
                                  <children>
-                                    <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" onAction="#onQuestionTypeMenuBtnAction" styleClass="menuButton_dark" text="Question-Type...">
+                                    <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="Question-Type...">
                                        <items>
                                           <MenuItem mnemonicParsing="false" text="Action 1" />
-                                          <MenuItem mnemonicParsing="false" text="Action 2" />
                                        </items>
                                        <VBox.margin>
                                           <Insets bottom="20.0" />
                                        </VBox.margin>
                                     </MenuButton>
-                                    <VBox fx:id="multipleChoiceVBox" prefHeight="200.0" prefWidth="100.0">
+                                    <VBox fx:id="multipleChoiceVBox" prefHeight="200.0" prefWidth="100.0" visible="false">
                                        <children>
                                           <Button mnemonicParsing="false" onAction="#onAddNewAnswerBtnClick" styleClass="btn_dark" text="Add new answer" />
                                           <VBox fx:id="multipleChoiceAnswerVBox" prefHeight="200.0" prefWidth="100.0" />
@@ -166,14 +179,14 @@
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">
                            <children>
-                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Question Text" textFill="#e8e4e4">
+                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Answer" textFill="#e8e4e4">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <VBox minHeight="200.0" styleClass="question_vbox">
+                              <VBox minHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-                                    <TextArea fx:id="question" prefWidth="500.0" />
+                                    <TextArea fx:id="answerTextArea" disable="true" prefWidth="1000.0" promptText="Type..." />
                                  </children>
                               </VBox>
                            </children>
@@ -187,7 +200,7 @@
                               </Label>
                               <VBox minHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-                                    <TextArea fx:id="remarks" prefWidth="1000.0" />
+                                    <TextArea fx:id="remarks" prefWidth="1000.0" promptText="Type" />
                                  </children>
                               </VBox>
                            </children>
