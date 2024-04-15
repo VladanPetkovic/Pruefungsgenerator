@@ -33,7 +33,7 @@ public abstract class ScreenController {
     public static Screen<QuestionCreate_ScreenController> questionUpload = new Screen<>("sites/question_create.fxml");
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
     public static Screen<QuestionEdit_ScreenController> home = new Screen<>("sites/home.fxml");
-    public static Screen<pdfPreview_ScreenController> pdf_preview = new Screen<>("sites/pdf_preview.fxml");
+    public static Screen<PdfPreview_ScreenController> pdf_preview = new Screen<>("sites/pdf_preview.fxml");
 
 
     /**
@@ -50,6 +50,8 @@ public abstract class ScreenController {
         // resetting filterquestion
         SharedData.setFilterQuestion(new Question());
         // set the scene and display it
+        MainApp.stage.setHeight(MainApp.stage.getHeight());
+        MainApp.stage.setWidth(MainApp.stage.getWidth());
         MainApp.stage.setScene(screen.scene);
         MainApp.stage.show();
     }

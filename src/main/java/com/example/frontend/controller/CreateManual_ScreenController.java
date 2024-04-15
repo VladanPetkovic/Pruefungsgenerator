@@ -50,7 +50,7 @@ public class CreateManual_ScreenController extends ScreenController {
         initializeMenuButton(this.questionTypeMenuButton, true);
 
         // set up the event handler for the "Apply Filter" button
-        applyFilterButton.setOnAction(this::applyFilterButtonClicked);
+        // applyFilterButton.setOnAction(this::applyFilterButtonClicked);
 
         // displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());

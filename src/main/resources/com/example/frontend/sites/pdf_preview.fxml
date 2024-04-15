@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.pdfPreview_ScreenController">
+<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.PdfPreview_ScreenController">
     <children>
         <HBox maxHeight="100.0" minHeight="100.0" prefHeight="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
             <children>

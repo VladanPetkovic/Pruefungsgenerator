@@ -17,9 +17,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateManual_ScreenController">
+<VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateManual_ScreenController">
    <children>
-      <HBox maxHeight="100.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
+      <HBox maxHeight="100.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" styleClass="main_navigation">
          <children>
             <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -34,7 +34,7 @@
       </HBox>
       <HBox prefHeight="530.0" prefWidth="1120.0" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane minHeight="600.0" minWidth="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
+            <GridPane minHeight="600.0" minWidth="100.0" styleClass="main_navigation">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
@@ -47,14 +47,14 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" stylesheets="@../css/main.css">
+                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../icons/file_add.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create Test&#10;automatically" textAlignment="CENTER" textFill="WHITE" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" text="Create Test&#10;automatically" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="nav_createTestManualButton" alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
@@ -64,7 +64,7 @@
                               <Image url="@../icons/file_add_blue.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_selected" stylesheets="@../css/main.css" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_selected" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="nav_uploadQuestionButton" alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
@@ -74,7 +74,7 @@
                               <Image url="@../icons/file_upload.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create&#10;Question" textAlignment="CENTER" textFill="WHITE" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="Create&#10;Question" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="nav_editQuestionButton" alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
@@ -84,12 +84,12 @@
                               <Image url="@../icons/file_edit_white.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Edit&#10;Question" textAlignment="CENTER" textFill="WHITE" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="Edit&#10;Question" textAlignment="CENTER" textFill="WHITE" />
                      </children>
                   </VBox>
                </children>
             </GridPane>
-            <VBox fx:id="preview_search_nav" minWidth="390.0" prefHeight="630.0" prefWidth="390.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" stylesheets="@../css/main.css">
+            <VBox fx:id="preview_search_nav" minWidth="390.0" prefHeight="630.0" prefWidth="390.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox">
                <children>
                   <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" text="Selected Course" textFill="WHITE" />
                   <Label styleClass="topic_label" text="Set filters for a new question:" />
@@ -164,7 +164,7 @@
             </VBox>
             <VBox prefHeight="630.0" prefWidth="635.0" HBox.hgrow="ALWAYS">
                <children>
-                  <GridPane fx:id="test_options" minHeight="30.0" style="-fx-background-color: #2f2f2f;" stylesheets="@../css/main.css">
+                  <GridPane fx:id="test_options" minHeight="30.0" style="-fx-background-color: #2f2f2f;">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -179,7 +179,7 @@
                   </GridPane>
                   <ScrollPane fx:id="scrollPane_testQuestionsPreview" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
                     <!--  <content> -->
-                        <VBox fx:id="vbox_testQuestionsPreview" styleClass="filter_question_preview_vbox" />
+                        <VBox fx:id="vbox_testQuestionsPreview" />
                      <!--  <VBox prefHeight="570.0" prefWidth="633.0" visible="false" />-->
                  <!--  </content>-->
                   </ScrollPane>

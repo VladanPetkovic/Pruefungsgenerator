@@ -27,7 +27,7 @@ public class MainApp extends Application {
     }
 
     /**
-     * Sets the minimum and maximum sizes for the application window.
+     * Sets the minimum size for the application window.
      *
      * @param stage The primary stage for the application.
      */
@@ -36,10 +36,6 @@ public class MainApp extends Application {
         // min. window
         stage.setMinWidth(720);
         stage.setMinHeight(550);
-
-        // max. window
-        stage.setMaxWidth(1920);
-        stage.setMaxHeight(1080);
     }
 
     /**
