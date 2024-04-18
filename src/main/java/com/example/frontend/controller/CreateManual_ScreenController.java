@@ -3,34 +3,15 @@ package com.example.frontend.controller;
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
-import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 public class CreateManual_ScreenController extends ScreenController {
-    @FXML
-    private Label label_selectedCourse;
-    @FXML
-    private TextField categoryTextField;
-    @FXML
-    private TextField questionTextField;
-    @FXML
-    private TextField keywordTextField;
-    @FXML
-    private Slider difficultySlider;
-    @FXML
-    private Slider pointsSlider;
-    @FXML
-    public MenuButton questionTypeMenuButton;
-    @FXML
-    private Button applyFilterButton;
     @FXML
     private VBox vbox_testQuestionsPreview;
     @FXML
@@ -38,35 +19,16 @@ public class CreateManual_ScreenController extends ScreenController {
 
     @FXML
     private void initialize() {
-        // initialize points and difficulty from the slider by a listener
-        // --> only when the value changes, the value is updated
-        getPointsFromSlider(this.pointsSlider);
-        getDifficultyFromSlider(this.difficultySlider);
-
-        // init auto-completion
-        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
-        initializeQuestions(this.questionTextField);
-        initializeMenuButton(this.questionTypeMenuButton, true);
-
-        // set up the event handler for the "Apply Filter" button
-        // applyFilterButton.setOnAction(this::applyFilterButtonClicked);
-
-        // displays the selected course above the filter window
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
-
         // check whether questions from automaticTestCreate are available for showing in testPreview
         if (!SharedData.getTestQuestions().isEmpty()) {
             // display the questions from automaticTestCreate in the testPreviewArea
             showTestQuestionsInPreview();
         }
-    }
 
-    // event handler for the "Apply Filter" button click
-    @FXML
-    private void applyFilterButtonClicked(ActionEvent event) {
-        // call the searchQuestions method to apply the filter
-        searchQuestions();
+        // display filtered questions
+        SharedData.getFilteredQuestions().addListener((ListChangeListener<Question>) change -> {
+            showFilteredQuestions(SharedData.getFilteredQuestions());
+        });
     }
 
     // event handler for the "Apply Export" button click
@@ -78,70 +40,6 @@ public class CreateManual_ScreenController extends ScreenController {
             switchScene(pdf_preview, true);
         }
     }
-
-    // event handler to search questions based on filters
-    @FXML
-    private void searchQuestions() {
-        // create a new Question object to hold filter values
-        Question filterQuestion = new Question();
-
-        // get filter values from text fields and checkboxes
-        String categoryName = categoryTextField.getText().trim();
-        String keywordText = keywordTextField.getText().trim();
-        String questionText = questionTextField.getText();
-        String questionTypeString = questionTypeMenuButton.getText();
-
-        // set category value if provided
-        if (!categoryName.isEmpty()) {
-            Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
-            if (category != null) {
-                filterQuestion.setCategory(category);
-            }
-        }
-
-        // set keyword value if provided
-        // handle multiple keywords as ArrayList<Keyword>
-        ArrayList<Keyword> keywordsList = new ArrayList<>();
-        if (!keywordText.isEmpty()) {
-            // split by commas or spaces
-            String[] keywordsArray = keywordText.split("[,\\s]+");
-            for (String keyword : keywordsArray) {
-                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
-                if (keywordObj != null) {
-                    keywordsList.add(keywordObj);
-                }
-            }
-        }
-        if (!keywordsList.isEmpty()) {
-            filterQuestion.setKeywords(keywordsList);
-        }
-
-        // set the question text
-        if (!(Objects.equals(questionText, "") || questionText == null)) {
-            filterQuestion.setQuestion(questionText);
-        }
-
-        // set points and difficulty if set
-        if (SharedData.getFilterQuestion().getPoints() != 0) {
-            filterQuestion.setPoints(SharedData.getFilterQuestion().getPoints());
-        }
-        if (SharedData.getFilterQuestion().getDifficulty() != 0) {
-            filterQuestion.setDifficulty(SharedData.getFilterQuestion().getDifficulty());
-        }
-
-        // set questionType value
-        if (QuestionType.checkExistingType(questionTypeString)) {
-            QuestionType filterQuestionType = new QuestionType(questionTypeString);
-            filterQuestion.setType(filterQuestionType);
-        }
-
-        // call Repository to search for questions corresponding to filter values
-        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
-
-        // display filtered questions in filter window
-        showFilteredQuestions(result);
-    }
-
 
     // method to display test questions in preview area
     @FXML
@@ -175,9 +73,14 @@ public class CreateManual_ScreenController extends ScreenController {
         }
     }
 
-    // method to display filtered questions in filter window
+    /**
+     * method to display filtered questions in filter window
+     * @param questions The ObservableList of questions to show in the preview window.
+     */
     @FXML
-    void showFilteredQuestions(ArrayList<Question> questions) {
+    private void showFilteredQuestions(ObservableList<Question> questions) {
+        double spacing = 20.0;
+
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
             // If the list is empty, print a message indicating no questions found.
@@ -185,9 +88,6 @@ public class CreateManual_ScreenController extends ScreenController {
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
         }
-
-        // Define the spacing between question boxes.
-        double spacing = 20.0;
 
         // Clear the existing content in the preview VBox.
         this.vbox_filteredQuestionsPreview.getChildren().clear();
@@ -213,6 +113,10 @@ public class CreateManual_ScreenController extends ScreenController {
     private void displayClickedQuestion(VBox questionVbox, Question question) {
         questionVbox.setOnMouseClicked(event -> {
             double spacing = 100;
+
+            // remove the question from the filterBox
+            SharedData.getFilteredQuestions().remove(question);
+
             int numberOfQuestions = this.vbox_testQuestionsPreview.getChildren().size();
             // Create a VBox to hold the question details.
             VBox newQuestionVbox = new VBox();

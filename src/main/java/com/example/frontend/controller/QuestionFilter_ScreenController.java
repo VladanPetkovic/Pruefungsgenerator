@@ -1,7 +1,5 @@
 package com.example.frontend.controller;
 
-import com.example.backend.app.LogLevel;
-import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
@@ -14,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -113,45 +110,9 @@ public class QuestionFilter_ScreenController extends ScreenController {
         // call Repository to search for questions corresponding to filter values
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
 
-        // display filtered questions in filter window
-        showFilteredQuestions(result);
-    }
-
-    /**
-     * method to display filtered questions in filter window
-     * @param questions The ArrayList of questions to show in the preview window.
-     */
-    @FXML
-    void showFilteredQuestions(ArrayList<Question> questions) {
-        // TODO: change this to save the questions in an ObserverableList in SharedData
-        // Check if the list of questions is empty.
-//        if (questions.isEmpty()) {
-//            // If the list is empty, print a message indicating no questions found.
-//            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
-//            this.vbox_filteredQuestionsPreview.getChildren().clear();
-//            return;
-//        }
-//
-//        // Define the spacing between question boxes.
-//        double spacing = 20.0;
-//
-//        // Clear the existing content in the preview VBox.
-//        this.vbox_filteredQuestionsPreview.getChildren().clear();
-//
-//        // Iterate through each question in the list.
-//        for (Question question : questions) {
-//            // Create a VBox to hold the question details.
-//            VBox questionVbox = createQuestionVBox(question);
-//            questionVbox.getStyleClass().add("filter_question_preview_vbox");
-//
-//            if (!containsQuestionWithId(question.getId())) {
-//                // Add the question VBox to the preview VBox, if the question is not already in preview.
-//                this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
-//                // display the clicked question in the test_preview_pane
-//                displayClickedQuestion(questionVbox, question);
-//                // Set the spacing between question boxes.
-//                this.vbox_filteredQuestionsPreview.setSpacing(spacing);
-//            }
-//        }
+        // save to our SharedData
+        for (Question question : result) {
+            SharedData.getFilteredQuestions().add(question);
+        }
     }
 }
