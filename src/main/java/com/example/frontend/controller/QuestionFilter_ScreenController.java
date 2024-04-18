@@ -111,6 +111,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
 
         // save to our SharedData
+        SharedData.getFilteredQuestions().clear();
         for (Question question : result) {
             SharedData.getFilteredQuestions().add(question);
         }

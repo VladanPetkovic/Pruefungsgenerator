@@ -89,21 +89,19 @@ public class CreateManual_ScreenController extends ScreenController {
             return;
         }
 
-        // Clear the existing content in the preview VBox.
         this.vbox_filteredQuestionsPreview.getChildren().clear();
 
         // Iterate through each question in the list.
         for (Question question : questions) {
-            // Create a VBox to hold the question details.
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
 
             if (!containsQuestionWithId(question.getId())) {
-                // Add the question VBox to the preview VBox, if the question is not already in preview.
+                // add question to preview-box, if the question is not already in preview.
                 this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
                 // display the clicked question in the test_preview_pane
                 displayClickedQuestion(questionVbox, question);
-                // Set the spacing between question boxes.
+                // set spacing
                 this.vbox_filteredQuestionsPreview.setSpacing(spacing);
             }
         }

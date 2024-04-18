@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -84,7 +85,7 @@
                   </VBox>
                </children>
             </GridPane>
-            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
+            <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: #3A3A3A;" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                <content>
                   <VBox styleClass="automatic_create_scrollPane" stylesheets="@../css/main.css">
                      <children>
@@ -105,6 +106,9 @@
                                        <font>
                                           <Font size="20.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets bottom="20.0" top="20.0" />
+                                       </VBox.margin>
                                     </Button>
                                  </children>
                               </VBox>
