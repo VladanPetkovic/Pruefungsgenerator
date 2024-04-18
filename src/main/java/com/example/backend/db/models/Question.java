@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -75,4 +78,15 @@ public class Question {
         Answer.createAnswers(question, new_question_id);
     }
 
+    /**
+     * This function returns the formatted string of a timestamp (created_at, updated_at)
+     * @param time the time to format
+     * @return A String, which we can use in the frontend
+     */
+    public String getTimeStampFormatted(Timestamp time) {
+        Instant instant = time.toInstant();
+        LocalDateTime updatedAt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return updatedAt.format(formatter);
+    }
 }

@@ -24,6 +24,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private VBox vbox_filteredQuestionsPreview;
     @FXML
+    public Label updated_at_label;
+    @FXML
+    public Label created_at_label;
+    @FXML
     private MenuButton chooseCategory;
     @FXML
     private Spinner<Double> choosePoints;
@@ -162,6 +166,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
 
+            initTimeStamps(question);
+
             // Set the question ID.
             questionId = question.getId();
         });
@@ -276,10 +282,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private void initSelectedQuestionType(Question selectedQuestion) {
         multipleChoiceAnswerVBox.getChildren().clear();
+        chooseAnswerTextArea.setText("");
+        questionTypeMenuButtonEdit.textProperty().setValue(selectedQuestion.getType().getName());
 
         // question = MC
         if (selectedQuestion.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
-            questionTypeMenuButtonEdit.textProperty().setValue(Type.MULTIPLE_CHOICE.name());
             // TODO: we are using this already in ScreenController - refactor to dont duplicate code (maybe)
             for (Answer answer : selectedQuestion.getAnswers()) {
                 HBox hBoxAnswerRemove = new HBox();
@@ -299,6 +306,24 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             multipleChoiceVBox.setVisible(false);
             chooseAnswerTextArea.setDisable(false);
             chooseAnswerTextArea.setText(selectedQuestion.getAnswersAsString());
+        }
+    }
+
+    /**
+     * This function displays the timestamps of one question, when clicked to be edited.
+     * @param question The question, that has been selected.
+     */
+    private void initTimeStamps(Question question) {
+        // setting the timestamps
+        if (question.getCreated_at() == null) {
+            created_at_label.setText("Created at: ");
+        } else {
+            created_at_label.setText("Created at: " + question.getTimeStampFormatted(question.getCreated_at()));
+        }
+        if (question.getUpdated_at() == null) {
+            updated_at_label.setText("Updated at: ");
+        } else {
+            updated_at_label.setText("Updated at: " + question.getTimeStampFormatted(question.getUpdated_at()));
         }
     }
 
