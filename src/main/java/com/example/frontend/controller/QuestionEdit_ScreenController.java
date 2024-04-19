@@ -52,7 +52,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private MenuButton chooseKeywords;
 
-    private ArrayList<Keyword> keywords;
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private ArrayList<Keyword> startState = new ArrayList<>();
     private ArrayList<Category> categories;
@@ -86,7 +85,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories();
 
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
         fillKeywordWithKeywords();
 
         SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
@@ -154,7 +152,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : question.getKeywords()) {
-                if(k.getKeyword() != null) {
+                if(k.getKeyword() != null && !containsKeyword(k)) {
                     startState.add(k);
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword() + " X");
@@ -206,6 +204,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * Associates an event handler with each menu item to handle keyword selection.
      */
     private void fillKeywordWithKeywords() {
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
         for (Keyword keyword : keywords) {
             MenuItem menuItem = createMenuItem(keyword.getKeyword());
             menuItem.setOnAction(event -> handleKeywordSelection(keyword));
@@ -256,11 +255,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return True if the keyword is already present, false otherwise.
      */
     private boolean containsKeyword(Keyword k) {
-        // Iterate through the list of selected keywords.
         for (Keyword keyword : selectedKeywords) {
-            // Check if the keyword IDs match.
-            if (keyword.getId() == k.getId())
+            if (keyword.getId() == k.getId()) {
                 return true;
+            }
         }
         return false;
     }

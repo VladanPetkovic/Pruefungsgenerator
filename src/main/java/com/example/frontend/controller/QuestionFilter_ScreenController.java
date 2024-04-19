@@ -8,10 +8,7 @@ import com.example.backend.db.models.Question;
 import com.example.backend.db.models.QuestionType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -31,6 +28,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public TextField categoryTextField;
     @FXML
     public Label label_selectedCourse;
+    @FXML
+    public Button add_category_btn;
 
     @FXML
     private void initialize() {
@@ -41,12 +40,25 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // init auto-completion
         initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()));
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
         initializeQuestions(this.questionTextField);
         initializeMenuButton(this.questionTypeMenuButton, true);
 
         // displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
+    }
+
+    public void on_add_category_btn_click(ActionEvent actionEvent) {
+        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+            Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
+
+            // add category to categories-autoCompletion
+            SharedData.getSuggestedCategories().add(newCategory.getName());
+
+            add_category_btn.setDisable(true);
+        } else {
+            // TODO: display the error-message in the menu-banner
+        }
     }
 
     public void applyFilterButtonClicked(ActionEvent actionEvent) {

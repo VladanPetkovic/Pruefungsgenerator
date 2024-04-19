@@ -1,5 +1,7 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 
@@ -21,7 +23,8 @@ public class CategoryDAO implements DAO<Category> {
      */
     @Override
     public void create(Category category) {
-        String insertStmt = "INSERT INTO categories (name) VALUES (?);";
+        String insertStmt = "INSERT OR IGNORE INTO categories (name) VALUES (?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
@@ -44,6 +47,7 @@ public class CategoryDAO implements DAO<Category> {
         ArrayList<Category> categories = new ArrayList<>();
 
         String selectStmt = "SELECT * FROM categories;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt);
@@ -76,6 +80,7 @@ public class CategoryDAO implements DAO<Category> {
                 "JOIN has_cc ON categories.id = has_cc.fk_category_id " +
                 "JOIN courses ON has_cc.fk_course_id = courses.id " +
                 "WHERE has_cc.fk_course_id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
@@ -109,6 +114,7 @@ public class CategoryDAO implements DAO<Category> {
                 "SELECT * " +
                 "FROM categories " +
                 "WHERE id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -142,6 +148,7 @@ public class CategoryDAO implements DAO<Category> {
                 "FROM questions " +
                 "INNER JOIN categories ON questions.fk_category_id = categories.id " +
                 "WHERE questions.id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -174,6 +181,7 @@ public class CategoryDAO implements DAO<Category> {
                 "SELECT * " +
                 "FROM categories " +
                 "WHERE name = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
@@ -201,6 +209,7 @@ public class CategoryDAO implements DAO<Category> {
     @Override
     public void update(Category category) {
         String updateStmt = "UPDATE categories SET name = ? WHERE id = ?;";
+        Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
@@ -223,6 +232,8 @@ public class CategoryDAO implements DAO<Category> {
     public void delete(int id) {
         String deleteStmt = "DELETE FROM categories WHERE id = ?;";
         String deleteHasCCStmt = "DELETE FROM has_cc WHERE fk_category_id = ?;";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasCCStmt, LogLevel.DEBUG);
         // TODO: what happens with the question, that has fk_category_id deleted?
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -247,7 +258,8 @@ public class CategoryDAO implements DAO<Category> {
      * @param category_id The ID of the category.
      */
     public void addCCConnection(int course_id, int category_id) {
-        String insertStmt = "INSERT INTO has_cc (fk_course_id, fk_category_id) VALUES (?, ?);";
+        String insertStmt = "INSERT OR IGNORE INTO has_cc (fk_course_id, fk_category_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
@@ -269,6 +281,8 @@ public class CategoryDAO implements DAO<Category> {
      */
     public void removeCCConnection(int course_id, int category_id) {
         String deleteStmt = "DELETE FROM has_cc WHERE fk_course_id = ? AND fk_category_id = ?;";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
             preparedStatement.setInt(1, course_id);

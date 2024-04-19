@@ -32,8 +32,8 @@ public class QuestionDAO implements DAO<Question> {
     public void create(Question question) {
         String insertStmt =
                 "INSERT INTO questions " +
-                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark) " +
-                "VALUES (?, ?, ?, ?, ?, ?);";
+                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -45,6 +45,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(4, question.getQuestion());
             preparedStatement.setInt(5, question.getType().getId());
             preparedStatement.setString(6, question.getRemark());
+            preparedStatement.setString(7, question.getCreated_at().toString());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

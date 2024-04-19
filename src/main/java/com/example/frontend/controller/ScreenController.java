@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
@@ -20,6 +21,7 @@ import org.controlsfx.control.textfield.TextFields;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * the base class for all screen controllers
@@ -147,6 +149,7 @@ public abstract class ScreenController {
 
     /**
      * Initializes the auto-completion of the keywords in the search-area of edit-question
+     * And displays an add-btn, when the inputted text is changed AND not in the db
      */
     protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords) {
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -158,13 +161,27 @@ public abstract class ScreenController {
 
     /**
      * Initializes the auto-completion of the categories in the search-area of edit-question.
+     * TODO: maybe rewrite: initializeKeywords and initializeCategories to one function with additional boolean value
+     * And displays an add-btn, when the inputted text is changed AND not in the db
      */
-    protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories) {
-        ObservableList<String> items = FXCollections.observableArrayList();
+    protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories, Button add_category_btn) {
+        // in java everything is passed by reference, so changes in items make changes in SharedData
+        ObservableList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
-            items.add(c.getName());
+            // don't add existing categories --> good for, when switching scenes
+            if (!items.contains(c.getName())) {
+                items.add(c.getName());
+            }
         }
         TextFields.bindAutoCompletion(categoryTextField, items);
+
+        categoryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!items.contains(categoryTextField.getText()) && !Objects.equals(categoryTextField.getText(), "")) {
+                add_category_btn.setDisable(false);
+            } else {
+                add_category_btn.setDisable(true);
+            }
+        });
     }
 
     /**
@@ -183,7 +200,6 @@ public abstract class ScreenController {
 
     /**
      * This function initializes the MenuButton with the QuestionTypes.
-     * TODO: make a way adding new questionTypes (if it makes sense..?)
      * @param menuButton - the menuButton used in the scene
      */
     protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes) {

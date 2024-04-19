@@ -25,7 +25,7 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     @Override
     public void create(Keyword keyword) {
-        String insertStmt = "INSERT INTO keywords (keyword) VALUES (?);";
+        String insertStmt = "INSERT OR IGNORE INTO keywords (keyword) VALUES (?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();

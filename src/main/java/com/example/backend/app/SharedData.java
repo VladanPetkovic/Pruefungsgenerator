@@ -45,6 +45,9 @@ public class SharedData {
     @Getter
     @Setter
     private static ObservableList<Question> filteredQuestions = FXCollections.observableArrayList();
+    @Getter
+    @Setter
+    private static ObservableList<String> suggestedCategories = FXCollections.observableArrayList();
 
     @Getter
     @Setter
@@ -60,6 +63,7 @@ public class SharedData {
         filterQuestion = new Question();
         testQuestions = new ArrayList<>();
         filteredQuestions = FXCollections.observableArrayList();
+        suggestedCategories = FXCollections.observableArrayList();
         searchObjectsAutTestCreate = new ArrayList<>();
     }
 
