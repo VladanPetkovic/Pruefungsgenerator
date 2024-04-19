@@ -8,8 +8,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.controlsfx.control.textfield.TextFields;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -110,41 +113,24 @@ public abstract class ScreenController {
     }
 
     /**
-     * Method to update points value when the slider value changes.
-     * The value of the slider is saved in SharedData filterQuestion.
-     * Use this function in the init()-function of your screen - otherwise it won't listen to the user input.
-     * @param pointsSlider
+     * This function activates/deactivates a slider and changes the image accordingly.
+     * @param slider Either a difficulty or points slider (or some other)
+     * @param toggle_image The image, we want to change (toggle off or toggle on)
      */
-    protected void getPointsFromSlider(Slider pointsSlider) {
-        // add a listener to the value property of the points slider
-        pointsSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new points value from the slider
-                int points = (int) pointsSlider.getValue();
-                // update the points value in the filter question object stored in SharedData
-                SharedData.getFilterQuestion().setPoints(points);
-            }
-        });
-    }
-
-    /**
-     * Method to update difficulty value when the slider value changes.
-     * The value of the slider is saved in SharedData filterQuestion.
-     * Use this function in the init()-function of your screen - otherwise it won't listen to the user input.
-     * @param difficultySlider
-     */
-    protected void getDifficultyFromSlider(Slider difficultySlider) {
-        // add a listener to the value property of the difficulty slider
-        difficultySlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                // retrieve the new difficulty value from the slider
-                int difficulty = (int) difficultySlider.getValue();
-                // update the difficulty value in the filter question object stored in SharedData
-                SharedData.getFilterQuestion().setDifficulty(difficulty);
-            }
-        });
+    public void on_toggle_btn_click(Slider slider, ImageView toggle_image) {
+        // activate the difficulty slider
+        if (slider.isDisabled()) {
+            slider.setDisable(false);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
+            Image toggle_on_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_on_image);
+        } else {
+            // deactivate
+            slider.setDisable(true);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
+            Image toggle_off_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_off_image);
+        }
     }
 
     /**
@@ -332,6 +318,20 @@ public abstract class ScreenController {
     }
 
     /**
+     * Displays an error alert dialog.
+     * @param title       The title of the error alert dialog.
+     * @param headerText  The header text of the error alert dialog.
+     * @param contentText The content text of the error alert dialog.
+     */
+    protected void showErrorAlert(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
+    }
+
+    /**
      * Creates a JavaFX Button with the given text and disables focus traversal.
      * @param text The text to display on the button.
      * @return The created Button
@@ -340,5 +340,14 @@ public abstract class ScreenController {
         Button button = new Button(text);
         button.setFocusTraversable(false);
         return button;
+    }
+
+    /**
+     * Creates a menu item with the specified text.
+     * @param text The text for the menu item.
+     * @return The created MenuItem object.
+     */
+    protected MenuItem createMenuItem(String text) {
+        return new MenuItem(text);
     }
 }

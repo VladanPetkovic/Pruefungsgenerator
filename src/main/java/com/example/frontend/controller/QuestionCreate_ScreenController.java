@@ -78,31 +78,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     /**
-     * Displays an error alert dialog with the specified title, header text, and content text.
-     * The dialog is modal, meaning it will block user interaction with other windows until closed.
-     *
-     * @param title       The title of the error alert dialog.
-     * @param headerText  The header text displayed in the error alert dialog.
-     * @param contentText The main content text displayed in the error alert dialog.
-     */
-    public void showErrorAlert(String title, String headerText, String contentText) {
-        // Create a new instance of Alert with an error type
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-
-        // Set the title of the error alert dialog
-        alert.setTitle(title);
-
-        // Set the header text of the error alert dialog
-        alert.setHeaderText(headerText);
-
-        // Set the main content text of the error alert dialog
-        alert.setContentText(contentText);
-
-        // Display the error alert dialog and wait for user interaction
-        alert.showAndWait();
-    }
-
-    /**
      * Fills the MenuButton for selecting categories with the available categories.
      * This method iterates through the list of categories retrieved from the database
      * and adds each category as a MenuItem to the MenuButton for category selection.
@@ -170,19 +145,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             // Add the MenuItem to the MenuButton's items
             keyword.getItems().add(menuItem);
         }
-    }
-
-    /**
-     * Creates a MenuItem with the specified text.
-     *
-     * @param text The text to be displayed on the MenuItem.
-     * @return The created MenuItem with the specified text.
-     */
-    private MenuItem createMenuItem(String text) {
-        // Create a new MenuItem with the specified text
-        MenuItem menuItem = new MenuItem(text);
-        // Return the created MenuItem
-        return menuItem;
     }
 
     /**

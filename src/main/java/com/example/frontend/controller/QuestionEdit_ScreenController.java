@@ -172,20 +172,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     /**
-     * Displays an error alert dialog.
-     * @param title       The title of the error alert dialog.
-     * @param headerText  The header text of the error alert dialog.
-     * @param contentText The content text of the error alert dialog.
-     */
-    public void showErrorAlert(String title, String headerText, String contentText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
-        alert.showAndWait();
-    }
-
-    /**
      * Fills the category menu with available categories.
      * Iterates through the list of categories and creates a menu item for each category.
      * Associates an event handler with each menu item to handle category selection.
@@ -210,17 +196,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             menuItem.setOnAction(event -> handleKeywordSelection(keyword));
             chooseKeywords.getItems().add(menuItem);
         }
-    }
-
-    /**
-     * Creates a menu item with the specified text.
-     *
-     * @param text The text for the menu item.
-     * @return The created MenuItem object.
-     */
-    private MenuItem createMenuItem(String text) {
-        MenuItem menuItem = new MenuItem(text);
-        return menuItem;
     }
 
     /**

@@ -9,6 +9,7 @@ import com.example.backend.db.models.QuestionType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,14 +31,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public Label label_selectedCourse;
     @FXML
     public Button add_category_btn;
+    @FXML
+    public ImageView difficulty_toggle_image_view;
+    @FXML
+    public ImageView points_toggle_image_view;
 
     @FXML
     private void initialize() {
-        // initialize points and difficulty from the slider by a listener
-        // --> only when the value changes, the value is updated
-        getPointsFromSlider(this.pointsSlider);
-        getDifficultyFromSlider(this.difficultySlider);
-
         // init auto-completion
         initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
@@ -59,6 +59,14 @@ public class QuestionFilter_ScreenController extends ScreenController {
         } else {
             // TODO: display the error-message in the menu-banner
         }
+    }
+
+    public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
+        on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view);
+    }
+
+    public void on_toggle_points_btn_click(ActionEvent actionEvent) {
+        on_toggle_btn_click(pointsSlider, points_toggle_image_view);
     }
 
     public void applyFilterButtonClicked(ActionEvent actionEvent) {
@@ -106,11 +114,11 @@ public class QuestionFilter_ScreenController extends ScreenController {
         }
 
         // set points and difficulty if set
-        if (SharedData.getFilterQuestion().getPoints() != 0) {
-            filterQuestion.setPoints(SharedData.getFilterQuestion().getPoints());
+        if (!pointsSlider.isDisabled()) {
+            filterQuestion.setPoints((float) pointsSlider.getValue());
         }
-        if (SharedData.getFilterQuestion().getDifficulty() != 0) {
-            filterQuestion.setDifficulty(SharedData.getFilterQuestion().getDifficulty());
+        if (!difficultySlider.isDisabled()) {
+            filterQuestion.setDifficulty((int) difficultySlider.getValue());
         }
 
         // set questionType value
