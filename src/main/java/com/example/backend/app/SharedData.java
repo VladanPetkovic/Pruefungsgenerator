@@ -6,9 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -20,7 +25,8 @@ public class SharedData {
     // Default value for pageTitle // TODO: use @Getter and @Setter if possible
     private static StringProperty pageTitle = new SimpleStringProperty("");
     private static StringProperty operationStatus = new SimpleStringProperty("");
-    private static boolean operationIsErrorType = false;
+    private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
+    private static Timeline statusResetTimer;
 
     @Getter
     @Setter
@@ -103,16 +109,47 @@ public class SharedData {
 
     public static void setOperation(String messageString, boolean isErrorType) {
         operationStatus.set(messageString);
-        operationIsErrorType = isErrorType;
+        operationIsErrorType.set(isErrorType);
+        resetOperationStatusAfterDelay();
     }
 
     public static void setOperation(Message message) {
         operationStatus.set(message.getMessage());
-        operationIsErrorType = message.isError();
+        operationIsErrorType.set(message.isError());
+        resetOperationStatusAfterDelay();
+    }
+
+    private static void resetOperationStatusAfterDelay() {
+        // check if the statusResetTimer is not null
+        // if it's not null, stop the timer
+        if (statusResetTimer != null) {
+            statusResetTimer.stop();
+        }
+
+        // create a new timeline with a keyframe that sets the operationStatus to an empty string after 5 seconds
+        statusResetTimer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+            operationStatus.set("");
+        }));
+        statusResetTimer.play();
     }
 
     // Property accessor for operationStatus
     public static StringProperty operationStatusProperty() {
         return operationStatus;
     }
+
+    // Getter and setter for operationIsErrorType
+    public static boolean getOperationIsErrorType() {
+        return operationIsErrorType.get();
+    }
+
+    public static void setOperationIsErrorType(boolean isErrorType) {
+        operationIsErrorType.set(isErrorType);
+    }
+
+    // Property accessor for operationIsErrorType
+    public static BooleanProperty operationIsErrorTypeProperty() {
+        return operationIsErrorType;
+    }
+
 }

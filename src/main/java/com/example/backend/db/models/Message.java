@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 public enum Message {
-    SUCCESS_MESSAGE_OPERATION("Operation completed successfully.", true),
-    SUCCESS_MESSAGE_DATA_SAVED("Data saved successfully.", true),
+    SUCCESS_MESSAGE_OPERATION("Operation completed successfully.", false),
+    SUCCESS_MESSAGE_DATA_SAVED("Data saved successfully.", false),
 
     ERROR_MESSAGE_ERROR_OCCURRED("An error occurred.", true),
     ERROR_MESSAGE_LOAD_DATA("Failed to load data.", true),

@@ -5,6 +5,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import com.example.backend.app.SharedData;
+import javafx.beans.binding.Bindings;
+import javafx.scene.paint.Color;
 
 public class TitleBanner_ScreenController extends ScreenController {
 
@@ -19,10 +21,17 @@ public class TitleBanner_ScreenController extends ScreenController {
 
     @FXML
     public void initialize() {
-        // Bind the text property of titleLabel to the pageTitleProperty in SharedData
+        // bind the text property of titleLabel to the pageTitleProperty in SharedData
         titleLabel.textProperty().bind(SharedData.pageTitleProperty());
-        // Bind the text property of statusLabel to the operationStatusProperty in SharedData
+        // bind the text property of statusLabel to the operationStatusProperty in SharedData
         statusLabel.textProperty().bind(SharedData.operationStatusProperty());
+
+        // bind the textFill property of statusLabel to the error type in SharedData
+        statusLabel.textFillProperty().bind(
+                Bindings.when(SharedData.operationIsErrorTypeProperty())
+                        .then(Color.RED)
+                        .otherwise(Color.FORESTGREEN)
+        );
     }
 
     /**
