@@ -1,5 +1,6 @@
 package com.example.backend.db.models;
 
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -35,15 +36,18 @@ public class Category {
 
         // Check for no leading and ending space
         if (newCategory.trim().isEmpty()) {
+            SharedData.setOperation(Message.ERROR_MESSAGE_DATA_CONTAINS_SPACES);
             return "Category cannot be empty!";
         }
 
         // Check for no special characters except letters and digits
         if (!newCategory.matches("[a-zA-Z0-9öäüÖÄÜ\\s]+")) {
+            SharedData.setOperation(Message.CATEGORY_INVALID_CHARACTERS_ERROR_MESSAGE);
             return "Category contains invalid characters!";
         }
 
         if (newCategory.length() > 30) {
+            SharedData.setOperation("Category is too long - max 30 chars! Provided: " + newCategory.length(), true);
             return "Category is too long - max 30 chars! Provided: " + newCategory.length();
         }
 

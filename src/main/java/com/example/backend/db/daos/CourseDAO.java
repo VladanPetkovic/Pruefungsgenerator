@@ -36,9 +36,11 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setString(3, course.getLector());
             preparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.CREATE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
-            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.CREATE_COURSE_ERROR_MESSAGE.getMessage()));
+            SharedData.setOperation(Message.CREATE_COURSE_ERROR_MESSAGE);
         }
     }
 
@@ -157,7 +159,6 @@ public class CourseDAO implements DAO<Course> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.ERROR_MESSAGE_4.getMessage()));
         }
 
         return course;
@@ -211,8 +212,11 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setInt(4, course.getId());
             preparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.UPDATE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_COURSE_ERROR_MESSAGE);
         }
     }
 
@@ -240,8 +244,11 @@ public class CourseDAO implements DAO<Course> {
             thirdPreparedStatement.setInt(1, id);
             thirdPreparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.DELETE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_COURSE_ERROR_MESSAGE);
         }
     }
 

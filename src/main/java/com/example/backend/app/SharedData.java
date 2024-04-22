@@ -17,47 +17,10 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class SharedData {
 
-    // Default value for pageTitle
-    private static final String DEFAULT_PAGE_TITLE = "default page title";
-
-    private static StringProperty pageTitle = new SimpleStringProperty(DEFAULT_PAGE_TITLE);
-
-    // Getter and setter for pageTitle
-    public static String getPageTitle() {
-        return pageTitle.get();
-    }
-
-    public static void setPageTitle(String pageTitle) {
-        SharedData.pageTitle.set(pageTitle);
-    }
-
-    // Property accessor for pageTitle
-    public static StringProperty pageTitleProperty() {
-        return pageTitle;
-    }
-
-
-
-    // Default value for operationStatus
-    private static final String DEFAULT_STATUS_MESSAGE = "default message";
-
-    private static StringProperty operationStatus = new SimpleStringProperty(DEFAULT_STATUS_MESSAGE);
-
-    // Getter and setter for operationStatus
-    public static String getOperationStatus() {
-        return operationStatus.get();
-    }
-
-    public static void setOperationStatus(String operationStatus) {
-        SharedData.operationStatus.set(operationStatus);
-    }
-
-    // Property accessor for operationStatus
-    public static StringProperty operationStatusProperty() {
-        return operationStatus;
-    }
-
-
+    // Default value for pageTitle // TODO: use @Getter and @Setter if possible
+    private static StringProperty pageTitle = new SimpleStringProperty("");
+    private static StringProperty operationStatus = new SimpleStringProperty("");
+    private static boolean operationIsErrorType = false;
 
     @Getter
     @Setter
@@ -119,4 +82,37 @@ public class SharedData {
         searchObjectsAutTestCreate = new ArrayList<>();
     }
 
+    // Getter and setter for pageTitle
+    public static String getPageTitle() {
+        return pageTitle.get();
+    }
+
+    public static void setPageTitle(String pageTitle) {
+        SharedData.pageTitle.set(pageTitle);
+    }
+
+    // Property accessor for pageTitle
+    public static StringProperty pageTitleProperty() {
+        return pageTitle;
+    }
+
+    // Getter and setter for operationStatus
+    public static String getOperationStatus() {
+        return operationStatus.get();
+    }
+
+    public static void setOperation(String messageString, boolean isErrorType) {
+        operationStatus.set(messageString);
+        operationIsErrorType = isErrorType;
+    }
+
+    public static void setOperation(Message message) {
+        operationStatus.set(message.getMessage());
+        operationIsErrorType = message.isError();
+    }
+
+    // Property accessor for operationStatus
+    public static StringProperty operationStatusProperty() {
+        return operationStatus;
+    }
 }

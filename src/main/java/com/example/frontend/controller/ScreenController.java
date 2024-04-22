@@ -382,13 +382,4 @@ public abstract class ScreenController {
         button.setFocusTraversable(false);
         return button;
     }
-
-    /**
-     * Creates a menu item with the specified text.
-     * @param text The text for the menu item.
-     * @return The created MenuItem object.
-     */
-    protected MenuItem createMenuItem(String text) {
-        return new MenuItem(text);
-    }
 }

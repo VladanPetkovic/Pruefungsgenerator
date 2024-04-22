@@ -36,8 +36,10 @@ public class CreateManual_ScreenController extends ScreenController {
     private void applyExportButtonClicked(ActionEvent event) {
         // check if there are test questions to export
         if (!SharedData.getTestQuestions().isEmpty()) {
-            // switch the scene to the pdf-preview screen
             switchScene(pdf_preview, true);
+        } else {
+            // display error-message
+            SharedData.setOperation(Message.NO_QUESTIONS_PROVIDED_ERROR_MESSAGE);
         }
     }
 
@@ -84,6 +86,7 @@ public class CreateManual_ScreenController extends ScreenController {
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
             // If the list is empty, print a message indicating no questions found.
+            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
             Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;

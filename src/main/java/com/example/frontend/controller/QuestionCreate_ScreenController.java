@@ -88,7 +88,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         // Iterate through the list of categories
         for (Category c : categories) {
             // Create a MenuItem for the category
-            MenuItem menuItem = createMenuItem(c.getName());
+            MenuItem menuItem = new MenuItem(c.getName());
 
             // Set the action event for the MenuItem
             menuItem.setOnAction(event -> {
@@ -115,7 +115,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         // Iterate through the list of keywords
         for (Keyword k : keywords) {
             // Create a MenuItem for the keyword
-            MenuItem menuItem = createMenuItem(k.getKeyword());
+            MenuItem menuItem = new MenuItem(k.getKeyword());
 
             // Set the action event for the MenuItem
             menuItem.setOnAction(event -> {

@@ -5,47 +5,46 @@ import lombok.Setter;
 
 @Getter
 public enum Message {
-    SUCCESS_MESSAGE_1("Operation completed successfully."),
-    SUCCESS_MESSAGE_2("Data saved successfully."),
+    SUCCESS_MESSAGE_OPERATION("Operation completed successfully.", true),
+    SUCCESS_MESSAGE_DATA_SAVED("Data saved successfully.", true),
 
-    ERROR_MESSAGE_1("An error occurred."),
-    ERROR_MESSAGE_2("Failed to load data."),
-    ERROR_MESSAGE_4("Failed to retrieve a course by its name from the database."),
-    ERROR_MESSAGE_5("Failed to retrieve questions based on search options and a course from the database."),
+    ERROR_MESSAGE_ERROR_OCCURRED("An error occurred.", true),
+    ERROR_MESSAGE_LOAD_DATA("Failed to load data.", true),
+    ERROR_MESSAGE_DATA_CONTAINS_SPACES("String contains only spaces.", true),
 
     // error messages for the answer DAO:
-    CREATE_ANSWER_ERROR_MESSAGE("Failed to insert answer into the database."),
-    CREATE_ANSWERS_ERROR_MESSAGE("Failed to insert answer(s) into the database."),
-    CREATE_HASAQ_CONNECTION_ERROR_MESSAGE("Failed to insert hasAQ connection(s) into the database."),
-    READALL_ANSWERS_ERROR_MESSAGE("Failed to retrieve all answers from the database."),
-    READ_ANSWER_BY_ID_ERROR_MESSAGE("Failed to retrieve answer by ID from the database."),
-    READ_ANSWER_BY_NAME_ERROR_MESSAGE("Failed to retrieve answer by name from the database."),
-    UPDATE_ANSWER_ERROR_MESSAGE("Failed to update answer in the database."),
-    DELETE_ANSWER_ERROR_MESSAGE("Failed to delete answer from the database."),
+    CREATE_ANSWER_ERROR_MESSAGE("Failed to insert answer into the database.", true),
+    UPDATE_ANSWER_ERROR_MESSAGE("Failed to update answer in the database.", true),
+    DELETE_ANSWER_ERROR_MESSAGE("Failed to delete answer from the database.", true),
 
-    // error messages for the category DAO:
-    CREATE_CATEGORY_ERROR_MESSAGE("Failed to insert category into the database."),
-    READALL_CATEGORIES_ERROR_MESSAGE("Failed to retrieve all categories from the database."),
-    READALL_CATEGORIES_FOR_ONE_COURSE_ERROR_MESSAGE("Failed to retrieve all categories for one course from the database."),
-    READ_CATEGORY_BY_ID_ERROR_MESSAGE("Failed to retrieve category by ID from the database."),
-    READ_CATEGORY_FOR_ONE_QUESTION_ERROR_MESSAGE("Failed to retrieve category for one question from the database."),
-    READ_CATEGORY_BY_NAME_ERROR_MESSAGE("Failed to retrieve category by its name from the database."),
-    UPDATE_CATEGORY_ERROR_MESSAGE("Failed to update category in the database."),
-    DELETE_CATEGORY_ERROR_MESSAGE("Failed to delete category from the database."),
-    CREATE_HASCC_CONNECTION_ERROR_MESSAGE("Failed to insert hasCC connection into the database."),
-    DELETE_HASCC_CONNECTION_ERROR_MESSAGE("Failed to delete hasCC connection from the database."),
+    // category:
+    CREATE_CATEGORY_ERROR_MESSAGE("Failed to insert category into the database.", true),
+    CREATE_CATEGORY_SUCCESS_MESSAGE("Category created successfully.", false),
+    UPDATE_CATEGORY_ERROR_MESSAGE("Failed to update category in the database.", true),
+    UPDATE_CATEGORY_SUCCESS_MESSAGE("Category updated successfully.", false),
+    DELETE_CATEGORY_ERROR_MESSAGE("Failed to delete category from the database.", true),
+    DELETE_CATEGORY_SUCCESS_MESSAGE("Category deleted successfully.", false),
+    CATEGORY_INVALID_CHARACTERS_ERROR_MESSAGE("Category contains invalid characters!", true),
 
     // error messages for the course DAO:
-    CREATE_COURSE_ERROR_MESSAGE("Failed to insert course into the database.");
+    CREATE_COURSE_ERROR_MESSAGE("Failed to insert course into the database.", true),
+    CREATE_COURSE_SUCCESS_MESSAGE("Course created successfully.", false),
+    UPDATE_COURSE_ERROR_MESSAGE("Failed to update course in the database.", true),
+    UPDATE_COURSE_SUCCESS_MESSAGE("Course updated successfully.", false),
+    DELETE_COURSE_ERROR_MESSAGE("Failed to delete course from the database.", true),
+    DELETE_COURSE_SUCCESS_MESSAGE("Course deleted successfully.", false),
+
+    // test:
+    NO_QUESTIONS_PROVIDED_ERROR_MESSAGE("No questions provided.", true),
+    NO_QUESTIONS_FOUND("No questions found.", true);
 
 
+    private String message;
+    private boolean isError;
 
-    @Setter
-    private final String message;
-
-    Message(String message) {
+    Message(String message, boolean isError) {
         this.message = message;
+        this.isError = isError;
     }
-
 }
 

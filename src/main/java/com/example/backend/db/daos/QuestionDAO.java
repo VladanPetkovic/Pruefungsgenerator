@@ -8,7 +8,6 @@ import com.example.backend.db.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 public class QuestionDAO implements DAO<Question> {
@@ -205,7 +204,6 @@ public class QuestionDAO implements DAO<Question> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.ERROR_MESSAGE_5.getMessage()));
         }
 
         return this.questionCache;

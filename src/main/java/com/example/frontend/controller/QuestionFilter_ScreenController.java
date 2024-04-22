@@ -2,10 +2,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Category;
-import com.example.backend.db.models.Keyword;
-import com.example.backend.db.models.Question;
-import com.example.backend.db.models.QuestionType;
+import com.example.backend.db.models.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -50,14 +47,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
     public void on_add_category_btn_click(ActionEvent actionEvent) {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
             Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
 
             // add category to categories-autoCompletion
             SharedData.getSuggestedCategories().add(newCategory.getName());
 
             add_category_btn.setDisable(true);
-        } else {
-            // TODO: display the error-message in the menu-banner
         }
     }
 

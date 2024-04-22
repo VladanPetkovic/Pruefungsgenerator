@@ -101,6 +101,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
             // If the list is empty, print a message indicating no questions found.
+            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
             Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
@@ -178,7 +179,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private void fillCategoryWithCategories() {
         for (Category category : categories) {
-            MenuItem menuItem = createMenuItem(category.getName());
+            MenuItem menuItem = new MenuItem(category.getName());
             menuItem.setOnAction(event -> handleCategorySelection(category));
             chooseCategory.getItems().add(menuItem);
         }
@@ -192,7 +193,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void fillKeywordWithKeywords() {
         ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
         for (Keyword keyword : keywords) {
-            MenuItem menuItem = createMenuItem(keyword.getKeyword());
+            MenuItem menuItem = new MenuItem(keyword.getKeyword());
             menuItem.setOnAction(event -> handleKeywordSelection(keyword));
             chooseKeywords.getItems().add(menuItem);
         }
