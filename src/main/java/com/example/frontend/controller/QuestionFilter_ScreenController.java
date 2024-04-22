@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
@@ -46,15 +48,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void on_add_category_btn_click(ActionEvent actionEvent) {
-        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-            Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
-
-            // add category to categories-autoCompletion
-            SharedData.getSuggestedCategories().add(newCategory.getName());
-
-            add_category_btn.setDisable(true);
-        }
+        addCategoryBtnClick(categoryTextField, add_category_btn);
     }
 
     public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
@@ -125,9 +119,15 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // call Repository to search for questions corresponding to filter values
         ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
+        SharedData.getFilteredQuestions().clear();
+
+        if (result.isEmpty()) {
+            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
+            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
+            return;
+        }
 
         // save to our SharedData
-        SharedData.getFilteredQuestions().clear();
         for (Question question : result) {
             SharedData.getFilteredQuestions().add(question);
         }

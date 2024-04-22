@@ -11,11 +11,10 @@ import javafx.beans.property.BooleanProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
+
+import static com.example.frontend.controller.TitleBanner_ScreenController.resetOperationStatusAfterDelay;
 
 @Getter
 @Setter
@@ -26,7 +25,6 @@ public class SharedData {
     private static StringProperty pageTitle = new SimpleStringProperty("");
     private static StringProperty operationStatus = new SimpleStringProperty("");
     private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
-    private static Timeline statusResetTimer;
 
     @Getter
     @Setter
@@ -117,20 +115,6 @@ public class SharedData {
         operationStatus.set(message.getMessage());
         operationIsErrorType.set(message.isError());
         resetOperationStatusAfterDelay();
-    }
-
-    private static void resetOperationStatusAfterDelay() {
-        // check if the statusResetTimer is not null
-        // if it's not null, stop the timer
-        if (statusResetTimer != null) {
-            statusResetTimer.stop();
-        }
-
-        // create a new timeline with a keyframe that sets the operationStatus to an empty string after 5 seconds
-        statusResetTimer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-            operationStatus.set("");
-        }));
-        statusResetTimer.play();
     }
 
     // Property accessor for operationStatus

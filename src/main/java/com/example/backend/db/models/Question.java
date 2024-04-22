@@ -68,7 +68,12 @@ public class Question {
         return String.valueOf(answersCombined);
     }
 
-    public static void createNewQuestionInDatabase(Question question) {
+    /**
+     * Returns the created question-id.
+     * @param question provided question for creation
+     * @return id of the created question
+     */
+    public static int createNewQuestionInDatabase(Question question) {
         QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
         question.setType(qt);
         SQLiteDatabaseConnection.questionRepository.add(question);
@@ -76,6 +81,8 @@ public class Question {
         int new_question_id = SQLiteDatabaseConnection.questionRepository.getMaxQuestionId();
         // create one or multiple answers
         Answer.createAnswers(question, new_question_id);
+
+        return new_question_id;
     }
 
     /**

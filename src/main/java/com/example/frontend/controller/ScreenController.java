@@ -72,6 +72,7 @@ public abstract class ScreenController {
         SCREEN_TITLES.put(questionEdit, "Question Edit");
         SCREEN_TITLES.put(home, "Home");
         SCREEN_TITLES.put(pdf_preview, "PDF Preview");
+        SCREEN_TITLES.put(settings, "Settings");
     }
 
     /**
@@ -248,6 +249,23 @@ public abstract class ScreenController {
                 menuButton.setText("all types");
             });
             menuButton.getItems().add(menuItem);
+        }
+    }
+
+    /**
+     * Function used to add a new category when clicked on the plus-button.
+     * @param categoryTextField the textField, where category is inputted
+     * @param add_category_btn the add-btn that is clicked for adding a new category
+     */
+    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) {
+        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
+            Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
+
+            // add category to categories-autoCompletion
+            SharedData.getSuggestedCategories().add(newCategory.getName());
+
+            add_category_btn.setDisable(true);
         }
     }
 

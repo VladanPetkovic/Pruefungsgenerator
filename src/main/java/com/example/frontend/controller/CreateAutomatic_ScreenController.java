@@ -163,8 +163,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         Label label = new Label(labelText);
         // add custom styling to the label
         label.getStyleClass().add("automatic_create_label");
-        // load external CSS file for additional styling
-        label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
         // set preferred height and width for the label
         label.setPrefHeight(150.0);

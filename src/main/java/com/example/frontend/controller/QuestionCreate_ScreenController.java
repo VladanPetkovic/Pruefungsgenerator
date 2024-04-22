@@ -17,7 +17,9 @@ import java.util.ResourceBundle;
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
     @FXML
-    private MenuButton category;
+    private TextField categoryTextField;
+    @FXML
+    private Button add_category_btn;
     @FXML
     private Slider difficulty;
     @FXML
@@ -40,8 +42,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
     private HBox keywordsHBox;
-    private ArrayList<Category> categories;
-    private Category selectedCategory = null;
     private ArrayList<TextArea> answers = new ArrayList<>();
 
     /**
@@ -54,13 +54,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
-
-        if (categories.isEmpty()){
-            showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
-        }
-
-        fillCategoryWithCategories();
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
 
         difficulty.setValue(5);
 
@@ -75,33 +69,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         fillKeywordWithKeywords();
         initializeMenuButton(questionTypeMenuButton, false);
         initQuestionTypeListener();
-    }
-
-    /**
-     * Fills the MenuButton for selecting categories with the available categories.
-     * This method iterates through the list of categories retrieved from the database
-     * and adds each category as a MenuItem to the MenuButton for category selection.
-     * When a category is selected from the MenuButton, the corresponding category
-     * is assigned to the selectedCategory variable, and its name is displayed in the MenuButton.
-     */
-    private void fillCategoryWithCategories() {
-        // Iterate through the list of categories
-        for (Category c : categories) {
-            // Create a MenuItem for the category
-            MenuItem menuItem = new MenuItem(c.getName());
-
-            // Set the action event for the MenuItem
-            menuItem.setOnAction(event -> {
-                // When the MenuItem is clicked, assign the selected category to selectedCategory
-                selectedCategory = c;
-
-                // Set the text of the MenuButton to the name of the selected category
-                category.setText(c.getName());
-            });
-
-            // Add the MenuItem to the MenuButton's items
-            category.getItems().add(menuItem);
-        }
     }
 
     /**
@@ -207,10 +174,11 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
 
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
+        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
 
         // Create a new Question object with the provided details
         Question q = new Question(
-                selectedCategory,
+                category,
                 (int) difficulty.getValue(),
                 points.getValue().floatValue(),
                 question.getText(),
@@ -223,23 +191,12 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 new ArrayList<>()           // TODO: placeholder for photos
         );
 
-        Question.createNewQuestionInDatabase(q);
-        // Create a Question object to search for the uploaded question
-        Question questionSearch = new Question();
-        questionSearch.setCategory(selectedCategory);
-        questionSearch.setDifficulty((int) difficulty.getValue());
-        questionSearch.setQuestion(question.getText());
-        questionSearch.setType(questionType);
-        // Retrieve the uploaded question from the database
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(
-                questionSearch, SharedData.getSelectedCourse().getName());
+        int question_id = Question.createNewQuestionInDatabase(q);
         // If the question upload was successful
-        if (questions.size() != 0) {
-            // Set the question ID for the uploaded question
-            q.setId(questions.get(0).getId());
+        if (question_id != 0) {
             // Associate keywords with the uploaded question // TODO: change this to be efficient
             for (Keyword k : selectedKeywords) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
+                SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
             switchScene(questionUpload, true);
@@ -282,9 +239,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
-        // Check if the category is selected
-        if (selectedCategory == null) {
-            return "Category needs to be selected.";
+        // Check if an existing category has been selected
+        if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
+            return "Select an existing category - or add a new category.";
         }
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
             return "Question-Type needs to be selected.";
@@ -298,5 +255,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             return "Question needs to be filled out.";
         }
         return null;
+    }
+
+    public void on_add_category_btn_click(ActionEvent actionEvent) {
+        addCategoryBtnClick(categoryTextField, add_category_btn);
     }
 }

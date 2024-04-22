@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -7,6 +9,7 @@ import javafx.scene.image.ImageView;
 import com.example.backend.app.SharedData;
 import javafx.beans.binding.Bindings;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class TitleBanner_ScreenController extends ScreenController {
 
@@ -18,6 +21,7 @@ public class TitleBanner_ScreenController extends ScreenController {
 
     @FXML
     private Label statusLabel;
+    private static Timeline statusResetTimer;
 
     @FXML
     public void initialize() {
@@ -43,5 +47,18 @@ public class TitleBanner_ScreenController extends ScreenController {
         SharedData.resetAll();
     }
 
+    public static void resetOperationStatusAfterDelay() {
+        // check if the statusResetTimer is not null
+        // if it's not null, stop the timer
+        if (statusResetTimer != null) {
+            statusResetTimer.stop();
+        }
+
+        // create a new timeline with a keyframe that sets the operationStatus to an empty string after 5 seconds
+        statusResetTimer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+            SharedData.setOperation("", false);
+        }));
+        statusResetTimer.play();
+    }
 }
 

@@ -100,9 +100,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
-            // If the list is empty, print a message indicating no questions found.
-            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
-            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
         }
@@ -360,7 +357,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                     keywordNotFound = false;
             }
             if (keywordNotFound) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1,question);
+                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1, question.getId());
             }
         }
     }
