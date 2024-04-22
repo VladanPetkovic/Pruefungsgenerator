@@ -2,8 +2,10 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
@@ -36,6 +38,7 @@ public class CourseDAO implements DAO<Course> {
             setCourseCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.CREATE_COURSE_ERROR_MESSAGE.getMessage()));
         }
     }
 
@@ -64,6 +67,7 @@ public class CourseDAO implements DAO<Course> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+
         }
 
         return null;
@@ -153,6 +157,7 @@ public class CourseDAO implements DAO<Course> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.ERROR_MESSAGE_4.getMessage()));
         }
 
         return course;

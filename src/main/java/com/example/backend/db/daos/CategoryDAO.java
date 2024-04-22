@@ -1,9 +1,11 @@
 package com.example.backend.db.daos;
 
+import com.example.backend.app.SharedData;
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
+import com.example.backend.db.models.Message;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,6 +36,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.CREATE_CATEGORY_ERROR_MESSAGE.getMessage()));
         }
     }
 
@@ -60,6 +63,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.READALL_CATEGORIES_ERROR_MESSAGE.getMessage()));
         }
 
         return categories;
@@ -95,6 +99,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.READALL_CATEGORIES_FOR_ONE_COURSE_ERROR_MESSAGE.getMessage()));
         }
 
         return categories;
@@ -129,6 +134,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.READ_CATEGORY_BY_ID_ERROR_MESSAGE.getMessage()));
         }
 
         return category;
@@ -163,6 +169,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.READ_CATEGORY_FOR_ONE_QUESTION_ERROR_MESSAGE.getMessage()));
         }
 
         return category;
@@ -196,6 +203,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.READ_CATEGORY_BY_NAME_ERROR_MESSAGE.getMessage()));
         }
 
         return category;
@@ -220,6 +228,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.UPDATE_CATEGORY_ERROR_MESSAGE.getMessage()));
         }
     }
 
@@ -248,6 +257,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.DELETE_CATEGORY_ERROR_MESSAGE.getMessage()));
         }
     }
 
@@ -270,6 +280,7 @@ public class CategoryDAO implements DAO<Category> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.CREATE_HASCC_CONNECTION_ERROR_MESSAGE.getMessage()));
         }
     }
 
@@ -290,6 +301,7 @@ public class CategoryDAO implements DAO<Category> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.DELETE_HASCC_CONNECTION_ERROR_MESSAGE.getMessage()));
         }
     }
 

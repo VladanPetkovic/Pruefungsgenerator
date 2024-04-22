@@ -139,6 +139,16 @@ Slider {
     -fx-tick-label-fill: white;
 }
 
+/* Title Banner */
+.titleBanner_label {
+    -fx-font-family: "Inter";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-line-spacing: 15px;
+    -fx-letter-spacing: 0em;
+    -fx-text-align: right;
+    -fx-padding: 0 100px 0 0;
+}
 
 
 /* Navigation bar Scene*/

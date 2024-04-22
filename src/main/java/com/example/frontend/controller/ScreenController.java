@@ -21,6 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.controlsfx.control.textfield.TextFields;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +63,16 @@ public abstract class ScreenController {
 
 
 
+    // Define a hashmap for the title banner for the different pages
+    private static final Map<Screen, String> SCREEN_TITLES = new HashMap<>();
+    static {
+        SCREEN_TITLES.put(createTestAutomatic, "Automatic Test Creation");
+        SCREEN_TITLES.put(createTestManual, "Manual Test Creation");
+        SCREEN_TITLES.put(questionUpload, "Question Upload");
+        SCREEN_TITLES.put(questionEdit, "Question Edit");
+        SCREEN_TITLES.put(home, "Home");
+        SCREEN_TITLES.put(pdf_preview, "PDF Preview");
+    }
 
     /**
      * switches to the specified screen and optionally refreshes its components
@@ -69,12 +81,19 @@ public abstract class ScreenController {
      */
     public static void switchScene(Screen screen, boolean refresh){
         // reload components, if refresh is true
-        if(refresh){
+        if (refresh) {
             screen.loadComponents();
         }
 
         // resetting filterquestion
         SharedData.setFilterQuestion(new Question());
+
+        // Update pageTitle in SharedData
+        String pageTitle = SCREEN_TITLES.get(screen);
+        if (pageTitle != null) {
+            SharedData.setPageTitle(pageTitle);
+        }
+
         // set the scene and display it
         MainApp.stage.setHeight(MainApp.stage.getHeight());
         MainApp.stage.setWidth(MainApp.stage.getWidth());
@@ -132,15 +151,6 @@ public abstract class ScreenController {
     protected void onSettingsNavBtnClick(MouseEvent event) throws IOException
     {
         switchScene(settings,true);
-    }
-
-    /**
-     * handles click event for navigating to the home screen and resetting shared data
-     */
-    public void onFHTWLogoClick() {
-        // navigate to the home screen and reset shared data
-        switchScene(home,true);
-        SharedData.resetAll();
     }
 
     /**

@@ -4,6 +4,8 @@ import com.example.backend.db.models.*;
 import com.example.backend.db.models.Question;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +16,49 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 public class SharedData {
+
+    // Default value for pageTitle
+    private static final String DEFAULT_PAGE_TITLE = "default page title";
+
+    private static StringProperty pageTitle = new SimpleStringProperty(DEFAULT_PAGE_TITLE);
+
+    // Getter and setter for pageTitle
+    public static String getPageTitle() {
+        return pageTitle.get();
+    }
+
+    public static void setPageTitle(String pageTitle) {
+        SharedData.pageTitle.set(pageTitle);
+    }
+
+    // Property accessor for pageTitle
+    public static StringProperty pageTitleProperty() {
+        return pageTitle;
+    }
+
+
+
+    // Default value for operationStatus
+    private static final String DEFAULT_STATUS_MESSAGE = "default message";
+
+    private static StringProperty operationStatus = new SimpleStringProperty(DEFAULT_STATUS_MESSAGE);
+
+    // Getter and setter for operationStatus
+    public static String getOperationStatus() {
+        return operationStatus.get();
+    }
+
+    public static void setOperationStatus(String operationStatus) {
+        SharedData.operationStatus.set(operationStatus);
+    }
+
+    // Property accessor for operationStatus
+    public static StringProperty operationStatusProperty() {
+        return operationStatus;
+    }
+
+
+
     @Getter
     @Setter
     //stores the users course selection from the Home Screen
@@ -36,7 +81,7 @@ public class SharedData {
 
     @Getter
     @Setter
-    private static com.example.backend.db.models.Question filterQuestion = new Question();
+    private static Question filterQuestion = new Question();
 
     @Getter
     @Setter

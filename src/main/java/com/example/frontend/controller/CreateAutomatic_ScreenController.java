@@ -251,40 +251,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         parentVBox.getChildren().add(innerVBox);
     }
 
-    /*
-    private void showSuccessModal() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/success_modal.fxml"));
-            Parent root = loader.load();
-            SuccessModalController controller = loader.getController();
-            controller.setMessage("Test created successfully!");
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showErrorModal() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/error_modal.fxml"));
-            Parent root = loader.load();
-            ErrorModalController controller = loader.getController();
-            controller.setMessage("Test creation failed!");
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-     */
-
     // method triggered when the "Create Test" button is clicked
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
@@ -352,25 +318,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         SharedData.getSearchObjectsAutTestCreate().clear();
         // reset the question count to zero
         this.questionCount = 0;
-
-        /*
-        // Assume isSuccess indicates whether the test creation was successful
-        boolean isSuccess = true;
-
-        if(isSuccess){
-            showSuccessModal();
-        } else {
-            showErrorModal();
-        }
-
-        // Clear banners after 3 seconds
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), evt -> {
-            // switch scene to createTestManual
-            switchScene(createTestManual, true);
-        }));
-        timeline.play();
-
-         */
 
         switchScene(createTestManual, true);
 

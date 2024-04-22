@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import com.example.backend.app.SharedData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        SharedData.setPageTitle("Exam Generator");
         this.stage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());

@@ -2,6 +2,7 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 
@@ -180,8 +181,8 @@ public class QuestionDAO implements DAO<Question> {
 
             // insert into prepared stmt
             int count = 1;
-            for(Object prepObjects : listForPreparedStmt) {
-                if(prepObjects instanceof String) {
+            for (Object prepObjects : listForPreparedStmt) {
+                if (prepObjects instanceof String) {
                     questionsStatement.setString(count, (String) prepObjects);
                 } else if(prepObjects instanceof Integer) {
                     questionsStatement.setInt(count, (int) prepObjects);
@@ -197,13 +198,14 @@ public class QuestionDAO implements DAO<Question> {
             try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                 while (questionsResultSet.next()) {
                     Question newQuestion = createModelFromResultSet(questionsResultSet);
-                    if(newQuestion != null) {
+                    if (newQuestion != null) {
                         this.questionCache.add(createModelFromResultSet(questionsResultSet));
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperationStatus(String.format("{ \"error\": \"%s\" }", Message.ERROR_MESSAGE_5.getMessage()));
         }
 
         return this.questionCache;

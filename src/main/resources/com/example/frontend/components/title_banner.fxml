@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.text.Font?>
+
+<GridPane maxHeight="100.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" styleClass="main_navigation" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.frontend.controller.TitleBanner_ScreenController">
+<columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="720.0" minWidth="10.0" prefWidth="720.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+</columnConstraints>
+<children>
+    <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0">
+        <image>
+            <Image url="@../icons/FH_logo.png" />
+        </image>
+    </ImageView>
+    <Label fx:id="titleLabel" alignment="CENTER" prefHeight="129.0" prefWidth="720.0" styleClass="homeScreen_label" textFill="white" GridPane.columnIndex="1">
+        <font>
+            <Font size="35.0" />
+        </font>
+    </Label>
+    <Label fx:id="statusLabel" alignment="CENTER" prefHeight="129.0" prefWidth="200.0" styleClass="titleBanner_label" textFill="red" GridPane.columnIndex="2">
+        <font>
+            <Font size="5.0" />
+        </font>
+    </Label>
+</children>
+</GridPane>
