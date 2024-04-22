@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -30,6 +31,7 @@ import java.util.Objects;
  * the base class for all screen controllers
  * provides functionality to switch between screens and handle common UI events
  */
+
 public abstract class ScreenController {
 
     // define and initialize screens for different functionalities
@@ -39,6 +41,25 @@ public abstract class ScreenController {
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
     public static Screen<QuestionEdit_ScreenController> home = new Screen<>("sites/home.fxml");
     public static Screen<PdfPreview_ScreenController> pdf_preview = new Screen<>("sites/pdf_preview.fxml");
+    public static Screen<Settings_ScreenController> settings = new Screen<>("sites/settings.fxml");
+
+
+    //todo maybe not used (simon)
+    @FXML
+    ImageView createTestAutomaticNavImageView;
+    @FXML
+    ImageView createTestManualNavImageView;
+    @FXML
+    ImageView createQuestionNavImageView;
+    @FXML
+    ImageView editQuestionNavImageView;
+    @FXML
+    ImageView settingsNavImageView;
+
+    @FXML
+    Label createTestAutomaticNavLabel;
+
+
 
 
     /**
@@ -69,6 +90,10 @@ public abstract class ScreenController {
     @FXML
     protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
         switchScene(createTestAutomatic,true);
+
+        //todo maybe not used (simon)
+        createTestAutomaticNavLabel.getStyleClass().add("navigation_item_label_selected");
+        createTestAutomaticNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/frontend/icons/file_add_blue.png")));
     }
 
     /**
@@ -101,6 +126,12 @@ public abstract class ScreenController {
     protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
     {
         switchScene(questionEdit,true);
+    }
+
+    @FXML
+    protected void onSettingsNavBtnClick(MouseEvent event) throws IOException
+    {
+        switchScene(settings,true);
     }
 
     /**

@@ -44,10 +44,10 @@ public class CreateManual_ScreenController extends ScreenController {
     // method to display test questions in preview area
     @FXML
     private void showTestQuestionsInPreview() {
-        // spacing between each spacing (serves as an area for the answers)
+        //spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
 
-        // counter for question number
+        //counter for question number
         int i = 1;
 
         // check if there are test questions available

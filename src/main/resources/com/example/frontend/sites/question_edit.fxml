@@ -33,63 +33,9 @@
             </Label>
          </children>
       </HBox>
-      <HBox prefHeight="530.0" prefWidth="1120.0" VBox.vgrow="ALWAYS">
+      <HBox prefHeight="530.0" prefWidth="1120.0" style="-fx-background-color: #2f2f2f;" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane minHeight="-Infinity" minWidth="-Infinity" styleClass="main_navigation">
-              <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" text="Create Test&#10;automatically&#10;" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_createTestManualButton" alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_notSelected" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_uploadQuestionButton" alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" pickOnBounds="true" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_upload.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" pickOnBounds="false" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="Create&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_editQuestionButton" alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_edit_blue.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" pickOnBounds="false" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_selected" text="Edit&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-               </children>
-            </GridPane>
+            <fx:include source="../components/navbar.fxml" />
             <VBox maxWidth="500.0" minWidth="378.0" prefHeight="600.0" prefWidth="411.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" HBox.hgrow="ALWAYS">
                <children>
                   <!-- INCLUDE FILTER BOX -->
