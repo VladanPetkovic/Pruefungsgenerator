@@ -92,9 +92,9 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <VBox prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
+                                    <VBox fx:id="customDoubleSpinnerPlaceholder" prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
                                        <children>
-                                          <Spinner fx:id="choosePoints" styleClass="automatic_create_spinner" />
+
                                        </children>
                                     </VBox>
                                  </children>

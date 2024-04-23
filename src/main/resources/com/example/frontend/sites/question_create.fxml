@@ -73,7 +73,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
+                              <VBox fx:id="customDoubleSpinnerPlaceholder" prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
                                     <Slider fx:id="difficulty" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" style="-fx-background-color: #2f2f2f;" styleClass="slider-tool" value="5.0" />
                                  </children>
@@ -89,7 +89,7 @@
                               </Label>
                               <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-                                    <Spinner fx:id="points" styleClass="automatic_create_spinner" />
+
                                  </children>
                               </VBox>
                            </children>

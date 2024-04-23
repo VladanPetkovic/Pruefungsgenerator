@@ -5,6 +5,7 @@ import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,7 +31,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private MenuButton chooseCategory;
     @FXML
-    private Spinner<Double> choosePoints;
+    private VBox customDoubleSpinnerPlaceholder;
+    private CustomDoubleSpinner choosePoints;
     @FXML
     public VBox multipleChoiceAnswerVBox;
     @FXML
@@ -87,8 +89,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         fillKeywordWithKeywords();
 
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        choosePoints.setValueFactory(valueFactory);
+        choosePoints = new CustomDoubleSpinner();
+        choosePoints.getStyleClass().add("automatic_create_spinner");
+
+        customDoubleSpinnerPlaceholder.getChildren().add(choosePoints);
     }
 
     /**

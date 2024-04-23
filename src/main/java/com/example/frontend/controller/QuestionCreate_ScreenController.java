@@ -3,6 +3,7 @@ package com.example.frontend.controller;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,7 +24,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private Slider difficulty;
     @FXML
-    private Spinner<Double> points;
+    private VBox customDoubleSpinnerPlaceholder;
+    private CustomDoubleSpinner points;
     @FXML
     public MenuButton questionTypeMenuButton;
     @FXML
@@ -58,8 +60,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
         difficulty.setValue(5);
 
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        points.setValueFactory(valueFactory);
+        //SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
+        //points.setValueFactory(valueFactory);
+
+        points = new CustomDoubleSpinner();
+        points.getStyleClass().add("automatic_create_spinner");
+
+        customDoubleSpinnerPlaceholder.getChildren().add(points);
 
         question.setText("");
         remarks.setText("");

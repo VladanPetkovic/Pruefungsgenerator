@@ -5,6 +5,7 @@ import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.SearchObject;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -107,14 +108,11 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // create a new SearchObject to store points selection
         SearchObject<Float> searchObject = new SearchObject<>();
         // listen for changes in the spinner value and update the SearchObject accordingly
-        spinner.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                double points = (Double) spinner.getValue();
-                searchObject.setObjectName("POINT");
-                searchObject.setValueOfObject((float) points);
-                searchObject.setSet(true);
-            }
+        spinner.valueFactoryProperty().addListener((observable, oldNumber, newNumber) -> {
+            double points = (Double) spinner.getValue();
+            searchObject.setObjectName("POINT");
+            searchObject.setValueOfObject((float) points);
+            searchObject.setSet(true);
         });
         // add the selected points to the appropriate ArrayList in SharedData
         SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
@@ -193,14 +191,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         parentVBox.getChildren().add(innerVBox);
     }
 
+
+
+
     // helper method to create a Spinner with custom styling
     private void createSpinner(VBox parentVBox) {
         // create a new Spinner
-        Spinner<Double> spinner = new Spinner<>();
-
-        // set up the Spinner with a value factory and default values
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        spinner.setValueFactory(valueFactory);
+        CustomDoubleSpinner spinner = new CustomDoubleSpinner();
 
         // add custom styling to the Spinner
         spinner.getStyleClass().add("automatic_create_spinner");
