@@ -60,9 +60,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
         difficulty.setValue(5);
 
-        //SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        //points.setValueFactory(valueFactory);
-
         points = new CustomDoubleSpinner();
         points.getStyleClass().add("automatic_create_spinner");
 
@@ -206,7 +203,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
-            switchScene(questionUpload, true);
+            switchScene(questionCreate, true);
         }
     }
 

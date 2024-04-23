@@ -34,19 +34,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     @FXML
     private void onAddQuestionBtnClick() {
-        // increment the question count
         questionCount++;
 
-        // create a new VBox with the required structure
         VBox newQuestionVBox = createNewQuestionVBox();
-
-        // add new ArrayList of SearchObjects to our searchData-array in SharedData
         SharedData.getSearchObjectsAutTestCreate().add(new ArrayList<>());
 
         // set the event handlers for the components within the new VBox
         setEventHandlers(newQuestionVBox, this.questionCount);
-
-        // get the parent of the parent (grandparent) of addQuestionVBox
         VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
 
         // get the index of the parent of addQuestionVBox in its grandparent
@@ -61,18 +55,14 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // iterate over all nodes within the VBox
         for (Node node : questionVBox.getChildren()) {
             if (node instanceof VBox) {
-                // if the node is another VBox, recursively set event handlers for its children
                 setEventHandlers((VBox) node, vBoxNumber);
             } else if (node instanceof MenuButton) {
-                // if the node is a MenuButton, set its event handler to select a category
                 MenuButton menuButton = (MenuButton) node;
                 setMenuButtonHandler(menuButton, vBoxNumber);
             } else if (node instanceof Spinner) {
-                // if the node is a Spinner, set its event handler to select points
                 Spinner spinner = (Spinner) node;
                 setSpinnerHandler(spinner, vBoxNumber);
             } else if (node instanceof Slider) {
-                // if the node is a Slider, set its event handler to select difficulty
                 Slider slider = (Slider) node;
                 setSliderHandler(slider, vBoxNumber);
             }
@@ -162,7 +152,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // add custom styling to the label
         label.getStyleClass().add("automatic_create_label");
 
-        // set preferred height and width for the label
+        // set preferred height and width for the label // TODO: don't use inline css - make css-class
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
         // set text color
@@ -190,9 +180,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // add the VBox containing the MenuButton to the parent VBox
         parentVBox.getChildren().add(innerVBox);
     }
-
-
-
 
     // helper method to create a Spinner with custom styling
     private void createSpinner(VBox parentVBox) {

@@ -4,12 +4,8 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -39,7 +35,7 @@ public abstract class ScreenController {
     // define and initialize screens for different functionalities
     public static Screen<CreateAutomatic_ScreenController> createTestAutomatic = new Screen<>("sites/create_automatic.fxml");
     public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
-    public static Screen<QuestionCreate_ScreenController> questionUpload = new Screen<>("sites/question_create.fxml");
+    public static Screen<QuestionCreate_ScreenController> questionCreate = new Screen<>("sites/question_create.fxml");
     public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
     public static Screen<QuestionEdit_ScreenController> home = new Screen<>("sites/home.fxml");
     public static Screen<PdfPreview_ScreenController> pdf_preview = new Screen<>("sites/pdf_preview.fxml");
@@ -68,8 +64,8 @@ public abstract class ScreenController {
     static {
         SCREEN_TITLES.put(createTestAutomatic, "Automatic Test Creation");
         SCREEN_TITLES.put(createTestManual, "Manual Test Creation");
-        SCREEN_TITLES.put(questionUpload, "Question Upload");
-        SCREEN_TITLES.put(questionEdit, "Question Edit");
+        SCREEN_TITLES.put(questionCreate, "Create Question");
+        SCREEN_TITLES.put(questionEdit, "Edit Question");
         SCREEN_TITLES.put(home, "Home");
         SCREEN_TITLES.put(pdf_preview, "PDF Preview");
         SCREEN_TITLES.put(settings, "Settings");
@@ -134,7 +130,7 @@ public abstract class ScreenController {
     @FXML
     protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
     {
-        switchScene(questionUpload,true);
+        switchScene(questionCreate,true);
     }
 
     /**
