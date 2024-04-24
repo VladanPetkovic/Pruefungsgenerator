@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import com.example.backend.app.SharedData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        SharedData.setPageTitle("Exam Generator");
         this.stage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -27,7 +29,7 @@ public class MainApp extends Application {
     }
 
     /**
-     * Sets the minimum and maximum sizes for the application window.
+     * Sets the minimum size for the application window.
      *
      * @param stage The primary stage for the application.
      */
@@ -36,10 +38,6 @@ public class MainApp extends Application {
         // min. window
         stage.setMinWidth(720);
         stage.setMinHeight(550);
-
-        // max. window
-        stage.setMaxWidth(1920);
-        stage.setMaxHeight(1080);
     }
 
     /**

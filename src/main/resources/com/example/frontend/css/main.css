@@ -2,6 +2,9 @@ Button, CheckBox {
     -fx-cursor: HAND;
 }
 
+Slider:pressed {
+    -fx-cursor: CLOSED_HAND;
+}
 Slider {
     -fx-cursor: OPEN_HAND;
 }
@@ -53,6 +56,17 @@ Slider {
 }
 .btn_dark:pressed {
     -fx-background-color: #2f2f2f;
+}
+.btn_add_icon {
+    -fx-background-color: none;
+    -fx-cursor: HAND;
+}
+.btn_add_icon:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+.btn_add_icon:pressed {
+    -fx-rotate: 45;
 }
 
 .optionAreaBox {
@@ -125,6 +139,16 @@ Slider {
     -fx-tick-label-fill: white;
 }
 
+/* Title Banner */
+.titleBanner_label {
+    -fx-font-family: "Inter";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-line-spacing: 15px;
+    -fx-letter-spacing: 0em;
+    -fx-text-align: right;
+    -fx-padding: 0 100px 0 0;
+}
 
 
 /* Navigation bar Scene*/
@@ -211,4 +235,10 @@ Slider {
     -fx-border-color: grey;
     -fx-border-radius: 2%;
     -fx-cursor: HAND;
+}
+.filter_question_preview_vbox:hover {
+    -fx-background-color: #646464;
+}
+.filter_question_preview_vbox:pressed {
+    -fx-background-color: #2f2f2f;
 }

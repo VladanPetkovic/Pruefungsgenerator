@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -65,7 +68,12 @@ public class Question {
         return String.valueOf(answersCombined);
     }
 
-    public static void createNewQuestionInDatabase(Question question) {
+    /**
+     * Returns the created question-id.
+     * @param question provided question for creation
+     * @return id of the created question
+     */
+    public static int createNewQuestionInDatabase(Question question) {
         QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
         question.setType(qt);
         SQLiteDatabaseConnection.questionRepository.add(question);
@@ -73,6 +81,19 @@ public class Question {
         int new_question_id = SQLiteDatabaseConnection.questionRepository.getMaxQuestionId();
         // create one or multiple answers
         Answer.createAnswers(question, new_question_id);
+
+        return new_question_id;
     }
 
+    /**
+     * This function returns the formatted string of a timestamp (created_at, updated_at)
+     * @param time the time to format
+     * @return A String, which we can use in the frontend
+     */
+    public String getTimeStampFormatted(Timestamp time) {
+        Instant instant = time.toInstant();
+        LocalDateTime updatedAt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return updatedAt.format(formatter);
+    }
 }

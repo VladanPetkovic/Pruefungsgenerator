@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class pdfPreview_ScreenController extends ScreenController {
+public class PdfPreview_ScreenController extends ScreenController {
     @FXML
     private Slider questionCountSlider;
 

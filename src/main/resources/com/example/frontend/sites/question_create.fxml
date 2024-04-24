@@ -7,8 +7,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -20,77 +20,11 @@
 
 <VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.QuestionCreate_ScreenController">
    <children>
-      <HBox maxHeight="100.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" styleClass="main_navigation">
-         <children>
-            <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/FH_logo.png" />
-               </image></ImageView>
-            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Create Question" textFill="WHITE">
-               <font>
-                  <Font size="35.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
+      <fx:include source="../components/title_banner.fxml" />
       <HBox prefHeight="530.0" prefWidth="1120.0" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane minHeight="-Infinity" minWidth="-Infinity" styleClass="main_navigation">
-              <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" text="Create Test&#10;automatically&#10;" textAlignment="CENTER" textFill="#f2eaea" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_createTestManual_button" alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_notSelected" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_uploadQuestionButton" alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_upload_blue.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_selected" text="Create&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_editQuestionButton" alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_edit_white.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="Edit&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-               </children>
-            </GridPane>
-            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" HBox.hgrow="ALWAYS">
+            <fx:include source="../components/navbar.fxml" />
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: #2f2f2f;" HBox.hgrow="ALWAYS">
                <content>
                   <VBox styleClass="automatic_create_scrollPane">
                      <children>
@@ -103,8 +37,30 @@
                               </Label>
                               <VBox prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <MenuButton fx:id="category" mnemonicParsing="false" styleClass="menuButton_dark" text="Choose Category..." VBox.vgrow="ALWAYS">
-                                    </MenuButton>
+                                    <GridPane>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.7999267578125" minWidth="10.0" prefWidth="304.5999755859375" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.39996337890625" minWidth="10.0" prefWidth="48.60002441406249" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <TextField fx:id="categoryTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="Search Category..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                                          <Button fx:id="add_category_btn" disable="true" mnemonicParsing="false" onAction="#on_add_category_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                             <graphic>
+                                                <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/add.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
+                                    </GridPane>
                                  </children>
                               </VBox>
                            </children>
@@ -130,36 +86,9 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
+                              <VBox fx:id="customDoubleSpinnerPlaceholder" prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-                                    <Spinner fx:id="points" styleClass="automatic_create_spinner" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
-                           <children>
-                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Question-Type" textFill="#e8e4e4">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                              <VBox prefHeight="200.0" prefWidth="100.0" styleClass="question_vbox">
-                                 <children>
-                                    <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" onAction="#onQuestionTypeMenuBtnAction" styleClass="menuButton_dark" text="Question-Type...">
-                                       <items>
-                                          <MenuItem mnemonicParsing="false" text="Action 1" />
-                                          <MenuItem mnemonicParsing="false" text="Action 2" />
-                                       </items>
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" />
-                                       </VBox.margin>
-                                    </MenuButton>
-                                    <VBox fx:id="multipleChoiceVBox" prefHeight="200.0" prefWidth="100.0">
-                                       <children>
-                                          <Button mnemonicParsing="false" onAction="#onAddNewAnswerBtnClick" styleClass="btn_dark" text="Add new answer" />
-                                          <VBox fx:id="multipleChoiceAnswerVBox" prefHeight="200.0" prefWidth="100.0" />
-                                       </children></VBox>
+
                                  </children>
                               </VBox>
                            </children>
@@ -173,7 +102,47 @@
                               </Label>
                               <VBox minHeight="200.0" styleClass="question_vbox">
                                  <children>
-                                    <TextArea fx:id="question" prefWidth="500.0" />
+                                    <TextArea fx:id="question" prefWidth="500.0" promptText="Type..." />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                           <children>
+                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Question-Type" textFill="#e8e4e4">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <VBox prefHeight="200.0" prefWidth="100.0" styleClass="question_vbox">
+                                 <children>
+                                    <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="Question-Type...">
+                                       <items>
+                                          <MenuItem mnemonicParsing="false" text="Action 1" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="20.0" />
+                                       </VBox.margin>
+                                    </MenuButton>
+                                    <VBox fx:id="multipleChoiceVBox" prefHeight="200.0" prefWidth="100.0" visible="false">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#onAddNewAnswerBtnClick" styleClass="btn_dark" text="Add new answer" />
+                                          <VBox fx:id="multipleChoiceAnswerVBox" prefHeight="200.0" prefWidth="100.0" />
+                                       </children></VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                           <children>
+                              <Label prefWidth="1000.0" styleClass="automatic_create_label" text="Answer" textFill="#e8e4e4">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <VBox minHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
+                                 <children>
+                                    <TextArea fx:id="answerTextArea" disable="true" prefWidth="1000.0" promptText="Type..." />
                                  </children>
                               </VBox>
                            </children>
@@ -187,7 +156,7 @@
                               </Label>
                               <VBox minHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-                                    <TextArea fx:id="remarks" prefWidth="1000.0" />
+                                    <TextArea fx:id="remarks" prefWidth="1000.0" promptText="Type" />
                                  </children>
                               </VBox>
                            </children>
@@ -210,6 +179,9 @@
                                  <font>
                                     <Font size="20.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets bottom="20.0" />
+                                 </VBox.margin>
                               </Button>
                            </children>
                         </VBox>

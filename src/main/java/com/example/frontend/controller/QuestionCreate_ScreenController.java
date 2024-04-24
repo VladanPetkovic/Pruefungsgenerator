@@ -3,6 +3,7 @@ package com.example.frontend.controller;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,34 +14,36 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
     @FXML
-    private MenuButton category;
+    private TextField categoryTextField;
+    @FXML
+    private Button add_category_btn;
     @FXML
     private Slider difficulty;
     @FXML
-    private Spinner<Double> points;
+    private VBox customDoubleSpinnerPlaceholder;
+    private CustomDoubleSpinner points;
     @FXML
     public MenuButton questionTypeMenuButton;
     @FXML
-    private VBox multipleChoiceVBox;
+    private VBox multipleChoiceAnswerVBox;
     @FXML
-    public VBox multipleChoiceAnswerVBox;
+    private VBox multipleChoiceVBox;
     @FXML
     private TextArea question;
     @FXML
     private TextArea remarks;
+    @FXML
+    private TextArea answerTextArea;
     @FXML
     private MenuButton keyword;
     private ArrayList<Keyword> keywords;
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
     private HBox keywordsHBox;
-    private ArrayList<Category> categories;
-    private Category selectedCategory = null;
     private ArrayList<TextArea> answers = new ArrayList<>();
 
     /**
@@ -53,18 +56,14 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
-
-        if (categories.size() == 0){
-            showErrorAlert("Error","No categories found","Please create categories first before accessing upload question");
-        }
-
-        fillCategoryWithCategories();
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
 
         difficulty.setValue(5);
 
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        points.setValueFactory(valueFactory);
+        points = new CustomDoubleSpinner();
+        points.getStyleClass().add("automatic_create_spinner");
+
+        customDoubleSpinnerPlaceholder.getChildren().add(points);
 
         question.setText("");
         remarks.setText("");
@@ -72,59 +71,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
 
         fillKeywordWithKeywords();
-        initializeMenuButton(questionTypeMenuButton);
-    }
-
-    /**
-     * Displays an error alert dialog with the specified title, header text, and content text.
-     * The dialog is modal, meaning it will block user interaction with other windows until closed.
-     *
-     * @param title       The title of the error alert dialog.
-     * @param headerText  The header text displayed in the error alert dialog.
-     * @param contentText The main content text displayed in the error alert dialog.
-     */
-    public void showErrorAlert(String title, String headerText, String contentText) {
-        // Create a new instance of Alert with an error type
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-
-        // Set the title of the error alert dialog
-        alert.setTitle(title);
-
-        // Set the header text of the error alert dialog
-        alert.setHeaderText(headerText);
-
-        // Set the main content text of the error alert dialog
-        alert.setContentText(contentText);
-
-        // Display the error alert dialog and wait for user interaction
-        alert.showAndWait();
-    }
-
-    /**
-     * Fills the MenuButton for selecting categories with the available categories.
-     * This method iterates through the list of categories retrieved from the database
-     * and adds each category as a MenuItem to the MenuButton for category selection.
-     * When a category is selected from the MenuButton, the corresponding category
-     * is assigned to the selectedCategory variable, and its name is displayed in the MenuButton.
-     */
-    private void fillCategoryWithCategories() {
-        // Iterate through the list of categories
-        for (Category c : categories) {
-            // Create a MenuItem for the category
-            MenuItem menuItem = createMenuItem(c.getName());
-
-            // Set the action event for the MenuItem
-            menuItem.setOnAction(event -> {
-                // When the MenuItem is clicked, assign the selected category to selectedCategory
-                selectedCategory = c;
-
-                // Set the text of the MenuButton to the name of the selected category
-                category.setText(c.getName());
-            });
-
-            // Add the MenuItem to the MenuButton's items
-            category.getItems().add(menuItem);
-        }
+        initializeMenuButton(questionTypeMenuButton, false);
+        initQuestionTypeListener();
     }
 
     /**
@@ -138,7 +86,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         // Iterate through the list of keywords
         for (Keyword k : keywords) {
             // Create a MenuItem for the keyword
-            MenuItem menuItem = createMenuItem(k.getKeyword());
+            MenuItem menuItem = new MenuItem(k.getKeyword());
 
             // Set the action event for the MenuItem
             menuItem.setOnAction(event -> {
@@ -171,79 +119,46 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     /**
-     * Creates a MenuItem with the specified text.
-     *
-     * @param text The text to be displayed on the MenuItem.
-     * @return The created MenuItem with the specified text.
-     */
-    private MenuItem createMenuItem(String text) {
-        // Create a new MenuItem with the specified text
-        MenuItem menuItem = new MenuItem(text);
-        // Return the created MenuItem
-        return menuItem;
-    }
-
-    /**
      * This function gets triggered when the questionTypeMenuButton is clicked on.
-     * @param actionEvent not used
      */
-    public void onQuestionTypeMenuBtnAction(ActionEvent actionEvent) {
-        if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
-            if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
-                initMultipleChoiceVBox();
+    public void initQuestionTypeListener() {
+        questionTypeMenuButton.textProperty().addListener((observable) -> {
+            if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
+                switch (new QuestionType(questionTypeMenuButton.getText()).getType()) {
+                    case MULTIPLE_CHOICE:
+                        initMultipleChoiceVBox();
+                        break;
+                    case TRUE_FALSE:
+                        hideMultipleChoiceVBox();
+                        answerTextArea.setDisable(true);
+                        break;
+                    default:
+                        hideMultipleChoiceVBox();
+                }
             } else {
-                removeMultipleChoiceVBox();
+                hideMultipleChoiceVBox();
             }
-        } else {
-            removeMultipleChoiceVBox();
-        }
+        });
     }
 
     public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
-        if (answers.size() <= 10) {
-            // Create an HBox to contain each answer and its removal button
-            HBox hBoxAnswerRemove = new HBox();
-            TextArea textAreaAnswer = new TextArea();
-            answers.add(textAreaAnswer);
-            Button buttonRemove = createButton("X");
-            // Set action event for the removal button
-            buttonRemove.setOnAction(e -> {
-                answers.remove(textAreaAnswer);
-                multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-            });
-            // Add the answer TextArea and its removal button to the HBox
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox containing the answer and its removal button to the multiple choice VBox
-            multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-        }
+        addMultipleChoiceAnswerBtnClicked(answers, multipleChoiceAnswerVBox);
     }
 
     private void initMultipleChoiceVBox() {
         multipleChoiceVBox.setVisible(true);
+        answerTextArea.setDisable(true);
     }
 
     /**
      * This function hides the multipleChoiceVBox and resets our answers-ArrayList.
      */
-    private void removeMultipleChoiceVBox() {
+    private void hideMultipleChoiceVBox() {
         multipleChoiceVBox.setVisible(false);
         // Clear the list of answers
         answers.clear();
-    }
-
-    /**
-     * Creates a JavaFX Button with the given text and disables focus traversal.
-     *
-     * @param text The text to display on the button.
-     * @return The created Button with the specified text and disabled focus traversal.
-     */
-    private Button createButton(String text) {
-        // Create a new Button with the specified text
-        Button button = new Button(text);
-        // Disable focus traversal for the button
-        button.setFocusTraversable(false);
-        // Return the created Button
-        return button;
+        multipleChoiceAnswerVBox.getChildren().clear();
+        answerTextArea.setDisable(false);
     }
 
     /**
@@ -263,10 +178,11 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
 
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
+        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
 
         // Create a new Question object with the provided details
         Question q = new Question(
-                selectedCategory,
+                category,
                 (int) difficulty.getValue(),
                 points.getValue().floatValue(),
                 question.getText(),
@@ -274,31 +190,20 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 remarks.getText(),
                 new Timestamp(System.currentTimeMillis()),
                 null,               // this can only be changed when editing a question
-                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), this.answers),
+                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
                 selectedKeywords,
                 new ArrayList<>()           // TODO: placeholder for photos
         );
 
-        Question.createNewQuestionInDatabase(q);
-        // Create a Question object to search for the uploaded question
-        Question questionSearch = new Question();
-        questionSearch.setCategory(selectedCategory);
-        questionSearch.setDifficulty((int) difficulty.getValue());
-        questionSearch.setQuestion(question.getText());
-        questionSearch.setType(questionType);
-        // Retrieve the uploaded question from the database
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(
-                questionSearch, SharedData.getSelectedCourse().getName());
+        int question_id = Question.createNewQuestionInDatabase(q);
         // If the question upload was successful
-        if (questions.size() != 0) {
-            // Set the question ID for the uploaded question
-            q.setId(questions.get(0).getId());
+        if (question_id != 0) {
             // Associate keywords with the uploaded question // TODO: change this to be efficient
             for (Keyword k : selectedKeywords) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(k, q);
+                SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
-            switchScene(questionUpload, true);
+            switchScene(questionCreate, true);
         }
     }
 
@@ -338,9 +243,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
-        // Check if the category is selected
-        if (selectedCategory == null) {
-            return "Category needs to be selected.";
+        // Check if an existing category has been selected
+        if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
+            return "Select an existing category - or add a new category.";
         }
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
             return "Question-Type needs to be selected.";
@@ -354,5 +259,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             return "Question needs to be filled out.";
         }
         return null;
+    }
+
+    public void on_add_category_btn_click(ActionEvent actionEvent) {
+        addCategoryBtnClick(categoryTextField, add_category_btn);
     }
 }

@@ -5,6 +5,9 @@ import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.components.CustomDoubleSpinner;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,61 +18,46 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
-    @FXML
-    private Label label_selectedCourse;
-    @FXML
-    private TextField categoryTextField;
-    @FXML
-    private TextField keywordTextField;
-    @FXML
-    private TextField questionTextField;
-    @FXML
-    private Slider difficultySlider;
-    @FXML
-    private Slider pointsSlider;
-    @FXML
-    public MenuButton questionTypeMenuButton;
     private ArrayList<TextArea> answers = new ArrayList<>();
     @FXML
-    private VBox previewVBox;
+    private VBox vbox_filteredQuestionsPreview;
+    @FXML
+    public Label updated_at_label;
+    @FXML
+    public Label created_at_label;
     @FXML
     private MenuButton chooseCategory;
     @FXML
-    private Spinner<Double> choosePoints;
+    private VBox customDoubleSpinnerPlaceholder;
+    private CustomDoubleSpinner choosePoints;
     @FXML
-    private CheckBox chooseMultipleChoice;
+    public VBox multipleChoiceAnswerVBox;
+    @FXML
+    public VBox multipleChoiceVBox;
+    @FXML
+    public MenuButton questionTypeMenuButtonEdit;
+    @FXML
+    public TextArea chooseAnswerTextArea;
     @FXML
     private Slider chooseDifficulty;
     @FXML
     private TextArea chooseQuestion;
     @FXML
     private TextArea chooseRemarks;
-
-    private ArrayList<Keyword> keywords;
-    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
-
-    private ArrayList<Keyword> startState = new ArrayList<>();
-
-    private ArrayList<Category> categories;
-    private Category selectedCategory = null;
-
     @FXML
     private ScrollPane chooseScrollPane;
-
     @FXML
     private HBox keywordsHBox;
-
     @FXML
     private MenuButton chooseKeywords;
 
-    @FXML
-    private VBox multipleChoiceVBox;
-
+    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
+    private ArrayList<Keyword> startState = new ArrayList<>();
+    private ArrayList<Category> categories;
+    private Category selectedCategory = null;
     private int questionId;
 
     /**
@@ -80,501 +68,70 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Makes the scroll pane transparent to mouse events.
+        // you can't scroll when no question has been selected
         chooseScrollPane.setMouseTransparent(true);
 
-        // Sets the text of the selected course label to the name of the selected course.
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
+        // display filtered questions
+        SharedData.getFilteredQuestions().addListener((ListChangeListener<Question>) change -> {
+            showFilteredQuestions(SharedData.getFilteredQuestions());
+        });
 
         // Retrieves all categories for the selected course from the database.
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
 
         // Displays an error alert if no categories are found for the selected course.
-        if (categories.size() == 0)
+        if (categories.size() == 0) {
             showErrorAlert("Error", "No categories found", "Please create categories first before accessing upload question");
+        }
 
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories();
 
-        // all keywords for the course
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
-
-        // Fills the keyword menu with the retrieved keywords.
         fillKeywordWithKeywords();
 
-        // Configures the spinner value factory for choosing points.
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
+        choosePoints = new CustomDoubleSpinner();
+        choosePoints.getStyleClass().add("automatic_create_spinner");
 
-        // Sets the value factory for the choosePoints spinner.
-        choosePoints.setValueFactory(valueFactory);
-
-        // Sets the difficulty filter to the current value of the difficulty slider.
-        getDifficultyFromSlider(this.difficultySlider);
-        // Sets the points filter to the current value of the points slider.
-        getPointsFromSlider(this.pointsSlider);
-
-        initializeKeywords(keywordTextField, keywords);
-        initializeCategories(categoryTextField, categories);
-        initializeQuestions(questionTextField);
-        initializeMenuButton(questionTypeMenuButton);
+        customDoubleSpinnerPlaceholder.getChildren().add(choosePoints);
     }
 
     /**
-     * Displays an error alert dialog.
-     *
-     * @param title       The title of the error alert dialog.
-     * @param headerText  The header text of the error alert dialog.
-     * @param contentText The content text of the error alert dialog.
+     * method to display filtered questions in filter window
+     * @param questions The ObservableList of questions to show in the preview window.
      */
-    public void showErrorAlert(String title, String headerText, String contentText) {
-        // Creates a new Alert dialog with ERROR type.
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void showFilteredQuestions(ObservableList<Question> questions) {
+        double spacing = 20.0;
 
-        // Sets the title of the error alert dialog.
-        alert.setTitle(title);
-
-        // Sets the header text of the error alert dialog.
-        alert.setHeaderText(headerText);
-
-        // Sets the content text of the error alert dialog.
-        alert.setContentText(contentText);
-
-        // Displays the error alert dialog and waits for user input.
-        alert.showAndWait();
-    }
-
-    /**
-     * Handles the event when the apply filter button is clicked.
-     * Calls the searchQuestions method to perform filtering and searching.
-     *
-     * @param event The ActionEvent object representing the button click event.
-     */
-    @FXML
-    private void applyFilterButtonClicked(ActionEvent event) {
-        // Calls the searchQuestions method to perform filtering and searching.
-        searchQuestions();
-    }
-
-    /**
-     * Searches for questions based on the applied filters and displays the result.
-     * Constructs a filter question based on the selected filter criteria.
-     * Calls the question repository to retrieve the filtered questions.
-     * Displays the filtered questions in the console.
-     */
-    @FXML
-    private void searchQuestions() {
-        // Constructs a filter question based on the selected filter criteria.
-        Question filterQuestion = createFilterQuestion();
-
-        // Calls the question repository to retrieve the filtered questions.
-        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(
-                filterQuestion,
-                SharedData.getSelectedCourse().getName());
-
-        // Displays the filtered questions in the console.
-        printQuestions(result);
-    }
-
-    /**
-     * Creates a filter question based on the selected filter criteria.
-     * Retrieves the category name, keyword text, question text and multiple choice checkbox status.
-     * Sets the category filter, keyword filter, question filter, points and difficulty filter, and questionType.
-     * @return The constructed filter question.
-     */
-    private Question createFilterQuestion() {
-        // Creates a new instance of the filter question.
-        Question filterQuestion = new Question();
-
-        String categoryName = categoryTextField.getText().trim();
-        String keywordText = keywordTextField.getText().trim();
-        String questionText = questionTextField.getText();
-        String questionTypeString = questionTypeMenuButton.getText();
-
-        setCategoryFilter(categoryName, filterQuestion);
-
-        setKeywordFilter(keywordText, filterQuestion);
-
-        setQuestionFilter(questionText, filterQuestion);
-
-        setPointsAndDifficultyFilter(filterQuestion);
-
-        // set questionType value
-        if (QuestionType.checkExistingType(questionTypeString)) {
-            QuestionType filterQuestionType = new QuestionType(questionTypeString);
-            filterQuestion.setType(filterQuestionType);
-        }
-
-        return filterQuestion;
-    }
-
-    /**
-     * Sets the category filter for the filter question.
-     * If the provided category name is not empty:
-     *     - Retrieves the category object from the database based on the category name.
-     *     - If the category exists, sets it as the category filter for the filter question.
-     * @param categoryName The name of the category to set as the filter.
-     * @param filterQuestion The filter question object to set the category filter.
-     */
-    private void setCategoryFilter(String categoryName, Question filterQuestion) {
-        // Checks if the provided category name is not empty.
-        if (!categoryName.isEmpty()) {
-            // Retrieves the category object from the database based on the category name.
-            Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
-            // If the category exists, sets it as the category filter for the filter question.
-            if (category != null) {
-                filterQuestion.setCategory(category);
-            }
-        }
-    }
-
-    /**
-     * Sets the keyword filter for the filter question based on the provided keyword text.
-     * If the provided keyword text is not empty:
-     *     - Splits the keyword text into an array of keywords using comma or whitespace as delimiters.
-     *     - Retrieves keyword objects from the database for each keyword in the array.
-     *     - Adds the retrieved keyword objects to a list.
-     *     - Sets the list of keywords as the keyword filter for the filter question.
-     * @param keywordText The text containing keywords to set as the filter.
-     * @param filterQuestion The filter question object to set the keyword filter.
-     */
-    private void setKeywordFilter(String keywordText, Question filterQuestion) {
-        // Checks if the provided keyword text is not empty.
-        if (keywordText != null) {
-            // Splits the keyword text into an array of keywords using comma or whitespace as delimiters.
-            String[] keywordsArray = keywordText.split("[,\\s]+");
-            // Initializes a list to store keyword objects.
-            ArrayList<Keyword> keywordsList = new ArrayList<>();
-
-            // Iterates through each keyword in the array.
-            for (String keyword : keywordsArray) {
-                // Retrieves the keyword object from the database for the current keyword in the array.
-                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
-                // If the keyword object exists, adds it to the list.
-                if (keywordObj != null) {
-                    keywordsList.add(keywordObj);
-                }
-            }
-
-            // Sets the list of keywords as the keyword filter for the filter question.
-            if(!keywordsList.isEmpty()) {
-                filterQuestion.setKeywords(keywordsList);
-            }
-        }
-    }
-
-    /**
-     * Sets the filterQuestion with the provided questionText-String.
-     * @param questionText the question text inputted for getting all questions.
-     * @param filterQuestion the filter question used for SQL-query.
-     */
-    private void setQuestionFilter(String questionText, Question filterQuestion) {
-        if (Objects.equals(questionText, "") || questionText == null) {
-            return;
-        }
-
-        filterQuestion.setQuestion(questionText);
-    }
-
-    /**
-     * Sets the difficulty and points filter for the filter question.
-     * Sets the difficulty filter to the current value of the difficulty slider, if the slider-value was changed.
-     * Sets the points filter to the current value of the points slider, if the slider-value was changed.
-     * @param filterQuestion The filter question object to set the difficulty and points filters.
-     */
-    private void setPointsAndDifficultyFilter(Question filterQuestion) {
-        int points = (int) SharedData.getFilterQuestion().getPoints();
-        int difficulty = SharedData.getFilterQuestion().getDifficulty();
-        if(points != 0) {
-            filterQuestion.setPoints(points);
-        }
-        if(difficulty != 0) {
-            filterQuestion.setDifficulty(difficulty);
-        }
-    }
-
-    /**
-     * Fills the category menu with available categories.
-     * Iterates through the list of categories and creates a menu item for each category.
-     * Associates an event handler with each menu item to handle category selection.
-     */
-    private void fillCategoryWithCategories() {
-        for (Category category : categories) {
-            // Create a menu item for the current category.
-            MenuItem menuItem = createMenuItem(category.getName());
-            // Associate an event handler with the menu item to handle category selection.
-            menuItem.setOnAction(event -> handleCategorySelection(category));
-            // Add the menu item to the category menu.
-            chooseCategory.getItems().add(menuItem);
-        }
-    }
-
-    /**
-     * Fills the keyword menu with available keywords.
-     * Iterates through the list of keywords and creates a menu item for each keyword.
-     * Associates an event handler with each menu item to handle keyword selection.
-     */
-    private void fillKeywordWithKeywords() {
-        for (Keyword keyword : keywords) {
-            // Create a menu item for the current keyword.
-            MenuItem menuItem = createMenuItem(keyword.getKeyword());
-            // Associate an event handler with the menu item to handle keyword selection.
-            menuItem.setOnAction(event -> handleKeywordSelection(keyword));
-            // Add the menu item to the keyword menu.
-            chooseKeywords.getItems().add(menuItem);
-        }
-    }
-
-    /**
-     * Creates a menu item with the specified text.
-     *
-     * @param text The text for the menu item.
-     * @return The created MenuItem object.
-     */
-    private MenuItem createMenuItem(String text) {
-        // Create a new menu item with the specified text.
-        MenuItem menuItem = new MenuItem(text);
-        // Return the created menu item.
-        return menuItem;
-    }
-
-    /**
-     * Handles the selection of a category.
-     *
-     * @param category The selected category.
-     */
-    private void handleCategorySelection(Category category) {
-        // Set the selected category to the specified category.
-        selectedCategory = category;
-        // Set the text of the chooseCategory menu button to the name of the selected category.
-        chooseCategory.setText(category.getName());
-    }
-
-    /**
-     * Handles the selection of a keyword.
-     *
-     * @param keyword The selected keyword.
-     */
-    private void handleKeywordSelection(Keyword keyword) {
-        // Check if the selected keyword is not already in the list of selected keywords.
-        if (!containsKeyword(keyword)) {
-            // Add the selected keyword to the list of selected keywords.
-            selectedKeywords.add(keyword);
-            // Create a button with the keyword text and an "X" to remove it.
-            Button button = createButton(keyword.getKeyword() + " X");
-            // Set an action event for the button to handle the removal of the keyword.
-            button.setOnAction(event -> handleKeywordRemoval(button, keyword));
-            // Add the button to the keywordsHBox.
-            keywordsHBox.getChildren().add(button);
-        }
-    }
-
-    /**
-     * Checks if a keyword is already present in the list of selected keywords.
-     *
-     * @param k The keyword to check.
-     * @return True if the keyword is already present, false otherwise.
-     */
-    private boolean containsKeyword(Keyword k) {
-        // Iterate through the list of selected keywords.
-        for (Keyword keyword : selectedKeywords) {
-            // Check if the keyword IDs match.
-            if (keyword.getId() == k.getId())
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Removes a keyword from the list of selected keywords and its corresponding button from the UI.
-     *
-     * @param button The button associated with the keyword.
-     * @param keyword The keyword to remove.
-     */
-    private void handleKeywordRemoval(Button button, Keyword keyword) {
-        // Remove the button from the UI.
-        keywordsHBox.getChildren().remove(button);
-        // Remove the keyword from the list of selected keywords.
-        selectedKeywords.remove(keyword);
-    }
-
-    /**
-     * Handles the action when the multiple choice checkbox is selected or deselected.
-     * If selected, creates the UI elements for adding multiple choice answers.
-     * If deselected, resets the UI elements for multiple choice.
-     */
-    @FXML
-    private void onActionChooseMultipleChoice() {
-        // If the multiple choice checkbox is selected, create multiple choice UI elements.
-        if (chooseMultipleChoice.isSelected()) {
-            createMultipleChoiceButton();
-        } else {
-            // If deselected, reset the UI elements for multiple choice.
-            resetMultipleChoiceView();
-        }
-    }
-
-    /**
-     * Resets the view for multiple choice questions.
-     * Clears the existing UI elements and adds back the multiple choice checkbox.
-     * Clears the list of answers.
-     */
-    private void resetMultipleChoiceView() {
-        // Create a reference to the multiple choice checkbox.
-        CheckBox checkBox = chooseMultipleChoice;
-        // Clear the existing UI elements in the multiple choice VBox.
-        multipleChoiceVBox.getChildren().clear();
-        // Add the multiple choice checkbox back to the VBox.
-        multipleChoiceVBox.getChildren().add(checkBox);
-        // Clear the list of answers.
-        answers.clear();
-    }
-
-    /**
-     * Creates a button to add a new multiple choice answer entry.
-     * Calls the method createAndAddMultipleChoiceButton() with default parameters.
-     */
-    private void createMultipleChoiceButton() {
-        // Call createAndAddMultipleChoiceButton() with default parameters.
-        createAndAddMultipleChoiceButton("Add answer", "");
-    }
-
-    /**
-     * Creates a new multiple choice answer entry with the specified initial answer.
-     * Adds the created answer entry to the multipleChoiceVBox.
-     *
-     * @param initialAnswer The initial answer text for the answer entry.
-     */
-    private void createMultipleChoiceEntry(String initialAnswer) {
-        // Create an HBox to hold the answer entry and remove button.
-        HBox hBoxAnswerRemove = new HBox();
-        // Create a TextArea for the answer entry and set its initial text.
-        TextArea textAreaAnswer = new TextArea();
-        textAreaAnswer.setText(initialAnswer);
-        // Add the TextArea to the list of answers.
-        answers.add(textAreaAnswer);
-        // Create a button to remove the answer entry.
-        Button buttonRemove = createButton("X");
-        // Set the action for the remove button.
-        setButtonRemoveAction(buttonRemove, textAreaAnswer, hBoxAnswerRemove);
-        // Add the answer entry and remove button to the HBox.
-        hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-        // Add the HBox to the multipleChoiceVBox.
-        multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-    }
-
-    /**
-     * Creates and adds a new multiple choice answer entry to the multipleChoiceVBox.
-     * This method is called when the "Add answer" button is clicked.
-     *
-     * @param buttonText    The text to display on the button.
-     * @param initialAnswer The initial answer text for the answer entry.
-     */
-    private void createAndAddMultipleChoiceButton(String buttonText, String initialAnswer) {
-        // Create a button with the specified text.
-        Button button = createButton(buttonText);
-        // Set the action for the button.
-        button.setOnAction(event -> {
-            // Create an HBox to hold the answer entry and remove button.
-            HBox hBoxAnswerRemove = new HBox();
-            // Create a TextArea for the answer entry and set its initial text.
-            TextArea textAreaAnswer = new TextArea();
-            textAreaAnswer.setText(initialAnswer);
-            // Add the TextArea to the list of answers.
-            answers.add(textAreaAnswer);
-            // Create a button to remove the answer entry.
-            Button buttonRemove = createButton("X");
-            // Set the action for the remove button.
-            setButtonRemoveAction(buttonRemove, textAreaAnswer, hBoxAnswerRemove);
-            // Add the answer entry and remove button to the HBox.
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox to the multipleChoiceVBox.
-            multipleChoiceVBox.getChildren().add(hBoxAnswerRemove);
-            // Remove the "Add answer" button if the maximum number of answers is reached.
-            multipleChoiceVBox.getChildren().remove(button);
-            // Create another "Add answer" button if the maximum number of answers is not reached.
-            if (answers.size() <= 10) {
-                createMultipleChoiceButton();
-            }
-        });
-        // Add the button to the multipleChoiceVBox.
-        multipleChoiceVBox.getChildren().add(button);
-    }
-
-    /**
-     * Sets the action for the remove button associated with a multiple choice answer entry.
-     * This method is called when a remove button is created.
-     *
-     * @param buttonRemove      The remove button.
-     * @param textAreaAnswer    The TextArea associated with the answer entry.
-     * @param hBoxAnswerRemove  The HBox containing the answer entry and remove button.
-     */
-    private void setButtonRemoveAction(Button buttonRemove, TextArea textAreaAnswer, HBox hBoxAnswerRemove) {
-        // Set the action for the remove button.
-        buttonRemove.setOnAction(e -> {
-            // Remove the answer entry from the list of answers.
-            answers.remove(textAreaAnswer);
-            // Remove the HBox containing the answer entry and remove button from the multipleChoiceVBox.
-            multipleChoiceVBox.getChildren().remove(hBoxAnswerRemove);
-            // Create another "Add answer" button if the maximum number of answers is not reached.
-            if (answers.size() <= 10) {
-                createMultipleChoiceButton();
-            }
-        });
-    }
-
-    /**
-     * Creates a Button with the specified text.
-     *
-     * @param text  The text to be displayed on the Button.
-     * @return      The created Button.
-     */
-    private Button createButton(String text) {
-        Button button = new Button(text);
-        // Set focus traversal to false to prevent the Button from being focused when navigating through UI controls.
-        button.setFocusTraversable(false);
-        return button;
-    }
-
-    /**
-     * Prints the list of questions to the UI.
-     *
-     * @param questions The list of questions to be printed.
-     */
-    @FXML
-    void printQuestions(ArrayList<Question> questions) {
         // Check if the list of questions is empty.
         if (questions.isEmpty()) {
-            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
-            previewVBox.getChildren().clear();
+            this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
         }
 
-        // Define the spacing between question boxes.
-        double spacing = 10.0;
-
         // Clear the existing content in the preview VBox.
-        previewVBox.getChildren().clear();
+        this.vbox_filteredQuestionsPreview.getChildren().clear();
 
-        // Iterate through each question in the list.
         for (Question question : questions) {
-            // Create a VBox to hold the question details.
             VBox questionVbox = createQuestionVBox(question);
-            // Set event handlers for the question VBox.
-            setQuestionVboxEventHandlers(questionVbox, question);
-            // Add the question VBox to the preview VBox.
-            previewVBox.getChildren().add(questionVbox);
-            // Set the spacing between question boxes.
-            previewVBox.setSpacing(spacing);
+            questionVbox.getStyleClass().add("filter_question_preview_vbox");
+
+            // add question to preview-box
+            this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
+            // display the clicked question in the test_preview_pane
+            displayClickedQuestion(questionVbox, question);
+            // set spacing
+            this.vbox_filteredQuestionsPreview.setSpacing(spacing);
         }
     }
 
     /**
-     * Sets event handlers for the VBox containing question details.
-     *
+     * This function displays the question, that was clicked in the filter-preview.
+     * Thus, it sets all event-handlers for the question for editing.
      * @param questionVbox The VBox containing the question details.
      * @param question The question object associated with the VBox.
      */
-    private void setQuestionVboxEventHandlers(VBox questionVbox, Question question) {
+    @FXML
+    private void displayClickedQuestion(VBox questionVbox, Question question) {
         questionVbox.setOnMouseClicked(event -> {
             // Make the scroll pane transparent to allow interaction with underlying elements.
             chooseScrollPane.setMouseTransparent(false);
@@ -585,12 +142,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             chooseDifficulty.setValue(question.getDifficulty());
             choosePoints.getValueFactory().setValue((double) question.getPoints());
 
-            // If the question is multiple choice, set the corresponding UI elements.
-            if (question.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
-                chooseMultipleChoice.setSelected(true);
-                Arrays.stream(question.getAnswersAsString().split("\n")).forEach(this::createMultipleChoiceEntry);
-                createMultipleChoiceButton();
-            }
+            initSelectedQuestionType(question);
 
             // Set the question text and remarks to the values of the selected question.
             chooseQuestion.setText(question.getQuestion());
@@ -602,7 +154,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : question.getKeywords()) {
-                if(k.getKeyword() != null) {
+                if(k.getKeyword() != null && !containsKeyword(k)) {
                     startState.add(k);
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword() + " X");
@@ -614,9 +166,144 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
 
+            initTimeStamps(question);
+
             // Set the question ID.
             questionId = question.getId();
         });
+    }
+
+    /**
+     * Fills the category menu with available categories.
+     * Iterates through the list of categories and creates a menu item for each category.
+     * Associates an event handler with each menu item to handle category selection.
+     */
+    private void fillCategoryWithCategories() {
+        for (Category category : categories) {
+            MenuItem menuItem = new MenuItem(category.getName());
+            menuItem.setOnAction(event -> handleCategorySelection(category));
+            chooseCategory.getItems().add(menuItem);
+        }
+    }
+
+    /**
+     * Fills the keyword menu with available keywords.
+     * Iterates through the list of keywords and creates a menu item for each keyword.
+     * Associates an event handler with each menu item to handle keyword selection.
+     */
+    private void fillKeywordWithKeywords() {
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        for (Keyword keyword : keywords) {
+            MenuItem menuItem = new MenuItem(keyword.getKeyword());
+            menuItem.setOnAction(event -> handleKeywordSelection(keyword));
+            chooseKeywords.getItems().add(menuItem);
+        }
+    }
+
+    /**
+     * Handles the selection of a category.
+     *
+     * @param category The selected category.
+     */
+    private void handleCategorySelection(Category category) {
+        selectedCategory = category;
+        chooseCategory.setText(category.getName());
+    }
+
+    /**
+     * Handles the selection of a keyword.
+     *
+     * @param keyword The selected keyword.
+     */
+    private void handleKeywordSelection(Keyword keyword) {
+        // Check if the selected keyword is not already in the list of selected keywords.
+        if (!containsKeyword(keyword)) {
+            selectedKeywords.add(keyword);
+            Button button = createButton(keyword.getKeyword() + " X");
+            button.setOnAction(event -> handleKeywordRemoval(button, keyword));
+            keywordsHBox.getChildren().add(button);
+        }
+    }
+
+    /**
+     * Checks if a keyword is already present in the list of selected keywords.
+     *
+     * @param k The keyword to check.
+     * @return True if the keyword is already present, false otherwise.
+     */
+    private boolean containsKeyword(Keyword k) {
+        for (Keyword keyword : selectedKeywords) {
+            if (keyword.getId() == k.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes a keyword from the list of selected keywords and its corresponding button from the UI.
+     *
+     * @param button The button associated with the keyword.
+     * @param keyword The keyword to remove.
+     */
+    private void handleKeywordRemoval(Button button, Keyword keyword) {
+        keywordsHBox.getChildren().remove(button);
+        selectedKeywords.remove(keyword);
+    }
+
+    /**
+     * This function initializes the questionType and answers, when a question is selected for editing.
+     * @param selectedQuestion the question, that was selected
+     */
+    private void initSelectedQuestionType(Question selectedQuestion) {
+        multipleChoiceAnswerVBox.getChildren().clear();
+        chooseAnswerTextArea.setText("");
+        questionTypeMenuButtonEdit.textProperty().setValue(selectedQuestion.getType().getName());
+
+        // question = MC
+        if (selectedQuestion.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
+            // TODO: we are using this already in ScreenController - refactor to dont duplicate code (maybe)
+            for (Answer answer : selectedQuestion.getAnswers()) {
+                HBox hBoxAnswerRemove = new HBox();
+                TextArea textAreaAnswer = new TextArea(answer.getAnswer());
+                answers.add(textAreaAnswer);
+                Button buttonRemove = createButton("X");
+                buttonRemove.setOnAction(e -> {
+                    answers.remove(textAreaAnswer);
+                    multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
+                });
+                hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
+                multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
+            }
+            multipleChoiceVBox.setVisible(true);
+            chooseAnswerTextArea.setDisable(true);
+        } else {
+            multipleChoiceVBox.setVisible(false);
+            chooseAnswerTextArea.setDisable(false);
+            chooseAnswerTextArea.setText(selectedQuestion.getAnswersAsString());
+        }
+    }
+
+    /**
+     * This function displays the timestamps of one question, when clicked to be edited.
+     * @param question The question, that has been selected.
+     */
+    private void initTimeStamps(Question question) {
+        // setting the timestamps
+        if (question.getCreated_at() == null) {
+            created_at_label.setText("Created at: ");
+        } else {
+            created_at_label.setText("Created at: " + question.getTimeStampFormatted(question.getCreated_at()));
+        }
+        if (question.getUpdated_at() == null) {
+            updated_at_label.setText("Updated at: ");
+        } else {
+            updated_at_label.setText("Updated at: " + question.getTimeStampFormatted(question.getUpdated_at()));
+        }
+    }
+
+    public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
+        addMultipleChoiceAnswerBtnClicked(answers, multipleChoiceAnswerVBox);
     }
 
     /**
@@ -637,7 +324,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Create a Question object from the inputs
         Question question = createQuestionFromInputs();
         question.setId(questionId);
-        question.setType(new QuestionType(1, "OPEN")); // TODO: HARDCODED - MAKE A DROP-BOX FOR QUESTION-TYPE INSTEAD OF MC
 
         // Update the question in the database
         SQLiteDatabaseConnection.questionRepository.update(question);
@@ -675,7 +361,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                     keywordNotFound = false;
             }
             if (keywordNotFound) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1,question);
+                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1, question.getId());
             }
         }
     }
@@ -691,7 +377,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (selectedCategory == null) {
             return "Category needs to be selected.";
         }
-        if (chooseMultipleChoice.isSelected() && checkIfEmptyAnswers()) {
+        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText()) && checkIfEmptyAnswers()) {
             return "You selected multiple choice but at least one answer is not filled out.";
         }
         if (checkIfQuestionIsEmpty()) {
@@ -711,11 +397,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 (int) chooseDifficulty.getValue(),
                 choosePoints.getValue().floatValue(),
                 chooseQuestion.getText(),
-                new QuestionType(Type.OPEN),                // TODO: change to not be hardcoded
+                null,                                  // questionType cannot be changed
                 chooseRemarks.getText(),
                 null,                             // created_at cannot be changed
                 new Timestamp(System.currentTimeMillis()),  // updated_at
-                getAnswerArrayList(Type.OPEN, this.answers), // TODO: change to not be hardcoded
+                getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
                 selectedKeywords,
                 new ArrayList<>()                           // images // TODO: implement this here
         );

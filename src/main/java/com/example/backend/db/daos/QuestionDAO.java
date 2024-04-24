@@ -2,12 +2,12 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 public class QuestionDAO implements DAO<Question> {
@@ -32,8 +32,8 @@ public class QuestionDAO implements DAO<Question> {
     public void create(Question question) {
         String insertStmt =
                 "INSERT INTO questions " +
-                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark) " +
-                "VALUES (?, ?, ?, ?, ?, ?);";
+                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -45,6 +45,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(4, question.getQuestion());
             preparedStatement.setInt(5, question.getType().getId());
             preparedStatement.setString(6, question.getRemark());
+            preparedStatement.setString(7, question.getCreated_at().toString());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -179,8 +180,8 @@ public class QuestionDAO implements DAO<Question> {
 
             // insert into prepared stmt
             int count = 1;
-            for(Object prepObjects : listForPreparedStmt) {
-                if(prepObjects instanceof String) {
+            for (Object prepObjects : listForPreparedStmt) {
+                if (prepObjects instanceof String) {
                     questionsStatement.setString(count, (String) prepObjects);
                 } else if(prepObjects instanceof Integer) {
                     questionsStatement.setInt(count, (int) prepObjects);
@@ -196,7 +197,7 @@ public class QuestionDAO implements DAO<Question> {
             try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                 while (questionsResultSet.next()) {
                     Question newQuestion = createModelFromResultSet(questionsResultSet);
-                    if(newQuestion != null) {
+                    if (newQuestion != null) {
                         this.questionCache.add(createModelFromResultSet(questionsResultSet));
                     }
                 }
@@ -346,7 +347,7 @@ public class QuestionDAO implements DAO<Question> {
         String updateStmt =
                 "UPDATE questions " +
                 "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
-                "fk_question_type_id = ?, remark = ?, updated_at = ? " +
+                "remark = ?, updated_at = ? " +
                 "WHERE id = ?;";
 
         Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
@@ -358,10 +359,9 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestion());
-            preparedStatement.setInt(5, question.getType().getId());
-            preparedStatement.setString(6, question.getRemark());
-            preparedStatement.setString(7, String.valueOf(question.getUpdated_at()));
-            preparedStatement.setInt(8, question.getId());
+            preparedStatement.setString(5, question.getRemark());
+            preparedStatement.setString(6, String.valueOf(question.getUpdated_at()));
+            preparedStatement.setInt(7, question.getId());
 
             preparedStatement.executeUpdate();
 

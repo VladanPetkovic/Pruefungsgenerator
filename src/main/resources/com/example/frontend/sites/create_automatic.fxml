@@ -1,90 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateAutomatic_ScreenController">
+<VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateAutomatic_ScreenController">
    <children>
-      <HBox maxHeight="100.0" minHeight="100.0" minWidth="1120.0" prefHeight="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
-         <children>
-            <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/FH_logo.png" />
-               </image></ImageView>
-            <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="Automatic Test Creation" textFill="WHITE">
-               <font>
-                  <Font size="35.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
+      <fx:include source="../components/title_banner.fxml"/>
       <HBox prefHeight="530.0" prefWidth="1120.0" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane minHeight="600.0" minWidth="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
-               <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <VBox fx:id="nav_createTestAutomaticButton" alignment="CENTER" minHeight="100.0" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="220.0" prefWidth="100.0" stylesheets="@../css/main.css">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add_blue.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_selected" stylesheets="@../css/main.css" text="Create Test&#10;automatically&#10;" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_createTestManualButton" alignment="CENTER" minHeight="100.0" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_add.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create Test&#10;manually" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_uploadQuestionButton" alignment="CENTER" minHeight="100.0" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_upload.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" pickOnBounds="false" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Create&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="nav_editQuestionButon" alignment="CENTER" minHeight="100.0" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
-                     <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/file_edit_white.png" />
-                           </image>
-                        </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" stylesheets="@../css/main.css" text="Edit&#10;Question" textAlignment="CENTER" textFill="WHITE" />
-                     </children>
-                  </VBox>
-               </children>
-            </GridPane>
-            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
+            <fx:include source="../components/navbar.fxml" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: #3A3A3A;" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                <content>
                   <VBox styleClass="automatic_create_scrollPane" stylesheets="@../css/main.css">
                      <children>
@@ -105,6 +37,9 @@
                                        <font>
                                           <Font size="20.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets bottom="20.0" top="20.0" />
+                                       </VBox.margin>
                                     </Button>
                                  </children>
                               </VBox>

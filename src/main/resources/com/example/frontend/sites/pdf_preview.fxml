@@ -17,21 +17,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.pdfPreview_ScreenController">
+<VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.PdfPreview_ScreenController">
     <children>
-        <HBox maxHeight="100.0" minHeight="100.0" prefHeight="100.0" styleClass="main_navigation" stylesheets="@../css/main.css">
-            <children>
-                <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../icons/FH_logo.png" />
-                    </image></ImageView>
-                <Label alignment="CENTER" prefHeight="129.0" prefWidth="1151.0" styleClass="homeScreen_label" text="PDF Preview" textFill="WHITE">
-                    <font>
-                        <Font size="35.0" />
-                    </font>
-                </Label>
-            </children>
-        </HBox>
+        <fx:include source="../components/title_banner.fxml"/>
         <HBox minWidth="500.0" VBox.vgrow="ALWAYS">
             <children>
                 <GridPane minHeight="-Infinity" minWidth="-Infinity" styleClass="main_navigation" stylesheets="@../css/main.css">

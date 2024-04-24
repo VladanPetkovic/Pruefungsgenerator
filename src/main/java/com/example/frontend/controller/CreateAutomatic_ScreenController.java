@@ -5,6 +5,7 @@ import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
 import com.example.backend.db.models.SearchObject;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,19 +34,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     @FXML
     private void onAddQuestionBtnClick() {
-        // increment the question count
         questionCount++;
 
-        // create a new VBox with the required structure
         VBox newQuestionVBox = createNewQuestionVBox();
-
-        // add new ArrayList of SearchObjects to our searchData-array in SharedData
         SharedData.getSearchObjectsAutTestCreate().add(new ArrayList<>());
 
         // set the event handlers for the components within the new VBox
         setEventHandlers(newQuestionVBox, this.questionCount);
-
-        // get the parent of the parent (grandparent) of addQuestionVBox
         VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
 
         // get the index of the parent of addQuestionVBox in its grandparent
@@ -60,18 +55,14 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // iterate over all nodes within the VBox
         for (Node node : questionVBox.getChildren()) {
             if (node instanceof VBox) {
-                // if the node is another VBox, recursively set event handlers for its children
                 setEventHandlers((VBox) node, vBoxNumber);
             } else if (node instanceof MenuButton) {
-                // if the node is a MenuButton, set its event handler to select a category
                 MenuButton menuButton = (MenuButton) node;
                 setMenuButtonHandler(menuButton, vBoxNumber);
             } else if (node instanceof Spinner) {
-                // if the node is a Spinner, set its event handler to select points
                 Spinner spinner = (Spinner) node;
                 setSpinnerHandler(spinner, vBoxNumber);
             } else if (node instanceof Slider) {
-                // if the node is a Slider, set its event handler to select difficulty
                 Slider slider = (Slider) node;
                 setSliderHandler(slider, vBoxNumber);
             }
@@ -107,14 +98,11 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // create a new SearchObject to store points selection
         SearchObject<Float> searchObject = new SearchObject<>();
         // listen for changes in the spinner value and update the SearchObject accordingly
-        spinner.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                double points = (Double) spinner.getValue();
-                searchObject.setObjectName("POINT");
-                searchObject.setValueOfObject((float) points);
-                searchObject.setSet(true);
-            }
+        spinner.valueFactoryProperty().addListener((observable, oldNumber, newNumber) -> {
+            double points = (Double) spinner.getValue();
+            searchObject.setObjectName("POINT");
+            searchObject.setValueOfObject((float) points);
+            searchObject.setSet(true);
         });
         // add the selected points to the appropriate ArrayList in SharedData
         SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
@@ -163,10 +151,8 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         Label label = new Label(labelText);
         // add custom styling to the label
         label.getStyleClass().add("automatic_create_label");
-        // load external CSS file for additional styling
-        label.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
 
-        // set preferred height and width for the label
+        // set preferred height and width for the label // TODO: don't use inline css - make css-class
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
         // set text color
@@ -198,11 +184,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     // helper method to create a Spinner with custom styling
     private void createSpinner(VBox parentVBox) {
         // create a new Spinner
-        Spinner<Double> spinner = new Spinner<>();
-
-        // set up the Spinner with a value factory and default values
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10, 1, 0.5);
-        spinner.setValueFactory(valueFactory);
+        CustomDoubleSpinner spinner = new CustomDoubleSpinner();
 
         // add custom styling to the Spinner
         spinner.getStyleClass().add("automatic_create_spinner");
@@ -250,40 +232,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // add the VBox containing the Slider to the parent VBox
         parentVBox.getChildren().add(innerVBox);
     }
-
-    /*
-    private void showSuccessModal() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/success_modal.fxml"));
-            Parent root = loader.load();
-            SuccessModalController controller = loader.getController();
-            controller.setMessage("Test created successfully!");
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showErrorModal() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("src/main/resources/com/example/frontend/sites/error_modal.fxml"));
-            Parent root = loader.load();
-            ErrorModalController controller = loader.getController();
-            controller.setMessage("Test creation failed!");
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-     */
 
     // method triggered when the "Create Test" button is clicked
     @FXML
@@ -352,25 +300,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         SharedData.getSearchObjectsAutTestCreate().clear();
         // reset the question count to zero
         this.questionCount = 0;
-
-        /*
-        // Assume isSuccess indicates whether the test creation was successful
-        boolean isSuccess = true;
-
-        if(isSuccess){
-            showSuccessModal();
-        } else {
-            showErrorModal();
-        }
-
-        // Clear banners after 3 seconds
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), evt -> {
-            // switch scene to createTestManual
-            switchScene(createTestManual, true);
-        }));
-        timeline.play();
-
-         */
 
         switchScene(createTestManual, true);
 

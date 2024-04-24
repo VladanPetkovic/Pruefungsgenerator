@@ -2,8 +2,10 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Answer;
+import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
@@ -29,6 +31,7 @@ public class AnswerDAO implements DAO<Answer> {
             setAnswerCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_ANSWER_ERROR_MESSAGE);
         }
     }
 
@@ -56,6 +59,7 @@ public class AnswerDAO implements DAO<Answer> {
             setAnswerCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_ANSWER_ERROR_MESSAGE);
         }
     }
 
@@ -196,6 +200,7 @@ public class AnswerDAO implements DAO<Answer> {
             setAnswerCache(null);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_ANSWER_ERROR_MESSAGE);
         }
     }
 
@@ -216,6 +221,7 @@ public class AnswerDAO implements DAO<Answer> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_ANSWER_ERROR_MESSAGE);
         }
     }
 
@@ -223,6 +229,7 @@ public class AnswerDAO implements DAO<Answer> {
     public Answer createModelFromResultSet(ResultSet resultSet) throws SQLException {
         return new Answer(
                 resultSet.getInt("id"),
-                resultSet.getString("answer"));
+                resultSet.getString("answer")
+        );
     }
 }

@@ -57,7 +57,7 @@ public class QuestionRepository implements Repository<Question> {
                 Object field_value = field.get(question_searchOptions);
                 String field_name = field.getName();
 
-                if(field_value == null) {
+                if (field_value == null) {
                     // ArrayLists & Date are null --> set them false
                     searchOptions.add(new SearchObject<>(columnName, field_name, null, false));
                 }

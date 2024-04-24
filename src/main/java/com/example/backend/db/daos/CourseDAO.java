@@ -2,8 +2,10 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
@@ -34,8 +36,11 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setString(3, course.getLector());
             preparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.CREATE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_COURSE_ERROR_MESSAGE);
         }
     }
 
@@ -64,6 +69,7 @@ public class CourseDAO implements DAO<Course> {
 
         } catch (SQLException e) {
             e.printStackTrace();
+
         }
 
         return null;
@@ -206,8 +212,11 @@ public class CourseDAO implements DAO<Course> {
             preparedStatement.setInt(4, course.getId());
             preparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.UPDATE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_COURSE_ERROR_MESSAGE);
         }
     }
 
@@ -235,8 +244,11 @@ public class CourseDAO implements DAO<Course> {
             thirdPreparedStatement.setInt(1, id);
             thirdPreparedStatement.executeUpdate();
             setCourseCache(null);
+
+            SharedData.setOperation(Message.DELETE_COURSE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_COURSE_ERROR_MESSAGE);
         }
     }
 

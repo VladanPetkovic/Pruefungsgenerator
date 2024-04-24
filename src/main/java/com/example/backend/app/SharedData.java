@@ -2,16 +2,30 @@ package com.example.backend.app;
 
 import com.example.backend.db.models.*;
 import com.example.backend.db.models.Question;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 
+import static com.example.frontend.controller.TitleBanner_ScreenController.resetOperationStatusAfterDelay;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class SharedData {
+
+    // Default value for pageTitle // TODO: use @Getter and @Setter if possible
+    private static StringProperty pageTitle = new SimpleStringProperty("");
+    private static StringProperty operationStatus = new SimpleStringProperty("");
+    private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
+
     @Getter
     @Setter
     //stores the users course selection from the Home Screen
@@ -34,7 +48,7 @@ public class SharedData {
 
     @Getter
     @Setter
-    private static com.example.backend.db.models.Question filterQuestion = new Question();
+    private static Question filterQuestion = new Question();
 
     @Getter
     @Setter
@@ -42,12 +56,14 @@ public class SharedData {
 
     @Getter
     @Setter
-    private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
+    private static ObservableList<Question> filteredQuestions = FXCollections.observableArrayList();
+    @Getter
+    @Setter
+    private static ObservableList<String> suggestedCategories = FXCollections.observableArrayList();
 
     @Getter
     @Setter
-    // stores all keywords for searching and displaying in the keyword-dropdown
-    private static ArrayList<Keyword> keywordsList = new ArrayList<>();
+    private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
 
 
     //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
@@ -58,16 +74,66 @@ public class SharedData {
         newStudyProgram = new StudyProgram();
         filterQuestion = new Question();
         testQuestions = new ArrayList<>();
+        filteredQuestions = FXCollections.observableArrayList();
+        suggestedCategories = FXCollections.observableArrayList();
         searchObjectsAutTestCreate = new ArrayList<>();
-        keywordsList = new ArrayList<>();
     }
 
     //reset the Questions stored from the Automatic Test Create (mainly created for use in CreateManual_ScreenController)
     public static void resetQuestions() {
-
         filterQuestion = new Question();
         testQuestions = new ArrayList<>();
         searchObjectsAutTestCreate = new ArrayList<>();
+    }
+
+    // Getter and setter for pageTitle
+    public static String getPageTitle() {
+        return pageTitle.get();
+    }
+
+    public static void setPageTitle(String pageTitle) {
+        SharedData.pageTitle.set(pageTitle);
+    }
+
+    // Property accessor for pageTitle
+    public static StringProperty pageTitleProperty() {
+        return pageTitle;
+    }
+
+    // Getter and setter for operationStatus
+    public static String getOperationStatus() {
+        return operationStatus.get();
+    }
+
+    public static void setOperation(String messageString, boolean isErrorType) {
+        operationStatus.set(messageString);
+        operationIsErrorType.set(isErrorType);
+        resetOperationStatusAfterDelay();
+    }
+
+    public static void setOperation(Message message) {
+        operationStatus.set(message.getMessage());
+        operationIsErrorType.set(message.isError());
+        resetOperationStatusAfterDelay();
+    }
+
+    // Property accessor for operationStatus
+    public static StringProperty operationStatusProperty() {
+        return operationStatus;
+    }
+
+    // Getter and setter for operationIsErrorType
+    public static boolean getOperationIsErrorType() {
+        return operationIsErrorType.get();
+    }
+
+    public static void setOperationIsErrorType(boolean isErrorType) {
+        operationIsErrorType.set(isErrorType);
+    }
+
+    // Property accessor for operationIsErrorType
+    public static BooleanProperty operationIsErrorTypeProperty() {
+        return operationIsErrorType;
     }
 
 }

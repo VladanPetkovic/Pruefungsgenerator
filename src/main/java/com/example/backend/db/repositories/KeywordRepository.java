@@ -46,8 +46,8 @@ public class KeywordRepository implements Repository<Keyword> {
         getKeywordDAO().create(keyword);
     }
 
-    public void addConnection(Keyword keyword, Question question) {
-        getKeywordDAO().addKQConnection(keyword.getId(), question.getId());
+    public void addConnection(Keyword keyword, int question_id) {
+        getKeywordDAO().addKQConnection(keyword.getId(), question_id);
     }
 
     public void removeConnection(Keyword keyword, Question question){
