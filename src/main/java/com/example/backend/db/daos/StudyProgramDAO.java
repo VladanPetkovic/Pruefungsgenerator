@@ -2,7 +2,9 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -37,8 +39,11 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
             preparedStatement.setString(2, program.getAbbreviation());
             preparedStatement.executeUpdate();
             setStudyProgramCache(null);
+
+            SharedData.setOperation(Message.CREATE_STUDYPROGRAM_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_STUDYPROGRAM_ERROR_MESSAGE);
         }
     }
 
@@ -144,8 +149,11 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
             preparedStatement.setInt(3, program.getId());
             preparedStatement.executeUpdate();
             setStudyProgramCache(null);
+
+            SharedData.setOperation(Message.UPDATE_STUDYPROGRAM_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_STUDYPROGRAM_ERROR_MESSAGE);
         }
     }
 
@@ -172,8 +180,11 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
             secondPpStmt.executeUpdate();
 
             setStudyProgramCache(null);
+
+            SharedData.setOperation(Message.DELETE_STUDYPROGRAM_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_STUDYPROGRAM_ERROR_MESSAGE);
         }
     }
 

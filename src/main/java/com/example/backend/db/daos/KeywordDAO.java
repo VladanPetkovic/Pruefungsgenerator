@@ -2,8 +2,10 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Keyword;
+import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
@@ -33,8 +35,11 @@ public class KeywordDAO implements DAO<Keyword> {
             preparedStatement.setString(1, keyword.getKeyword());
             preparedStatement.executeUpdate();
             setKeywordCache(null);
+
+            SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_KEYWORD_ERROR_MESSAGE);
         }
     }
 
@@ -216,8 +221,11 @@ public class KeywordDAO implements DAO<Keyword> {
             preparedStatement.setInt(2, keyword.getId());
             preparedStatement.executeUpdate();
             setKeywordCache(null);
+
+            SharedData.setOperation(Message.UPDATE_KEYWORD_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_KEYWORD_ERROR_MESSAGE);
         }
     }
 
@@ -243,8 +251,11 @@ public class KeywordDAO implements DAO<Keyword> {
             secondPreparedStatement.setInt(1, id);
             secondPreparedStatement.executeUpdate();
             setKeywordCache(null);
+
+            SharedData.setOperation(Message.DELETE_KEYWORD_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_KEYWORD_ERROR_MESSAGE);
         }
     }
 
