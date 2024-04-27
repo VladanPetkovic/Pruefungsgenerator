@@ -39,12 +39,16 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private TextArea answerTextArea;
     @FXML
-    private MenuButton keyword;
-    private ArrayList<Keyword> keywords;
+    private MenuButton keywordMenuButton;
+    @FXML
+    private Button addKeywordBtn;
+    @FXML
+    private TextField keywordTextField;
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
     private HBox keywordsHBox;
     private ArrayList<TextArea> answers = new ArrayList<>();
+    private ArrayList<Keyword> keywords = new ArrayList<>();
 
     /**
      * Initializes the controller after its root element has been completely processed.
@@ -57,6 +61,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         difficulty.setValue(5);
 
@@ -68,54 +74,12 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         question.setText("");
         remarks.setText("");
 
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        for (Keyword keyword : keywords) {
+            fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+        }
 
-        fillKeywordWithKeywords();
         initializeMenuButton(questionTypeMenuButton, false);
         initQuestionTypeListener();
-    }
-
-    /**
-     * Fills the MenuButton for selecting keywords with the available keywords.
-     * This method iterates through the list of keywords retrieved from the database
-     * and adds each keyword as a MenuItem to the MenuButton for keyword selection.
-     * When a keyword is selected from the MenuButton, it is added to the list of selected keywords.
-     * If a selected keyword is clicked again, it is removed from the list of selected keywords.
-     */
-    private void fillKeywordWithKeywords() {
-        // Iterate through the list of keywords
-        for (Keyword k : keywords) {
-            // Create a MenuItem for the keyword
-            MenuItem menuItem = new MenuItem(k.getKeyword());
-
-            // Set the action event for the MenuItem
-            menuItem.setOnAction(event -> {
-                // Check if the selected keyword is not already in the list of selected keywords
-                if (!selectedKeywords.contains(k)) {
-                    // If not, add the keyword to the list of selected keywords
-                    selectedKeywords.add(k);
-
-                    // Create a button to display the selected keyword with a removal option
-                    Button b = createButton(k.getKeyword() + " X");
-
-                    // Set the action event for the removal button
-                    b.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
-                            // When the removal button is clicked, remove the keyword from the list of selected keywords
-                            keywordsHBox.getChildren().remove(b);
-                            selectedKeywords.remove(k);
-                        }
-                    });
-
-                    // Add the removal button to the HBox for displaying selected keywords
-                    keywordsHBox.getChildren().add(b);
-                }
-            });
-
-            // Add the MenuItem to the MenuButton's items
-            keyword.getItems().add(menuItem);
-        }
     }
 
     /**
@@ -173,7 +137,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         String s = checkIfFilled();
         // If any field is missing, display an error alert and return
         if (s != null) {
-            showErrorAlert("Error", "Not all fields filled", s);
+            SharedData.setOperation(Message.ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED);
             return;
         }
 
@@ -243,18 +207,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
-        // Check if an existing category has been selected
         if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
             return "Select an existing category - or add a new category.";
         }
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
             return "Question-Type needs to be selected.";
         }
-        // Check if multiple choice is selected and at least one answer is not filled out
         if (checkIfEmptyAnswers()) {
             return "You selected multiple choice but at least one answer is not filled out.";
         }
-        // Check if the question text area is empty
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
         }
@@ -262,6 +223,20 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     public void on_add_category_btn_click(ActionEvent actionEvent) {
-        addCategoryBtnClick(categoryTextField, add_category_btn);
+        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+            addCategoryBtnClick(categoryTextField, add_category_btn);
+        }
+    }
+
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
+            // add to database, if not existing
+            Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText());
+            // add to our KeywordMenuButton
+            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+            // return a message
+            SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
+            addKeywordBtn.setDisable(true);
+        }
     }
 }

@@ -11,6 +11,7 @@ public enum Message {
     ERROR_MESSAGE_ERROR_OCCURRED("An error occurred.", true),
     ERROR_MESSAGE_LOAD_DATA("Failed to load data.", true),
     ERROR_MESSAGE_DATA_CONTAINS_SPACES("String contains only spaces.", true),
+    ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED("Some required fields haven't been filled.", true),
 
     // error messages for the answer DAO:
     CREATE_ANSWER_ERROR_MESSAGE("Failed to insert answer into the database.", true),
@@ -30,6 +31,7 @@ public enum Message {
     DELETE_CATEGORY_ERROR_MESSAGE("Failed to delete category from the database.", true),
     DELETE_CATEGORY_SUCCESS_MESSAGE("Category deleted successfully.", false),
     CATEGORY_INVALID_CHARACTERS_ERROR_MESSAGE("Category contains invalid characters!", true),
+    NO_CATEGORIES_FOR_SELECTED_COURSE("No categories found for the selected course - create a new category.", true),
 
     // error messages for the course DAO:
     CREATE_COURSE_ERROR_MESSAGE("Failed to insert course into the database.", true),
@@ -54,6 +56,7 @@ public enum Message {
     UPDATE_KEYWORD_SUCCESS_MESSAGE("Keyword updated successfully.", false),
     DELETE_KEYWORD_ERROR_MESSAGE("Failed to delete keyword from the database.", true),
     DELETE_KEYWORD_SUCCESS_MESSAGE("Keyword deleted successfully.", false),
+    KEYWORD_INVALID_CHARACTERS_ERROR_MESSAGE("Keyword contains invalid characters!", true),
 
     // error messages for the question DAO:
     CREATE_QUESTION_ERROR_MESSAGE("Failed to insert question into the database.", true),

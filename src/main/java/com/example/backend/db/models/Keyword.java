@@ -1,5 +1,6 @@
 package com.example.backend.db.models;
 
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,32 +29,33 @@ public class Keyword {
 
         // Check for no leading and ending space
         if (newKeyword.trim().isEmpty()) {
+            SharedData.setOperation(Message.ERROR_MESSAGE_DATA_CONTAINS_SPACES);
             return "Keyword cannot be empty!";
         }
 
         // Check for no special characters except letters and digits
         if (!newKeyword.matches("[a-zA-Z0-9öäüÖÄÜ\\s]+")) {
+            SharedData.setOperation(Message.KEYWORD_INVALID_CHARACTERS_ERROR_MESSAGE);
             return "Keyword contains invalid characters!";
         }
 
         if (newKeyword.length() > 30) {
+            SharedData.setOperation("Keyword too long - max 30 chars! You entered: " + newKeyword.length(), true);
             return "Keyword too long - max 30 chars! You entered: " + newKeyword.length();
         }
 
         return null;
     }
 
-    public static void createNewKeywordInDatabase(String keyword) {
-        Keyword newKeyword = new Keyword(keyword);
+    public static Keyword createNewKeywordInDatabase(String keyword) {
+        Keyword newKeyword = SQLiteDatabaseConnection.keywordRepository.get(keyword);
 
         // check for existing keywords
-        Keyword keywordInDatabase = SQLiteDatabaseConnection.keywordRepository.get(keyword);
-
-        if (keywordInDatabase == null) {
-            SQLiteDatabaseConnection.keywordRepository.add(newKeyword);
+        if (newKeyword == null) {
+            Keyword addToDatabase = new Keyword(keyword);
+            SQLiteDatabaseConnection.keywordRepository.add(addToDatabase);
+            newKeyword = SQLiteDatabaseConnection.keywordRepository.get(keyword);
         }
-
-        // TODO: add the connection to the question
-        // keywords can only be created when creating/editing a question
+        return newKeyword;
     }
 }

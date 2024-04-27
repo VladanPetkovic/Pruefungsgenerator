@@ -1,7 +1,5 @@
 package com.example.frontend.controller;
 
-import com.example.backend.app.LogLevel;
-import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
@@ -52,7 +50,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     private HBox keywordsHBox;
     @FXML
-    private MenuButton chooseKeywords;
+    private MenuButton keywordMenuButton;
+    @FXML
+    private TextField keywordTextField;
+    @FXML
+    private Button addKeywordBtn;
 
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private ArrayList<Keyword> startState = new ArrayList<>();
@@ -78,16 +80,20 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Retrieves all categories for the selected course from the database.
         categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         // Displays an error alert if no categories are found for the selected course.
-        if (categories.size() == 0) {
-            showErrorAlert("Error", "No categories found", "Please create categories first before accessing upload question");
+        if (categories.isEmpty()) {
+            SharedData.setOperation(Message.NO_CATEGORIES_FOR_SELECTED_COURSE);
         }
 
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories();
 
-        fillKeywordWithKeywords();
+        for (Keyword keyword : keywords) {
+            fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+        }
 
         choosePoints = new CustomDoubleSpinner();
         choosePoints.getStyleClass().add("automatic_create_spinner");
@@ -154,7 +160,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : question.getKeywords()) {
-                if(k.getKeyword() != null && !containsKeyword(k)) {
+                if(k.getKeyword() != null && !containsKeyword(k, selectedKeywords)) {
                     startState.add(k);
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword() + " X");
@@ -187,20 +193,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     /**
-     * Fills the keyword menu with available keywords.
-     * Iterates through the list of keywords and creates a menu item for each keyword.
-     * Associates an event handler with each menu item to handle keyword selection.
-     */
-    private void fillKeywordWithKeywords() {
-        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
-        for (Keyword keyword : keywords) {
-            MenuItem menuItem = new MenuItem(keyword.getKeyword());
-            menuItem.setOnAction(event -> handleKeywordSelection(keyword));
-            chooseKeywords.getItems().add(menuItem);
-        }
-    }
-
-    /**
      * Handles the selection of a category.
      *
      * @param category The selected category.
@@ -208,47 +200,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void handleCategorySelection(Category category) {
         selectedCategory = category;
         chooseCategory.setText(category.getName());
-    }
-
-    /**
-     * Handles the selection of a keyword.
-     *
-     * @param keyword The selected keyword.
-     */
-    private void handleKeywordSelection(Keyword keyword) {
-        // Check if the selected keyword is not already in the list of selected keywords.
-        if (!containsKeyword(keyword)) {
-            selectedKeywords.add(keyword);
-            Button button = createButton(keyword.getKeyword() + " X");
-            button.setOnAction(event -> handleKeywordRemoval(button, keyword));
-            keywordsHBox.getChildren().add(button);
-        }
-    }
-
-    /**
-     * Checks if a keyword is already present in the list of selected keywords.
-     *
-     * @param k The keyword to check.
-     * @return True if the keyword is already present, false otherwise.
-     */
-    private boolean containsKeyword(Keyword k) {
-        for (Keyword keyword : selectedKeywords) {
-            if (keyword.getId() == k.getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes a keyword from the list of selected keywords and its corresponding button from the UI.
-     *
-     * @param button The button associated with the keyword.
-     * @param keyword The keyword to remove.
-     */
-    private void handleKeywordRemoval(Button button, Keyword keyword) {
-        keywordsHBox.getChildren().remove(button);
-        selectedKeywords.remove(keyword);
     }
 
     /**
@@ -316,8 +267,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Validate input fields
         String errorMessage = validateInput();
         if (errorMessage != null) {
-            // Show error alert if validation fails
-            showErrorAlert("Error", "Not all fields filled", errorMessage);
+            // display error message
+            SharedData.setOperation(Message.ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED);
             return;
         }
 
@@ -421,5 +372,18 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private boolean checkIfQuestionIsEmpty() {
         return chooseQuestion.getText().isEmpty();
+    }
+
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
+        if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
+            // add to database, if not existing
+            Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText());
+            // add to our KeywordMenuButton
+            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+            // return a message
+            SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
+            addKeywordBtn.setDisable(true);
+        }
     }
 }

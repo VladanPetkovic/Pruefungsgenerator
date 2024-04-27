@@ -81,7 +81,7 @@ public class KeywordDAO implements DAO<Keyword> {
      */
     public ArrayList<Keyword> readAllForOneQuestion(int questionId) {
         String selectStmt =
-                "SELECT keywords.* " +
+                "SELECT DISTINCT keywords.* " +
                 "FROM keywords " +
                 "JOIN has_kq ON keywords.id = has_kq.fk_keyword_id " +
                 "JOIN questions ON has_kq.fk_question_id = questions.id " +
