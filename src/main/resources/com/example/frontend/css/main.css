@@ -236,6 +236,7 @@ Slider {
 
 .context-menu {
     -fx-background-color: #2f2f2f;
+    -fx-background-radius: 5;
 }
 
 .menu-button .menu-item {
