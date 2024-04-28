@@ -93,6 +93,9 @@ public class Home_ScreenController extends ScreenController {
 
         // add option to add a new study program
         Button customButton = new Button("add Study Program");
+       //todo
+        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             studyProgramMenuButton.setText("add Study Program");
@@ -119,6 +122,7 @@ public class Home_ScreenController extends ScreenController {
 
         // add button to add a new course
         Button customButton = new Button("add Course");
+        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             coursesMenuButton.setText("add Course");

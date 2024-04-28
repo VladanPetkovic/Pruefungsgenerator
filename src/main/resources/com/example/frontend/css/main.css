@@ -226,10 +226,27 @@ Slider {
 }
 
 .homeScreen_addButton_menu_item {
+    /*
     -fx-border-style: solid;
-    -fx-border-width: 1 0 0 0; /* top, right, bottom, left */
+    -fx-border-width: 0 0 0 0; /* top, right, bottom, left
     -fx-border-color: black;
+    */
 }
+
+
+.context-menu {
+    -fx-background-color: #2f2f2f;
+}
+
+.menu-button .menu-item {
+    -fx-background-color: #2f2f2f;
+}
+
+.menu-button .label {
+    -fx-text-fill: white;
+}
+
+
 
 
 /* addCourse / addProgram Scene */
