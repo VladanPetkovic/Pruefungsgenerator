@@ -178,7 +178,7 @@ Slider {
 /* Title Banner */
 .titleBanner_label {
     -fx-font-family: "Inter";
-    -fx-font-size: 10px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-line-spacing: 15px;
     -fx-letter-spacing: 0em;

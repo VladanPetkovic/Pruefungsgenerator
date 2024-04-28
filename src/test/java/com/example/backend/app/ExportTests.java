@@ -56,7 +56,7 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
-        export.setOptions(testHeader, 5, "C:\\Users\\vlada\\Downloads", false, false);
+        export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
         boolean pdfWasCreated = export.exportDocument(questions);
 
         // assert
@@ -71,7 +71,7 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
-        exportDocx.setOptions(testHeader, 10, "C:\\Users\\vlada\\Downloads", true, true);
+        exportDocx.setOptions(testHeader, 6, "C:\\Users\\vlada\\Downloads", true, true);
         boolean docxWasCreated = exportDocx.exportDocument(questions);
 
         // assert
@@ -82,7 +82,8 @@ public class ExportTests {
     void createFileName_checkFileName() {
         System.out.println("Check: valid file-name");
 
-        System.out.println(export.createFileName());
+        System.out.println(export.createFileName(true));
+        System.out.println(export.createFileName(false));
 
         assertTrue(true);
     }

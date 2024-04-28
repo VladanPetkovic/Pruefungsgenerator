@@ -12,6 +12,10 @@ module com.example.demo {
     requires poi.ooxml;
     requires poi;
     requires poi.ooxml.schemas;
+    requires layout;
+    requires kernel;
+    requires io;
+    requires itextpdf;
 
     opens com.example.frontend to javafx.fxml;
     exports com.example.frontend;

@@ -43,3 +43,4 @@ src/main/java/com/example/backend/db/db_config.txt
 .idea/dataSources/
 src/main/java/com/example/backend/db/mydatabase.db
 src/main/java/com/example/backend/app/output_config.txt
+bin/

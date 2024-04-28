@@ -36,12 +36,14 @@
         </Label>
 
         <!-- Status label in the second row -->
-        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.rowIndex="1">
-            <font>
-                <Font size="5.0" />
-            </font>
-        </Label>
+        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.rowIndex="1" />
         </children>
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
     </GridPane>
 </children>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>

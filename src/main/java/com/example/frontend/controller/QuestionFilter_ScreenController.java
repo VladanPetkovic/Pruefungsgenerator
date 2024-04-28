@@ -132,6 +132,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // save to our SharedData
         for (Question question : result) {
+            question.removeDuplicates();
             SharedData.getFilteredQuestions().add(question);
         }
     }

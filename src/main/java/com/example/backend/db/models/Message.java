@@ -12,6 +12,7 @@ public enum Message {
     ERROR_MESSAGE_LOAD_DATA("Failed to load data.", true),
     ERROR_MESSAGE_DATA_CONTAINS_SPACES("String contains only spaces.", true),
     ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED("Some required fields haven't been filled.", true),
+    ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE("Select a folder, where to save the file!", true),
 
     // error messages for the answer DAO:
     CREATE_ANSWER_ERROR_MESSAGE("Failed to insert answer into the database.", true),
