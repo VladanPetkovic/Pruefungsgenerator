@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
@@ -41,6 +42,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     @FXML
     public void initialize() {
+
         // set (press & release) event handlers for all buttons that are dynamically generated
         setButtonEventHandlers(addQuestionVBox.getChildren());
         onAddQuestionBtnClick();

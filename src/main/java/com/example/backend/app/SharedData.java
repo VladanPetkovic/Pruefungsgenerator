@@ -2,6 +2,7 @@ package com.example.backend.app;
 
 import com.example.backend.db.models.*;
 import com.example.backend.db.models.Question;
+import com.example.frontend.controller.Home_ScreenController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.beans.property.SimpleStringProperty;
@@ -65,6 +66,9 @@ public class SharedData {
     @Setter
     private static ArrayList<ArrayList<SearchObject<?>>> searchObjectsAutTestCreate = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private static Screen currentScreen = Screen.CreateAutomatic;
 
     //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
     public static void resetAll() {

@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -51,20 +52,10 @@ public abstract class ScreenController {
     public static Screen<Settings_ScreenController> settings = new Screen<>("sites/settings.fxml");
 
 
-    //todo maybe not used (simon)
-    @FXML
-    ImageView createTestAutomaticNavImageView;
-    @FXML
-    ImageView createTestManualNavImageView;
-    @FXML
-    ImageView createQuestionNavImageView;
-    @FXML
-    ImageView editQuestionNavImageView;
-    @FXML
-    ImageView settingsNavImageView;
 
-    @FXML
-    Label createTestAutomaticNavLabel;
+
+
+
 
 
 
@@ -107,57 +98,6 @@ public abstract class ScreenController {
         MainApp.stage.show();
     }
 
-    /**
-     * handles click event for navigating to the create automatic test screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
-        switchScene(createTestAutomatic,true);
-
-        //todo maybe not used (simon)
-        createTestAutomaticNavLabel.getStyleClass().add("navigation_item_label_selected");
-        createTestAutomaticNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/frontend/icons/file_add_blue.png")));
-    }
-
-    /**
-     * handles click event for navigating to the create manual test screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onCreateManTestNavBtnClick(MouseEvent event) throws IOException {
-        switchScene(createTestManual,true);
-    }
-
-    /**
-     * handles click event for navigating to the question upload screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(questionCreate,true);
-    }
-
-    /**
-     * handles click event for navigating to the question edit screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(questionEdit,true);
-    }
-
-    @FXML
-    protected void onSettingsNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(settings,true);
-    }
 
     /**
      * This function activates/deactivates a slider and changes the image accordingly.
@@ -571,7 +511,6 @@ public abstract class ScreenController {
         // Remove ripple effect
         menuButton.setEffect(null);
     }
-
     //
     // END REGION QUESTION-CREATE AND QUESTION-EDIT
     //

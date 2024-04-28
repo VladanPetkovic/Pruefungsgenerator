@@ -3,6 +3,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.Screen;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
@@ -38,6 +39,7 @@ public class Home_ScreenController extends ScreenController {
      */
     @FXML
     private void initialize() {
+        //SharedData.setCurrentScreen(Screen.Home);
         resetStudyProgramMenuButton();
         loadStudyPrograms();
 
