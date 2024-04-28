@@ -4,12 +4,17 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -18,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import java.util.HashMap;
@@ -449,6 +455,121 @@ public abstract class ScreenController {
         });
 
         return button;
+    }
+
+    @FXML
+    protected void onButtonPressed(MouseEvent event) {
+        Node source = (Node) event.getSource();
+        if (source instanceof Button) {
+            Button button = (Button) source;
+            if (button.getStyleClass().contains("btn_red")) {
+                handleRedButtonPressed(button);
+            } else if (button.getStyleClass().contains("btn_grey")) {
+                handleGreyButtonPressed(button);
+            } else if (button.getStyleClass().contains("btn_dark")) {
+                handleDarkButtonPressed(button);
+            }
+        } else if (source instanceof MenuButton) {
+            MenuButton menuButton = (MenuButton) source;
+            handleMenuButtonPressed(menuButton);
+        }
+    }
+
+    private void handleRedButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: red;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleGreyButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: #646464;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleDarkButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: #2f2f2f;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleMenuButtonPressed(MenuButton menuButton) {
+        // Instantly change background color when pressed
+        menuButton.setStyle("-fx-background-color: #2f2f2f;");
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        menuButton.setEffect(dropShadow);
+    }
+
+    @FXML
+    protected void onButtonReleased(MouseEvent event) {
+        Node source = (Node) event.getSource();
+        if (source instanceof Button) {
+            Button button = (Button) source;
+            handleButtonReleased(button);
+        } else if (source instanceof MenuButton) {
+            MenuButton menuButton = (MenuButton) source;
+            handleMenuButtonReleased(menuButton);
+        }
+    }
+
+    private void handleButtonReleased(Button button) {
+        // Release animation (return to original state)
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 1.0))
+        );
+        timeline.play();
+
+        // Remove ripple effect
+        button.setEffect(null);
+    }
+
+    private void handleMenuButtonReleased(MenuButton menuButton) {
+        // Return to original background color gradually
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.1), menuButton);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+
+        // Remove ripple effect
+        menuButton.setEffect(null);
     }
 
     //

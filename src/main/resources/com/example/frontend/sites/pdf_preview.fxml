@@ -110,7 +110,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" styleClass="btn_dark" text="Choose folder to save file" GridPane.halignment="CENTER">
+                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" styleClass="btn_dark" text="Choose folder to save file" GridPane.halignment="CENTER" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased">
                                        <cursor>
                                           <Cursor fx:constant="DEFAULT" />
                                        </cursor>
@@ -130,9 +130,9 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                               <Button mnemonicParsing="false" onAction="#applyFormattingBtnClicked" styleClass="btn_grey" text="View PDF" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                               <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-                              <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" styleClass="btn_red" text="Export docx" />
+                               <Button mnemonicParsing="false" onAction="#applyFormattingBtnClicked" styleClass="btn_grey" text="View PDF" GridPane.columnIndex="1" GridPane.halignment="CENTER" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
+                               <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="2" GridPane.halignment="RIGHT" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
+                              <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" styleClass="btn_red" text="Export docx" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
                            </children>
                            <VBox.margin>
                               <Insets top="30.0" />
