@@ -204,7 +204,17 @@ Slider {
     -fx-font-weight: bold;
     -fx-text-fill: #228be6; /* color of the blue icons */
 }
-
+.navigation_vbox {          /* applied to the main navigation and the home-btn */
+    -fx-cursor: HAND;
+}
+.navigation_vbox:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.navigation_vbox:pressed {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
 
 /* Home Screen Scene*/
 .homeScreen_gridPane {
