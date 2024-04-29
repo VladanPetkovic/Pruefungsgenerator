@@ -64,6 +64,7 @@ public class Home_ScreenController extends ScreenController {
     // event handler for continue button click
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
+        SharedData.setCurrentScreen(Screen.CreateAutomatic);
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
             Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
