@@ -29,6 +29,8 @@ public class AnswerDAO implements DAO<Answer> {
             preparedStatement.setString(1, answer.getAnswer());
             preparedStatement.executeUpdate();
             setAnswerCache(null);
+
+            SharedData.setOperation(Message.CREATE_ANSWER_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.CREATE_ANSWER_ERROR_MESSAGE);
@@ -57,9 +59,11 @@ public class AnswerDAO implements DAO<Answer> {
 
             preparedStatement.executeUpdate();
             setAnswerCache(null);
+
+            SharedData.setOperation(Message.CREATE_ANSWERS_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
-            SharedData.setOperation(Message.CREATE_ANSWER_ERROR_MESSAGE);
+            SharedData.setOperation(Message.CREATE_ANSWERS_ERROR_MESSAGE);
         }
     }
 
@@ -198,6 +202,8 @@ public class AnswerDAO implements DAO<Answer> {
             preparedStatement.setInt(2, answer.getId());
             preparedStatement.executeUpdate();
             setAnswerCache(null);
+
+            SharedData.setOperation(Message.UPDATE_ANSWER_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.UPDATE_ANSWER_ERROR_MESSAGE);
@@ -219,6 +225,7 @@ public class AnswerDAO implements DAO<Answer> {
             secondPpStmt.setInt(1, id);
             secondPpStmt.executeUpdate();
 
+            SharedData.setOperation(Message.DELETE_ANSWER_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.DELETE_ANSWER_ERROR_MESSAGE);

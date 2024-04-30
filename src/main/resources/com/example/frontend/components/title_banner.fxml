@@ -14,7 +14,7 @@
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="920.0" minWidth="10.0" prefWidth="920.0" />
 </columnConstraints>
 <children>
-    <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0">
+    <ImageView fx:id="fhtw_logo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#onFHTWLogoClick" pickOnBounds="true" preserveRatio="true" styleClass="navigation_vbox" GridPane.columnIndex="0">
         <image>
             <Image url="@../icons/FH_logo.png" />
         </image>
@@ -36,12 +36,14 @@
         </Label>
 
         <!-- Status label in the second row -->
-        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.rowIndex="1">
-            <font>
-                <Font size="5.0" />
-            </font>
-        </Label>
+        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.rowIndex="1" />
         </children>
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
     </GridPane>
 </children>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>

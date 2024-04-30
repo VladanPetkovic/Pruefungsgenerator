@@ -41,7 +41,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="btn_red" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="btn_red" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
                      </children>
                   </GridPane>
                   <ScrollPane fx:id="scrollPane_testQuestionsPreview" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">

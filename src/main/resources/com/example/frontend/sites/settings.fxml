@@ -28,8 +28,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" styleClass="btn_dark" text="Import" />
-                        <Button mnemonicParsing="false" styleClass="btn_dark" text="Export" GridPane.columnIndex="1" />
+                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" styleClass="btn_dark" text="Import" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
+                        <Button mnemonicParsing="false" styleClass="btn_dark" text="Export" GridPane.columnIndex="1" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
                      </children>
                   </GridPane>
                 </children>

@@ -3,6 +3,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.Screen;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
@@ -38,6 +39,7 @@ public class Home_ScreenController extends ScreenController {
      */
     @FXML
     private void initialize() {
+        //SharedData.setCurrentScreen(Screen.Home);
         resetStudyProgramMenuButton();
         loadStudyPrograms();
 
@@ -62,6 +64,7 @@ public class Home_ScreenController extends ScreenController {
     // event handler for continue button click
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
+        SharedData.setCurrentScreen(Screen.CreateAutomatic);
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
             Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
@@ -91,6 +94,9 @@ public class Home_ScreenController extends ScreenController {
 
         // add option to add a new study program
         Button customButton = new Button("add Study Program");
+       //todo
+        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             studyProgramMenuButton.setText("add Study Program");
@@ -117,6 +123,7 @@ public class Home_ScreenController extends ScreenController {
 
         // add button to add a new course
         Button customButton = new Button("add Course");
+        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             coursesMenuButton.setText("add Course");

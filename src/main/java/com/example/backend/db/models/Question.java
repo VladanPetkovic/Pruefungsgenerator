@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.security.Key;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 @Getter
@@ -95,5 +95,39 @@ public class Question {
         LocalDateTime updatedAt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
         return updatedAt.format(formatter);
+    }
+
+    public void removeDuplicates() {
+        ArrayList<Answer> uniqueAnswers = new ArrayList<>();
+        for (Answer answer : this.answers) {
+            if (!containsAnswerWithId(answer.getId(), uniqueAnswers)) {
+                uniqueAnswers.add(answer);
+            }
+        }
+        this.answers = uniqueAnswers;
+
+        ArrayList<Keyword> uniqueKeywords = new ArrayList<>();
+        for (Keyword keyword : this.keywords) {
+            if (!containsKeywordWithId(keyword.getId(), uniqueKeywords)) {
+                uniqueKeywords.add(keyword);
+            }
+        }
+    }
+
+    private boolean containsAnswerWithId(int answer_id, ArrayList<Answer> answers) {
+        for (Answer answer : answers) {
+            if (answer.getId() == answer_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean containsKeywordWithId(int keyword_id, ArrayList<Keyword> keywords) {
+        for (Keyword keyword : keywords) {
+            if (keyword.getId() == keyword_id) {
+                return true;
+            }
+        }
+        return false;
     }
 }

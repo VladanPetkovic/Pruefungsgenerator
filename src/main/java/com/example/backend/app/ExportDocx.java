@@ -1,15 +1,20 @@
 package com.example.backend.app;
 
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Question;
+import com.example.backend.db.models.Type;
 import javafx.scene.image.Image;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class ExportDocx extends Export<XWPFDocument> {
@@ -27,7 +32,7 @@ public class ExportDocx extends Export<XWPFDocument> {
             }
 
             // Save the document to a file
-            FileOutputStream out = new FileOutputStream(new File(this.destinationFolder + "/" + createFileName()));
+            FileOutputStream out = new FileOutputStream(new File(this.destinationFolder + "/" + createFileName(false)));
             document.write(out);
             out.close();
             Logger.log(getClass().getName(), "Docx-file created successfully", LogLevel.INFO);
@@ -41,7 +46,6 @@ public class ExportDocx extends Export<XWPFDocument> {
 
     @Override
     protected XWPFDocument buildDocument(ArrayList<Question> testQuestions) {
-        this.questionNumber = 0;
         setNumberOfPages(testQuestions.size());
 
         try {
@@ -58,15 +62,8 @@ public class ExportDocx extends Export<XWPFDocument> {
                 setContentPageNumber(document);
             }
 
-            for (int i = 0; i < this.numberOfPages; i++) {
-                // CONTENT with questions
-                setContent(document, testQuestions);
-
-                // adds a page-break for a document with multiple pages
-                if (i + 1 < this.numberOfPages) {
-                    addPageBreak(document);
-                }
-            }
+            // CONTENT with questions
+            setContent(document, testQuestions);
 
             return document;
         } catch (Exception e) {
@@ -79,19 +76,6 @@ public class ExportDocx extends Export<XWPFDocument> {
     @Override
     public ArrayList<Image> getPreviewImages(ArrayList<Question> testQuestions) {
         return null;
-    }
-
-    @Override
-    public String createFileName() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-
-        return String.format("test_%04d-%02d-%02d_%02d-%02d-%02d.docx",
-                currentDateTime.getYear(),
-                currentDateTime.getMonthValue(),
-                currentDateTime.getDayOfMonth(),
-                currentDateTime.getHour(),
-                currentDateTime.getMinute(),
-                currentDateTime.getSecond());
     }
 
     private void setTitle(XWPFDocument document, String title) {
@@ -182,44 +166,51 @@ public class ExportDocx extends Export<XWPFDocument> {
     }
 
     private void setContent(XWPFDocument document, ArrayList<Question> testQuestions) {
-        int counter = 0;
+        int questionNumber = 0;
 
-        for (int i = 0; i < this.questionsPerSite; i++) {
-            counter++;
-            // stop when all questions have been printed or the max-amount of questions-per-size hast been printed
-            if (questionNumber == testQuestions.size() || (counter % this.questionsPerSite + 1) == 0) {
-                break;
-            }
+        for (Question question : testQuestions) {
+            questionNumber++;
 
             // questionString
             XWPFParagraph questionParagraph = document.createParagraph();
             XWPFRun questionRun = questionParagraph.createRun();
             questionRun.setBold(true);
-            questionRun.setText((questionNumber + 1) + ". " + testQuestions.get(questionNumber).getQuestion());
-            questionRun.addCarriageReturn();
+            questionRun.setText(questionNumber + ". " + question.getQuestion());
 
             // answer
             XWPFRun answerRun = questionParagraph.createRun();
             answerRun.setBold(false);
-            answerRun.setText("A:");
-
-            // adding paragraphs for the answer-block
-            if (counter % this.questionsPerSite != 0) {
-                // not adding paragraphs for the last question-block
-                for (int j = 0; j < getParagraphCount(); j++) {
-                    XWPFParagraph answerBlockParagraph = document.createParagraph();
+            // different questionTypes
+            if (question.getType().getType() == Type.OPEN) {
+                answerRun.addCarriageReturn();
+                answerRun.setText("A:");
+            } else if (question.getType().getType() == Type.MULTIPLE_CHOICE) {
+                for (Answer answer : question.getAnswers()) {
+                    setMcAnswer(answer.getAnswer(), answerRun);
                 }
+            } else if (question.getType().getType() == Type.TRUE_FALSE) {
+                setMcAnswer("True", answerRun);
+                setMcAnswer("False", answerRun);
             }
 
-            questionNumber++;
+
+            for (int j = 0; j < getParagraphCount(questionNumber) && questionNumber != testQuestions.size(); j++) {
+                document.createParagraph();
+            }
         }
     }
 
-    private void addPageBreak(XWPFDocument document) {
-        // Create a paragraph with a run containing a break for a new page
-        XWPFParagraph paragraph = document.createParagraph();
-        XWPFRun run = paragraph.createRun();
-        run.addBreak(BreakType.PAGE);
+    private void setMcAnswer(String answerText, XWPFRun answerRun) {
+        try {
+            answerRun.addCarriageReturn();
+            answerRun.addTab();
+            answerRun.addPicture(new FileInputStream("src/main/resources/com/example/frontend/icons/checkbox.png"), XWPFDocument.PICTURE_TYPE_PNG, "unchecked_checkbox.png", Units.toEMU(15), Units.toEMU(15));
+            answerRun.setText(answerText);
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -227,20 +218,16 @@ public class ExportDocx extends Export<XWPFDocument> {
      * So that setting of 4, 5,... questions per site looks ok.
      * @return the number of paragraphs between questions (the answer-block)
      */
-    private int getParagraphCount() {
-        int paragraphsOnOnePage = 29 - this.questionsPerSite;
+    private int getParagraphCount(int questionNumber) {
+        int paragraphsOnOnePage = 25 - this.questionsPerSite;
 
         // first page
-        if (this.questionNumber < this.questionsPerSite) {
+        if (questionNumber < this.questionsPerSite) {
             // mind the title
             return (int) (paragraphsOnOnePage - 2)/this.questionsPerSite;
         }
 
         // following pages
         return (int) paragraphsOnOnePage/this.questionsPerSite;
-    }
-
-    private void convertWordToPdf(XWPFDocument wordDocument) {
-
     }
 }

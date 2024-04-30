@@ -2,7 +2,9 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Message;
 import com.example.backend.db.models.QuestionType;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -27,8 +29,11 @@ public class QuestionTypeDAO implements DAO<QuestionType> {
             preparedStatement.setString(1, type.getName());
             preparedStatement.executeUpdate();
             setQuestionTypeCache(null);
+
+            SharedData.setOperation(Message.CREATE_QUESTION_TYPE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_QUESTION_TYPE_ERROR_MESSAGE);
         }
     }
 
@@ -113,8 +118,11 @@ public class QuestionTypeDAO implements DAO<QuestionType> {
             preparedStatement.setInt(2, type.getId());
             preparedStatement.executeUpdate();
             setQuestionTypeCache(null);
+
+            SharedData.setOperation(Message.UPDATE_QUESTION_TYPE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_QUESTION_TYPE_ERROR_MESSAGE);
         }
     }
 
@@ -130,8 +138,11 @@ public class QuestionTypeDAO implements DAO<QuestionType> {
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             setQuestionTypeCache(null);
+
+            SharedData.setOperation(Message.DELETE_QUESTION_TYPE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_QUESTION_TYPE_ERROR_MESSAGE);
         }
     }
 

@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     private void initialize() {
         // init auto-completion
-        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()));
+        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()), null);
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
         initializeQuestions(this.questionTextField);
         initializeMenuButton(this.questionTypeMenuButton, true);
@@ -48,7 +49,9 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void on_add_category_btn_click(ActionEvent actionEvent) {
-        addCategoryBtnClick(categoryTextField, add_category_btn);
+        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+            addCategoryBtnClick(categoryTextField, add_category_btn);
+        }
     }
 
     public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
@@ -129,6 +132,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // save to our SharedData
         for (Question question : result) {
+            question.removeDuplicates();
             SharedData.getFilteredQuestions().add(question);
         }
     }

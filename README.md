@@ -22,3 +22,9 @@ Supervisor: Christoph Redl
 
 ### Project-Uml & Class-Diagram
 [<kbd>**View project-uml** &rarr;</kbd>](docs/sites/projekt.puml)
+
+### Pdf icons
+
+We are using checkboxes for Multiple-choice-questions.
+
+<img src="./docs/pictures/pdf_icons.png">

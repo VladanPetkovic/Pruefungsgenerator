@@ -4,18 +4,28 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,20 +52,10 @@ public abstract class ScreenController {
     public static Screen<Settings_ScreenController> settings = new Screen<>("sites/settings.fxml");
 
 
-    //todo maybe not used (simon)
-    @FXML
-    ImageView createTestAutomaticNavImageView;
-    @FXML
-    ImageView createTestManualNavImageView;
-    @FXML
-    ImageView createQuestionNavImageView;
-    @FXML
-    ImageView editQuestionNavImageView;
-    @FXML
-    ImageView settingsNavImageView;
 
-    @FXML
-    Label createTestAutomaticNavLabel;
+
+
+
 
 
 
@@ -98,57 +98,6 @@ public abstract class ScreenController {
         MainApp.stage.show();
     }
 
-    /**
-     * handles click event for navigating to the create automatic test screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
-        switchScene(createTestAutomatic,true);
-
-        //todo maybe not used (simon)
-        createTestAutomaticNavLabel.getStyleClass().add("navigation_item_label_selected");
-        createTestAutomaticNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/frontend/icons/file_add_blue.png")));
-    }
-
-    /**
-     * handles click event for navigating to the create manual test screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onCreateManTestNavBtnClick(MouseEvent event) throws IOException {
-        switchScene(createTestManual,true);
-    }
-
-    /**
-     * handles click event for navigating to the question upload screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(questionCreate,true);
-    }
-
-    /**
-     * handles click event for navigating to the question edit screen
-     * @param event the mouse click event
-     * @throws IOException if there is an error loading the screen
-     */
-    @FXML
-    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(questionEdit,true);
-    }
-
-    @FXML
-    protected void onSettingsNavBtnClick(MouseEvent event) throws IOException
-    {
-        switchScene(settings,true);
-    }
 
     /**
      * This function activates/deactivates a slider and changes the image accordingly.
@@ -174,13 +123,26 @@ public abstract class ScreenController {
     /**
      * Initializes the auto-completion of the keywords in the search-area of edit-question
      * And displays an add-btn, when the inputted text is changed AND not in the db
+     * @param addKeywordBtn When passed null, then we cannot add keywords
      */
-    protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords) {
-        ObservableList<String> items = FXCollections.observableArrayList();
+    protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords, Button addKeywordBtn) {
+        ArrayList<String> items = new ArrayList<>();
         for (Keyword k : keywords) {
-            items.add(k.getKeyword());
+            if (!items.contains(k.getKeyword())) {
+                items.add(k.getKeyword());
+            }
         }
         TextFields.bindAutoCompletion(keywordTextField, items);
+
+        if (addKeywordBtn != null) {
+            keywordTextField.textProperty().addListener((obsrevable, oldValue, newValue) -> {
+                if (!items.contains(keywordTextField.getText()) && !Objects.equals(keywordTextField.getText(), "")) {
+                    addKeywordBtn.setDisable(false);
+                } else {
+                    addKeywordBtn.setDisable(true);
+                }
+            });
+        }
     }
 
     /**
@@ -190,7 +152,7 @@ public abstract class ScreenController {
      */
     protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories, Button add_category_btn) {
         // in java everything is passed by reference, so changes in items make changes in SharedData
-        ObservableList<String> items = SharedData.getSuggestedCategories();
+        ArrayList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
             // don't add existing categories --> good for, when switching scenes
             if (!items.contains(c.getName())) {
@@ -206,6 +168,19 @@ public abstract class ScreenController {
                 add_category_btn.setDisable(true);
             }
         });
+    }
+
+    /**
+     * Function used to add a new category when clicked on the plus-button.
+     * @param categoryTextField the textField, where category is inputted
+     * @param add_category_btn the add-btn that is clicked for adding a new category
+     */
+    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) {
+        SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
+        Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
+        SharedData.getSuggestedCategories().add(newCategory.getName());
+
+        add_category_btn.setDisable(true);
     }
 
     /**
@@ -245,23 +220,6 @@ public abstract class ScreenController {
                 menuButton.setText("all types");
             });
             menuButton.getItems().add(menuItem);
-        }
-    }
-
-    /**
-     * Function used to add a new category when clicked on the plus-button.
-     * @param categoryTextField the textField, where category is inputted
-     * @param add_category_btn the add-btn that is clicked for adding a new category
-     */
-    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) {
-        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-            Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
-
-            // add category to categories-autoCompletion
-            SharedData.getSuggestedCategories().add(newCategory.getName());
-
-            add_category_btn.setDisable(true);
         }
     }
 
@@ -335,6 +293,10 @@ public abstract class ScreenController {
         return false;
     }
 
+    //
+    // START REGION QUESTION-CREATE AND QUESTION-EDIT
+    //
+
     /**
      * Converts the answers provided either in mc-TextAreas or in the one simple-answer-Textarea to
      * an ArrayList of Answer/s.
@@ -373,20 +335,6 @@ public abstract class ScreenController {
     }
 
     /**
-     * Displays an error alert dialog.
-     * @param title       The title of the error alert dialog.
-     * @param headerText  The header text of the error alert dialog.
-     * @param contentText The content text of the error alert dialog.
-     */
-    protected void showErrorAlert(String title, String headerText, String contentText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
-        alert.showAndWait();
-    }
-
-    /**
      * Creates a JavaFX Button with the given text and disables focus traversal.
      * @param text The text to display on the button.
      * @return The created Button
@@ -396,4 +344,190 @@ public abstract class ScreenController {
         button.setFocusTraversable(false);
         return button;
     }
+
+    /**
+     * Checks if a keyword is already present in the list of selected keywords.
+     * @param selectedKeywords The ArrayList containing selected keywords.
+     * @param k The keyword to check.
+     * @return True if the keyword is already present, false otherwise.
+     */
+    protected boolean containsKeyword(Keyword k, ArrayList<Keyword> selectedKeywords) {
+        for (Keyword keyword : selectedKeywords) {
+            if (keyword.getId() == k.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This function fills the MenuButton with a keyword.
+     * It sets an ActionEvent, when clicked --> the keyword is displayed.
+     * The displayed keyword can be removed via button click.
+     */
+    protected void fillKeywordMenuButtonWithKeyword(Keyword newKeyword, ArrayList<Keyword> selectedKeywords, HBox keywordsHBox, MenuButton keywordMenuButton) {
+        // Create keyword MenuItem
+        MenuItem menuItem = new MenuItem(newKeyword.getKeyword());
+        // Add action event for keyword MenuItem
+        menuItem.setOnAction(event -> addSelectedKeyword(newKeyword, selectedKeywords, keywordsHBox));
+        // Add MenuItem to keywordMenuButton
+        keywordMenuButton.getItems().add(menuItem);
+    }
+    protected void addSelectedKeyword(Keyword newKeyword, ArrayList<Keyword> selectedKeywords, HBox keywordsHBox) {
+        if (containsKeyword(newKeyword, selectedKeywords)) {
+            return;
+        }
+
+        selectedKeywords.add(newKeyword);
+        Button removalButton = createRemovalButton(newKeyword, keywordsHBox, selectedKeywords);
+        keywordsHBox.getChildren().add(removalButton);
+    }
+    protected Button createRemovalButton(Keyword newKeyword, HBox keywordsHBox, ArrayList<Keyword> selectedKeywords) {
+        Button button = createButton(newKeyword.getKeyword() + " X");
+
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                // When the removal button is clicked, remove the keyword from the list of selected keywords
+                keywordsHBox.getChildren().remove(button);
+                selectedKeywords.remove(newKeyword);
+            }
+        });
+
+        return button;
+    }
+
+    @FXML
+    protected void onButtonPressed(MouseEvent event) {
+        Node source = (Node) event.getSource();
+        if (source instanceof Button) {
+            Button button = (Button) source;
+            if (button.getStyleClass().contains("btn_red")) {
+                handleRedButtonPressed(button);
+            } else if (button.getStyleClass().contains("btn_grey")) {
+                handleGreyButtonPressed(button);
+            } else if (button.getStyleClass().contains("btn_dark")) {
+                handleDarkButtonPressed(button);
+            }
+        } else if (source instanceof MenuButton) {
+            MenuButton menuButton = (MenuButton) source;
+            handleMenuButtonPressed(menuButton);
+        }
+    }
+
+    private void handleRedButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: red;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleGreyButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: #646464;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleDarkButtonPressed(Button button) {
+        // Instantly change background color when pressed
+        button.setStyle("-fx-background-color: #2f2f2f;");
+
+        // Depress or shrink animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(button.scaleYProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 0.9)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 0.9))
+        );
+        timeline.play();
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        button.setEffect(dropShadow);
+    }
+
+    private void handleMenuButtonPressed(MenuButton menuButton) {
+        // Instantly change background color when pressed
+        menuButton.setStyle("-fx-background-color: #2f2f2f;");
+
+        // Ripple effect
+        DropShadow dropShadow = new DropShadow();
+        menuButton.setEffect(dropShadow);
+    }
+
+    @FXML
+    protected void onButtonReleased(MouseEvent event) {
+        Node source = (Node) event.getSource();
+        if (source instanceof Button) {
+            Button button = (Button) source;
+            handleButtonReleased(button);
+        } else if (source instanceof MenuButton) {
+            MenuButton menuButton = (MenuButton) source;
+            handleMenuButtonReleased(menuButton);
+        }
+    }
+
+    private void handleButtonReleased(Button button) {
+        // Release animation (return to original state)
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleXProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(0.1), new KeyValue(button.scaleYProperty(), 1.0))
+        );
+        timeline.play();
+
+        // Remove ripple effect
+        button.setEffect(null);
+    }
+
+    private void handleMenuButtonReleased(MenuButton menuButton) {
+        // Return to original background color gradually
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.1), menuButton);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+
+        // Remove ripple effect
+        menuButton.setEffect(null);
+    }
+    //
+    // END REGION QUESTION-CREATE AND QUESTION-EDIT
+    //
+
+
+    // currently not needed --> maybe for "deleting all questions",...
+    //    /**
+//     * Displays an error alert dialog.
+//     * @param title       The title of the error alert dialog.
+//     * @param headerText  The header text of the error alert dialog.
+//     * @param contentText The content text of the error alert dialog.
+//     */
+//    protected void showErrorAlert(String title, String headerText, String contentText) {
+//        Alert alert = new Alert(Alert.AlertType.ERROR);
+//        alert.setTitle(title);
+//        alert.setHeaderText(headerText);
+//        alert.setContentText(contentText);
+//        alert.showAndWait();
+//    }
 }

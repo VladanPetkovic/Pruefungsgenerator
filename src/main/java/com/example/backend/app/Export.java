@@ -4,13 +4,14 @@ import com.example.backend.db.models.Question;
 import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Getter
 @Setter
 public abstract class Export<T> {
     protected int questionsPerSite = 5;
-    protected int questionNumber = 0;
     protected int numberOfPages;
     protected String title = "";
     protected String destinationFolder = "";
@@ -42,7 +43,19 @@ public abstract class Export<T> {
      * Creates the fileName with the current DateTime.
      * @return String, for example: "test_2024-02-11_18-38-27.pdf" or "test_2024-02-11_18-38-27.docx"
      */
-    public abstract String createFileName();
+    public String createFileName(boolean isPdf) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        String extension = isPdf ? "pdf" : "docx";
+        return String.format("test_%04d-%02d-%02d_%02d-%02d-%02d.%s",
+                currentDateTime.getYear(),
+                currentDateTime.getMonthValue(),
+                currentDateTime.getDayOfMonth(),
+                currentDateTime.getHour(),
+                currentDateTime.getMinute(),
+                currentDateTime.getSecond(),
+                extension);
+    }
 
     /**
      * !!!Use this function before exportDocument()!!!

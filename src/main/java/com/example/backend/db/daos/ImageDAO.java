@@ -2,8 +2,10 @@ package com.example.backend.db.daos;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Image;
+import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
@@ -38,8 +40,11 @@ public class ImageDAO implements DAO<Image> {
             preparedStatement.setString(4, image.getComment());
             preparedStatement.executeUpdate();
             setImageCache(null);
+
+            SharedData.setOperation(Message.CREATE_IMAGE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_IMAGE_ERROR_MESSAGE);
         }
     }
 
@@ -139,7 +144,7 @@ public class ImageDAO implements DAO<Image> {
     /**
      * Retrieves an image by its name from the database.
      *
-     * @param name The name of the image to retrieve.
+     * @param imageName The name of the image to retrieve.
      * @return The Image object corresponding to the given name.
      */
     public Image read(String imageName) {
@@ -184,8 +189,11 @@ public class ImageDAO implements DAO<Image> {
             preparedStatement.setInt(5, image.getId());
             preparedStatement.executeUpdate();
             setImageCache(null);
+
+            SharedData.setOperation(Message.UPDATE_IMAGE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_IMAGE_ERROR_MESSAGE);
         }
     }
 
@@ -211,8 +219,11 @@ public class ImageDAO implements DAO<Image> {
             secondPreparedStatement.setInt(1, id);
             secondPreparedStatement.executeUpdate();
             setImageCache(null);
+
+            SharedData.setOperation(Message.DELETE_IMAGE_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_IMAGE_ERROR_MESSAGE);
         }
     }
 

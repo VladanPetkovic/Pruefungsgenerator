@@ -24,23 +24,41 @@ Slider {
     -fx-background-color: red;
     -fx-text-fill: #fff;
     -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
 }
 .btn_red:hover {
     -fx-background-color: #ff6b6b;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 .btn_red:pressed {
     -fx-background-color: red;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
 .btn_grey {
     -fx-background-color: #646464;
     -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
 }
 .btn_grey:hover {
     -fx-background-color: #2f2f2f;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 .btn_grey:pressed {
     -fx-background-color: #646464;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
 .btn_dark {
@@ -50,23 +68,36 @@ Slider {
     -fx-min-width: 200px;
     -fx-pref-height: 32px;
     -fx-max-width: 300px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
 }
 .btn_dark:hover {
     -fx-background-color: #646464;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 .btn_dark:pressed {
     -fx-background-color: #2f2f2f;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
+
 .btn_add_icon {
     -fx-background-color: none;
     -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
 }
 .btn_add_icon:hover {
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 .btn_add_icon:pressed {
     -fx-rotate: 45;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
 .optionAreaBox {
@@ -89,12 +120,17 @@ Slider {
     -fx-border-radius: 5px;
     -fx-padding: 5px 10px;
     -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
 }
 .menuButton_dark:hover {
     -fx-background-color: #646464;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 .menuButton_dark:pressed {
     -fx-background-color: #2f2f2f;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
 .searchbar_dark {
@@ -142,7 +178,7 @@ Slider {
 /* Title Banner */
 .titleBanner_label {
     -fx-font-family: "Inter";
-    -fx-font-size: 10px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-line-spacing: 15px;
     -fx-letter-spacing: 0em;
@@ -168,7 +204,17 @@ Slider {
     -fx-font-weight: bold;
     -fx-text-fill: #228be6; /* color of the blue icons */
 }
-
+.navigation_vbox {          /* applied to the main navigation and the home-btn */
+    -fx-cursor: HAND;
+}
+.navigation_vbox:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.navigation_vbox:pressed {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
 
 /* Home Screen Scene*/
 .homeScreen_gridPane {
@@ -190,10 +236,28 @@ Slider {
 }
 
 .homeScreen_addButton_menu_item {
+    /*
     -fx-border-style: solid;
-    -fx-border-width: 1 0 0 0; /* top, right, bottom, left */
+    -fx-border-width: 0 0 0 0; /* top, right, bottom, left
     -fx-border-color: black;
+    */
 }
+
+
+.context-menu {
+    -fx-background-color: #2f2f2f;
+    -fx-background-radius: 5;
+}
+
+.menu-button .menu-item {
+    -fx-background-color: #2f2f2f;
+}
+
+.menu-button .label {
+    -fx-text-fill: white;
+}
+
+
 
 
 /* addCourse / addProgram Scene */

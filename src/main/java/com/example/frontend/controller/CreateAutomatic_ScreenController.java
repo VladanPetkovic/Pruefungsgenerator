@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
@@ -27,8 +28,23 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private VBox addQuestionVBox; // reference to the VBox containing the "Add Question" button
     private int questionCount = 0; // variable to keep track of the question count
 
+    private void setButtonEventHandlers(List<Node> nodes) {
+        for (Node node : nodes) {
+            if (node instanceof Button) {
+                Button button = (Button) node;
+                button.setOnMousePressed(this::onButtonPressed);
+                button.setOnMouseReleased(this::onButtonReleased);
+            } else if (node instanceof VBox) {
+                setButtonEventHandlers(((VBox) node).getChildren());
+            }
+        }
+    }
+
     @FXML
     public void initialize() {
+
+        // set (press & release) event handlers for all buttons that are dynamically generated
+        setButtonEventHandlers(addQuestionVBox.getChildren());
         onAddQuestionBtnClick();
     }
 

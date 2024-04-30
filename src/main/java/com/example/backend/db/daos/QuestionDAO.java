@@ -48,8 +48,11 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setString(7, question.getCreated_at().toString());
 
             preparedStatement.executeUpdate();
+
+            SharedData.setOperation(Message.CREATE_QUESTION_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_QUESTION_ERROR_MESSAGE);
         }
     }
 
@@ -365,8 +368,10 @@ public class QuestionDAO implements DAO<Question> {
 
             preparedStatement.executeUpdate();
 
+            SharedData.setOperation(Message.UPDATE_QUESTION_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.UPDATE_QUESTION_ERROR_MESSAGE);
         }
     }
 
@@ -398,8 +403,11 @@ public class QuestionDAO implements DAO<Question> {
 
             fourthPreparedStatement.setInt(1, id);
             fourthPreparedStatement.executeUpdate();
+
+            SharedData.setOperation(Message.DELETE_QUESTION_SUCCESS_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            SharedData.setOperation(Message.DELETE_QUESTION_ERROR_MESSAGE);
         }
     }
 

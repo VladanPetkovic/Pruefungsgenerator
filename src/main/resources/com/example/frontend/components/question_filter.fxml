@@ -36,7 +36,7 @@
                           </rowConstraints>
                            <children>
                                       <TextField fx:id="categoryTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="Search Category..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
-                              <Button fx:id="add_category_btn" disable="true" mnemonicParsing="false" onAction="#on_add_category_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                              <Button fx:id="add_category_btn" disable="true" mnemonicParsing="false" onAction="#on_add_category_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased">
                                  <graphic>
                                     <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -122,7 +122,7 @@
                         <VBox prefHeight="200.0" prefWidth="100.0">
                             <children>
                                 <Label styleClass="option_label" text="Set Question-Type:" />
-                                <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="Question-Type...">
+                                <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="Question-Type..." >
                                     <items>
                                         <MenuItem mnemonicParsing="false" text="Action 1" />
                                         <MenuItem mnemonicParsing="false" text="Action 2" />
@@ -133,7 +133,7 @@
                                 </MenuButton>
                             </children>
                         </VBox>
-                        <Button mnemonicParsing="false" onAction="#applyFilterButtonClicked" styleClass="btn_dark" text="Apply Filter" />
+                        <Button mnemonicParsing="false" onAction="#applyFilterButtonClicked" styleClass="btn_dark" text="Apply Filter" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
                     </children>
                 </VBox>
             </content>

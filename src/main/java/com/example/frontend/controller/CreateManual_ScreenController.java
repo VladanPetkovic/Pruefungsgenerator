@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import com.example.backend.app.Screen;
 
 public class CreateManual_ScreenController extends ScreenController {
     @FXML

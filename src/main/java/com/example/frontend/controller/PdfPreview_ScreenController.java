@@ -1,6 +1,8 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.*;
+import com.example.backend.app.Screen;
+import com.example.backend.db.models.Message;
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,22 +23,14 @@ import java.util.Objects;
 public class PdfPreview_ScreenController extends ScreenController {
     @FXML
     private Slider questionCountSlider;
-
     @FXML
     private TextField titleTextField;
-
     @FXML
     private VBox vbox_previewPane;
-
     @FXML
     private Label label_selectedCourse;
-
-    @FXML
-    private Label label_error_folderMissing;
-
     @FXML
     private CheckBox checkbox_applyHeader;
-
     @FXML
     private CheckBox checkbox_showPageNumber;
 
@@ -81,7 +75,7 @@ public class PdfPreview_ScreenController extends ScreenController {
             // returning to the automatic-test-create-scene
             switchScene(createTestAutomatic, true);
         } else {
-            this.label_error_folderMissing.setText("Select a folder, where to save the file!");
+            SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
         }
     }
 
@@ -159,5 +153,10 @@ public class PdfPreview_ScreenController extends ScreenController {
 
     private int getQuestionCount() {
         return (int) questionCountSlider.getValue();
+    }
+
+    public void onGoBackBtnClick(ActionEvent mouseEvent) {
+        SharedData.setCurrentScreen(Screen.CreateManual);
+        switchScene(createTestManual,true);
     }
 }

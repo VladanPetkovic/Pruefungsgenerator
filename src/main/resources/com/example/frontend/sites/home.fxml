@@ -27,13 +27,13 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                   <MenuButton fx:id="studyProgramMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onStudyProgramBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="menuButton_dark" stylesheets="@../css/main.css" text="Studyprograms">
+                   <MenuButton fx:id="studyProgramMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onStudyProgramBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="menuButton_dark" stylesheets="@../css/main.css" text="Studyprograms" >
                        <!-- Items will be dynamically loaded by the controller -->
                        <font>
                            <Font size="20.0" />
                        </font>
                    </MenuButton>
-                   <MenuButton fx:id="coursesMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onCoursesBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="menuButton_dark" stylesheets="@../css/main.css" text="Courses" GridPane.columnIndex="1">
+                   <MenuButton fx:id="coursesMenuButton" alignment="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onCoursesBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="menuButton_dark" stylesheets="@../css/main.css" text="Courses" GridPane.columnIndex="1" >
                        <!-- Items will be dynamically loaded by the controller -->
                        <font>
                            <Font size="20.0" />
@@ -45,7 +45,7 @@
       </HBox>
       <HBox alignment="CENTER" minHeight="100.0" prefHeight="100.0" styleClass="homeScreen_hbox_ContinueButton" stylesheets="@../css/main.css">
          <children>
-            <Button fx:id="btn_home_continue" alignment="CENTER" contentDisplay="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onContinueBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="Continue" textFill="WHITE">
+            <Button fx:id="btn_home_continue" alignment="CENTER" contentDisplay="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onContinueBtnClick" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="Continue" textFill="WHITE" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased">
                <font>
                   <Font size="20.0" />
                </font>
