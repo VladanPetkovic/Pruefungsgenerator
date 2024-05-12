@@ -4,6 +4,7 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -27,13 +28,11 @@ import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * the base class for all screen controllers
@@ -106,7 +105,7 @@ public abstract class ScreenController {
      */
     public void on_toggle_btn_click(Slider slider, ImageView toggle_image) {
         // activate the difficulty slider
-        if (slider.isDisabled()) {
+        if (slider.isDisabled()) {          // TODO: refactor duplicate code fragments
             slider.setDisable(false);
             File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
             Image toggle_on_image = new Image(file.toURI().toString());
@@ -114,6 +113,21 @@ public abstract class ScreenController {
         } else {
             // deactivate
             slider.setDisable(true);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
+            Image toggle_off_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_off_image);
+        }
+    }
+    public void on_toggle_btn_click(CustomDoubleSpinner spinner, ImageView toggle_image) {
+        // activate the spinner
+        if (spinner.isDisabled()) {
+            spinner.setDisable(false);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
+            Image toggle_on_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_on_image);
+        } else {
+            // deactivate
+            spinner.setDisable(true);
             File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
             Image toggle_off_image = new Image(file.toURI().toString());
             toggle_image.setImage(toggle_off_image);
@@ -280,12 +294,13 @@ public abstract class ScreenController {
     }
 
     /**
-     * Check, if the testQuestions-Array contains a question.
+     * Check, if questions contains the question_id
      * @param question_id ID of the question, that is going to be checked.
+     * @param questions, the array of questions to be checked
      * @return true, if testQuestions contains this question with id = question_id, return false otherwise.
      */
-    protected boolean containsQuestionWithId(int question_id) {
-        for (Question question : SharedData.getTestQuestions()) {
+    protected boolean containsQuestionWithId(int question_id, List<Question> questions) {
+        for (Question question : questions) {
             if (question.getId() == question_id) {
                 return true;
             }

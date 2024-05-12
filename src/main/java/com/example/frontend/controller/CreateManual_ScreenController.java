@@ -64,25 +64,10 @@ public class CreateManual_ScreenController extends ScreenController {
                 Label questionTextLabel = new Label(question.getQuestion());
 
                 // create remove button
-                Button removeButton = new Button("X");
-                removeButton.setOnAction(eventRemove -> {
-                    // remove the question from the vbox_testQuestionsPreview
-                    vbox_testQuestionsPreview.getChildren().remove(questionVbox);
-                    // add it back to the filtered questions
-                    SharedData.getFilteredQuestions().add(question);
-
-                    //remove the question from SharedData.getTestQuestions()
-                    SharedData.getTestQuestions().remove(question);
-                    //clear the test preview area
-                    this.vbox_testQuestionsPreview.getChildren().clear();
-                    //reload the preview and filtered questions area
-                    showTestQuestionsInPreview();
-                    showFilteredQuestions(SharedData.getFilteredQuestions());
-                });
+                Button removeButton = getRemoveButton(questionVbox, question);
 
                 // add labels to the VBox
                 questionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
-
 
                 // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
@@ -116,7 +101,7 @@ public class CreateManual_ScreenController extends ScreenController {
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
 
-            if (!containsQuestionWithId(question.getId())) {
+            if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add question to preview-box, if the question is not already in preview.
                 this.vbox_filteredQuestionsPreview.getChildren().add(questionVbox);
                 // display the clicked question in the test_preview_pane
@@ -142,32 +127,38 @@ public class CreateManual_ScreenController extends ScreenController {
             Label questionTextLabel = new Label(question.getQuestion());
 
             //create remove button
-            Button removeButton = new Button("X");
-            removeButton.setOnAction(eventRemove -> {
-                // remove the question from the vbox_testQuestionsPreview
-                vbox_testQuestionsPreview.getChildren().remove(questionVbox);
-                // add it back to the filtered questions
-                SharedData.getFilteredQuestions().add(question);
-
-                //remove the question from the selected testquestions
-                SharedData.getTestQuestions().remove(question);
-                //clear the test preview area
-                this.vbox_testQuestionsPreview.getChildren().clear();
-                //reload the preview and filtered questions area
-                showTestQuestionsInPreview();
-                showFilteredQuestions(SharedData.getFilteredQuestions());
-            });
+            Button removeButton = getRemoveButton(questionVbox, question);
 
             // add labels to the VBox
-
             newQuestionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
 
-            if (!containsQuestionWithId(question.getId())) {
+            if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
                 this.vbox_testQuestionsPreview.getChildren().add(newQuestionVbox);
                 this.vbox_testQuestionsPreview.setSpacing(spacing);
                 SharedData.getTestQuestions().add(question);
             }
         });
+    }
+
+    private Button getRemoveButton(VBox questionVbox, Question question) {
+        Button removeButton = new Button("X");
+        removeButton.setOnAction(eventRemove -> {
+            // remove the question from the vbox_testQuestionsPreview
+            vbox_testQuestionsPreview.getChildren().remove(questionVbox);
+            // add it back to the filtered questions --> don't add duplicates
+            if (!containsQuestionWithId(question.getId(), SharedData.getFilteredQuestions())) {
+                SharedData.getFilteredQuestions().add(question);
+            }
+
+            //remove the question from the selected testquestions
+            SharedData.getTestQuestions().remove(question);
+            //clear the test preview area
+            this.vbox_testQuestionsPreview.getChildren().clear();
+            //reload the preview and filtered questions area
+            showTestQuestionsInPreview();
+            showFilteredQuestions(SharedData.getFilteredQuestions());
+        });
+        return removeButton;
     }
 }

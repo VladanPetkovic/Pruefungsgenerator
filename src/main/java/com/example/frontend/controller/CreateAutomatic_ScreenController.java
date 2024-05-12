@@ -5,10 +5,7 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
-import com.example.backend.db.models.SearchObject;
 import com.example.frontend.components.CustomDoubleSpinner;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -17,7 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
@@ -26,7 +25,11 @@ import java.util.*;
 public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
     private VBox addQuestionVBox; // reference to the VBox containing the "Add Question" button
-    private int questionCount = 0; // variable to keep track of the question count
+    private int questionCount = 0;
+    private ArrayList<MenuButton> categoriesMenuButtons = new ArrayList<>();
+    private ArrayList<Category> categories;
+    private ArrayList<Slider> difficultySliders = new ArrayList<>();
+    private ArrayList<CustomDoubleSpinner> pointsSpinners = new ArrayList<>();
 
     private void setButtonEventHandlers(List<Node> nodes) {
         for (Node node : nodes) {
@@ -42,6 +45,8 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     @FXML
     public void initialize() {
+        int course_id = SharedData.getSelectedCourse().getId();
+        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
 
         // set (press & release) event handlers for all buttons that are dynamically generated
         setButtonEventHandlers(addQuestionVBox.getChildren());
@@ -53,10 +58,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         questionCount++;
 
         VBox newQuestionVBox = createNewQuestionVBox();
-        SharedData.getSearchObjectsAutTestCreate().add(new ArrayList<>());
-
-        // set the event handlers for the components within the new VBox
-        setEventHandlers(newQuestionVBox, this.questionCount);
         VBox grandparentVBox = (VBox) addQuestionVBox.getParent().getParent();
 
         // get the index of the parent of addQuestionVBox in its grandparent
@@ -64,82 +65,6 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // add the new VBox just before the addQuestionVBox
         grandparentVBox.getChildren().add(parentIndex, newQuestionVBox);
-    }
-
-    // set event handlers recursively for components within a VBox
-    private void setEventHandlers(VBox questionVBox, int vBoxNumber) {
-        // iterate over all nodes within the VBox
-        for (Node node : questionVBox.getChildren()) {
-            if (node instanceof VBox) {
-                setEventHandlers((VBox) node, vBoxNumber);
-            } else if (node instanceof MenuButton) {
-                MenuButton menuButton = (MenuButton) node;
-                setMenuButtonHandler(menuButton, vBoxNumber);
-            } else if (node instanceof Spinner) {
-                Spinner spinner = (Spinner) node;
-                setSpinnerHandler(spinner, vBoxNumber);
-            } else if (node instanceof Slider) {
-                Slider slider = (Slider) node;
-                setSliderHandler(slider, vBoxNumber);
-            }
-        }
-    }
-
-    // set event handler for MenuButton to select category
-    private void setMenuButtonHandler(MenuButton menuButton, int vBoxNumber) {
-        // create a new SearchObject to store category selection
-        SearchObject<String> searchObject = new SearchObject<>();
-        menuButton.getItems().clear();
-        // retrieve categories for the selected course
-        int course_id = SharedData.getSelectedCourse().getId();
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
-        // populate the MenuButton with category options and set event handlers for selection
-        for (Category category : categories) {
-            MenuItem menuItem = new MenuItem(category.getName());
-            menuItem.setOnAction(e -> {
-                String categoryName = category.getName();
-                menuButton.setText(categoryName);
-                searchObject.setObjectName("CAT");
-                searchObject.setValueOfObject(categoryName);
-                searchObject.setSet(true);
-            });
-            menuButton.getItems().add(menuItem);
-        }
-        // add the selected category to the appropriate ArrayList in SharedData
-        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
-    }
-
-    // set event handler for Spinner to select points
-    private void setSpinnerHandler(Spinner<Double> spinner, int vBoxNumber) {
-        // create a new SearchObject to store points selection
-        SearchObject<Float> searchObject = new SearchObject<>();
-        // listen for changes in the spinner value and update the SearchObject accordingly
-        spinner.valueFactoryProperty().addListener((observable, oldNumber, newNumber) -> {
-            double points = (Double) spinner.getValue();
-            searchObject.setObjectName("POINT");
-            searchObject.setValueOfObject((float) points);
-            searchObject.setSet(true);
-        });
-        // add the selected points to the appropriate ArrayList in SharedData
-        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
-    }
-
-    // set event handler for Slider to select difficulty
-    private void setSliderHandler(Slider slider, int vBoxNumber) {
-        // create a new SearchObject to store difficulty selection
-        SearchObject<Integer> searchObject = new SearchObject<>();
-        // listen for changes in the slider value and update the SearchObject accordingly
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldNumber, Number newNumber) {
-                int difficulty = (int) slider.getValue();
-                searchObject.setObjectName("DIFF");
-                searchObject.setValueOfObject(difficulty);
-                searchObject.setSet(true);
-            }
-        });
-        // add the selected difficulty to the appropriate ArrayList in SharedData
-        SharedData.getSearchObjectsAutTestCreate().get(vBoxNumber - 1).add(searchObject);
     }
 
     // create a new VBox for adding a question with required components
@@ -186,6 +111,16 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         MenuButton menuButton = new MenuButton("Choose category...");
         // add custom styling to the MenuButton
         menuButton.getStyleClass().add("menuButton_dark");
+        // populate the MenuButton with category options and set event handlers for selection
+        for (Category category : categories) {
+            MenuItem menuItem = new MenuItem(category.getName());
+            menuItem.setOnAction(e -> {
+                String categoryName = category.getName();
+                menuButton.setText(categoryName);
+            });
+            menuButton.getItems().add(menuItem);
+        }
+        categoriesMenuButtons.add(menuButton);
 
         // create a new VBox to contain the MenuButton
         VBox innerVBox = new VBox(menuButton);
@@ -206,17 +141,20 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // add custom styling to the Spinner
         spinner.getStyleClass().add("automatic_create_spinner");
+        spinner.setDisable(true);
+        pointsSpinners.add(spinner);
 
-        // create a new VBox to contain the Spinner
-        VBox innerVBox = new VBox(spinner);
+        // create a new HBox to contain the Slider and the toggle btn
+        HBox innerHBox = new HBox(spinner);
         // set preferred height and width for the VBox
-        innerVBox.setPrefHeight(33.0);
-        innerVBox.setPrefWidth(1000.0);
+        innerHBox.setPrefHeight(33.0);
+        innerHBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
-        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerHBox.getStyleClass().add("automatic_create_vbox");
+        addToggleBtn(innerHBox, spinner);
 
-        // add the VBox containing the Spinner to the parent VBox
-        parentVBox.getChildren().add(innerVBox);
+        // add the VBox containing the Slider to the parent VBox
+        parentVBox.getChildren().add(innerHBox);
     }
 
     // helper method to create a Slider with custom styling
@@ -238,63 +176,66 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         slider.getStyleClass().add("slider-tool");
         // set default value for the Slider
         slider.setValue(5.0);
+        slider.setDisable(true);
+        difficultySliders.add(slider);
 
-        // create a new VBox to contain the Slider
-        VBox innerVBox = new VBox(slider);
+        // create a new HBox to contain the Slider and the toggle btn
+        HBox innerHBox = new HBox(slider);
         // set preferred height and width for the VBox
-        innerVBox.setPrefHeight(33.0);
-        innerVBox.setPrefWidth(1000.0);
+        innerHBox.setPrefHeight(33.0);
+        innerHBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
-        innerVBox.getStyleClass().add("automatic_create_vbox");
+        innerHBox.getStyleClass().add("automatic_create_vbox");
+        addToggleBtn(innerHBox, slider);
 
         // add the VBox containing the Slider to the parent VBox
-        parentVBox.getChildren().add(innerVBox);
+        parentVBox.getChildren().add(innerHBox);
+    }
+
+    private void addToggleBtn(HBox hbox, Object sliderOrSpinner) {
+        Button button = new Button();
+        button.getStyleClass().add("btn_add_icon");
+        ImageView toggleIcon = new ImageView();
+        toggleIcon.setImage(new Image(getClass().getResourceAsStream("/com/example/frontend/icons/toggle_off.png")));
+        toggleIcon.setFitWidth(34.0);
+        toggleIcon.setFitHeight(36.0);
+        button.setGraphic(toggleIcon);
+        button.setPrefHeight(35.0);
+        button.setPrefWidth(34.0);
+
+        button.setOnAction(event -> {
+            if (sliderOrSpinner instanceof Slider slider) {
+                on_toggle_btn_click(slider, toggleIcon);
+            } else if (sliderOrSpinner instanceof CustomDoubleSpinner customDoubleSpinner) {
+                on_toggle_btn_click(customDoubleSpinner, toggleIcon);
+            }
+        });
+
+        hbox.getChildren().add(button);
     }
 
     // method triggered when the "Create Test" button is clicked
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
-        // remove any empty elements from the searchObjectArray
-        SharedData.getSearchObjectsAutTestCreate().removeIf(ArrayList::isEmpty);
-
-        // loop through each array of searchOptions
-        for (ArrayList<SearchObject<?>> searchObjectArrayList : SharedData.getSearchObjectsAutTestCreate()) {
+        for (int i = 0; i < questionCount; i++) {
             // initialize variables to store selected category, difficulty, and points
             String selectedCategory = "";
-            int selectedDifficulty = 0;
-            float selectedPoints = 0;
-
-            // iterate through each searchObject in the current array
-            for (SearchObject<?> searchObject : searchObjectArrayList) {
-                // check if the searchObject represents points and is set
-                if (Objects.equals(searchObject.getObjectName(), "POINT") && searchObject.isSet()) {
-                    // set the selected points
-                    selectedPoints = (float) searchObject.getValueOfObject();
-                } else if (Objects.equals(searchObject.getObjectName(), "DIFF") && searchObject.isSet()) {
-                    // set the selected difficulty
-                    selectedDifficulty = (int) searchObject.getValueOfObject();
-                } else if (Objects.equals(searchObject.getObjectName(), "CAT") && searchObject.isSet()) {
-                    // set the selected category
-                    selectedCategory = (String) searchObject.getValueOfObject();
-                }
-            }
-
-            // create a new Question object to query the database
+            double selectedPoints = 0;
             Question queryQuestion = new Question();
-            // check if a category is selected
-            if (!Objects.equals(selectedCategory, "")) {
-                // set the category of the query question from the database
+
+            // get the category
+            if (!Objects.equals(categoriesMenuButtons.get(i).getText(), "Choose category...")) {
+                selectedCategory = categoriesMenuButtons.get(i).getText();
                 queryQuestion.setCategory(SQLiteDatabaseConnection.CategoryRepository.get(selectedCategory));
             }
-            // check if points are selected
-            if (selectedPoints != 0) {
-                // set the points of the query question
-                queryQuestion.setPoints(selectedPoints);
+            // get the points
+            if (!pointsSpinners.get(i).isDisabled()) {
+                selectedPoints = pointsSpinners.get(i).getValue();
+                queryQuestion.setPoints((float) selectedPoints);
             }
-            // check if difficulty is selected
-            if (selectedDifficulty != 0) {
-                // set the difficulty of the query question
-                queryQuestion.setDifficulty(selectedDifficulty);
+            // get the difficulty
+            if (!difficultySliders.get(i).isDisabled()) {
+                queryQuestion.setDifficulty((int) difficultySliders.get(i).getValue());
             }
 
             // perform the database query to retrieve questions based on the criteria
@@ -307,20 +248,16 @@ public class CreateAutomatic_ScreenController extends ScreenController {
                 int randomIndex = random.nextInt(queryResult.size());
                 // get the randomly selected question
                 Question newQuestion = queryResult.get(randomIndex);
-                if (!containsQuestionWithId(newQuestion.getId())) {
+                if (!containsQuestionWithId(newQuestion.getId(), SharedData.getTestQuestions())) {
                     // add the selected question to the test questions list, if not already existing in the testQuestions-array
                     SharedData.getTestQuestions().add(newQuestion);
                 }
             }
         }
 
-        // clear the search options from the SearchObjects array
-        SharedData.getSearchObjectsAutTestCreate().clear();
         // reset the question count to zero
         this.questionCount = 0;
-
+        SharedData.setCurrentScreen(Screen.CreateManual);
         switchScene(createTestManual, true);
-
     }
-
 }
