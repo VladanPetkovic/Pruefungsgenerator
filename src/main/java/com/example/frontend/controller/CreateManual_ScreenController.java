@@ -44,6 +44,7 @@ public class CreateManual_ScreenController extends ScreenController {
         }
     }
 
+
     // method to display test questions in preview area
     @FXML
     private void showTestQuestionsInPreview() {
@@ -62,9 +63,26 @@ public class CreateManual_ScreenController extends ScreenController {
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
                 Label questionTextLabel = new Label(question.getQuestion());
 
+                // create remove button
+                Button removeButton = new Button("X");
+                removeButton.setOnAction(eventRemove -> {
+                    // remove the question from the vbox_testQuestionsPreview
+                    vbox_testQuestionsPreview.getChildren().remove(questionVbox);
+                    // add it back to the filtered questions
+                    SharedData.getFilteredQuestions().add(question);
+
+                    //remove the question from SharedData.getTestQuestions()
+                    SharedData.getTestQuestions().remove(question);
+                    //clear the test preview area
+                    this.vbox_testQuestionsPreview.getChildren().clear();
+                    //reload the preview and filtered questions area
+                    showTestQuestionsInPreview();
+                    showFilteredQuestions(SharedData.getFilteredQuestions());
+                });
+
                 // add labels to the VBox
-                questionVbox.getChildren().add(questionNumberLabel);
-                questionVbox.getChildren().add(questionTextLabel);
+                questionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
+
 
                 // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
@@ -75,6 +93,7 @@ public class CreateManual_ScreenController extends ScreenController {
             }
         }
     }
+
 
     /**
      * method to display filtered questions in filter window
@@ -121,9 +140,27 @@ public class CreateManual_ScreenController extends ScreenController {
             VBox newQuestionVbox = new VBox();
             Label questionNumberLabel = new Label("Question "+ (numberOfQuestions + 1) +" (Erreichbare Punkte: "+ question.getPoints() + ")");
             Label questionTextLabel = new Label(question.getQuestion());
+
+            //create remove button
+            Button removeButton = new Button("X");
+            removeButton.setOnAction(eventRemove -> {
+                // remove the question from the vbox_testQuestionsPreview
+                vbox_testQuestionsPreview.getChildren().remove(questionVbox);
+                // add it back to the filtered questions
+                SharedData.getFilteredQuestions().add(question);
+
+                //remove the question from the selected testquestions
+                SharedData.getTestQuestions().remove(question);
+                //clear the test preview area
+                this.vbox_testQuestionsPreview.getChildren().clear();
+                //reload the preview and filtered questions area
+                showTestQuestionsInPreview();
+                showFilteredQuestions(SharedData.getFilteredQuestions());
+            });
+
             // add labels to the VBox
-            newQuestionVbox.getChildren().add(questionNumberLabel);
-            newQuestionVbox.getChildren().add(questionTextLabel);
+
+            newQuestionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
 
             if (!containsQuestionWithId(question.getId())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
