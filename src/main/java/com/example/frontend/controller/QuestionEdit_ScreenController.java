@@ -212,10 +212,17 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             }
             multipleChoiceVBox.setVisible(true);
             chooseAnswerTextArea.setDisable(true);
+        } else if (selectedQuestion.getType().getType() == Type.TRUE_FALSE) {
+            multipleChoiceVBox.setVisible(false);
+            chooseAnswerTextArea.setDisable(true);
         } else {
             multipleChoiceVBox.setVisible(false);
             chooseAnswerTextArea.setDisable(false);
             chooseAnswerTextArea.setText(selectedQuestion.getAnswersAsString());
+            // update the answer from the selectedQuestion
+            chooseAnswerTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+                selectedQuestion.getAnswers().get(0).setAnswer(newValue);
+            });
         }
     }
 
@@ -296,7 +303,12 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         compareKeywords(question);
 
         // compare answers and add/remove connections accordingly
-        compareAnswers();
+        if (selectedQuestion.getType().getType() == Type.MULTIPLE_CHOICE) {
+            compareAnswers();
+        } else {
+            SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeConnection(selectedQuestion.getAnswers().get(0), selectedQuestion.getId());    // not MC --> we have only one answer
+            SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(selectedQuestion.getAnswers(), selectedQuestion.getId());
+        }
 
         switchScene(questionEdit, true);
     }
@@ -390,7 +402,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (checkIfEmptyAnswers(questionTypeMenuButtonEdit, answers)) {
             return "You selected multiple choice, but at least one answer is not filled out.";
         }
-        if (answers.size() < 2) {
+        if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText())) {
             return "Enter at least two answers, when selecting multiple choice.";
         }
         if (checkIfQuestionIsEmpty()) {

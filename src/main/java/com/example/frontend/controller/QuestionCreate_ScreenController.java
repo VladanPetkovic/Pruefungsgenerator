@@ -209,7 +209,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (checkIfEmptyAnswers(questionTypeMenuButton, answers)) {
             return "You selected multiple choice, but at least one answer is not filled out.";
         }
-        if (answers.size() < 2) {
+        if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
             return "Enter at least two answers, when selecting multiple choice.";
         }
         if (checkIfQuestionIsEmpty()) {
