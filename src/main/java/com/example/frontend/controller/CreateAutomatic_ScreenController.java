@@ -217,6 +217,9 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     // method triggered when the "Create Test" button is clicked
     @FXML
     protected void onCreateAutTestBtnClick(ActionEvent event) {
+        // clear previous questions from manual-create
+        SharedData.getTestQuestions().clear();
+
         for (int i = 0; i < questionCount; i++) {
             // initialize variables to store selected category, difficulty, and points
             String selectedCategory = "";
