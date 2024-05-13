@@ -251,7 +251,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
         downButton.setOnAction(event -> {
             //if a question after exists switch this question with question after
-            if (index <= this.vbox_testQuestionsPreview.getChildren().size()) {
+            if (index + 1 < this.vbox_testQuestionsPreview.getChildren().size()) {
                 Question questionAfter = SharedData.getTestQuestions().get(index+1);
                 Question questiontmp = SharedData.getTestQuestions().get(index);
                 SharedData.getTestQuestions().set(index+1,questiontmp);
