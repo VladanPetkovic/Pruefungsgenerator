@@ -369,3 +369,11 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .filter_question_preview_vbox:pressed {
     -fx-background-color: #2f2f2f;
 }
+
+.remove-button{
+
+}
+
+.position-button {
+
+}

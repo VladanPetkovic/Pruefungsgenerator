@@ -11,9 +11,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import com.example.backend.app.Screen;
+import javafx.scene.shape.Polygon;
 
 public class CreateManual_ScreenController extends ScreenController {
     @FXML
@@ -83,11 +85,13 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 //create remove button
                 Button removeButton = getRemoveButton(questionVbox, question);
+                Button upButton = getUpButton(i-1);
+                Button downButton = getDownButton(i-1);
 
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
                 newQuestionHbox.setSpacing(50);
-                newQuestionHbox.getChildren().addAll(questionNumberLabel,removeButton);
+                newQuestionHbox.getChildren().addAll(questionNumberLabel ,upButton, downButton, removeButton);
 
                 // add labels to the VBox
                 questionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
@@ -162,12 +166,15 @@ public class CreateManual_ScreenController extends ScreenController {
                 }
             });
 
+            Button upButton = getUpButton(numberOfQuestions);
+            Button downButton = getDownButton(numberOfQuestions);
+
             //create remove button
             Button removeButton = getRemoveButton(questionVbox, question);
 
             HBox newQuestionHbox = new HBox();
             newQuestionHbox.setSpacing(50);
-            newQuestionHbox.getChildren().addAll(questionNumberLabel,removeButton);
+            newQuestionHbox.getChildren().addAll(questionNumberLabel,upButton,downButton,removeButton);
 
             // add labels to the VBox
             newQuestionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
@@ -202,4 +209,61 @@ public class CreateManual_ScreenController extends ScreenController {
         });
         return removeButton;
     }
+
+    Button getUpButton(int index) {
+        Button upButton = new Button("Up");
+        /* set icon
+        ImageView imageView = new ImageView();
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/arrowUp.png")));
+        imageView.setFitWidth(16);
+        imageView.setFitHeight(16);
+        upButton.setGraphic(imageView);
+        */
+        upButton.getStyleClass().add("position-button");
+
+        upButton.setOnAction(event -> {
+            //if a question before exists switch this question with question before
+            if (index > 0) {
+                Question questionBefore = SharedData.getTestQuestions().get(index-1);
+                Question questiontmp = SharedData.getTestQuestions().get(index);
+                SharedData.getTestQuestions().set(index-1,questiontmp);
+                SharedData.getTestQuestions().set(index,questionBefore);
+            }
+            //clear the test preview area
+            this.vbox_testQuestionsPreview.getChildren().clear();
+            //reload the preview and filtered questions area
+            showTestQuestionsInPreview();
+            showFilteredQuestions(SharedData.getFilteredQuestions());
+        });
+        return upButton;
+    }
+
+    Button getDownButton(int index) {
+        Button downButton = new Button("Down");
+        /* set icon
+        ImageView imageView = new ImageView();
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/arrowUp.png")));
+        imageView.setFitWidth(16);
+        imageView.setFitHeight(16);
+        upButton.setGraphic(imageView);
+        */
+        downButton.getStyleClass().add("position-button");
+
+        downButton.setOnAction(event -> {
+            //if a question after exists switch this question with question after
+            if (index <= this.vbox_testQuestionsPreview.getChildren().size()) {
+                Question questionAfter = SharedData.getTestQuestions().get(index+1);
+                Question questiontmp = SharedData.getTestQuestions().get(index);
+                SharedData.getTestQuestions().set(index+1,questiontmp);
+                SharedData.getTestQuestions().set(index,questionAfter);
+            }
+            //clear the test preview area
+            this.vbox_testQuestionsPreview.getChildren().clear();
+            //reload the preview and filtered questions area
+            showTestQuestionsInPreview();
+            showFilteredQuestions(SharedData.getFilteredQuestions());
+        });
+        return downButton;
+    }
+
 }
