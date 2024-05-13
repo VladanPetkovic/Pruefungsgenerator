@@ -36,15 +36,15 @@
                     <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                             <children>
-                        <Button mnemonicParsing="false" onAction="#onGoBackBtnClick" styleClass="btn_add_icon">
-                           <graphic>
-                                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="menu_btn">
+                                <Button mnemonicParsing="false" onAction="#onGoBackBtnClick" styleClass="btn_add_icon">
+                                   <graphic>
+                                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                           <image>
                                               <Image url="@../icons/go_back_white.png" />
                                           </image>
                                       </ImageView>
-                           </graphic>
-                        </Button>
+                                   </graphic>
+                                </Button>
                             </children>
                         </VBox>
                     </children>
@@ -134,7 +134,7 @@
                            <children>
                                <Button mnemonicParsing="false" onAction="#applyFormattingBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_grey" text="View PDF" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                                <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="Export PDF" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-                              <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="Export docx" />
+                               <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="Export docx" />
                            </children>
                            <VBox.margin>
                               <Insets top="30.0" />

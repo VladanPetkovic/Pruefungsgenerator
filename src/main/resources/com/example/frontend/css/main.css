@@ -1,25 +1,34 @@
+
+
+/*
+changes the cursor to a hand symbol when hovering over buttons and checkboxes
+ */
 Button, CheckBox {
     -fx-cursor: HAND;
 }
 
+/*
+changes the cursor to a closed hand symbol, when a slider is pressed
+ */
 Slider:pressed {
     -fx-cursor: CLOSED_HAND;
 }
+
+/*
+sets the cursor to an open hand symbol, when hovering over a slider
+ */
 Slider {
     -fx-cursor: OPEN_HAND;
 }
 
-.menu_btn {
-    -fx-background-color: #2f2f2f; /* dark grey background color */
-    -fx-color: #fff; /* White text color */
-    -fx-border-radius: 2%; /* Rounded corners for curled edges */
-    -fx-pref-height: 50px;
-    -fx-pref-width: 50px;
-    -fx-max-height: 50px;
-    -fx-max-width: 50px;
-    -fx-cursor: HAND;
-}
+/*
+This rule sets the background color to red, text color to white, font weight to bold, and applies rounded corners to the background and border.
+Additionally, it specifies padding, cursor as a hand symbol, a drop shadow effect, and a transition effect for smoother visual changes.
 
+Occurrences of red buttons in the project:
+    - manual test create: export button
+    - pdf preview: export pdf button & export docx button
+*/
 .btn_red {
     -fx-background-color: red;
     -fx-text-fill: #fff;
@@ -31,16 +40,29 @@ Slider {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+/*
+This rule changes the background color to a lighter shade of red and slightly scales up the button for visual feedback.
+*/
 .btn_red:hover {
     -fx-background-color: #ff6b6b;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/*
+This rule restores the background color to red and applies a darker drop shadow effect when the button is pressed.
+*/
 .btn_red:pressed {
     -fx-background-color: red;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+/*
+This rule sets the background color to a shade of grey, text color to white, and applies rounded corners to the background and border.
+Additionally, it specifies padding, cursor as a hand symbol, a drop shadow effect, and a transition effect for smoother visual changes.
+
+Occurrences of grey buttons in the project:
+    - pdf preview: view pdf/apply formatting button
+*/
 .btn_grey {
     -fx-background-color: #646464;
     -fx-text-fill: white;
@@ -51,16 +73,35 @@ Slider {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+/*
+This rule changes the background color to a darker shade of grey and slightly scales up the button for visual feedback.
+*/
 .btn_grey:hover {
     -fx-background-color: #2f2f2f;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/*
+This rule restores the background color to the original grey shade and applies a darker drop shadow effect when the button is pressed.
+*/
 .btn_grey:pressed {
     -fx-background-color: #646464;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+/*
+This rule sets the background color to a dark shade, text color to white, and applies specific width and height.
+It also sets minimum and maximum width, rounds the background and border corners, specifies padding, cursor as a hand symbol, a drop shadow effect, and a transition effect for smoother visual changes.
+
+Occurrences of dark buttons in the project:
+    - automatic test create: add question button & create test button
+    - question filter: apply filter button
+    - home: continue button
+    - pdf preview: choose directory button
+    - create question: add new answer button (MC question) & create question button
+    - edit question: add new answer button (MC question) & save changes button
+    - settings: export button & import button
+*/
 .btn_dark {
     -fx-background-color: #2f2f2f;
     -fx-text-fill: white;
@@ -75,26 +116,48 @@ Slider {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+/*
+This rule changes the background color to a slightly lighter shade and slightly scales up the button for visual feedback.
+*/
 .btn_dark:hover {
     -fx-background-color: #646464;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/*
+This rule restores the background color to the original dark shade and applies a darker drop shadow effect when the button is pressed.
+*/
 .btn_dark:pressed {
     -fx-background-color: #2f2f2f;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+/*
+This rule removes the background color, sets the cursor as a hand symbol, and applies a drop shadow effect.
+It also specifies a transition effect for smoother visual changes.
+
+Occurrences of btn_add_icon buttons in the project:
+    - pdf preview: go back button
+    - question filter: add category button & difficulty toggle button & points toggle button
+    - create question: add category button & add keyword button
+    - edit question: add keyword button
+*/
 .btn_add_icon {
     -fx-background-color: none;
     -fx-cursor: HAND;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+/*
+This rule slightly scales up the button for visual feedback.
+*/
 .btn_add_icon:hover {
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/*
+This rule rotates the button by 45 degrees and applies a darker drop shadow effect when the button is pressed.
+*/
 .btn_add_icon:pressed {
     -fx-rotate: 45;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
