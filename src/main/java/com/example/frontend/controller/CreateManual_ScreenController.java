@@ -74,14 +74,10 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 //final var for listener
                 final int qi = i-1;
-                //todo listener that changes when user
                 questionTextArea.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        // This code will be executed whenever the text in the TextArea changes
                         SharedData.getTestQuestions().get(qi).setQuestion(newValue);
-                        System.out.println("Text changed: " + newValue);
-                        // You can trigger any event or action here based on the text change
                     }
                 });
 
@@ -159,14 +155,10 @@ public class CreateManual_ScreenController extends ScreenController {
             questionTextArea.setWrapText(true);
             questionTextArea.setPrefRowCount(3);
 
-            //todo listener that changes when user
             questionTextArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    // This code will be executed whenever the text in the TextArea changes
                     SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue);
-                    System.out.println("Text changed: " + newValue);
-                    // You can trigger any event or action here based on the text change
                 }
             });
 
