@@ -4,11 +4,14 @@ import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.models.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import com.example.backend.app.Screen;
 
@@ -61,13 +64,41 @@ public class CreateManual_ScreenController extends ScreenController {
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
                 Label questionNumberLabel = new Label("Question "+ i +" (Erreichbare Punkte: "+ question.getPoints() + ")");
-                Label questionTextLabel = new Label(question.getQuestion());
 
-                // create remove button
+
+                // create textarea (= editable) for question text
+                TextArea questionTextArea = new TextArea(question.getQuestion());
+                questionTextArea.setWrapText(true);
+                questionTextArea.setPrefRowCount(3);
+
+
+                //final var for listener
+                final int qi = i-1;
+                //todo listener that changes when user
+                questionTextArea.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        // This code will be executed whenever the text in the TextArea changes
+                        SharedData.getTestQuestions().get(qi).setQuestion(newValue);
+                        System.out.println("Text changed: " + newValue);
+                        // You can trigger any event or action here based on the text change
+                    }
+                });
+
+                //create remove button
                 Button removeButton = getRemoveButton(questionVbox, question);
 
+                //save button not needed due to event listener
+                //Button saveButton = getSaveButton(i-1, questionTextArea, question);
+
+                //create hbox for questionlabel and remove button
+                HBox newQuestionHbox = new HBox();
+                newQuestionHbox.setSpacing(50);
+                newQuestionHbox.getChildren().addAll(questionNumberLabel,removeButton);
+
                 // add labels to the VBox
-                questionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
+                questionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
+
 
                 // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
@@ -124,13 +155,36 @@ public class CreateManual_ScreenController extends ScreenController {
             // Create a VBox to hold the question details.
             VBox newQuestionVbox = new VBox();
             Label questionNumberLabel = new Label("Question "+ (numberOfQuestions + 1) +" (Erreichbare Punkte: "+ question.getPoints() + ")");
-            Label questionTextLabel = new Label(question.getQuestion());
+
+
+            // create textarea (= editable) for question text
+            TextArea questionTextArea = new TextArea(question.getQuestion());
+            questionTextArea.setWrapText(true);
+            questionTextArea.setPrefRowCount(3);
+
+            //todo listener that changes when user
+            questionTextArea.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    // This code will be executed whenever the text in the TextArea changes
+                    SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue);
+                    System.out.println("Text changed: " + newValue);
+                    // You can trigger any event or action here based on the text change
+                }
+            });
 
             //create remove button
             Button removeButton = getRemoveButton(questionVbox, question);
 
+            //not needed due to event listener
+            //Button saveButton = getSaveButton(numberOfQuestions, questionTextArea, question);
+
+            HBox newQuestionHbox = new HBox();
+            newQuestionHbox.setSpacing(50);
+            newQuestionHbox.getChildren().addAll(questionNumberLabel,removeButton);
+
             // add labels to the VBox
-            newQuestionVbox.getChildren().addAll(questionNumberLabel,questionTextLabel,removeButton);
+            newQuestionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
 
             if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
@@ -143,6 +197,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
     private Button getRemoveButton(VBox questionVbox, Question question) {
         Button removeButton = new Button("X");
+        removeButton.getStyleClass().add("remove-button");
         removeButton.setOnAction(eventRemove -> {
             // remove the question from the vbox_testQuestionsPreview
             vbox_testQuestionsPreview.getChildren().remove(questionVbox);
@@ -161,4 +216,24 @@ public class CreateManual_ScreenController extends ScreenController {
         });
         return removeButton;
     }
+
+    // not needed due to eventlistener
+    /*
+    private Button getSaveButton(int index, TextArea changedText, Question question) {
+        Button saveButton = new Button("Save");
+        saveButton.getStyleClass().add("save-button");
+        //question.setQuestion(changedText.getText());
+        saveButton.setOnAction(eventRemove -> {
+            SharedData.getTestQuestions().get(index).setQuestion(changedText.getText());
+            System.out.println("Questiontext saveButtonClicked: " + SharedData.getTestQuestions().get(index).getQuestion());
+            System.out.println("Index saveButtonClicked: " + index);
+            System.out.println("questionTextTextarea saveButtonClicked: " + changedText.getText());
+        });
+        System.out.println("Questiontext from saveButtonCreate: " + question.getQuestion());
+        System.out.println("Index from saveButtonCreate: " + index);
+        System.out.println("questionTextTextarea from saveButtonCreate: " + changedText.getText());
+        return saveButton;
+    }
+    */
+
 }
