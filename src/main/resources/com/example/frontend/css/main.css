@@ -377,3 +377,8 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .position-button {
 
 }
+
+/* textArea Context Menu (right-klick) */
+.text-area-context-menu .context-menu {
+    -fx-background-color: white;
+}

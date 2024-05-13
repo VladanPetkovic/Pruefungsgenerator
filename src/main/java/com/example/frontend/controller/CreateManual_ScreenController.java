@@ -158,6 +158,7 @@ public class CreateManual_ScreenController extends ScreenController {
             TextArea questionTextArea = new TextArea(question.getQuestion());
             questionTextArea.setWrapText(true);
             questionTextArea.setPrefRowCount(3);
+            questionTextArea.getStyleClass().add("text-area-context-menu");
 
             questionTextArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
