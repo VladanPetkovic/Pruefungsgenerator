@@ -88,9 +88,6 @@ public class CreateManual_ScreenController extends ScreenController {
                 //create remove button
                 Button removeButton = getRemoveButton(questionVbox, question);
 
-                //save button not needed due to event listener
-                //Button saveButton = getSaveButton(i-1, questionTextArea, question);
-
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
                 newQuestionHbox.setSpacing(50);
@@ -176,9 +173,6 @@ public class CreateManual_ScreenController extends ScreenController {
             //create remove button
             Button removeButton = getRemoveButton(questionVbox, question);
 
-            //not needed due to event listener
-            //Button saveButton = getSaveButton(numberOfQuestions, questionTextArea, question);
-
             HBox newQuestionHbox = new HBox();
             newQuestionHbox.setSpacing(50);
             newQuestionHbox.getChildren().addAll(questionNumberLabel,removeButton);
@@ -216,24 +210,4 @@ public class CreateManual_ScreenController extends ScreenController {
         });
         return removeButton;
     }
-
-    // not needed due to eventlistener
-    /*
-    private Button getSaveButton(int index, TextArea changedText, Question question) {
-        Button saveButton = new Button("Save");
-        saveButton.getStyleClass().add("save-button");
-        //question.setQuestion(changedText.getText());
-        saveButton.setOnAction(eventRemove -> {
-            SharedData.getTestQuestions().get(index).setQuestion(changedText.getText());
-            System.out.println("Questiontext saveButtonClicked: " + SharedData.getTestQuestions().get(index).getQuestion());
-            System.out.println("Index saveButtonClicked: " + index);
-            System.out.println("questionTextTextarea saveButtonClicked: " + changedText.getText());
-        });
-        System.out.println("Questiontext from saveButtonCreate: " + question.getQuestion());
-        System.out.println("Index from saveButtonCreate: " + index);
-        System.out.println("questionTextTextarea from saveButtonCreate: " + changedText.getText());
-        return saveButton;
-    }
-    */
-
 }
