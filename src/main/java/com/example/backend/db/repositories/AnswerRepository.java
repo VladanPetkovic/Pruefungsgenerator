@@ -31,6 +31,10 @@ public class AnswerRepository implements Repository<Answer> {
         return getAnswerDAO().read(answer);
     }
 
+    public int getMaxAnswerId() {
+        return getAnswerDAO().getMaxAnswerId();
+    }
+
     @Override
     public void add(Answer answer) {
         getAnswerDAO().create(answer);
@@ -39,6 +43,10 @@ public class AnswerRepository implements Repository<Answer> {
     public void add(ArrayList<Answer> answers, int question_id) {
         getAnswerDAO().create(answers);
         getAnswerDAO().addHasAQConnection(answers, question_id);
+    }
+
+    public void removeConnection(Answer answer, int question_id) {
+        getAnswerDAO().removeHasAQConnection(answer.getId(), question_id);
     }
 
     @Override

@@ -20,19 +20,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.util.*;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * the base class for all screen controllers
@@ -330,25 +327,6 @@ public abstract class ScreenController {
         return answerArrayList;
     }
 
-    protected void addMultipleChoiceAnswerBtnClicked(ArrayList<TextArea> answers, VBox multipleChoiceAnswerVBox) {
-        if (answers.size() <= 10) {
-            // Create an HBox to contain each answer and its removal button
-            HBox hBoxAnswerRemove = new HBox();
-            TextArea textAreaAnswer = new TextArea();
-            answers.add(textAreaAnswer);
-            Button buttonRemove = createButton("X");
-            // Set action event for the removal button
-            buttonRemove.setOnAction(e -> {
-                answers.remove(textAreaAnswer);
-                multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
-            });
-            // Add the answer TextArea and its removal button to the HBox
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox containing the answer and its removal button to the multiple choice VBox
-            multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
-        }
-    }
-
     /**
      * Creates a JavaFX Button with the given text and disables focus traversal.
      * @param text The text to display on the button.
@@ -410,6 +388,31 @@ public abstract class ScreenController {
         });
 
         return button;
+    }
+
+    /**
+     * Checks if any of the answers provided for the question are empty. If multiple choice is selected,
+     * it iterates through the list of answers and returns true if it finds any empty answer. If multiple
+     * choice is not selected, it always returns false.
+     *
+     * @return true if any answer is empty (when multiple choice is selected), false otherwise.
+     */
+    protected boolean checkIfEmptyAnswers(MenuButton questionTypeMenuButton, ArrayList<TextArea> answers) {
+        // Check if multiple choice is selected
+        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+            // Iterate through the list of answers
+            for (TextArea t : answers) {
+                // Check if the current answer is empty
+                if (t.getText() == null) {
+                    return true;
+                }
+                if (t.getText().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        // Return false if no empty answers are found or if multiple choice is not selected
+        return false;
     }
 
     @FXML
