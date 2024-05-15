@@ -4,10 +4,8 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.components.CustomDoubleSpinner;
-import com.example.backend.app.Screen;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -47,11 +45,10 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private Button addKeywordBtn;
     @FXML
     private TextField keywordTextField;
-    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     @FXML
     private HBox keywordsHBox;
+    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private ArrayList<TextArea> answers = new ArrayList<>();
-    private ArrayList<Keyword> keywords = new ArrayList<>();
 
     /**
      * Initializes the controller after its root element has been completely processed.
@@ -65,7 +62,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
 
         initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
-        keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         difficulty.setValue(5);
@@ -110,7 +107,22 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     public void onAddNewAnswerBtnClick(ActionEvent actionEvent) {
-        addMultipleChoiceAnswerBtnClicked(answers, multipleChoiceAnswerVBox);
+        if (answers.size() <= 10) {
+            // Create an HBox to contain each answer and its removal button
+            HBox hBoxAnswerRemove = new HBox();
+            TextArea textAreaAnswer = new TextArea();
+            answers.add(textAreaAnswer);
+            Button buttonRemove = createButton("X");
+            // Set action event for the removal button
+            buttonRemove.setOnAction(e -> {
+                answers.remove(textAreaAnswer);
+                multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
+            });
+            // Add the answer TextArea and its removal button to the HBox
+            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
+            // Add the HBox containing the answer and its removal button to the multiple choice VBox
+            multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
+        }
     }
 
     private void initMultipleChoiceVBox() {
@@ -141,7 +153,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         String s = checkIfFilled();
         // If any field is missing, display an error alert and return
         if (s != null) {
-            SharedData.setOperation(Message.ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED);
+            SharedData.setOperation(s, true);
             return;
         }
 
@@ -176,29 +188,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     /**
-     * Checks if any of the answers provided for the question are empty. If multiple choice is selected,
-     * it iterates through the list of answers and returns true if it finds any empty answer. If multiple
-     * choice is not selected, it always returns false.
-     *
-     * @return true if any answer is empty (when multiple choice is selected), false otherwise.
-     */
-    private boolean checkIfEmptyAnswers() {
-        // Check if multiple choice is selected
-        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
-            // Iterate through the list of answers
-            for (TextArea t : answers) {
-                // Check if the current answer is empty
-                if (t.getText().isEmpty()) {
-                    // Return true if an empty answer is found
-                    return true;
-                }
-            }
-        }
-        // Return false if no empty answers are found or if multiple choice is not selected
-        return false;
-    }
-
-    /**
      * Checks if the question text area is empty.
      * @return true if the question text area is empty, false otherwise.
      */
@@ -217,8 +206,11 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
             return "Question-Type needs to be selected.";
         }
-        if (checkIfEmptyAnswers()) {
-            return "You selected multiple choice but at least one answer is not filled out.";
+        if (checkIfEmptyAnswers(questionTypeMenuButton, answers)) {
+            return "You selected multiple choice, but at least one answer is not filled out.";
+        }
+        if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+            return "Enter at least two answers, when selecting multiple choice.";
         }
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";

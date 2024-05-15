@@ -4,6 +4,7 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
+import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -19,21 +20,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * the base class for all screen controllers
@@ -106,7 +102,7 @@ public abstract class ScreenController {
      */
     public void on_toggle_btn_click(Slider slider, ImageView toggle_image) {
         // activate the difficulty slider
-        if (slider.isDisabled()) {
+        if (slider.isDisabled()) {          // TODO: refactor duplicate code fragments
             slider.setDisable(false);
             File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
             Image toggle_on_image = new Image(file.toURI().toString());
@@ -114,6 +110,21 @@ public abstract class ScreenController {
         } else {
             // deactivate
             slider.setDisable(true);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
+            Image toggle_off_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_off_image);
+        }
+    }
+    public void on_toggle_btn_click(CustomDoubleSpinner spinner, ImageView toggle_image) {
+        // activate the spinner
+        if (spinner.isDisabled()) {
+            spinner.setDisable(false);
+            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
+            Image toggle_on_image = new Image(file.toURI().toString());
+            toggle_image.setImage(toggle_on_image);
+        } else {
+            // deactivate
+            spinner.setDisable(true);
             File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
             Image toggle_off_image = new Image(file.toURI().toString());
             toggle_image.setImage(toggle_off_image);
@@ -280,12 +291,13 @@ public abstract class ScreenController {
     }
 
     /**
-     * Check, if the testQuestions-Array contains a question.
+     * Check, if questions contains the question_id
      * @param question_id ID of the question, that is going to be checked.
+     * @param questions, the array of questions to be checked
      * @return true, if testQuestions contains this question with id = question_id, return false otherwise.
      */
-    protected boolean containsQuestionWithId(int question_id) {
-        for (Question question : SharedData.getTestQuestions()) {
+    protected boolean containsQuestionWithId(int question_id, List<Question> questions) {
+        for (Question question : questions) {
             if (question.getId() == question_id) {
                 return true;
             }
@@ -313,25 +325,6 @@ public abstract class ScreenController {
             answerArrayList.add(new Answer(simple_answer.getText()));
         }
         return answerArrayList;
-    }
-
-    protected void addMultipleChoiceAnswerBtnClicked(ArrayList<TextArea> answers, VBox multipleChoiceAnswerVBox) {
-        if (answers.size() <= 10) {
-            // Create an HBox to contain each answer and its removal button
-            HBox hBoxAnswerRemove = new HBox();
-            TextArea textAreaAnswer = new TextArea();
-            answers.add(textAreaAnswer);
-            Button buttonRemove = createButton("X");
-            // Set action event for the removal button
-            buttonRemove.setOnAction(e -> {
-                answers.remove(textAreaAnswer);
-                multipleChoiceAnswerVBox.getChildren().remove(hBoxAnswerRemove);
-            });
-            // Add the answer TextArea and its removal button to the HBox
-            hBoxAnswerRemove.getChildren().addAll(textAreaAnswer, buttonRemove);
-            // Add the HBox containing the answer and its removal button to the multiple choice VBox
-            multipleChoiceAnswerVBox.getChildren().add(hBoxAnswerRemove);
-        }
     }
 
     /**
@@ -395,6 +388,31 @@ public abstract class ScreenController {
         });
 
         return button;
+    }
+
+    /**
+     * Checks if any of the answers provided for the question are empty. If multiple choice is selected,
+     * it iterates through the list of answers and returns true if it finds any empty answer. If multiple
+     * choice is not selected, it always returns false.
+     *
+     * @return true if any answer is empty (when multiple choice is selected), false otherwise.
+     */
+    protected boolean checkIfEmptyAnswers(MenuButton questionTypeMenuButton, ArrayList<TextArea> answers) {
+        // Check if multiple choice is selected
+        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+            // Iterate through the list of answers
+            for (TextArea t : answers) {
+                // Check if the current answer is empty
+                if (t.getText() == null) {
+                    return true;
+                }
+                if (t.getText().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        // Return false if no empty answers are found or if multiple choice is not selected
+        return false;
     }
 
     @FXML

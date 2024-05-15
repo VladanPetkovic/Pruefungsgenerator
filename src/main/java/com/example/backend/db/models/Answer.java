@@ -20,6 +20,11 @@ public class Answer {
         setAnswer(answer);
     }
 
+    public Answer(Answer other) {
+        setId(other.getId());
+        setAnswer(other.getAnswer());
+    }
+
     /**
      * This method creates answers and their connection for a new question.
      * If same answers exists, only the connection is made.
@@ -32,7 +37,5 @@ public class Answer {
 
         // add one or multiple answers and the connection in the join table (has_aq)
         SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(newQuestion.getAnswers(), newQuestionId);
-
-        // TODO: Eingabefeld für answers erstellen in question-create
     }
 }

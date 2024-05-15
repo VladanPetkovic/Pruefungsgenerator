@@ -9,10 +9,7 @@ import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
 import lombok.Setter;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class AnswerDAO implements DAO<Answer> {
@@ -60,7 +57,7 @@ public class AnswerDAO implements DAO<Answer> {
             preparedStatement.executeUpdate();
             setAnswerCache(null);
 
-            SharedData.setOperation(Message.CREATE_ANSWERS_SUCCESS_MESSAGE);
+            // SharedData.setOperation(Message.CREATE_ANSWERS_SUCCESS_MESSAGE); // commented out to get the success-message for "question-created"
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.CREATE_ANSWERS_ERROR_MESSAGE);
@@ -191,6 +188,26 @@ public class AnswerDAO implements DAO<Answer> {
         return returnAnswer;
     }
 
+    public int getMaxAnswerId() {
+        this.answerCache.clear();
+
+        String selectStmt = "SELECT id FROM answers ORDER BY id DESC LIMIT 1;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectStmt)) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
     @Override
     public void update(Answer answer) {
         String updateStmt = "UPDATE answers SET answer = ? WHERE id = ?";
@@ -229,6 +246,21 @@ public class AnswerDAO implements DAO<Answer> {
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.DELETE_ANSWER_ERROR_MESSAGE);
+        }
+    }
+
+    public void removeHasAQConnection(int answer_id, int question_id) {
+        String deleteStmt = "DELETE FROM has_aq WHERE fk_answer_id = ? AND fk_question_id = ?";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            preparedStatement.setInt(1, answer_id);
+            preparedStatement.setInt(2, question_id);
+            preparedStatement.executeUpdate();
+            setAnswerCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
