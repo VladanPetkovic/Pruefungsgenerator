@@ -96,39 +96,49 @@ public abstract class ScreenController {
 
 
     /**
-     * This function activates/deactivates a slider and changes the image accordingly.
-     * @param slider Either a difficulty or points slider (or some other)
-     * @param toggle_image The image, we want to change (toggle off or toggle on)
+     * This function activates/deactivates/sets to min/sets to max a slider/spinner and changes the image accordingly.
+     * @param sliderOrSpinner Either a difficulty or points slider (or some other)
+     * @param toggleImage The image, we want to change (toggle off or toggle on)
+     * @param status The status of the sliderOrSpinner object.
      */
-    public void on_toggle_btn_click(Slider slider, ImageView toggle_image) {
-        // activate the difficulty slider
-        if (slider.isDisabled()) {          // TODO: refactor duplicate code fragments
-            slider.setDisable(false);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
-            Image toggle_on_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_on_image);
-        } else {
-            // deactivate
-            slider.setDisable(true);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
-            Image toggle_off_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_off_image);
+    public void on_toggle_btn_click(Object sliderOrSpinner, ImageView toggleImage, int status) {
+        String imagePath = "src/main/resources/com/example/frontend/icons/";
+        Slider slider = null;
+        CustomDoubleSpinner spinner = null;
+        if (sliderOrSpinner instanceof Slider) {
+            slider = (Slider) sliderOrSpinner;
+        } else if (sliderOrSpinner instanceof CustomDoubleSpinner) {
+            spinner = (CustomDoubleSpinner) sliderOrSpinner;
         }
-    }
-    public void on_toggle_btn_click(CustomDoubleSpinner spinner, ImageView toggle_image) {
-        // activate the spinner
-        if (spinner.isDisabled()) {
-            spinner.setDisable(false);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
-            Image toggle_on_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_on_image);
-        } else {
-            // deactivate
-            spinner.setDisable(true);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
-            Image toggle_off_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_off_image);
+
+        switch (status) {
+            case 0: // currently disabled --> enable
+                if (slider != null) {
+                    slider.setDisable(false);
+                } else if (spinner != null) {
+                    spinner.setDisable(false);
+                }
+                imagePath += "toggle_on.png";
+                break;
+            case 1: // currently enabled --> min
+                imagePath += "toggle_on_min.png";
+                break;
+            case 2: // currently min --> max
+                imagePath += "toggle_on_max.png";
+                break;
+            default: // current max --> disable
+                if (slider != null) {
+                    slider.setDisable(true);
+                } else if (spinner != null) {
+                    spinner.setDisable(true);
+                }
+                imagePath += "toggle_off.png";
+                break;
         }
+
+        File file = new File(imagePath);
+        Image toggleImageFile = new Image(file.toURI().toString());
+        toggleImage.setImage(toggleImageFile);
     }
 
     /**

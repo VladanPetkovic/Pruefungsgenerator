@@ -150,7 +150,7 @@ public class QuestionDAO implements DAO<Question> {
      * @param course        The course for which questions are to be retrieved.
      * @return ArrayList of questions based on the search options and course.
      */
-    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course) {
+    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course, int pointsStatus, int difficultyStatus) {
         // deleting old questions, if they are existing in this cache
         this.questionCache.clear();
 
@@ -174,7 +174,7 @@ public class QuestionDAO implements DAO<Question> {
                 "WHERE co.id = ?");
 
         // init selectSTMT and listForPreparedStmt
-        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getId());
+        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getId(), pointsStatus, difficultyStatus);
 
         Logger.log(getClass().getName(), String.valueOf(selectQuestionsStmt), LogLevel.DEBUG);
 
@@ -220,7 +220,7 @@ public class QuestionDAO implements DAO<Question> {
      * @param listForPreparedStmt List to hold values for the prepared statement.
      * @param course_id           The ID of the course.
      */
-    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id) {
+    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id, int pointsStatus, int difficultyStatus) {
         int countKeywords = 0;
         int countImages = 0;
 
@@ -255,7 +255,13 @@ public class QuestionDAO implements DAO<Question> {
             }
             else if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
                 // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
-                stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                if (Objects.equals(searchObject.getColumn_name(), "points")) {
+                    prepareQueryMinMax(stmt, searchObject, pointsStatus);
+                } else if (Objects.equals(searchObject.getColumn_name(), "difficulty")) {
+                    prepareQueryMinMax(stmt, searchObject, difficultyStatus);
+                } else {
+                    stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                }
                 listForPreparedStmt.add(searchObject.getValueOfObject());
             }
         }
@@ -263,6 +269,17 @@ public class QuestionDAO implements DAO<Question> {
         // replace last ' AND' to ';'
         stmt.delete(stmt.length() - 4, stmt.length());
         stmt.append(';');
+    }
+
+    // Helperfunction for getting min/max of points/difficulty
+    public void prepareQueryMinMax(StringBuilder stmt, SearchObject<?> searchObject, int status) {
+        if (status == 1) {          // get 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+        } else if (status == 2) {   // get min 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" >= ? AND");
+        } else if (status == 3) {   // get max 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" <= ? AND");
+        }
     }
 
     /**
@@ -345,8 +362,6 @@ public class QuestionDAO implements DAO<Question> {
      */
     @Override
     public void update(Question question) {
-
-        // TODO: update answers
         String updateStmt =
                 "UPDATE questions " +
                 "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
