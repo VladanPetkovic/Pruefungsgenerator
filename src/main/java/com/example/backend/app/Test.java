@@ -1,9 +1,9 @@
 package com.example.backend.app;
 
+import com.example.backend.db.models.Question;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 
 

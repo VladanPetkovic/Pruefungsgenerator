@@ -29,14 +29,14 @@
         <children>
 
         <!-- Title label in the first row -->
-        <Label fx:id="titleLabel" alignment="CENTER" prefHeight="59.0" prefWidth="922.0" styleClass="homeScreen_label" textFill="white" GridPane.rowIndex="0">
+        <Label fx:id="titleLabel" alignment="CENTER" prefHeight="59.0" prefWidth="922.0" styleClass="homeScreen_label" textFill="white" GridPane.halignment="CENTER" GridPane.rowIndex="0">
             <font>
                 <Font size="35.0" />
             </font>
         </Label>
 
         <!-- Status label in the second row -->
-        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.rowIndex="1" />
+        <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
         </children>
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />

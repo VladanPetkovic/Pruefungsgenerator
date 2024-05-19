@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
@@ -24,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -425,6 +428,36 @@ public abstract class ScreenController {
         return false;
     }
 
+    //
+    // END REGION QUESTION-CREATE AND QUESTION-EDIT
+    //
+
+
+
+    //
+    // START REGION EXPORT FILE
+    //
+    /**
+     * This function opens a new Dialog to get the destination folder for saving the export-file.
+     * If a folder was chosen previously, then it will set the previous choice as default.
+     * @param label_selectedDirectory Label, which shows the selected directory.
+     */
+    protected void chooseDirectory(Label label_selectedDirectory) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select Folder to Save File");
+        if (!label_selectedDirectory.getText().equals("\"\"")) {
+            chooser.setInitialDirectory(new File(label_selectedDirectory.getText()));
+        }
+        File directory = chooser.showDialog(MainApp.stage);
+        if (directory != null) {
+            label_selectedDirectory.setText(directory.toString());
+            Logger.log(getClass().getName(), label_selectedDirectory.getText(), LogLevel.INFO);
+        }
+    }
+    //
+    // END REGION EXPORT FILE
+    //
+
     @FXML
     protected void onButtonPressed(MouseEvent event) {
         Node source = (Node) event.getSource();
@@ -539,9 +572,6 @@ public abstract class ScreenController {
         // Remove ripple effect
         menuButton.setEffect(null);
     }
-    //
-    // END REGION QUESTION-CREATE AND QUESTION-EDIT
-    //
 
 
     // currently not needed --> maybe for "deleting all questions",...
