@@ -150,6 +150,10 @@ public abstract class ScreenController {
      * @param addKeywordBtn When passed null, then we cannot add keywords
      */
     protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords, Button addKeywordBtn) {
+        if (keywords.isEmpty()) {
+            return;
+        }
+
         ArrayList<String> items = new ArrayList<>();
         for (Keyword k : keywords) {
             if (!items.contains(k.getKeyword())) {
@@ -175,6 +179,10 @@ public abstract class ScreenController {
      * And displays an add-btn, when the inputted text is changed AND not in the db
      */
     protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories, Button add_category_btn) {
+        if (categories.isEmpty()) {
+            return;
+        }
+
         // in java everything is passed by reference, so changes in items make changes in SharedData
         ArrayList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
@@ -215,7 +223,7 @@ public abstract class ScreenController {
         ObservableList<String> items = FXCollections.observableArrayList();
         String course_name = SharedData.getSelectedCourse().getName();
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10 && i < questions.size(); i++) {
             items.add(questions.get(i).getQuestion());
         }
         TextFields.bindAutoCompletion(questionTextField, items);

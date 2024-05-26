@@ -208,7 +208,13 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-alignment: center;
     -fx-text-fill: white;
     -fx-padding: 10px;
-    -fx-font-size: large;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+.label_white_bold {
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 .option_label {

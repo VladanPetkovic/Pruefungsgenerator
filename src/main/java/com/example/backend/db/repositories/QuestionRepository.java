@@ -23,6 +23,16 @@ public class QuestionRepository implements Repository<Question> {
         setQuestionDAO(questionDAO);
     }
 
+    public int getCountOfAllQuestions() {
+        return getQuestionDAO().readQuestionCount();
+    }
+
+    public int getCountOfAllQuestions(StudyProgram studyProgram) {
+        return getQuestionDAO().readQuestionCount(studyProgram.getId());
+    }
+    public int getCountOfAllQuestions(Course course) {
+        return getQuestionDAO().readQuestionCount(course);
+    }
     @Override
     public ArrayList<Question> getAll() {
         return getQuestionDAO().readAll();
@@ -33,7 +43,16 @@ public class QuestionRepository implements Repository<Question> {
         return getQuestionDAO().readAll(category);
     }
 
-    // getting all questions for a dynamic search
+    public ArrayList<Question> getAll(Course course, int minQuestionId) {
+        return getQuestionDAO().readAll(course, minQuestionId);
+    }
+
+    /**
+     * getting all questions for a dynamic search
+     * @param question_searchOptions A question, that has all search-values.
+     * @param courseName The course-name we are searching the questions for.
+     * @return Return an ArrayList of questions, that match the given conditions.
+     */
     public ArrayList<Question> getAll(Question question_searchOptions, String courseName) {
         // adding default values
         // status = 1 means: slider/spinner is activated and not on min or max

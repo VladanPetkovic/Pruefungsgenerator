@@ -26,8 +26,6 @@ public class Settings_ScreenController extends ScreenController {
     @FXML
     public MenuButton chooseCourseMenuButton;
     @FXML
-    public TextField fileNameTextField;
-    @FXML
     public Label label_selectedDirectory;
     @FXML
     Button settingsImportBtn;
@@ -98,8 +96,17 @@ public class Settings_ScreenController extends ScreenController {
             return;
         }
 
-        ExportCSV exportCSV = new ExportCSV(this.fileNameTextField.getText(), this.label_selectedDirectory.getText());
-        if (exportCSV.export()) {
+        ExportCSV exportCSV = new ExportCSV(this.label_selectedDirectory.getText());
+        int exportType = 0;     // all questions
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of study-program")) {
+            exportType = 1;     // only for studyProgram
+            exportCSV.initStudyProgram(chooseStudyProgramMenuBtn.getText());
+        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of course")) {
+            exportType = 2;     // only for course
+            exportCSV.initCourse(chooseCourseMenuButton.getText());
+        }
+
+        if (exportCSV.export(exportType)) {
             SharedData.setOperation(Message.SUCCESS_MESSAGE_QUESTIONS_EXPORTED);
         } else {
             SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
@@ -123,10 +130,6 @@ public class Settings_ScreenController extends ScreenController {
                 SharedData.setOperation(Message.ERROR_MESSAGE_INPUT_ALL_FIELDS);
                 return false;
             }
-        }
-        if (!fileNameTextField.getText().matches("^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)?$")) {
-            SharedData.setOperation(Message.ERROR_MESSAGE_INVALID_FILENAME);
-            return false;
         }
         if (this.label_selectedDirectory.getText().equals("\"\"")) {
             SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
