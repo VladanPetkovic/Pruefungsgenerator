@@ -111,6 +111,11 @@
                                           <TextArea fx:id="chooseQuestion" minHeight="200.0" prefHeight="200.0" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>
+                                    <VBox fx:id="picturePickerPlaceholder">
+                                       <children>
+
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">

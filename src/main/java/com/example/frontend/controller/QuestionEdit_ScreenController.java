@@ -3,18 +3,21 @@ package com.example.frontend.controller;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -64,6 +67,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private Category selectedCategory = null;
 
+    @FXML
+    private VBox picturePickerPlaceholder;
+    private PicturePickerController picturePickerController;
+
     /**
      * Initializes the Question Edit screen.
      *
@@ -101,6 +108,15 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         choosePoints.getStyleClass().add("automatic_create_spinner");
 
         customDoubleSpinnerPlaceholder.getChildren().add(choosePoints);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
+            VBox picturePicker = loader.load();
+            picturePickerController = loader.getController();
+            picturePickerPlaceholder.getChildren().add(picturePicker);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -174,6 +190,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                     keywordsHBox.getChildren().add(b);
                 }
             }
+
+            picturePickerController.addPreExistingImages(clickedQuestion.getImages());
 
             initTimeStamps(clickedQuestion);
         });
@@ -428,7 +446,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 new Timestamp(System.currentTimeMillis()),  // updated_at
                 getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
                 selectedKeywords,
-                new ArrayList<>()                           // images // TODO: implement this here
+                picturePickerController.getImages()                          // images // TODO: implement this here
         );
     }
 

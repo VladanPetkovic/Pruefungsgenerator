@@ -81,7 +81,8 @@ public class Question {
         int new_question_id = SQLiteDatabaseConnection.questionRepository.getMaxQuestionId();
         // create one or multiple answers
         Answer.createAnswers(question, new_question_id);
-
+        // create one or multiple images
+        Image.createImages(question,new_question_id);
         return new_question_id;
     }
 

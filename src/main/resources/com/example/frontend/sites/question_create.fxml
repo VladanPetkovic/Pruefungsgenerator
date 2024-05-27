@@ -105,6 +105,11 @@
                                     <TextArea fx:id="question" prefWidth="500.0" promptText="Type..." />
                                  </children>
                               </VBox>
+                              <VBox fx:id="picturePickerPlaceholder">
+                                 <children>
+
+                                 </children>
+                              </VBox>
                            </children>
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">

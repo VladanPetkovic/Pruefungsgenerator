@@ -3,14 +3,18 @@ package com.example.frontend.controller;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -50,6 +54,10 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private ArrayList<TextArea> answers = new ArrayList<>();
 
+    @FXML
+    private VBox picturePickerPlaceholder;
+    private PicturePickerController picturePickerController;
+
     /**
      * Initializes the controller after its root element has been completely processed.
      * This method is called once all FXML elements have been processed, but before the elements have been
@@ -81,6 +89,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
         initializeMenuButton(questionTypeMenuButton, false);
         initQuestionTypeListener();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
+            VBox picturePicker = loader.load();
+            picturePickerController = loader.getController();
+            picturePickerPlaceholder.getChildren().add(picturePicker);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -160,6 +177,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
         Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
 
+
+
         // Create a new Question object with the provided details
         Question q = new Question(
                 category,
@@ -172,7 +191,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 null,               // this can only be changed when editing a question
                 getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
                 selectedKeywords,
-                new ArrayList<>()           // TODO: placeholder for photos
+                picturePickerController.getImages()         // TODO: placeholder for photos
         );
 
         int question_id = Question.createNewQuestionInDatabase(q);
