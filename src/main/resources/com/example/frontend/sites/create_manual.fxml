@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.CreateManual_ScreenController">
    <children>
-      <fx:include source="../components/title_banner.fxml"/>
+      <fx:include source="../components/title_banner.fxml" />
       <HBox prefHeight="530.0" prefWidth="1120.0" VBox.vgrow="ALWAYS">
          <children>
             <fx:include source="../components/navbar.fxml" />
@@ -41,7 +37,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" styleClass="btn_red" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" />
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="Export Test" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
                      </children>
                   </GridPane>
                   <ScrollPane fx:id="scrollPane_testQuestionsPreview" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
