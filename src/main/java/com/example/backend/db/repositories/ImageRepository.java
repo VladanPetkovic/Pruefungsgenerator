@@ -37,13 +37,9 @@ public class ImageRepository implements Repository<Image> {
         return getImageDAO().read(imageName);
     }
 
-    public void add(ArrayList<Image> images, int question_id){
-        for(Image image : images){
-            add(image);
-        }
-        for (Image image : getAll(question_id)){
-            getImageDAO().addIQConnection(image.getId(),question_id);
-        }
+    public void add(ArrayList<Image> images, int question_id) {
+        getImageDAO().create(images);
+        getImageDAO().addHasIQConnection(images, question_id);
     }
 
     @Override

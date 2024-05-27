@@ -45,6 +45,7 @@ public enum Message {
 
     // error messages for the image DAO:
     CREATE_IMAGE_ERROR_MESSAGE("Failed to insert image into the database.", true),
+    CREATE_IMAGES_ERROR_MESSAGE("Failed to insert images into the database.", true),
     CREATE_IMAGE_SUCCESS_MESSAGE("Image created successfully.", false),
     UPDATE_IMAGE_ERROR_MESSAGE("Failed to update image in the database.", true),
     UPDATE_IMAGE_SUCCESS_MESSAGE("Image updated successfully.", false),
