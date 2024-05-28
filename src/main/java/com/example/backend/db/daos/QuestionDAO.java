@@ -606,13 +606,16 @@ public class QuestionDAO implements DAO<Question> {
 
         for (int i = 1; i <= columnCount; i++) {
             if ("image_id".equalsIgnoreCase(metaData.getColumnName(i))) {
-                Image newImage = new Image(
-                        resultSet.getInt("image_id"),
-                        resultSet.getBytes("image"),
-                        resultSet.getString("image_name"),
-                        resultSet.getInt("position"),
-                        resultSet.getString("comment"));
-                images.add(newImage);
+                // image not null
+                if (resultSet.getInt("image_id") != 0) {
+                    Image newImage = new Image(
+                            resultSet.getInt("image_id"),
+                            resultSet.getBytes("image"),
+                            resultSet.getString("image_name"),
+                            resultSet.getInt("position"),
+                            resultSet.getString("comment"));
+                    images.add(newImage);
+                }
             }
         }
 

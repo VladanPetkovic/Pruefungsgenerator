@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minWidth="390.0" prefHeight="407.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.QuestionFilter_ScreenController">
+<VBox minWidth="390.0" prefHeight="407.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.components.QuestionFilter_ScreenController">
     <children>
         <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" text="Selected Course" textFill="WHITE" />
         <Label styleClass="label_white_bold" text="Set filters for a new question:" />

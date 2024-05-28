@@ -1,7 +1,7 @@
-package com.example.frontend.controller;
+package com.example.frontend.components;
 
 import com.example.backend.app.SharedData;
-import com.example.frontend.MainApp;
+import com.example.frontend.controller.ScreenController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;

@@ -6,6 +6,7 @@ import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
+import com.example.frontend.components.PicturePickerController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -179,7 +180,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
 
 
-
         // Create a new Question object with the provided details
         Question q = new Question(
                 category,
@@ -209,6 +209,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     /**
      * Checks if the question text area is empty.
+     *
      * @return true if the question text area is empty, false otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {
@@ -217,6 +218,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     /**
      * Checks if all required fields are filled out.
+     *
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
@@ -235,7 +237,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
         }
-        if(picturePickerController.invalidSyntax()){
+        if (picturePickerController.invalidSyntax()) {
             return "Every image has to be included at least once.";
         }
         return null;

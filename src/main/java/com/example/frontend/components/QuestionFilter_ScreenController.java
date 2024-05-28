@@ -1,17 +1,15 @@
-package com.example.frontend.controller;
+package com.example.frontend.components;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.controller.ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import lombok.Getter;
-import lombok.Setter;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
 
 import java.util.ArrayList;
 import java.util.Objects;

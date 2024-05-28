@@ -51,8 +51,8 @@ public class ImageRepository implements Repository<Image> {
         getImageDAO().addIQConnection(image.getId(), question.getId());
     }
 
-    public void removeConnection(Image image, Question question){
-        getImageDAO().removeIQConnection(image.getId(),question.getId());
+    public void removeConnection(Image image, Question question) {
+        getImageDAO().removeIQConnection(image.getId(), question.getId());
     }
 
     @Override
