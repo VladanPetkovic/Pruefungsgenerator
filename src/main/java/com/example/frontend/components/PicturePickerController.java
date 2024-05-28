@@ -67,6 +67,10 @@ public class PicturePickerController {
 
     @FXML
     private void onActionUploadPicture() {
+        if(buttonAndImages.size() == 10){
+            SharedData.setOperation("Can't upload more than 10 pictures.",true);
+            return;
+        }
         File file = fileChooser.showOpenDialog(MainApp.stage);
         if (file != null) {
             String fileName = file.getName();
