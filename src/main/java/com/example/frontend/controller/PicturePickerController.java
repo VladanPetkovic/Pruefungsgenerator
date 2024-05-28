@@ -1,16 +1,20 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -38,6 +42,19 @@ public class PicturePickerController{
         return images;
     }
 
+    private TextArea textArea = null;
+
+    public void setTextArea(TextArea textArea){
+        this.textArea = textArea;
+    }
+
+    public boolean invalidSyntax(){
+        for(ButtonAndImage bai : buttonAndImages){
+            if(!textArea.getText().contains(bai.getTag()))return true;
+        }
+        return false;
+    }
+
     public PicturePickerController() {
         fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
@@ -55,61 +72,72 @@ public class PicturePickerController{
         File file = fileChooser.showOpenDialog(MainApp.stage);
         if (file != null) {
             String fileName = file.getName();
+            if(isFileAlreadyUploaded(fileName)) return;
             Image image = new Image(file.toURI().toString());
             buttonAndImages.add(new ButtonAndImage(fileName, image));
         }
     }
 
+    private boolean isFileAlreadyUploaded(String fileName){
+        for(ButtonAndImage bai : buttonAndImages){
+            if(bai.imageName.equals(fileName)){
+                SharedData.setOperation("Can't upload picture with same name twice.",true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeTagFromTextArea(String tag){
+        textArea.setText(textArea.getText().replaceAll(tag,""));
+    }
+
     public class ButtonAndImage {
         public final String imageName;
         public final Image image;
-        private final Button imageButton;
         private final ImageView imageView;
         private final Button removeButton;
-        private final HBox hBox;
+        private final StackPane stackPane;
 
         public ButtonAndImage(String imageName, Image image) {
             this.imageName = imageName;
             this.image = image;
 
             removeButton = new Button("X");
-            hBox = new HBox();
+            removeButton.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
 
+            stackPane = new StackPane();
 
             imageView = new ImageView(image);
-            imageView.setFitWidth(100); // Set a width for the image view
+            imageView.setFitHeight(100); // Set a width for the image view
             imageView.setPreserveRatio(true); // Preserve aspect ratio
 
-            imageButton = new Button(imageName);
+            stackPane.getChildren().addAll(imageView,removeButton);
 
-            hBox.getChildren().add(imageButton);
-            hBox.getChildren().add(removeButton);
+            StackPane.setAlignment(removeButton, Pos.TOP_RIGHT);
+            StackPane.setMargin(removeButton,new javafx.geometry.Insets(5));
 
-
-            imageButton.setOnMouseEntered(event -> showImage());
-            imageButton.setOnMouseExited(event -> hideImage());
             removeButton.setOnAction(actionEvent -> {
-                displayImages.getChildren().remove(hBox);
+                displayImages.getChildren().remove(stackPane);
                 buttonAndImages.remove(this);
+                removeTagFromTextArea(getTag());
             });
-            imageButton.setOnAction(actionEvent -> {
+
+            imageView.setOnMouseClicked(event -> {
                 Clipboard clipboard = Clipboard.getSystemClipboard();
                 ClipboardContent content = new ClipboardContent();
-                content.putString("<img name=\""+imageName+"\"/>");
+                content.putString(getTag());
                 clipboard.setContent(content);
+                SharedData.setOperation("Tag was copied to clipboard, paste into question text.",false);
             });
 
-            displayImages.getChildren().add(hBox);
+            Tooltip.install(imageView,new Tooltip(imageName));
+
+            displayImages.getChildren().add(stackPane);
         }
 
-        private void showImage() {
-            if (!hBox.getChildren().contains(imageView)) {
-                hBox.getChildren().add(imageView);
-            }
-        }
-
-        private void hideImage() {
-            hBox.getChildren().remove(imageView);
+        public String getTag(){
+            return "<img name=\""+imageName+"\"/>";
         }
     }
 }

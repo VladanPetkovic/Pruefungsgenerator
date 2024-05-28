@@ -95,6 +95,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             VBox picturePicker = loader.load();
             picturePickerController = loader.getController();
             picturePickerPlaceholder.getChildren().add(picturePicker);
+            picturePickerController.setTextArea(question);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,6 +234,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
+        }
+        if(picturePickerController.invalidSyntax()){
+            return "Every image has to be included at least once.";
         }
         return null;
     }

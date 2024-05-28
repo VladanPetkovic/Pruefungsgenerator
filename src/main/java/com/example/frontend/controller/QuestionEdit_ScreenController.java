@@ -114,6 +114,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             VBox picturePicker = loader.load();
             picturePickerController = loader.getController();
             picturePickerPlaceholder.getChildren().add(picturePicker);
+            picturePickerController.setTextArea(chooseQuestion);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -320,6 +321,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Compare the keywords and add/remove connections accordingly
         compareKeywords(question);
 
+        //Compare Images
+        compareImages(question);
+
         // compare answers and add/remove connections accordingly
         if (selectedQuestion.getType().getType() == Type.MULTIPLE_CHOICE) {
             compareAnswers();
@@ -329,6 +333,38 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         }
 
         switchScene(questionEdit, true);
+    }
+
+    private void compareImages(Question question){
+        for (Image image : selectedQuestion.getImages()){
+            boolean imageFound = false;
+            for(Image image2 : picturePickerController.getImages()){
+                if(image.getName().equals(image2.getName())){
+                    imageFound = true;
+                }
+            }
+            if(!imageFound){
+                SQLiteDatabaseConnection.imageRepository.removeConnection(image,question);
+            }
+        }
+
+        ArrayList<Image> images = new ArrayList<>();
+
+        for (Image image : picturePickerController.getImages()){
+            boolean imageIsNew = true;
+            for(Image image2 : selectedQuestion.getImages()){
+                if(image.getName().equals(image2.getName())){
+                    imageIsNew = false;
+                }
+            }
+            if(imageIsNew) {
+                images.add(image);
+            }
+        }
+
+        question.setImages(images);
+
+        Image.createImages(question,question.getId());
     }
 
     /**
@@ -425,6 +461,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         }
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
+        }
+        if(picturePickerController.invalidSyntax()){
+            return "Every image has to be included at least once.";
         }
         return null;
     }
