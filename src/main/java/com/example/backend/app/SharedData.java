@@ -14,7 +14,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 
-import static com.example.frontend.controller.TitleBanner_ScreenController.resetOperationStatusAfterDelay;
+import static com.example.frontend.components.TitleBanner_ScreenController.resetOperationStatusAfterDelay;
 
 @Getter
 @Setter

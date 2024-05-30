@@ -4,6 +4,7 @@ import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Image;
 import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
@@ -46,6 +47,86 @@ public class ImageDAO implements DAO<Image> {
             e.printStackTrace();
             SharedData.setOperation(Message.CREATE_IMAGE_ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * ATTENTION: duplicate records will be ignored.
+     * @param images the images to insert (one or multiple)
+     */
+    public void create(ArrayList<Image> images) {
+        int imageCount = 0;
+
+        StringBuilder insertStmt = new StringBuilder("INSERT OR IGNORE INTO images (image, name, position, comment) VALUES (?, ?, ?, ?)");
+        prepareInsertImageQuery(insertStmt, images);
+        Logger.log(getClass().getName(), String.valueOf(insertStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(insertStmt))) {
+
+            // insert new images
+            for (Image image : images) {
+                preparedStatement.setBytes(imageCount + 1, image.getImage());
+                preparedStatement.setString(imageCount + 2, image.getName());
+                preparedStatement.setInt(imageCount + 3, image.getPosition());
+                preparedStatement.setString(imageCount + 4, image.getComment());
+                imageCount += 4;
+            }
+
+            preparedStatement.executeUpdate();
+            setImageCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_IMAGES_ERROR_MESSAGE);
+        }
+    }
+
+    public void addHasIQConnection(ArrayList<Image> images, int question_id) {
+        int imageCount = 1;
+
+        StringBuilder insertHasAQStmt = new StringBuilder("" +
+                "INSERT OR IGNORE INTO has_iq (fk_image_id, fk_question_id) " +
+                "SELECT (SELECT id FROM images WHERE image = ?), ? ");
+        prepareInsertConnectionQuery(insertHasAQStmt, images);
+        Logger.log(getClass().getName(), String.valueOf(insertHasAQStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatementHasAQ = connection.prepareStatement(String.valueOf(insertHasAQStmt))) {
+
+            // insert new connections
+            for (Image image : images) {
+                preparedStatementHasAQ.setBytes(imageCount, image.getImage());
+                imageCount++;
+                preparedStatementHasAQ.setInt(imageCount, question_id);
+                imageCount++;
+            }
+
+            preparedStatementHasAQ.executeUpdate();
+            setImageCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void prepareInsertImageQuery(StringBuilder insertStmt, ArrayList<Image> images) {
+        if (images.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < images.size() - 1; i++) {
+                insertStmt.append(", (?, ?, ?, ?)");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    public void prepareInsertConnectionQuery(StringBuilder insertStmt, ArrayList<Image> images) {
+        if (images.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < images.size() - 1; i++) {
+                insertStmt.append("UNION ALL SELECT (SELECT id FROM images WHERE image = ?), ? ");
+            }
+        }
+
+        insertStmt.append(";");
     }
 
     /**

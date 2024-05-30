@@ -1,5 +1,7 @@
 package com.example.frontend.controller;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
@@ -24,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -96,39 +99,49 @@ public abstract class ScreenController {
 
 
     /**
-     * This function activates/deactivates a slider and changes the image accordingly.
-     * @param slider Either a difficulty or points slider (or some other)
-     * @param toggle_image The image, we want to change (toggle off or toggle on)
+     * This function activates/deactivates/sets to min/sets to max a slider/spinner and changes the image accordingly.
+     * @param sliderOrSpinner Either a difficulty or points slider (or some other)
+     * @param toggleImage The image, we want to change (toggle off or toggle on)
+     * @param status The status of the sliderOrSpinner object.
      */
-    public void on_toggle_btn_click(Slider slider, ImageView toggle_image) {
-        // activate the difficulty slider
-        if (slider.isDisabled()) {          // TODO: refactor duplicate code fragments
-            slider.setDisable(false);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
-            Image toggle_on_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_on_image);
-        } else {
-            // deactivate
-            slider.setDisable(true);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
-            Image toggle_off_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_off_image);
+    public void on_toggle_btn_click(Object sliderOrSpinner, ImageView toggleImage, int status) {
+        String imagePath = "src/main/resources/com/example/frontend/icons/";
+        Slider slider = null;
+        CustomDoubleSpinner spinner = null;
+        if (sliderOrSpinner instanceof Slider) {
+            slider = (Slider) sliderOrSpinner;
+        } else if (sliderOrSpinner instanceof CustomDoubleSpinner) {
+            spinner = (CustomDoubleSpinner) sliderOrSpinner;
         }
-    }
-    public void on_toggle_btn_click(CustomDoubleSpinner spinner, ImageView toggle_image) {
-        // activate the spinner
-        if (spinner.isDisabled()) {
-            spinner.setDisable(false);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_on.png");
-            Image toggle_on_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_on_image);
-        } else {
-            // deactivate
-            spinner.setDisable(true);
-            File file = new File("src/main/resources/com/example/frontend/icons/toggle_off.png");
-            Image toggle_off_image = new Image(file.toURI().toString());
-            toggle_image.setImage(toggle_off_image);
+
+        switch (status) {
+            case 0: // currently disabled --> enable
+                if (slider != null) {
+                    slider.setDisable(false);
+                } else if (spinner != null) {
+                    spinner.setDisable(false);
+                }
+                imagePath += "toggle_on.png";
+                break;
+            case 1: // currently enabled --> min
+                imagePath += "toggle_on_min.png";
+                break;
+            case 2: // currently min --> max
+                imagePath += "toggle_on_max.png";
+                break;
+            default: // current max --> disable
+                if (slider != null) {
+                    slider.setDisable(true);
+                } else if (spinner != null) {
+                    spinner.setDisable(true);
+                }
+                imagePath += "toggle_off.png";
+                break;
         }
+
+        File file = new File(imagePath);
+        Image toggleImageFile = new Image(file.toURI().toString());
+        toggleImage.setImage(toggleImageFile);
     }
 
     /**
@@ -137,6 +150,10 @@ public abstract class ScreenController {
      * @param addKeywordBtn When passed null, then we cannot add keywords
      */
     protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords, Button addKeywordBtn) {
+        if (keywords.isEmpty()) {
+            return;
+        }
+
         ArrayList<String> items = new ArrayList<>();
         for (Keyword k : keywords) {
             if (!items.contains(k.getKeyword())) {
@@ -162,6 +179,10 @@ public abstract class ScreenController {
      * And displays an add-btn, when the inputted text is changed AND not in the db
      */
     protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories, Button add_category_btn) {
+        if (categories.isEmpty()) {
+            return;
+        }
+
         // in java everything is passed by reference, so changes in items make changes in SharedData
         ArrayList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
@@ -202,7 +223,7 @@ public abstract class ScreenController {
         ObservableList<String> items = FXCollections.observableArrayList();
         String course_name = SharedData.getSelectedCourse().getName();
         ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10 && i < questions.size(); i++) {
             items.add(questions.get(i).getQuestion());
         }
         TextFields.bindAutoCompletion(questionTextField, items);
@@ -415,6 +436,36 @@ public abstract class ScreenController {
         return false;
     }
 
+    //
+    // END REGION QUESTION-CREATE AND QUESTION-EDIT
+    //
+
+
+
+    //
+    // START REGION EXPORT FILE
+    //
+    /**
+     * This function opens a new Dialog to get the destination folder for saving the export-file.
+     * If a folder was chosen previously, then it will set the previous choice as default.
+     * @param label_selectedDirectory Label, which shows the selected directory.
+     */
+    protected void chooseDirectory(Label label_selectedDirectory) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select Folder to Save File");
+        if (!label_selectedDirectory.getText().equals("\"\"")) {
+            chooser.setInitialDirectory(new File(label_selectedDirectory.getText()));
+        }
+        File directory = chooser.showDialog(MainApp.stage);
+        if (directory != null) {
+            label_selectedDirectory.setText(directory.toString());
+            Logger.log(getClass().getName(), label_selectedDirectory.getText(), LogLevel.INFO);
+        }
+    }
+    //
+    // END REGION EXPORT FILE
+    //
+
     @FXML
     protected void onButtonPressed(MouseEvent event) {
         Node source = (Node) event.getSource();
@@ -529,9 +580,6 @@ public abstract class ScreenController {
         // Remove ripple effect
         menuButton.setEffect(null);
     }
-    //
-    // END REGION QUESTION-CREATE AND QUESTION-EDIT
-    //
 
 
     // currently not needed --> maybe for "deleting all questions",...

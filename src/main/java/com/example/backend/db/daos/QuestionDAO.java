@@ -76,7 +76,8 @@ public class QuestionDAO implements DAO<Question> {
             "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
             "LEFT JOIN has_iq hiq ON q.id = hiq.fk_question_id " +
             "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
-            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id;";
+            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+            "LIMIT 500;";
         Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -95,6 +96,115 @@ public class QuestionDAO implements DAO<Question> {
         }
 
         return this.questionCache;
+    }
+
+    public ArrayList<Question> readAll(Course course, int minQuestionId) {
+        // deleting old questions, if they are existing in this cache
+        this.questionCache.clear();
+
+        String selectQuestionsStmt =
+                "SELECT q.id AS question_id, q.fk_category_id, q.difficulty, q.points, q.question, q.fk_question_type_id, q.remark, q.created_at, q.updated_at, " +
+                "a.id AS answer_id, a.answer, c.name AS category_name, " +
+                "k.id AS keyword_id, k.keyword, qt.name AS question_type " +
+                "FROM Questions q " +
+                "JOIN categories c ON q.fk_category_id = c.id " +
+                "LEFT JOIN has_aq ha ON q.id = ha.fk_question_id " +
+                "LEFT JOIN answers a ON ha.fk_answer_id = a.id " +
+                "LEFT JOIN has_kq hkq ON q.id = hkq.fk_question_id " +
+                "LEFT JOIN keywords k ON hkq.fk_keyword_id = k.id " +
+                "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
+                "LEFT JOIN has_cc ON q.fk_category_id = has_cc.fk_category_id " +
+                "LEFT JOIN courses ON has_cc.fk_course_id = courses.id " +
+                "WHERE courses.id = ? AND q.id > ? " +
+                "LIMIT 500;";
+        Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
+
+            questionsStatement.setInt(1, course.getId());
+            questionsStatement.setInt(2, minQuestionId);
+            try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
+                while (questionsResultSet.next()) {
+                    Question newQuestion = createModelFromResultSet(questionsResultSet);
+                    if(newQuestion != null) {
+                        this.questionCache.add(newQuestion);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return this.questionCache;
+    }
+
+    public int readQuestionCount() {
+        int questionCount = 0;
+
+        String selectStmt = "SELECT COUNT() AS question_count FROM questions;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt);
+             ResultSet count = questionsStatement.executeQuery()) {
+
+            if (count.next()) {
+                questionCount = count.getInt("question_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return questionCount;
+    }
+
+    public int readQuestionCount(Course course) {
+        int questionCount = 0;
+
+        String selectStmt = "SELECT COUNT(DISTINCT questions.id) AS question_count " +
+                "FROM questions " +
+                "JOIN has_cc ON questions.fk_category_id = has_cc.fk_category_id " +
+                "JOIN courses ON has_cc.fk_course_id = courses.id " +
+                "WHERE courses.id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt)) {
+
+            questionsStatement.setInt(1, course.getId());
+            try (ResultSet count = questionsStatement.executeQuery()) {
+                questionCount = count.getInt("question_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return questionCount;
+    }
+
+    public int readQuestionCount(int studyProgramId) {
+        int questionCount = 0;
+
+        String selectStmt = "SELECT COUNT(DISTINCT questions.id) AS question_count " +
+                "FROM questions " +
+                "JOIN has_cc ON questions.fk_category_id = has_cc.fk_category_id " +
+                "JOIN courses ON has_cc.fk_course_id = courses.id " +
+                "JOIN has_sc ON courses.id = has_sc.fk_course_id " +
+                "JOIN study_programs ON has_sc.fk_program_id = study_programs.id " +
+                "WHERE study_programs.id = ?;";
+        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt)) {
+
+            questionsStatement.setInt(1, studyProgramId);
+            try (ResultSet count = questionsStatement.executeQuery()) {
+                questionCount = count.getInt("question_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return questionCount;
     }
 
     /**
@@ -150,7 +260,7 @@ public class QuestionDAO implements DAO<Question> {
      * @param course        The course for which questions are to be retrieved.
      * @return ArrayList of questions based on the search options and course.
      */
-    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course) {
+    public ArrayList<Question> readAll(ArrayList<SearchObject<?>> searchOptions, Course course, int pointsStatus, int difficultyStatus) {
         // deleting old questions, if they are existing in this cache
         this.questionCache.clear();
 
@@ -174,7 +284,7 @@ public class QuestionDAO implements DAO<Question> {
                 "WHERE co.id = ?");
 
         // init selectSTMT and listForPreparedStmt
-        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getId());
+        prepareQuery(searchOptions, selectQuestionsStmt, listForPreparedStmt, course.getId(), pointsStatus, difficultyStatus);
 
         Logger.log(getClass().getName(), String.valueOf(selectQuestionsStmt), LogLevel.DEBUG);
 
@@ -220,7 +330,7 @@ public class QuestionDAO implements DAO<Question> {
      * @param listForPreparedStmt List to hold values for the prepared statement.
      * @param course_id           The ID of the course.
      */
-    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id) {
+    public void prepareQuery(ArrayList<SearchObject<?>> searchOptions, StringBuilder stmt, ArrayList<Object> listForPreparedStmt, int course_id, int pointsStatus, int difficultyStatus) {
         int countKeywords = 0;
         int countImages = 0;
 
@@ -255,7 +365,13 @@ public class QuestionDAO implements DAO<Question> {
             }
             else if(searchObject.isSet() && !Objects.equals(searchObject.getColumn_name(), "")) {
                 // append only objects with set flag and a columnName (otherwise we would insert into non-existing columns)
-                stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                if (Objects.equals(searchObject.getColumn_name(), "points")) {
+                    prepareQueryMinMax(stmt, searchObject, pointsStatus);
+                } else if (Objects.equals(searchObject.getColumn_name(), "difficulty")) {
+                    prepareQueryMinMax(stmt, searchObject, difficultyStatus);
+                } else {
+                    stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+                }
                 listForPreparedStmt.add(searchObject.getValueOfObject());
             }
         }
@@ -263,6 +379,17 @@ public class QuestionDAO implements DAO<Question> {
         // replace last ' AND' to ';'
         stmt.delete(stmt.length() - 4, stmt.length());
         stmt.append(';');
+    }
+
+    // Helperfunction for getting min/max of points/difficulty
+    public void prepareQueryMinMax(StringBuilder stmt, SearchObject<?> searchObject, int status) {
+        if (status == 1) {          // get 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" = ? AND");
+        } else if (status == 2) {   // get min 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" >= ? AND");
+        } else if (status == 3) {   // get max 5 points
+            stmt.append(" ").append(searchObject.getColumn_name()).append(" <= ? AND");
+        }
     }
 
     /**
@@ -345,8 +472,6 @@ public class QuestionDAO implements DAO<Question> {
      */
     @Override
     public void update(Question question) {
-
-        // TODO: update answers
         String updateStmt =
                 "UPDATE questions " +
                 "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
@@ -431,15 +556,22 @@ public class QuestionDAO implements DAO<Question> {
                             resultSet.getString("keyword"));
                     question.getKeywords().add(newKeyword);
                 }
-                // image not null
-                if (resultSet.getInt("image_id") != 0) {
-                    Image newImage = new Image(
-                            resultSet.getInt("image_id"),
-                            resultSet.getBytes("image"),
-                            resultSet.getString("image_name"),
-                            resultSet.getInt("position"),
-                            resultSet.getString("comment"));
-                    question.getImages().add(newImage);
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    if ("image_id".equalsIgnoreCase(metaData.getColumnName(i))) {
+                        // image not null
+                        if (resultSet.getInt("image_id") != 0) {
+                            Image newImage = new Image(
+                                    resultSet.getInt("image_id"),
+                                    resultSet.getBytes("image"),
+                                    resultSet.getString("image_name"),
+                                    resultSet.getInt("position"),
+                                    resultSet.getString("comment"));
+                            question.getImages().add(newImage);
+                        }
+                    }
                 }
                 // answer not null
                 if (resultSet.getInt("answer_id") != 0) {
@@ -469,13 +601,23 @@ public class QuestionDAO implements DAO<Question> {
         keywords.add(newKeyword);
 
         ArrayList<Image> images = new ArrayList<>();
-        Image newImage = new Image(
-                resultSet.getInt("image_id"),
-                resultSet.getBytes("image"),
-                resultSet.getString("image_name"),
-                resultSet.getInt("position"),
-                resultSet.getString("comment"));
-        images.add(newImage);
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        for (int i = 1; i <= columnCount; i++) {
+            if ("image_id".equalsIgnoreCase(metaData.getColumnName(i))) {
+                // image not null
+                if (resultSet.getInt("image_id") != 0) {
+                    Image newImage = new Image(
+                            resultSet.getInt("image_id"),
+                            resultSet.getBytes("image"),
+                            resultSet.getString("image_name"),
+                            resultSet.getInt("position"),
+                            resultSet.getString("comment"));
+                    images.add(newImage);
+                }
+            }
+        }
 
         ArrayList<Answer> answers = new ArrayList<>();
         Answer newAnswer = new Answer(

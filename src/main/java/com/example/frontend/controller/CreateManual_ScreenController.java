@@ -10,9 +10,11 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import com.example.backend.app.Screen;
 import javafx.scene.shape.Polygon;
@@ -90,8 +92,13 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
-                newQuestionHbox.setSpacing(50);
+                newQuestionHbox.setSpacing(10);
+                HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
+                questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
+
+
                 newQuestionHbox.getChildren().addAll(questionNumberLabel ,upButton, downButton, removeButton);
+                newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
 
                 // add labels to the VBox
                 questionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
@@ -160,6 +167,7 @@ public class CreateManual_ScreenController extends ScreenController {
             questionTextArea.setPrefRowCount(3);
             questionTextArea.getStyleClass().add("text-area-context-menu");
 
+            //listener that saves the changes from user input for the question text in the sharedData.testquestions array (used for pdf export)
             questionTextArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -167,17 +175,20 @@ public class CreateManual_ScreenController extends ScreenController {
                 }
             });
 
+            //create the buttons
             Button upButton = getUpButton(numberOfQuestions);
             Button downButton = getDownButton(numberOfQuestions);
-
-            //create remove button
             Button removeButton = getRemoveButton(questionVbox, question);
 
+            //create HBox that contains the label and buttons
             HBox newQuestionHbox = new HBox();
-            newQuestionHbox.setSpacing(50);
-            newQuestionHbox.getChildren().addAll(questionNumberLabel,upButton,downButton,removeButton);
+            newQuestionHbox.setSpacing(10);
+            HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
+            questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
-            // add labels to the VBox
+            newQuestionHbox.getChildren().addAll(questionNumberLabel,upButton,downButton,removeButton);
+            newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
+            // add labels, buttons and textarea to the questionVBox
             newQuestionVbox.getChildren().addAll(newQuestionHbox,questionTextArea);
 
             if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
@@ -190,8 +201,16 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     private Button getRemoveButton(VBox questionVbox, Question question) {
-        Button removeButton = new Button("X");
+        Button removeButton = new Button();
         removeButton.getStyleClass().add("remove-button");
+        //set image Icon
+        ImageView imageView = new ImageView();
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/remove.png")));
+        imageView.setFitWidth(16);
+        imageView.setFitHeight(16);
+        removeButton.setGraphic(imageView);
+
+
         removeButton.setOnAction(eventRemove -> {
             // remove the question from the vbox_testQuestionsPreview
             vbox_testQuestionsPreview.getChildren().remove(questionVbox);
@@ -212,14 +231,14 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     Button getUpButton(int index) {
-        Button upButton = new Button("Up");
-        /* set icon
+        Button upButton = new Button();
+        //set icon
         ImageView imageView = new ImageView();
-        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/arrowUp.png")));
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/upButton4.png")));
         imageView.setFitWidth(16);
         imageView.setFitHeight(16);
         upButton.setGraphic(imageView);
-        */
+
         upButton.getStyleClass().add("position-button");
 
         upButton.setOnAction(event -> {
@@ -240,14 +259,14 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     Button getDownButton(int index) {
-        Button downButton = new Button("Down");
-        /* set icon
+        Button downButton = new Button();
+        //set icon
         ImageView imageView = new ImageView();
-        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/arrowUp.png")));
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/frontend/icons/downButton4.png")));
         imageView.setFitWidth(16);
         imageView.setFitHeight(16);
-        upButton.setGraphic(imageView);
-        */
+        downButton.setGraphic(imageView);
+
         downButton.getStyleClass().add("position-button");
 
         downButton.setOnAction(event -> {
@@ -266,5 +285,4 @@ public class CreateManual_ScreenController extends ScreenController {
         });
         return downButton;
     }
-
 }

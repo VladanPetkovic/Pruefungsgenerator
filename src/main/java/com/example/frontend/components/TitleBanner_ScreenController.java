@@ -1,24 +1,18 @@
-package com.example.frontend.controller;
+package com.example.frontend.components;
 
+import com.example.frontend.controller.ScreenController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import com.example.backend.app.SharedData;
 import javafx.beans.binding.Bindings;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class TitleBanner_ScreenController extends ScreenController {
-
-    @FXML
-    private ImageView fhtw_logo;
-
     @FXML
     private Label titleLabel;
-
     @FXML
     private Label statusLabel;
     private static Timeline statusResetTimer;
@@ -43,7 +37,7 @@ public class TitleBanner_ScreenController extends ScreenController {
      */
     public void onFHTWLogoClick() {
         // navigate to the home screen and reset shared data
-        switchScene(home,true);
+        switchScene(home, true);
         SharedData.resetAll();
     }
 

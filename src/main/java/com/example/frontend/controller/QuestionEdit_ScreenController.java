@@ -3,18 +3,22 @@ package com.example.frontend.controller;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
+import com.example.frontend.components.PicturePickerController;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -64,6 +68,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
     private Category selectedCategory = null;
 
+    @FXML
+    private VBox picturePickerPlaceholder;
+    private PicturePickerController picturePickerController;
+
     /**
      * Initializes the Question Edit screen.
      *
@@ -101,10 +109,21 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         choosePoints.getStyleClass().add("automatic_create_spinner");
 
         customDoubleSpinnerPlaceholder.getChildren().add(choosePoints);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
+            VBox picturePicker = loader.load();
+            picturePickerController = loader.getController();
+            picturePickerPlaceholder.getChildren().add(picturePicker);
+            picturePickerController.setTextArea(chooseQuestion);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * method to display filtered questions in filter window
+     *
      * @param questions The ObservableList of questions to show in the preview window.
      */
     private void showFilteredQuestions(ObservableList<Question> questions) {
@@ -135,7 +154,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     /**
      * This function displays the question, that was clicked in the filter-preview.
      * Thus, it sets all event-handlers for the question for editing.
-     * @param questionVbox The VBox containing the question details.
+     *
+     * @param questionVbox    The VBox containing the question details.
      * @param clickedQuestion The question object associated with the VBox.
      */
     @FXML
@@ -164,7 +184,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : clickedQuestion.getKeywords()) {
-                if(k.getKeyword() != null && !containsKeyword(k, selectedKeywords)) {
+                if (k.getKeyword() != null && !containsKeyword(k, selectedKeywords)) {
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword() + " X");
                     b.setOnAction(e -> {
@@ -174,6 +194,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                     keywordsHBox.getChildren().add(b);
                 }
             }
+
+            picturePickerController.addPreExistingImages(clickedQuestion.getImages());
 
             initTimeStamps(clickedQuestion);
         });
@@ -198,6 +220,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * This function initializes the questionType and answers, when a question is selected for editing.
+     *
      * @param selectedQuestion the question, that was selected
      */
     private void initSelectedQuestionType(Question selectedQuestion) {
@@ -228,6 +251,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * This function displays the timestamps of one question, when clicked to be edited.
+     *
      * @param question The question, that has been selected.
      */
     private void initTimeStamps(Question question) {
@@ -250,6 +274,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * This function adds a new answer. Used for initialization (with real answer) and when the addNewAnswerBtn is clicked.
+     *
      * @param answer Can be new or given from a selectedQuestion
      */
     private void addNewAnswer(Answer answer) {
@@ -302,6 +327,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Compare the keywords and add/remove connections accordingly
         compareKeywords(question);
 
+        //Compare Images
+        compareImages(question);
+
         // compare answers and add/remove connections accordingly
         if (selectedQuestion.getType().getType() == Type.MULTIPLE_CHOICE) {
             compareAnswers();
@@ -313,13 +341,45 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         switchScene(questionEdit, true);
     }
 
+    private void compareImages(Question question) {
+        for (Image image : selectedQuestion.getImages()) {
+            boolean imageFound = false;
+            for (Image image2 : picturePickerController.getImages()) {
+                if (image.getName().equals(image2.getName())) {
+                    imageFound = true;
+                }
+            }
+            if (!imageFound) {
+                SQLiteDatabaseConnection.imageRepository.removeConnection(image, question);
+            }
+        }
+
+        ArrayList<Image> images = new ArrayList<>();
+
+        for (Image image : picturePickerController.getImages()) {
+            boolean imageIsNew = true;
+            for (Image image2 : selectedQuestion.getImages()) {
+                if (image.getName().equals(image2.getName())) {
+                    imageIsNew = false;
+                }
+            }
+            if (imageIsNew) {
+                images.add(image);
+            }
+        }
+
+        question.setImages(images);
+
+        Image.createImages(question, question.getId());
+    }
+
     /**
      * Compares the keywords between the current state and the initial state,
      * and adds or removes connections accordingly in the database.
      *
      * @param question The Question object representing the question being edited.
      */
-    private void compareKeywords(Question question){
+    private void compareKeywords(Question question) {
         // Remove connections for keywords that are not selected anymore
         for (Keyword keyword1 : selectedQuestion.getKeywords()) {
             boolean keywordFound = false;
@@ -408,11 +468,15 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (checkIfQuestionIsEmpty()) {
             return "Question needs to be filled out.";
         }
+        if (picturePickerController.invalidSyntax()) {
+            return "Every image has to be included at least once.";
+        }
         return null;
     }
 
     /**
      * Creates a Question object using the inputs provided by the user in the GUI.
+     *
      * @return A Question object initialized with the values from the input fields.
      */
     private Question createQuestionFromInputs() {
@@ -428,12 +492,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 new Timestamp(System.currentTimeMillis()),  // updated_at
                 getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
                 selectedKeywords,
-                new ArrayList<>()                           // images // TODO: implement this here
+                picturePickerController.getImages()                          // images // TODO: implement this here
         );
     }
 
     /**
      * Checks if the question field is empty.
+     *
      * @return {@code true} if the question field is empty, {@code false} otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {

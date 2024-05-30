@@ -1,15 +1,15 @@
-package com.example.frontend.controller;
+package com.example.frontend.components;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.controller.ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -36,6 +36,9 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     public ImageView points_toggle_image_view;
 
+    private int pointsSliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
+    private int difficultySliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
+
     @FXML
     private void initialize() {
         // init auto-completion
@@ -55,11 +58,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
-        on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view);
+        on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view, difficultySliderStatus);
+        difficultySliderStatus = (difficultySliderStatus + 1) % 4;
     }
 
     public void on_toggle_points_btn_click(ActionEvent actionEvent) {
-        on_toggle_btn_click(pointsSlider, points_toggle_image_view);
+        on_toggle_btn_click(pointsSlider, points_toggle_image_view, pointsSliderStatus);
+        pointsSliderStatus = (pointsSliderStatus + 1) % 4;
     }
 
     public void applyFilterButtonClicked(ActionEvent actionEvent) {
@@ -121,7 +126,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         }
 
         // call Repository to search for questions corresponding to filter values
-        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName());
+        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName(), pointsSliderStatus, difficultySliderStatus);
         SharedData.getFilteredQuestions().clear();
 
         if (result.isEmpty()) {

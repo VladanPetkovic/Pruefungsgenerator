@@ -7,11 +7,12 @@ import lombok.Setter;
 public enum Message {
     SUCCESS_MESSAGE_OPERATION("Operation completed successfully.", false),
     SUCCESS_MESSAGE_DATA_SAVED("Data saved successfully.", false),
+    SUCCESS_MESSAGE_QUESTIONS_EXPORTED("Questions exported successfully.", false),
 
     ERROR_MESSAGE_ERROR_OCCURRED("An error occurred.", true),
     ERROR_MESSAGE_LOAD_DATA("Failed to load data.", true),
     ERROR_MESSAGE_DATA_CONTAINS_SPACES("String contains only spaces.", true),
-    ERROR_MESSAGE_NOT_ALL_FIELDS_FILLED("Some required fields haven't been filled.", true),
+    ERROR_MESSAGE_INPUT_ALL_FIELDS("Some required fields haven't been filled.", true),
     ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE("Select a folder, where to save the file!", true),
 
     // error messages for the answer DAO:
@@ -44,6 +45,7 @@ public enum Message {
 
     // error messages for the image DAO:
     CREATE_IMAGE_ERROR_MESSAGE("Failed to insert image into the database.", true),
+    CREATE_IMAGES_ERROR_MESSAGE("Failed to insert images into the database.", true),
     CREATE_IMAGE_SUCCESS_MESSAGE("Image created successfully.", false),
     UPDATE_IMAGE_ERROR_MESSAGE("Failed to update image in the database.", true),
     UPDATE_IMAGE_SUCCESS_MESSAGE("Image updated successfully.", false),

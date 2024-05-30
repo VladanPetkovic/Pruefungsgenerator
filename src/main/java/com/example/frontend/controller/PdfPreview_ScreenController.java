@@ -3,7 +3,6 @@ package com.example.frontend.controller;
 import com.example.backend.app.*;
 import com.example.backend.app.Screen;
 import com.example.backend.db.models.Message;
-import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -14,9 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -90,22 +87,8 @@ public class PdfPreview_ScreenController extends ScreenController {
         showPreview(this.exportPdf.getPreviewImages(SharedData.getTestQuestions()));
     }
 
-    /**
-     * This function opens a new Dialog to get the destination folder for saving the export-file.
-     * If a folder was chosen previously, then it will set the previous choice as default.
-     * @param actionEvent never used
-     */
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select Folder to Save File");
-        if (!this.label_selectedDirectory.getText().equals("\"\"")) {
-            chooser.setInitialDirectory(new File(this.label_selectedDirectory.getText()));
-        }
-        File directory = chooser.showDialog(MainApp.stage);
-        if (directory != null) {
-            this.label_selectedDirectory.setText(directory.toString());
-            Logger.log(getClass().getName(), this.label_selectedDirectory.getText(), LogLevel.INFO);
-        }
+        chooseDirectory(this.label_selectedDirectory);
     }
 
     /**

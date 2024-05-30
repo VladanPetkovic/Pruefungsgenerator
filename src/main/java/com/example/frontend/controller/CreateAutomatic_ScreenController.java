@@ -29,7 +29,9 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     private ArrayList<MenuButton> categoriesMenuButtons = new ArrayList<>();
     private ArrayList<Category> categories;
     private ArrayList<Slider> difficultySliders = new ArrayList<>();
+    private ArrayList<Integer> difficultySlidersStatus = new ArrayList<>();
     private ArrayList<CustomDoubleSpinner> pointsSpinners = new ArrayList<>();
+    private ArrayList<Integer> pointsSpinnersStatus = new ArrayList<>();
 
     private void setButtonEventHandlers(List<Node> nodes) {
         for (Node node : nodes) {
@@ -142,7 +144,10 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // add custom styling to the Spinner
         spinner.getStyleClass().add("automatic_create_spinner");
         spinner.setDisable(true);
+        int status = 0;
         pointsSpinners.add(spinner);
+        pointsSpinnersStatus.add(status);
+        int indexOfStatus = pointsSpinnersStatus.size() - 1;
 
         // create a new HBox to contain the Slider and the toggle btn
         HBox innerHBox = new HBox(spinner);
@@ -151,7 +156,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerHBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
         innerHBox.getStyleClass().add("automatic_create_vbox");
-        addToggleBtn(innerHBox, spinner);
+        addToggleBtn(innerHBox, spinner, indexOfStatus);
 
         // add the VBox containing the Slider to the parent VBox
         parentVBox.getChildren().add(innerHBox);
@@ -177,7 +182,10 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // set default value for the Slider
         slider.setValue(5.0);
         slider.setDisable(true);
+        int sliderStatus = 0;
         difficultySliders.add(slider);
+        difficultySlidersStatus.add(sliderStatus);
+        int indexOfStatus = difficultySlidersStatus.size() - 1;
 
         // create a new HBox to contain the Slider and the toggle btn
         HBox innerHBox = new HBox(slider);
@@ -186,13 +194,13 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         innerHBox.setPrefWidth(1000.0);
         // add custom styling to the VBox
         innerHBox.getStyleClass().add("automatic_create_vbox");
-        addToggleBtn(innerHBox, slider);
+        addToggleBtn(innerHBox, slider, indexOfStatus);
 
         // add the VBox containing the Slider to the parent VBox
         parentVBox.getChildren().add(innerHBox);
     }
 
-    private void addToggleBtn(HBox hbox, Object sliderOrSpinner) {
+    private void addToggleBtn(HBox hbox, Object sliderOrSpinner, int indexOfStatus) {
         Button button = new Button();
         button.getStyleClass().add("btn_add_icon");
         ImageView toggleIcon = new ImageView();
@@ -202,16 +210,20 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         button.setGraphic(toggleIcon);
         button.setPrefHeight(35.0);
         button.setPrefWidth(34.0);
-
-        button.setOnAction(event -> {
-            if (sliderOrSpinner instanceof Slider slider) {
-                on_toggle_btn_click(slider, toggleIcon);
-            } else if (sliderOrSpinner instanceof CustomDoubleSpinner customDoubleSpinner) {
-                on_toggle_btn_click(customDoubleSpinner, toggleIcon);
-            }
-        });
-
+        button.setOnAction(event -> onToggleBtnClick(sliderOrSpinner, toggleIcon, indexOfStatus));
         hbox.getChildren().add(button);
+    }
+
+    private void onToggleBtnClick(Object sliderOrSpinner, ImageView toggleIcon, int indexOfStatus) {
+        if (sliderOrSpinner instanceof Slider slider) {
+            int status = difficultySlidersStatus.get(indexOfStatus);
+            on_toggle_btn_click(slider, toggleIcon, status);
+            difficultySlidersStatus.set(indexOfStatus, (status + 1) % 4);
+        } else if (sliderOrSpinner instanceof CustomDoubleSpinner customDoubleSpinner) {
+            int status = pointsSpinnersStatus.get(indexOfStatus);
+            on_toggle_btn_click(customDoubleSpinner, toggleIcon, status);
+            pointsSpinnersStatus.set(indexOfStatus, (status + 1) % 4);
+        }
     }
 
     // method triggered when the "Create Test" button is clicked
@@ -242,7 +254,9 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             }
 
             // perform the database query to retrieve questions based on the criteria
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getName());
+            int pointStatus = pointsSpinnersStatus.get(i);
+            int diffStatus = difficultySlidersStatus.get(i);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {
