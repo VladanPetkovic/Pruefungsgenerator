@@ -4,6 +4,7 @@ import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
@@ -40,6 +41,90 @@ public class KeywordDAO implements DAO<Keyword> {
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.CREATE_KEYWORD_ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * ATTENTION: duplicate records will be ignored
+     * @param keywords ArrayList of Keywords, so one or multiple keywords can be inserted at once into the keywords table.
+     */
+    public void create(ArrayList<Keyword> keywords) {
+        int keywordCounter = 1;
+
+        StringBuilder insertStmt = new StringBuilder("INSERT OR IGNORE INTO keywords (keyword) VALUES (?)");
+        prepareInsertKeywordQuery(insertStmt, keywords);
+        Logger.log(getClass().getName(), String.valueOf(insertStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(insertStmt))) {
+
+            // insert new answers
+            for (Keyword keyword : keywords) {
+                preparedStatement.setString(keywordCounter, keyword.getKeyword());
+                keywordCounter++;
+            }
+
+            preparedStatement.executeUpdate();
+            setKeywordCache(null);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_KEYWORD_ERROR_MESSAGE);
+        }
+    }
+
+    public void prepareInsertKeywordQuery(StringBuilder insertStmt, ArrayList<Keyword> keywords) {
+        if (keywords.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                insertStmt.append(", (?)");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    public void prepareInsertConnectionQuery(StringBuilder insertStmt, ArrayList<Keyword> keywords) {
+        if (keywords.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                insertStmt.append("UNION ALL SELECT (SELECT id FROM keywords WHERE keyword = ?), ? ");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    /**
+     * ATTENTION: duplicate records are ignored and no error will show up.
+     * @param keywords ArrayList of Keywords, inserting one or multiple keyword_ids in the has_kq table
+     * @param question_id The id of the Question
+     */
+    public void addKQConnection(ArrayList<Keyword> keywords, int question_id) {
+        int keywordCounter = 1;
+
+        StringBuilder insertHasKQStmt = new StringBuilder("" +
+                "INSERT OR IGNORE INTO has_kq (fk_keyword_id, fk_question_id) " +
+                "SELECT (SELECT id FROM keywords WHERE keyword = ?), ? ");
+        prepareInsertConnectionQuery(insertHasKQStmt, keywords);
+        Logger.log(getClass().getName(), String.valueOf(insertHasKQStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatementHasKQ = connection.prepareStatement(String.valueOf(insertHasKQStmt))) {
+
+            // insert new connections
+            for (Keyword keyword : keywords) {
+                preparedStatementHasKQ.setString(keywordCounter, keyword.getKeyword());
+                keywordCounter++;
+                preparedStatementHasKQ.setInt(keywordCounter, question_id);
+                keywordCounter++;
+            }
+
+            preparedStatementHasKQ.executeUpdate();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

@@ -19,7 +19,7 @@ und Werte nicht doppelt abgespeichert werden, auch wenn es in diesem Fall nur um
 ### 1. Normalform
 *Nur elementare Merkmalswerte sind erlaubt*
 
-Werte der Atrribute sind atomar (d.h keine zusammengesetzten Werte oder Mehrfachwerte)
+Werte der Attribute sind atomar (d.h keine zusammengesetzten Werte oder Mehrfachwerte)
 
 ### 2. Normalform
 *abhängig von allen Schlüsselmerkmalen*

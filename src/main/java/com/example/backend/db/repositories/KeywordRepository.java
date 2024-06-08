@@ -1,6 +1,7 @@
 package com.example.backend.db.repositories;
 
 import com.example.backend.db.daos.KeywordDAO;
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Question;
 import lombok.AccessLevel;
@@ -44,6 +45,11 @@ public class KeywordRepository implements Repository<Keyword> {
     @Override
     public void add(Keyword keyword) {
         getKeywordDAO().create(keyword);
+    }
+
+    public void add(ArrayList<Keyword> keywords, int question_id) {
+        getKeywordDAO().create(keywords);
+        getKeywordDAO().addKQConnection(keywords, question_id);
     }
 
     public void addConnection(Keyword keyword, int question_id) {
