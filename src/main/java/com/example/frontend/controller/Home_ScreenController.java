@@ -8,8 +8,10 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
+import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -100,7 +102,11 @@ public class Home_ScreenController extends ScreenController {
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             studyProgramMenuButton.setText("add Study Program");
-            addStudyProgram();
+            try {
+                addStudyProgram();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         //studyProgramMenuButton.getItems().add(menuItem);
         studyProgramMenuButton.getItems().add(customMenuItem);
@@ -127,162 +133,45 @@ public class Home_ScreenController extends ScreenController {
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             coursesMenuButton.setText("add Course");
-            addCourse();
+            try {
+                addCourse();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
        coursesMenuButton.getItems().add(customMenuItem);
     }
 
     // method to add a new study program
-    private void addStudyProgram() {
+    private void addStudyProgram() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("modals/add_StudyProgram.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Stage newStage = new Stage();
+        newStage.setTitle("Add Study Program");
+        newStage.setScene(scene);
 
-        // create a new stage for input
-        Stage inputStage = new Stage();
-        inputStage.setTitle("Add Study Program");
-
-        // create layout
-        VBox inputLayout = new VBox();
-        inputLayout.getStyleClass().add("homeScreen_gridPane");
-
-        // create text field for study program name
-        TextField inputName = new TextField();
-        Label inputNameLabel = new Label("Enter new Study Program Name:");
-        inputNameLabel.getStyleClass().add("addCourseAndProgram_label");
-        inputLayout.getChildren().add(inputNameLabel);
-        inputLayout.getChildren().add(inputName);
-
-        // create text field for study program abbreviation
-        TextField inputAbbr = new TextField();
-        Label inputAbbrLabel = new Label("Enter new Study Program Abbreviation:");
-        inputAbbrLabel.getStyleClass().add("addCourseAndProgram_label");
-        inputLayout.getChildren().add(inputAbbrLabel);
-        inputLayout.getChildren().add(inputAbbr);
-
-        // create confirm button
-        Button confirmButton = new Button("Confirm");
-        confirmButton.setOnAction(event -> {
-            String enteredName = inputName.getText();
-            String enteredAbbr = inputAbbr.getText();
-            SharedData.getNewStudyProgram().setName(enteredName);
-            SharedData.getNewStudyProgram().setAbbreviation(enteredAbbr);
-
-            // check if name or abbreviation already exists in the database
-            ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
-            boolean exists = false;
-            for(StudyProgram studyProgram : studyPrograms) {
-                if (studyProgram.getName().equals(enteredName)  || studyProgram.getAbbreviation().equals(enteredAbbr)) {
-                    exists = true;
-                    break;
-                }
-            }
-            // if not, create a new study program entry in the database
-            if (!exists) {
-                StudyProgram newProgram = new StudyProgram(enteredName, enteredAbbr);
-                SQLiteDatabaseConnection.studyProgramRepository.add(newProgram);
-            }
-            // close the window and reload study programs
-            inputStage.close();
+        //listener for when the stage is closed
+        newStage.setOnHidden(event -> {
             loadStudyPrograms();
         });
-        inputLayout.getChildren().add(confirmButton);
-
-        // create the scene and set stylesheets
-        Scene inputScene = new Scene(inputLayout, 300, 100);
-        inputScene.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
-        inputStage.setScene(inputScene);
-
-        // show the input stage
-        inputStage.show();
+        newStage.show();
     }
 
     // method to add a new course
-    private void addCourse() {
+    private void addCourse() throws IOException {
 
-        // create a new stage for input
-        Stage inputStage = new Stage();
-        inputStage.setTitle("Add Course");
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("modals/add_Course.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Stage newStage = new Stage();
+        newStage.setTitle("Add Study Program");
+        newStage.setScene(scene);
 
-        // create layout
-        VBox inputLayout = new VBox();
-        inputLayout.getStyleClass().add("homeScreen_gridPane");
-
-
-        // create text field for course name
-        TextField inputName = new TextField();
-        Label inputNameLabel = new Label("Enter new Course Name:");
-        inputNameLabel.getStyleClass().add("addCourseAndProgram_label");
-        inputLayout.getChildren().add(inputNameLabel);
-        inputLayout.getChildren().add(inputName);
-
-
-        // create spinner for course number
-        Spinner<Integer> numericSpinner = new Spinner<>();
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
-        numericSpinner.setValueFactory(valueFactory);
-
-        Label spinnerLabel = new Label("Enter new course number:");
-        spinnerLabel.getStyleClass().add("addCourseAndProgram_label");
-
-        // place spinner and label in HBox
-        HBox hbox = new HBox(10); // 10 is the spacing between elements
-        hbox.setPadding(new Insets(10));
-        hbox.getChildren().addAll(spinnerLabel, numericSpinner);
-        // add the HBox to layout
-        inputLayout.getChildren().add(hbox);
-
-        // add text field for lecturer
-        TextField inputLecturer = new TextField();
-        Label inputLecturerLabel = new Label("Enter new Lecturer:");
-        inputLecturerLabel.getStyleClass().add("addCourseAndProgram_label");
-        inputLayout.getChildren().add(inputLecturerLabel);
-        inputLayout.getChildren().add(inputLecturer);
-
-        // create confirm button
-        Button confirmButton = new Button("Confirm");
-        confirmButton.setOnAction(event -> {
-            String enteredName = inputName.getText();
-            int enteredNumber = numericSpinner.getValue();
-            String enteredLecturer = inputLecturer.getText();
-            /*
-            numericSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-                enteredNumber = newValue;
-                System.out.println("Selected value: " + newValue);
-            });
-            */
-
-            SharedData.getNewCourse().setName(enteredName);
-            SharedData.getNewCourse().setNumber(enteredNumber);
-
-            // check if course name or course number already exists in the database
-            ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
-            boolean exists = false;
-            for(Course course : courses) {
-                if (course.getName().equals(enteredName)  || course.getNumber() == enteredNumber) {
-                    exists = true;
-                    break;
-                }
-            }
-            // if not, create a new course entry in the database
-            if (!exists) {
-                Course newCourse= new Course(enteredName, enteredNumber, enteredLecturer);
-                SQLiteDatabaseConnection.courseRepository.add(newCourse);
-                Course newlyAddedCOurse = SQLiteDatabaseConnection.courseRepository.get(newCourse.getName());
-                SQLiteDatabaseConnection.courseRepository.addConnection(SharedData.getSelectedStudyProgram(), newlyAddedCOurse);
-            }
-            // close the window, reset course menu button, and reload courses
-            inputStage.close();
+        //listener for when the stage is closed
+        newStage.setOnHidden(event -> {
             resetCourseMenuButton();
             loadCourses();
         });
-        inputLayout.getChildren().add(confirmButton);
-
-        // create the scene and set stylesheets
-        Scene inputScene = new Scene(inputLayout, 380, 150);
-        inputScene.getStylesheets().add(getClass().getResource("/com/example/frontend/css/main.css").toExternalForm());
-        inputStage.setScene(inputScene);
-
-        // show the input stage
-        inputStage.show();
+        newStage.show();
     }
 
 
