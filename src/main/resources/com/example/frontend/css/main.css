@@ -389,3 +389,27 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .text-area-context-menu .context-menu {
     -fx-background-color: white;
 }
+
+/** MODALS **/
+.modals {
+    -fx-background-color: #2f2f2f;
+    -fx-max-width: 600px;
+    -fx-min-width: 500px;
+    -fx-pref-width: 600px;
+    -fx-max-height: 400px;
+    -fx-min-height: 300px;
+    -fx-pref-height: 400px;
+}
+.modal_topic_label {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+.modal_info_label {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: 12px;
+}

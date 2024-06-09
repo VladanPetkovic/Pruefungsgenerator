@@ -52,6 +52,10 @@ public class SharedData {
 
     @Getter
     @Setter
+    private static Question selectedEditQuestion = new Question();
+
+    @Getter
+    @Setter
     private static ArrayList<Question> testQuestions = new ArrayList<>();
 
     @Getter
@@ -72,6 +76,7 @@ public class SharedData {
         selectedStudyProgram = null;
         newStudyProgram = new StudyProgram();
         filterQuestion = new Question();
+        selectedEditQuestion = new Question();
         testQuestions = new ArrayList<>();
         filteredQuestions = FXCollections.observableArrayList();
         suggestedCategories = new ArrayList<>();
