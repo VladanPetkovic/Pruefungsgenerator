@@ -299,18 +299,6 @@ INSERT INTO has_kq VALUES(11, 5);
 INSERT INTO has_kq VALUES(2, 4);
 
 -----------------------------------------------------------------------------
--- -- Dropping tables (old tables)
--- DROP TABLE IF EXISTS hasKQ;
--- DROP TABLE IF EXISTS hasIQ;
--- DROP TABLE IF EXISTS hasCC;
--- DROP TABLE IF EXISTS hasSC;
--- DROP TABLE IF EXISTS Questions;
--- DROP TABLE IF EXISTS Keywords;
--- DROP TABLE IF EXISTS Images;
--- DROP TABLE IF EXISTS StudyPrograms;
--- DROP TABLE IF EXISTS Courses;
--- DROP TABLE IF EXISTS Categories;
--- -- (new tables)
 -- DROP TABLE IF EXISTS has_kq;
 -- DROP TABLE IF EXISTS has_iq;
 -- DROP TABLE IF EXISTS has_cc;

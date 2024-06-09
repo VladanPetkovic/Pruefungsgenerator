@@ -249,6 +249,24 @@ public class AnswerDAO implements DAO<Answer> {
         }
     }
 
+    /**
+     * This function deletes unused answers.
+     */
+    public void delete() {
+        String deleteStmt = "DELETE FROM answers " +
+                "WHERE id NOT IN (SELECT has_aq.fk_answer_id FROM has_aq);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Answers table
+            preparedStatement.executeUpdate();
+            setAnswerCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void removeHasAQConnection(int answer_id, int question_id) {
         String deleteStmt = "DELETE FROM has_aq WHERE fk_answer_id = ? AND fk_question_id = ?";
         Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);

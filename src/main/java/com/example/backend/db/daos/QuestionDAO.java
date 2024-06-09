@@ -511,6 +511,12 @@ public class QuestionDAO implements DAO<Question> {
         String deleteHasIQStmt = "DELETE FROM has_iq WHERE fk_question_id = ?;";
         String deleteHasKQStmt = "DELETE FROM has_kq WHERE fk_question_id = ?;";
         String deleteHasAQStmt = "DELETE FROM has_aq WHERE fk_question_id = ?;";
+
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasIQStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasKQStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), deleteHasAQStmt, LogLevel.DEBUG);
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
              PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt);

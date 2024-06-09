@@ -260,6 +260,23 @@ public class CategoryDAO implements DAO<Category> {
     }
 
     /**
+     * This function deletes unused categories.
+     */
+    public void delete() {
+        String deleteStmt = "DELETE FROM categories " +
+                "WHERE id NOT IN (SELECT questions.fk_category_id FROM questions);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Categories table
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Establishes a connection between a course and a category.
      *
      * @param course_id   The ID of the course.

@@ -69,4 +69,8 @@ public class KeywordRepository implements Repository<Keyword> {
     public void remove(Keyword keyword) {
         getKeywordDAO().delete(keyword.getId());
     }
+
+    public void removeUnused() {
+        getKeywordDAO().delete();
+    }
 }

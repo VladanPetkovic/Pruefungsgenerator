@@ -345,6 +345,24 @@ public class KeywordDAO implements DAO<Keyword> {
     }
 
     /**
+     * This function deletes unused keywords.
+     */
+    public void delete() {
+        String deleteStmt = "DELETE FROM keywords " +
+                "WHERE id NOT IN (SELECT has_kq.fk_keyword_id FROM has_kq);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Keywords table
+            preparedStatement.executeUpdate();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Adds a connection between a keyword and a question in the database.
      *
      * @param keywordId  The ID of the keyword.

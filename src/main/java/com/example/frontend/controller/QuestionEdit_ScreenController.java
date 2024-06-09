@@ -17,7 +17,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 import java.io.IOException;
@@ -526,7 +528,16 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         Screen<ConfirmDeletion_ScreenController> confirm_modal = new Screen<>("modals/confirm_deletion.fxml");
         confirmStage.setHeight(400);
         confirmStage.setWidth(600);
+        confirmStage.initModality(Modality.APPLICATION_MODAL);
         confirmStage.setScene(confirm_modal.scene);
+
+        confirmStage.setOnHidden((WindowEvent event) -> {
+            // question was deleted
+            if (SharedData.getSelectedEditQuestion().getId() == 0) {
+                switchScene(questionEdit, true);
+            }
+        });
+
         confirmStage.show();
     }
 }

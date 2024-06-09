@@ -309,6 +309,24 @@ public class ImageDAO implements DAO<Image> {
     }
 
     /**
+     * This function deletes unused images.
+     */
+    public void delete() {
+        String deleteStmt = "DELETE FROM images " +
+                "WHERE id NOT IN (SELECT has_iq.fk_image_id FROM has_iq);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Images table
+            preparedStatement.executeUpdate();
+            setImageCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Adds a connection between an image and a question in the database.
      *
      * @param imageId    The ID of the image.

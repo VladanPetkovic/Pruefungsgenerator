@@ -57,4 +57,8 @@ public class CategoryRepository implements Repository<Category> {
     public void remove(Category category) {
         getCategoryDAO().delete(category.getId());
     }
+
+    public void removeUnused() {
+        getCategoryDAO().delete();
+    }
 }
