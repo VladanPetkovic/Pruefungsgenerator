@@ -216,16 +216,33 @@
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" prefHeight="150.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onChooseButton" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="Save Changes" textFill="WHITE">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" top="20.0" />
-                                       </VBox.margin>
-                                    </Button>
-                                 </children>
+                                  <children>
+                                      <GridPane prefHeight="50.0" prefWidth="514.0">
+                                          <columnConstraints>
+                                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="534.2000305175782" />
+                                              <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="10.0" prefWidth="80.59996948242178" />
+                                          </columnConstraints>
+                                          <rowConstraints>
+                                              <RowConstraints />
+                                          </rowConstraints>
+                                          <children>
+                                              <Button mnemonicParsing="false" onAction="#onDeleteBtnClick" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                  <graphic>
+                                                      <ImageView fitHeight="103.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../icons/delete_trash_can.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onChooseButton" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="Save Changes" textFill="WHITE" GridPane.halignment="CENTER">
+                                                  <font>
+                                                      <Font size="20.0" />
+                                                  </font>
+                                              </Button>
+                                          </children>
+                                      </GridPane>
+                                  </children>
                               </VBox>
                            </children>
                         </VBox>
