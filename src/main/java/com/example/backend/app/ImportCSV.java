@@ -3,9 +3,7 @@ package com.example.backend.app;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 
-import javax.swing.*;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -17,31 +15,8 @@ import java.util.ArrayList;
 public class ImportCSV {
     private String filePath;
 
-    public ImportCSV() {
-        this.filePath = selectFile();
-    }
-
-    private String selectFile() {
-        // Creates a new JFileChooser instance
-        JFileChooser chooser = new JFileChooser();
-        // Sets the file filter to only show files with a .csv extension
-        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
-        // Opens the file chooser dialog and returns the user's action (approve or cancel)
-        int returnValue = chooser.showOpenDialog(null);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            // Gets the selected file from the file chooser
-            File selectedFile = chooser.getSelectedFile();
-            if (selectedFile != null && selectedFile.exists()) {
-                // Returns the absolute path of the selected file
-                return selectedFile.getAbsolutePath();
-            } else {
-                Logger.log(getClass().getName(), "Selected file does not exist.", LogLevel.INFO);
-            }
-        } else {
-            Logger.log(getClass().getName(), "File selection cancelled.", LogLevel.INFO);
-        }
-        // Returns null if no valid file was selected
-        return null;
+    public ImportCSV(String filePath) {
+        this.filePath = filePath;
     }
 
     public boolean importData() {

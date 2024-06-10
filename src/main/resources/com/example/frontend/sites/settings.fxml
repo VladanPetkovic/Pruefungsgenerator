@@ -60,6 +60,13 @@
                         <MenuButton fx:id="chooseCourseMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Export" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="Selected File:" GridPane.rowIndex="1" />
+                        <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="2" />
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Choose CSV-file" GridPane.rowIndex="3">
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </Button>
                      </children>
                   </GridPane>
                 </children>
