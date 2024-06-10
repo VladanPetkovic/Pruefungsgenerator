@@ -22,23 +22,30 @@ public class ImportCSV {
     }
 
     private String selectFile() {
+        // Creates a new JFileChooser instance
         JFileChooser chooser = new JFileChooser();
+        // Sets the file filter to only show files with a .csv extension
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
+        // Opens the file chooser dialog and returns the user's action (approve or cancel)
         int returnValue = chooser.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
+            // Gets the selected file from the file chooser
             File selectedFile = chooser.getSelectedFile();
             if (selectedFile != null && selectedFile.exists()) {
+                // Returns the absolute path of the selected file
                 return selectedFile.getAbsolutePath();
             } else {
-                System.out.println("Selected file does not exist.");
+                Logger.log(getClass().getName(), "Selected file does not exist.", LogLevel.INFO);
             }
         } else {
-            System.out.println("File selection cancelled.");
+            Logger.log(getClass().getName(), "File selection cancelled.", LogLevel.INFO);
         }
+        // Returns null if no valid file was selected
         return null;
     }
 
     public boolean importData() {
+        // Checks if the filePath is null, which means no file was selected
         if (filePath == null) {
             Logger.log(getClass().getName(), "No file selected.", LogLevel.INFO);
             return false;
@@ -49,35 +56,42 @@ public class ImportCSV {
             Logger.log(getClass().getName(), "Failed to import data from file: " + filePath, LogLevel.INFO);
             return false;
         }
+        // Returns true if the data import is successful
         return true;
     }
 
     private boolean importDataFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
-            // Skip the header line
+            // Read the first line, which is expected to be the header, and skip it
             if ((line = reader.readLine()) == null) {
                 Logger.log(getClass().getName(), "CSV file is empty.", LogLevel.INFO);
+                // Return false because there is no data to import
                 return false;
             }
+            // Loop through each subsequent line in the CSV file
             while ((line = reader.readLine()) != null) {
+                // Split the line into an array of strings using ";" as the delimiter
                 String[] values = line.split(";");
+                // process each row
                 importRow(values);
             }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
+        // Return true to indicate that the data import was successful
         return true;
     }
 
     private void importRow(String[] values) {
+        // Check if the CSV row contains exactly 10 values
         if (values.length != 10) {
             Logger.log(getClass().getName(), "Invalid CSV format.", LogLevel.INFO);
             return;
         }
 
-        // Parse values
+        // Parse values from the CSV row, removing any double quotes
         String questionText = values[0].replace("\"", "");
         String categoryName = values[1].replace("\"", "");
         int difficulty = Integer.parseInt(values[2]);
@@ -91,7 +105,8 @@ public class ImportCSV {
 
         // Handle database operations
         try (Connection connection = SQLiteDatabaseConnection.connect()) {
-            connection.setAutoCommit(false);  // Start transaction
+            // Disable auto-commit mode to start a database transaction
+            connection.setAutoCommit(false);
             try {
                 StudyProgram studyProgram = StudyProgram.createNewStudyProgramInDatabase(studyProgramName);
                 Course course = Course.createNewCourseInDatabase(courseName, studyProgram);
@@ -99,15 +114,21 @@ public class ImportCSV {
 
                 QuestionType questionType = getQuestionType(questionTypeName);
 
+                // Split the answers text by commas to get individual answers
                 String[] answersArray = answersText.split(",");
+                // Create a list of Answer objects from the split answers
                 ArrayList<Answer> answers = createAnswers(answersArray);
+                // Split the keywords text by commas to get individual keywords
                 String[] keywordsArray = keywordsText.split(",");
+                // Create a list of Keyword objects from the split keywords
                 ArrayList<Keyword> keywords = createKeywords(keywordsArray);
 
                 int questionId = insertQuestion(category, difficulty, points, questionText, questionType, remark, answers, keywords);
 
+                // Commit the transaction if all operations succeed
                 connection.commit();
             } catch (Exception e) {
+                // Rollback the transaction in case of an exception
                 connection.rollback();
                 e.printStackTrace();
             }
@@ -117,12 +138,14 @@ public class ImportCSV {
     }
 
     private QuestionType getQuestionType(String questionTypeName) {
-        // check for existence
+        // Check for existence of a QuestionType with the given name in the repository
         QuestionType newQuestionType = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(questionTypeName);
 
+        // If the QuestionType does not exist, create and add it to the repository
         if (newQuestionType == null) {
             QuestionType addToDatabase = new QuestionType(questionTypeName);
             SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.add(addToDatabase);
+            // Retrieve the newly added QuestionType from the repository
             newQuestionType = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(questionTypeName);
         }
         return newQuestionType;

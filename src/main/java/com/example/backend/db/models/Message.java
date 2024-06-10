@@ -87,7 +87,11 @@ public enum Message {
 
     // test:
     NO_QUESTIONS_PROVIDED_ERROR_MESSAGE("No questions provided.", true),
-    NO_QUESTIONS_FOUND("No questions found.", true);
+    NO_QUESTIONS_FOUND("No questions found.", true),
+
+    // import functionality:
+    SUCCESS_MESSAGE_DATA_IMPORTED("Data imported successfully.", false),
+    ERROR_MESSAGE_IMPORT_FAILED("Failed to import data from the file.", true);
 
 
     private String message;

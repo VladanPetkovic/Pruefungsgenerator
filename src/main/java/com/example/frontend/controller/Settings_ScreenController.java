@@ -1,6 +1,7 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.ExportCSV;
+import com.example.backend.app.ImportCSV;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
@@ -57,9 +58,20 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     public void onImportBtnClicked() {
-        FileChooser fileChooser = new FileChooser();
-        File selectedFile = fileChooser.showOpenDialog( settingsImportBtn.getScene().getWindow());
+        // Create an instance of the ImportCSV class
+        ImportCSV importCSV = new ImportCSV();
+
+        // Start the import process
+        boolean isSuccess = importCSV.importData();
+
+        // Update SharedData with a success or error message
+        if (isSuccess) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
+        } else {
+            SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
+        }
     }
+
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
         chooseDirectory(this.label_selectedDirectory);
