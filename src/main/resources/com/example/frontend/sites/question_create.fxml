@@ -88,22 +88,26 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <VBox minHeight="200.0" styleClass="question_vbox">
+                              <ScrollPane fitToWidth="true" fitToHeight="true" minHeight="200.0" maxHeight="300.0" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <StackPane prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                       <TextArea fx:id="question" prefWidth="500.0" promptText="Type..." VBox.vgrow="ALWAYS" />
+                                       <TextFlow fx:id="questionPreview" visible="false" VBox.vgrow="ALWAYS" />
+                                    </StackPane>
+                                 </content>
+                              </ScrollPane>
+                              <HBox>
                                  <children>
-                                    <TextArea fx:id="question" prefWidth="500.0" promptText="Type..." />
-                                    <TextFlow fx:id="questionPreview" visible="false" />
-                                 </children>
-                              </VBox>
-                              <VBox fx:id="picturePickerPlaceholder">
-                                 <children>
+                                    <VBox fx:id="picturePickerPlaceholder">
+                                       <children>
 
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="question_vbox">
+                                       <Button onAction="#onActionPreviewQuestion" fx:id="previewQuestion" visible="false" styleClass="btn_grey">Preview Question</Button>
+                                    </VBox>
                                  </children>
-                              </VBox>
-                              <VBox>
-                                 <children>
-                                    <Button fx:id="previewQuestion" onAction="#onActionPreviewQuestion" visible="false" styleClass="btn_dark">Preview Question</Button>
-                                 </children>
-                              </VBox>
+                              </HBox>
                            </children>
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">
