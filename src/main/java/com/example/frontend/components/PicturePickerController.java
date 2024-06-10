@@ -2,8 +2,11 @@ package com.example.frontend.components;
 
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
+import com.example.frontend.modals.ImageResizer_ScreenController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
@@ -13,10 +16,14 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.Setter;
 
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PicturePickerController {
@@ -25,7 +32,7 @@ public class PicturePickerController {
     private final FileChooser fileChooser;
     @Setter
     private TextArea textArea = null;
-    private final ArrayList<ButtonAndImage> buttonAndImages;
+    public final ArrayList<ButtonAndImage> buttonAndImages;
     private static final FileChooser.ExtensionFilter EXTENSION_FILTER =
             new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg");
 
@@ -67,8 +74,8 @@ public class PicturePickerController {
 
     @FXML
     private void onActionUploadPicture() {
-        if(buttonAndImages.size() == 10){
-            SharedData.setOperation("Can't upload more than 10 pictures.",true);
+        if (buttonAndImages.size() == 10) {
+            SharedData.setOperation("Can't upload more than 10 pictures.", true);
             return;
         }
         File file = fileChooser.showOpenDialog(MainApp.stage);
@@ -78,7 +85,29 @@ public class PicturePickerController {
                 return;
             }
             Image image = new Image(file.toURI().toString());
-            buttonAndImages.add(new ButtonAndImage(fileName, image));
+            try {
+                FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("modals/image_resizer.fxml"));
+                VBox imageResizer = loader.load();
+                ImageResizer_ScreenController imageResizerScreenController = loader.getController();
+                imageResizerScreenController.setPicturePickerController(this);
+                imageResizerScreenController.setImage(image);
+                Scene scene = new Scene(imageResizer);
+                Stage newStage = new Stage();
+                newStage.setTitle("Resize Image");
+                newStage.setScene(scene);
+
+                // Show the stage and wait for it to close
+                newStage.showAndWait();
+
+                // After the resizer stage is closed, check the output image
+                Image resizedImage = imageResizerScreenController.outputImage;
+                if (resizedImage != null) {
+                    buttonAndImages.add(new ButtonAndImage(fileName, resizedImage));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
