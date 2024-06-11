@@ -9,14 +9,13 @@ import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
+import com.example.frontend.modals.AddCourse_ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -144,11 +143,12 @@ public class Home_ScreenController extends ScreenController {
 
     // method to add a new study program
     private void addStudyProgram() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("modals/add_StudyProgram.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
         Stage newStage = new Stage();
+        com.example.frontend.controller.Screen<AddCourse_ScreenController> new_study_program_modal =
+                new com.example.frontend.controller.Screen<>("modals/add_StudyProgram.fxml");
+        newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle("Add Study Program");
-        newStage.setScene(scene);
+        newStage.setScene(new_study_program_modal.scene);
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
@@ -159,12 +159,12 @@ public class Home_ScreenController extends ScreenController {
 
     // method to add a new course
     private void addCourse() throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("modals/add_Course.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
         Stage newStage = new Stage();
+        com.example.frontend.controller.Screen<AddCourse_ScreenController> new_course_modal =
+                new com.example.frontend.controller.Screen<>("modals/add_Course.fxml");
+        newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle("Add Study Program");
-        newStage.setScene(scene);
+        newStage.setScene(new_course_modal.scene);
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {

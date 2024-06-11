@@ -7,21 +7,17 @@ import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import com.example.frontend.components.PicturePickerController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -119,9 +115,10 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     private boolean questionPreviewVisible = false;
+
     @FXML
-    private void onActionPreviewQuestion(){
-        if(!questionPreviewVisible){
+    private void onActionPreviewQuestion() {
+        if (!questionPreviewVisible) {
             question.setVisible(false);
             questionPreview.setVisible(true);
             questionPreview.getChildren().clear();
@@ -134,7 +131,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         questionPreviewVisible = false;
     }
 
-    public void parseAndDisplayContent(){
+    public void parseAndDisplayContent() {
         Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
         Matcher matcher = pattern.matcher(question.getText());
         int lastIndex = 0;
@@ -144,8 +141,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 questionPreview.getChildren().add(new Text(textBeforeImage));
             }
             String imageName = matcher.group(1);
-            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages){
-                if(image.imageName.equals(imageName)){
+            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
+                if (image.imageName.equals(imageName)) {
                     ImageView imageView = new ImageView(image.image);
                     questionPreview.getChildren().add(imageView);
                 }
@@ -158,9 +155,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
     }
 
-    private boolean previewQuestionShouldBeVisible(){
-        if(picturePickerController.invalidSyntax()) return false;
-        if(picturePickerController.buttonAndImages.size() == 0) return false;
+    private boolean previewQuestionShouldBeVisible() {
+        if (picturePickerController.invalidSyntax()) return false;
+        if (picturePickerController.buttonAndImages.size() == 0) return false;
         return true;
     }
 
