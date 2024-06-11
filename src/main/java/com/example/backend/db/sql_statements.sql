@@ -299,6 +299,22 @@ INSERT INTO has_kq VALUES(11, 5);
 INSERT INTO has_kq VALUES(2, 4);
 
 -----------------------------------------------------------------------------
+-- Delete statements
+DELETE FROM has_kq;
+DELETE FROM has_iq;
+DELETE FROM has_cc;
+DELETE FROM has_sc;
+DELETE FROM has_aq;
+DELETE FROM answers;
+DELETE FROM questions;
+DELETE FROM keywords;
+DELETE FROM images;
+DELETE FROM study_programs;
+DELETE FROM courses;
+DELETE FROM categories;
+
+-----------------------------------------------------------------------------
+-- Drop statements
 -- DROP TABLE IF EXISTS has_kq;
 -- DROP TABLE IF EXISTS has_iq;
 -- DROP TABLE IF EXISTS has_cc;

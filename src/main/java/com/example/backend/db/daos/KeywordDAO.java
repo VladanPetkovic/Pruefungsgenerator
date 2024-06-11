@@ -369,16 +369,45 @@ public class KeywordDAO implements DAO<Keyword> {
      * @param questionId The ID of the question.
      */
     public void addKQConnection(int keywordId, int questionId) {
+        // SQL to check if the connection already exists
+        String checkStmt = "SELECT COUNT(*) FROM has_kq WHERE fk_keyword_id = ? AND fk_question_id = ?;";
+        // SQL to insert a new connection
         String insertStmt = "INSERT INTO has_kq (fk_keyword_id, fk_question_id) VALUES (?, ?);";
-        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
+        Logger.log(getClass().getName(), "Checking existence: " + checkStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setInt(1, keywordId);
-            preparedStatement.setInt(2, questionId);
-            preparedStatement.executeUpdate();
+             PreparedStatement checkStatement = connection.prepareStatement(checkStmt);
+             PreparedStatement insertStatement = connection.prepareStatement(insertStmt)) {
+
+            // Set parameters for the check statement
+            checkStatement.setInt(1, keywordId);
+            checkStatement.setInt(2, questionId);
+
+            // Execute the check query
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    // Connection already exists, log and return
+                    Logger.log(getClass().getName(),
+                            "The connection between keyword ID " + keywordId + " and question ID " + questionId + " already exists.",
+                            LogLevel.INFO);
+                    return;
+                }
+            }
+
+            // Connection does not exist, proceed with the insertion
+            Logger.log(getClass().getName(), "Inserting new connection: " + insertStmt, LogLevel.DEBUG);
+
+            insertStatement.setInt(1, keywordId);
+            insertStatement.setInt(2, questionId);
+            insertStatement.executeUpdate();
+
             setKeywordCache(null);
+            Logger.log(getClass().getName(),
+                    "Successfully inserted connection between keyword ID " + keywordId + " and question ID " + questionId,
+                    LogLevel.INFO);
         } catch (SQLException e) {
+            Logger.log(getClass().getName(), "SQL error: " + e.getMessage(), LogLevel.ERROR);
             e.printStackTrace();
         }
     }
