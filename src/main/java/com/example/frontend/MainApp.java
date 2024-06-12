@@ -52,11 +52,11 @@ public class MainApp extends Application {
         cancelButton.getStyleClass().add("btn_grey");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && ((Optional<?>) result).get() == ButtonType.OK) {
-            //user clicks OK
-        } else {
+        if (result.isEmpty() || ((Optional<?>) result).get() != ButtonType.OK) {
             //user closes dialog or clicks cancel
             event.consume();
+        } else {
+            //user clicks OK
         }
     }
 
