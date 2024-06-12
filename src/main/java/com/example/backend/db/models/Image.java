@@ -21,14 +21,20 @@ public class Image {
     private String name;
     private int position;
     private String comment;
-    public Image(javafx.scene.image.Image image, String name){
-        this.image = imageToByteArray(image,getFileExtension(name));
+
+    public Image(javafx.scene.image.Image image, String name) {
+        this.image = imageToByteArray(image, getFileExtension(name));
         this.name = name;
     }
 
     public static void createImages(Question question, int newQuestionId) {
-        if(question == null) return;
-        SQLiteDatabaseConnection.imageRepository.add(question.getImages(),newQuestionId);
+        if (question == null) {
+            return;
+        }
+        if (question.getImages() == null) {
+            return;
+        }
+        SQLiteDatabaseConnection.imageRepository.add(question.getImages(), newQuestionId);
     }
 
     private String getFileExtension(String fileName) {
@@ -48,7 +54,7 @@ public class Image {
         return parts[parts.length - 1].toLowerCase();
     }
 
-    private byte[] imageToByteArray(javafx.scene.image.Image image, String format){
+    private byte[] imageToByteArray(javafx.scene.image.Image image, String format) {
         try {
             // Convert JavaFX Image to BufferedImage
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -57,7 +63,7 @@ public class Image {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, format, baos);
             return baos.toByteArray();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
@@ -77,7 +83,6 @@ public class Image {
         }
         return null;
     }
-
 
 
 }

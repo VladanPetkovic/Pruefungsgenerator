@@ -58,4 +58,8 @@ public class AnswerRepository implements Repository<Answer> {
     public void remove(Answer answer) {
         getAnswerDAO().delete(answer.getId());
     }
+
+    public void removeUnused() {
+        getAnswerDAO().delete();
+    }
 }

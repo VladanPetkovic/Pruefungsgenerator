@@ -58,4 +58,18 @@ public class Keyword {
         }
         return newKeyword;
     }
+
+    /**
+     * This method creates keywords and their connection for a new question.
+     * If same keywords exists, only the connection is made.
+     * @param newQuestion A new question with keywords
+     */
+    public static void createKeywords(Question newQuestion, int newQuestionId) {
+        if (newQuestion == null || newQuestion.getKeywords() == null) {
+            return;
+        }
+
+        // add one or multiple keywords and the connection in the join table (has_kq)
+        SQLiteDatabaseConnection.keywordRepository.add(newQuestion.getKeywords(), newQuestionId);
+    }
 }

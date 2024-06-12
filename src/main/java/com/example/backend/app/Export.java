@@ -75,7 +75,7 @@ public abstract class Export<T> {
     }
 
     protected void setNumberOfPages(int numberOfQuestions) {
-        float numberOfPages = (float) numberOfQuestions /this.questionsPerSite;
+        float numberOfPages = (float) numberOfQuestions / this.questionsPerSite;
         this.numberOfPages = (int) Math.ceil(numberOfPages);
     }
 }

@@ -14,6 +14,7 @@ public enum Message {
     ERROR_MESSAGE_DATA_CONTAINS_SPACES("String contains only spaces.", true),
     ERROR_MESSAGE_INPUT_ALL_FIELDS("Some required fields haven't been filled.", true),
     ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE("Select a folder, where to save the file!", true),
+    ERROR_MESSAGE_FILE_NOT_SELECTED("File was not selected!", true),
 
     // error messages for the answer DAO:
     CREATE_ANSWER_ERROR_MESSAGE("Failed to insert answer into the database.", true),
@@ -87,7 +88,11 @@ public enum Message {
 
     // test:
     NO_QUESTIONS_PROVIDED_ERROR_MESSAGE("No questions provided.", true),
-    NO_QUESTIONS_FOUND("No questions found.", true);
+    NO_QUESTIONS_FOUND("No questions found.", true),
+
+    // import functionality:
+    SUCCESS_MESSAGE_DATA_IMPORTED("Data imported successfully.", false),
+    ERROR_MESSAGE_IMPORT_FAILED("Failed to import data from the file.", true);
 
 
     private String message;

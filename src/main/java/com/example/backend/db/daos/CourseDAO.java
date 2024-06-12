@@ -259,16 +259,47 @@ public class CourseDAO implements DAO<Course> {
      * @param courseId  The ID of the course.
      */
     public void addSCConnection(int programId, int courseId) {
+        // SQL statement to check if the relationship already exists
+        String checkStmt = "SELECT COUNT(*) FROM has_sc WHERE fk_program_id = ? AND fk_course_id = ?;";
+        // SQL statement to insert a new relationship
         String insertStmt = "INSERT INTO has_sc (fk_program_id, fk_course_id) VALUES (?, ?);";
-        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
+        Logger.log(getClass().getName(), "Checking existence: " + checkStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setInt(1, programId);
-            preparedStatement.setInt(2, courseId);
-            preparedStatement.executeUpdate();
+             PreparedStatement checkStatement = connection.prepareStatement(checkStmt);
+             PreparedStatement insertStatement = connection.prepareStatement(insertStmt)) {
+
+            // Set parameters for the check statement
+            checkStatement.setInt(1, programId);
+            checkStatement.setInt(2, courseId);
+
+            // Execute the check query
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    // Relationship already exists, log and return
+                    Logger.log(getClass().getName(),
+                            "The relationship between program ID " + programId + " and course ID " + courseId + " already exists.",
+                            LogLevel.INFO);
+                    return;
+                }
+            }
+
+            // Relationship does not exist, proceed with the insertion
+            Logger.log(getClass().getName(), "Inserting new relationship: " + insertStmt, LogLevel.DEBUG);
+
+            insertStatement.setInt(1, programId);
+            insertStatement.setInt(2, courseId);
+            insertStatement.executeUpdate();
+
+            // Optionally clear any cache or perform additional actions
             setCourseCache(null);
+
+            Logger.log(getClass().getName(),
+                    "Successfully inserted relationship between program ID " + programId + " and course ID " + courseId,
+                    LogLevel.INFO);
         } catch (SQLException e) {
+            Logger.log(getClass().getName(), "SQL error: " + e.getMessage(), LogLevel.ERROR);
             e.printStackTrace();
         }
     }

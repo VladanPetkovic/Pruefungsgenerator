@@ -134,7 +134,7 @@ public class ExportCSV {
     private String createFileName() {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-        return String.format("tourExport_%04d-%02d-%02d_%02d-%02d-%02d.csv",
+        return String.format("questionDBExport_%04d-%02d-%02d_%02d-%02d-%02d.csv",
                 currentDateTime.getYear(),
                 currentDateTime.getMonthValue(),
                 currentDateTime.getDayOfMonth(),

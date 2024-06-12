@@ -260,42 +260,87 @@ public class CategoryDAO implements DAO<Category> {
     }
 
     /**
-     * Establishes a connection between a course and a category.
-     *
-     * @param course_id   The ID of the course.
-     * @param category_id The ID of the category.
+     * This function deletes unused categories.
      */
-    public void addCCConnection(int course_id, int category_id) {
-        String insertStmt = "INSERT OR IGNORE INTO has_cc (fk_course_id, fk_category_id) VALUES (?, ?);";
-        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+    public void delete() {
+        String deleteStmt = "DELETE FROM categories " +
+                "WHERE id NOT IN (SELECT questions.fk_category_id FROM questions);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-
-            preparedStatement.setInt(1, course_id);
-            preparedStatement.setInt(2, category_id);
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Categories table
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Removes a connection between a course and a category from the database.
+     * Establishes a connection between a course and a category, ensuring no duplicate connections are added.
+     *
+     * @param course_id   The ID of the course.
+     * @param category_id The ID of the category.
+     */
+    public void addCCConnection(int course_id, int category_id) {
+        String checkStmt = "SELECT COUNT(*) FROM has_cc WHERE fk_course_id = ? AND fk_category_id = ?";
+        String insertStmt = "INSERT INTO has_cc (fk_course_id, fk_category_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), checkStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement checkPreparedStatement = connection.prepareStatement(checkStmt)) {
+
+            checkPreparedStatement.setInt(1, course_id);
+            checkPreparedStatement.setInt(2, category_id);
+
+            try (ResultSet resultSet = checkPreparedStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) == 0) {
+                    try (PreparedStatement insertPreparedStatement = connection.prepareStatement(insertStmt)) {
+                        insertPreparedStatement.setInt(1, course_id);
+                        insertPreparedStatement.setInt(2, category_id);
+                        insertPreparedStatement.executeUpdate();
+                        Logger.log(getClass().getName(), "Connection added: course_id=" + course_id + ", category_id=" + category_id, LogLevel.INFO);
+                    }
+                } else {
+                    Logger.log(getClass().getName(), "Connection already exists: course_id=" + course_id + ", category_id=" + category_id, LogLevel.INFO);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Removes a connection between a course and a category from the database, ensuring the connection exists before removal.
      *
      * @param course_id   The ID of the course.
      * @param category_id The ID of the category.
      */
     public void removeCCConnection(int course_id, int category_id) {
+        String checkStmt = "SELECT COUNT(*) FROM has_cc WHERE fk_course_id = ? AND fk_category_id = ?";
         String deleteStmt = "DELETE FROM has_cc WHERE fk_course_id = ? AND fk_category_id = ?;";
+        Logger.log(getClass().getName(), checkStmt, LogLevel.DEBUG);
         Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
-            preparedStatement.setInt(1, course_id);
-            preparedStatement.setInt(2, category_id);
-            preparedStatement.executeUpdate();
+             PreparedStatement checkPreparedStatement = connection.prepareStatement(checkStmt)) {
+
+            checkPreparedStatement.setInt(1, course_id);
+            checkPreparedStatement.setInt(2, category_id);
+
+            try (ResultSet resultSet = checkPreparedStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    try (PreparedStatement deletePreparedStatement = connection.prepareStatement(deleteStmt)) {
+                        deletePreparedStatement.setInt(1, course_id);
+                        deletePreparedStatement.setInt(2, category_id);
+                        deletePreparedStatement.executeUpdate();
+                        Logger.log(getClass().getName(), "Connection removed: course_id=" + course_id + ", category_id=" + category_id, LogLevel.INFO);
+                    }
+                } else {
+                    Logger.log(getClass().getName(), "Connection does not exist: course_id=" + course_id + ", category_id=" + category_id, LogLevel.INFO);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

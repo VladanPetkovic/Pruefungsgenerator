@@ -4,6 +4,7 @@ import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Keyword;
 import com.example.backend.db.models.Message;
 import lombok.AccessLevel;
@@ -40,6 +41,90 @@ public class KeywordDAO implements DAO<Keyword> {
         } catch (SQLException e) {
             e.printStackTrace();
             SharedData.setOperation(Message.CREATE_KEYWORD_ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * ATTENTION: duplicate records will be ignored
+     * @param keywords ArrayList of Keywords, so one or multiple keywords can be inserted at once into the keywords table.
+     */
+    public void create(ArrayList<Keyword> keywords) {
+        int keywordCounter = 1;
+
+        StringBuilder insertStmt = new StringBuilder("INSERT OR IGNORE INTO keywords (keyword) VALUES (?)");
+        prepareInsertKeywordQuery(insertStmt, keywords);
+        Logger.log(getClass().getName(), String.valueOf(insertStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(insertStmt))) {
+
+            // insert new answers
+            for (Keyword keyword : keywords) {
+                preparedStatement.setString(keywordCounter, keyword.getKeyword());
+                keywordCounter++;
+            }
+
+            preparedStatement.executeUpdate();
+            setKeywordCache(null);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            SharedData.setOperation(Message.CREATE_KEYWORD_ERROR_MESSAGE);
+        }
+    }
+
+    public void prepareInsertKeywordQuery(StringBuilder insertStmt, ArrayList<Keyword> keywords) {
+        if (keywords.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                insertStmt.append(", (?)");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    public void prepareInsertConnectionQuery(StringBuilder insertStmt, ArrayList<Keyword> keywords) {
+        if (keywords.size() > 1) {
+            // -1, because we already have one insert
+            for (int i = 0; i < keywords.size() - 1; i++) {
+                insertStmt.append("UNION ALL SELECT (SELECT id FROM keywords WHERE keyword = ?), ? ");
+            }
+        }
+
+        insertStmt.append(";");
+    }
+
+    /**
+     * ATTENTION: duplicate records are ignored and no error will show up.
+     * @param keywords ArrayList of Keywords, inserting one or multiple keyword_ids in the has_kq table
+     * @param question_id The id of the Question
+     */
+    public void addKQConnection(ArrayList<Keyword> keywords, int question_id) {
+        int keywordCounter = 1;
+
+        StringBuilder insertHasKQStmt = new StringBuilder("" +
+                "INSERT OR IGNORE INTO has_kq (fk_keyword_id, fk_question_id) " +
+                "SELECT (SELECT id FROM keywords WHERE keyword = ?), ? ");
+        prepareInsertConnectionQuery(insertHasKQStmt, keywords);
+        Logger.log(getClass().getName(), String.valueOf(insertHasKQStmt), LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatementHasKQ = connection.prepareStatement(String.valueOf(insertHasKQStmt))) {
+
+            // insert new connections
+            for (Keyword keyword : keywords) {
+                preparedStatementHasKQ.setString(keywordCounter, keyword.getKeyword());
+                keywordCounter++;
+                preparedStatementHasKQ.setInt(keywordCounter, question_id);
+                keywordCounter++;
+            }
+
+            preparedStatementHasKQ.executeUpdate();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -260,22 +345,69 @@ public class KeywordDAO implements DAO<Keyword> {
     }
 
     /**
+     * This function deletes unused keywords.
+     */
+    public void delete() {
+        String deleteStmt = "DELETE FROM keywords " +
+                "WHERE id NOT IN (SELECT has_kq.fk_keyword_id FROM has_kq);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Keywords table
+            preparedStatement.executeUpdate();
+            setKeywordCache(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Adds a connection between a keyword and a question in the database.
      *
      * @param keywordId  The ID of the keyword.
      * @param questionId The ID of the question.
      */
     public void addKQConnection(int keywordId, int questionId) {
+        // SQL to check if the connection already exists
+        String checkStmt = "SELECT COUNT(*) FROM has_kq WHERE fk_keyword_id = ? AND fk_question_id = ?;";
+        // SQL to insert a new connection
         String insertStmt = "INSERT INTO has_kq (fk_keyword_id, fk_question_id) VALUES (?, ?);";
-        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+
+        Logger.log(getClass().getName(), "Checking existence: " + checkStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setInt(1, keywordId);
-            preparedStatement.setInt(2, questionId);
-            preparedStatement.executeUpdate();
+             PreparedStatement checkStatement = connection.prepareStatement(checkStmt);
+             PreparedStatement insertStatement = connection.prepareStatement(insertStmt)) {
+
+            // Set parameters for the check statement
+            checkStatement.setInt(1, keywordId);
+            checkStatement.setInt(2, questionId);
+
+            // Execute the check query
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    // Connection already exists, log and return
+                    Logger.log(getClass().getName(),
+                            "The connection between keyword ID " + keywordId + " and question ID " + questionId + " already exists.",
+                            LogLevel.INFO);
+                    return;
+                }
+            }
+
+            // Connection does not exist, proceed with the insertion
+            Logger.log(getClass().getName(), "Inserting new connection: " + insertStmt, LogLevel.DEBUG);
+
+            insertStatement.setInt(1, keywordId);
+            insertStatement.setInt(2, questionId);
+            insertStatement.executeUpdate();
+
             setKeywordCache(null);
+            Logger.log(getClass().getName(),
+                    "Successfully inserted connection between keyword ID " + keywordId + " and question ID " + questionId,
+                    LogLevel.INFO);
         } catch (SQLException e) {
+            Logger.log(getClass().getName(), "SQL error: " + e.getMessage(), LogLevel.ERROR);
             e.printStackTrace();
         }
     }

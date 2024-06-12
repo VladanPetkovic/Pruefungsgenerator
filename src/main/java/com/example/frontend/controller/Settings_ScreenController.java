@@ -1,11 +1,13 @@
 package com.example.frontend.controller;
 
 import com.example.backend.app.ExportCSV;
+import com.example.backend.app.ImportCSV;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
+import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -27,6 +29,8 @@ public class Settings_ScreenController extends ScreenController {
     public MenuButton chooseCourseMenuButton;
     @FXML
     public Label label_selectedDirectory;
+    @FXML
+    public Label label_selectedFile;
     @FXML
     Button settingsImportBtn;
 
@@ -57,8 +61,36 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     public void onImportBtnClicked() {
+        if (Objects.equals(this.label_selectedFile.getText(), "\"\"")) {
+            SharedData.setOperation(Message.ERROR_MESSAGE_FILE_NOT_SELECTED);
+            return;
+        }
+        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText());
+
+        // Start the import process
+        boolean isSuccess = importCSV.importData();
+
+        // Update SharedData with a success or error message
+        if (isSuccess) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
+        } else {
+            SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
+        }
+    }
+
+    public void onChooseFileBtnClick(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        File selectedFile = fileChooser.showOpenDialog( settingsImportBtn.getScene().getWindow());
+        fileChooser.setTitle("Select a CSV File");
+
+        // Set extension filter to only allow CSV files
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+        );
+
+        File file = fileChooser.showOpenDialog(MainApp.stage);
+        if (file != null) {
+            label_selectedFile.setText(file.toString());
+        }
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {

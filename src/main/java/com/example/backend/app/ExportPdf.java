@@ -163,9 +163,21 @@ public class ExportPdf extends Export<Document> {
         Rectangle pageSize = getPageSize(document);
         float fontSize = 11;
 
-        Paragraph dateParagraph = new Paragraph("Date:").setFont(font).setFontSize(fontSize).setFixedLeading(fontSize).setTextAlignment(TextAlignment.LEFT);
-        Paragraph nameParagraph = new Paragraph("Name:").setFont(font).setFontSize(fontSize).setFixedLeading(fontSize).setTextAlignment(TextAlignment.CENTER);
-        Paragraph uidParagraph = new Paragraph("UID:").setFont(font).setFontSize(fontSize).setFixedLeading(fontSize).setTextAlignment(TextAlignment.RIGHT);
+        Paragraph dateParagraph = new Paragraph("Date:")
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setFixedLeading(fontSize)
+                .setTextAlignment(TextAlignment.LEFT);
+        Paragraph nameParagraph = new Paragraph("Name:")
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setFixedLeading(fontSize)
+                .setTextAlignment(TextAlignment.CENTER);
+        Paragraph uidParagraph = new Paragraph("UID:")
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setFixedLeading(fontSize)
+                .setTextAlignment(TextAlignment.RIGHT);
         document.showTextAligned(dateParagraph, margin, pageSize.getHeight() - margin + 10, TextAlignment.LEFT);
         document.showTextAligned(nameParagraph, pageSize.getWidth()/2, pageSize.getHeight() - margin + 10, TextAlignment.CENTER);
         document.showTextAligned(uidParagraph, pageSize.getWidth() - 2 * margin, pageSize.getHeight() - margin + 10, TextAlignment.RIGHT);
@@ -176,8 +188,11 @@ public class ExportPdf extends Export<Document> {
         Rectangle pageSize = getPageSize(document);
 
         Paragraph pageNumParagraph = new Paragraph(String.format("%d", pageNumber));
-        pageNumParagraph.setFont(font).setFontSize(11);
-        pageNumParagraph.setTextAlignment(TextAlignment.RIGHT);
+        pageNumParagraph
+                .setFont(font)
+                .setFontSize(11);
+        pageNumParagraph
+                .setTextAlignment(TextAlignment.RIGHT);
         document.showTextAligned(pageNumParagraph, pageSize.getWidth() - margin, margin, TextAlignment.RIGHT);
     }
 

@@ -309,19 +309,16 @@ public class ImageDAO implements DAO<Image> {
     }
 
     /**
-     * Adds a connection between an image and a question in the database.
-     *
-     * @param imageId    The ID of the image.
-     * @param questionId The ID of the question.
+     * This function deletes unused images.
      */
-    public void addIQConnection(int imageId, int questionId) {
-        String insertStmt = "INSERT INTO has_iq (fk_image_id, fk_question_id) VALUES (?, ?);";
-        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
+    public void delete() {
+        String deleteStmt = "DELETE FROM images " +
+                "WHERE id NOT IN (SELECT has_iq.fk_image_id FROM has_iq);";
+        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-            preparedStatement.setInt(1, imageId);
-            preparedStatement.setInt(2, questionId);
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
+            // deleting from Images table
             preparedStatement.executeUpdate();
             setImageCache(null);
         } catch (SQLException e) {
@@ -330,23 +327,70 @@ public class ImageDAO implements DAO<Image> {
     }
 
     /**
-     * Removes a connection between an image and a question in the database.
+     * Adds a connection between an image and a question in the database if it does not already exist.
+     *
+     * @param imageId    The ID of the image.
+     * @param questionId The ID of the question.
+     */
+    public void addIQConnection(int imageId, int questionId) {
+        String checkStmt = "SELECT COUNT(*) FROM has_iq WHERE fk_image_id = ? AND fk_question_id = ?;";
+        String insertStmt = "INSERT INTO has_iq (fk_image_id, fk_question_id) VALUES (?, ?);";
+        Logger.log(getClass().getName(), checkStmt, LogLevel.DEBUG);
+
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement checkPreparedStatement = connection.prepareStatement(checkStmt);
+             PreparedStatement insertPreparedStatement = connection.prepareStatement(insertStmt)) {
+
+            checkPreparedStatement.setInt(1, imageId);
+            checkPreparedStatement.setInt(2, questionId);
+            try (ResultSet resultSet = checkPreparedStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    Logger.log(getClass().getName(), "Connection already exists, skipping insert.", LogLevel.INFO);
+                    return;
+                }
+            }
+
+            insertPreparedStatement.setInt(1, imageId);
+            insertPreparedStatement.setInt(2, questionId);
+            insertPreparedStatement.executeUpdate();
+            Logger.log(getClass().getName(), "IQ connection added successfully.", LogLevel.INFO);
+
+        } catch (SQLException e) {
+            Logger.log(getClass().getName(), "Error adding IQ connection: " + e.getMessage(), LogLevel.ERROR);
+        }
+    }
+
+    /**
+     * Removes a connection between an image and a question in the database if it exists.
      *
      * @param imageId    The ID of the image.
      * @param questionId The ID of the question.
      */
     public void removeIQConnection(int imageId, int questionId) {
+        String checkStmt = "SELECT COUNT(*) FROM has_iq WHERE fk_image_id = ? AND fk_question_id = ?;";
         String deleteStmt = "DELETE FROM has_iq WHERE fk_image_id = ? AND fk_question_id = ?;";
-        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
+        Logger.log(getClass().getName(), checkStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt)) {
-            preparedStatement.setInt(1, imageId);
-            preparedStatement.setInt(2, questionId);
-            preparedStatement.executeUpdate();
-            setImageCache(null);
+             PreparedStatement checkPreparedStatement = connection.prepareStatement(checkStmt);
+             PreparedStatement deletePreparedStatement = connection.prepareStatement(deleteStmt)) {
+
+            checkPreparedStatement.setInt(1, imageId);
+            checkPreparedStatement.setInt(2, questionId);
+            try (ResultSet resultSet = checkPreparedStatement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) == 0) {
+                    Logger.log(getClass().getName(), "Connection does not exist, skipping delete.", LogLevel.INFO);
+                    return;
+                }
+            }
+
+            deletePreparedStatement.setInt(1, imageId);
+            deletePreparedStatement.setInt(2, questionId);
+            deletePreparedStatement.executeUpdate();
+            Logger.log(getClass().getName(), "IQ connection removed successfully.", LogLevel.INFO);
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.log(getClass().getName(), "Error removing IQ connection: " + e.getMessage(), LogLevel.ERROR);
         }
     }
 

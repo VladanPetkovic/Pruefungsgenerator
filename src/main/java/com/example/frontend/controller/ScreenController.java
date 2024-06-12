@@ -53,11 +53,6 @@ public abstract class ScreenController {
 
 
 
-
-
-
-
-
     // Define a hashmap for the title banner for the different pages
     private static final Map<Screen, String> SCREEN_TITLES = new HashMap<>();
     static {

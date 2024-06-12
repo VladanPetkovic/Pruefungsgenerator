@@ -12,14 +12,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
@@ -40,6 +45,10 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private VBox multipleChoiceVBox;
     @FXML
     private TextArea question;
+    @FXML
+    private TextFlow questionPreview;
+    @FXML
+    private Button previewQuestion;
     @FXML
     private TextArea remarks;
     @FXML
@@ -82,6 +91,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         customDoubleSpinnerPlaceholder.getChildren().add(points);
 
         question.setText("");
+        question.textProperty().addListener((observableValue, s, t1) -> {
+            previewQuestion.setVisible(previewQuestionShouldBeVisible());
+        });
         remarks.setText("");
 
         for (Keyword keyword : keywords) {
@@ -100,6 +112,53 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean questionPreviewVisible = false;
+
+    @FXML
+    private void onActionPreviewQuestion() {
+        if (!questionPreviewVisible) {
+            question.setVisible(false);
+            questionPreview.setVisible(true);
+            questionPreview.getChildren().clear();
+            parseAndDisplayContent();
+            questionPreviewVisible = true;
+            return;
+        }
+        question.setVisible(true);
+        questionPreview.setVisible(false);
+        questionPreviewVisible = false;
+    }
+
+    public void parseAndDisplayContent() {
+        Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
+        Matcher matcher = pattern.matcher(question.getText());
+        int lastIndex = 0;
+        while (matcher.find()) {
+            String textBeforeImage = question.getText().substring(lastIndex, matcher.start());
+            if (!textBeforeImage.isEmpty()) {
+                questionPreview.getChildren().add(new Text(textBeforeImage));
+            }
+            String imageName = matcher.group(1);
+            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
+                if (image.imageName.equals(imageName)) {
+                    ImageView imageView = new ImageView(image.image);
+                    questionPreview.getChildren().add(imageView);
+                }
+            }
+            lastIndex = matcher.end();
+        }
+        String textAfterLastImage = question.getText().substring(lastIndex);
+        if (!textAfterLastImage.isEmpty()) {
+            questionPreview.getChildren().add(new Text(textAfterLastImage));
+        }
+    }
+
+    private boolean previewQuestionShouldBeVisible() {
+        if (picturePickerController.invalidSyntax()) return false;
+        if (picturePickerController.buttonAndImages.size() == 0) return false;
+        return true;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.backend.db.models;
 
+import com.example.backend.db.SQLiteDatabaseConnection;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,23 @@ public class Course {
         setName(name);
         setNumber(number);
         setLector(lector);
+    }
+
+    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) {
+        // check for existence
+        Course newCourse = SQLiteDatabaseConnection.courseRepository.get(course);
+
+        if (newCourse == null) {
+            Course addToDatabase = new Course();
+            addToDatabase.setName(course);
+            SQLiteDatabaseConnection.courseRepository.add(addToDatabase);
+            newCourse = SQLiteDatabaseConnection.courseRepository.get(course);
+            SQLiteDatabaseConnection.courseRepository.addConnection(studyProgram, newCourse);
+        } else {
+            SQLiteDatabaseConnection.courseRepository.addConnection(studyProgram, newCourse);
+        }
+
+        return newCourse;
     }
 
 }

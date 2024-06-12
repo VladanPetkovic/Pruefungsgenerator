@@ -64,4 +64,8 @@ public class ImageRepository implements Repository<Image> {
     public void remove(Image image) {
         getImageDAO().delete(image.getId());
     }
+
+    public void removeUnused() {
+        getImageDAO().delete();
+    }
 }

@@ -7,6 +7,7 @@ import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import com.example.frontend.components.PicturePickerController;
+import com.example.frontend.modals.ConfirmDeletion_ScreenController;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +17,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 import java.io.IOException;
@@ -163,6 +167,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         questionVbox.setOnMouseClicked(event -> {
             // save the value of the clicked question
             selectedQuestion = clickedQuestion;
+            SharedData.setSelectedEditQuestion(selectedQuestion);
 
             // Make the scroll pane transparent to allow interaction with underlying elements.
             chooseScrollPane.setMouseTransparent(false);
@@ -492,7 +497,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 new Timestamp(System.currentTimeMillis()),  // updated_at
                 getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
                 selectedKeywords,
-                picturePickerController.getImages()                          // images // TODO: implement this here
+                picturePickerController.getImages()         // images
         );
     }
 
@@ -516,5 +521,23 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
             addKeywordBtn.setDisable(true);
         }
+    }
+
+    public void onDeleteBtnClick(ActionEvent actionEvent) {
+        Stage confirmStage = new Stage();
+        Screen<ConfirmDeletion_ScreenController> confirm_modal = new Screen<>("modals/confirm_deletion.fxml");
+        confirmStage.setHeight(400);
+        confirmStage.setWidth(600);
+        confirmStage.initModality(Modality.APPLICATION_MODAL);
+        confirmStage.setScene(confirm_modal.scene);
+
+        confirmStage.setOnHidden((WindowEvent event) -> {
+            // question was deleted
+            if (SharedData.getSelectedEditQuestion().getId() == 0) {
+                switchScene(questionEdit, true);
+            }
+        });
+
+        confirmStage.show();
     }
 }
