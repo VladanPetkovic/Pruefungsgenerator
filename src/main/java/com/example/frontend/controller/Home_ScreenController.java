@@ -8,6 +8,7 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
+import com.example.frontend.MainApp;
 import com.example.frontend.modals.AddCourse_ScreenController;
 import com.example.frontend.modals.Modal;
 import javafx.event.ActionEvent;
@@ -175,14 +176,14 @@ public class Home_ScreenController extends ScreenController {
     // helper function to reset study program menu button
     void resetStudyProgramMenuButton() {
         studyProgramMenuButton.getItems().clear();
-        studyProgramMenuButton.setText("Study Programs");
+        studyProgramMenuButton.setText(MainApp.resourceBundle.getString("study_programs"));
         SharedData.setSelectedStudyProgram(null);
     }
 
     // helper function to reset course menu button
     void resetCourseMenuButton() {
         coursesMenuButton.getItems().clear();
-        coursesMenuButton.setText("Courses");
+        coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
     }
 }

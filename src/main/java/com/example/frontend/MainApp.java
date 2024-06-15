@@ -13,12 +13,17 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class MainApp extends Application {
-    /** The primary stage of the application. */
+    /**
+     * The primary stage of the application.
+     */
     public static Stage stage;
     public static ControllerFactory controllerFactory = new ControllerFactory();
+    public static ResourceBundle resourceBundle;
 
     /**
      * Starts the JavaFX application.
@@ -30,20 +35,22 @@ public class MainApp extends Application {
     public void start(Stage stage) throws IOException {
         SharedData.setPageTitle("Exam Generator");
         this.stage = stage;
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
+        Locale locale = new Locale("de", "AUT");
+        resourceBundle = ResourceBundle.getBundle("common.de", locale);
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         setWindowsSize(stage);
 
         //set onCloseRequest eventhandler
-        stage.setOnCloseRequest(event -> handleWindowCloseRequest(event));
+        stage.setOnCloseRequest(this::handleWindowCloseRequest);
         stage.show();
     }
 
     private void handleWindowCloseRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Exit");
-        alert.setHeaderText("Are you sure you want to exit?");
+        alert.setTitle(resourceBundle.getString("confirm_exit"));
+        alert.setHeaderText(resourceBundle.getString("confirm_exit_info"));
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(getClass().getResource("css/main.css").toExternalForm());

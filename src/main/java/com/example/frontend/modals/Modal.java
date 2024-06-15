@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * utility class for managing JavaFX scenes
  *
@@ -32,7 +35,7 @@ public class Modal<T> {
      * initializes FXMLLoader to set the root, scene, and controller variables
      */
     public void loadComponents() {
-        fxmlLoader = new FXMLLoader(MainApp.class.getResource(path));
+        fxmlLoader = new FXMLLoader(MainApp.class.getResource(path), MainApp.resourceBundle);
         try {
             // load FXML file
             root = fxmlLoader.load();
