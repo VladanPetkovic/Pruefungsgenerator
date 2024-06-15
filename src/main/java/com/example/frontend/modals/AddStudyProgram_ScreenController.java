@@ -106,7 +106,7 @@ public class AddStudyProgram_ScreenController extends ModalController {
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
             if (SharedData.getSelectedEditStudyProgram().getId() == 0) {
-                switchScene(HOME);
+                closeStage(actionEvent);
             }
         });
 

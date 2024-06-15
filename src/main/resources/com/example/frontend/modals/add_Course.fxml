@@ -53,7 +53,7 @@
        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-           <Button fx:id="saveBtn" onAction="#handleConfirm" styleClass="btn_grey" text="%save" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+           <Button fx:id="saveBtn" onAction="#handleConfirm" styleClass="btn_green" text="%save" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
          <Button mnemonicParsing="false" onAction="#onCancelBtnClick" styleClass="btn_orange" text="%cancel" GridPane.halignment="CENTER" />
          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDeleteBtnClick" styleClass="btn_add_icon" visible="false">
             <graphic>

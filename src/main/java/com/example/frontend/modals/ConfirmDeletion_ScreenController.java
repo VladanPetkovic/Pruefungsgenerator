@@ -2,7 +2,6 @@ package com.example.frontend.modals;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
-import com.example.backend.db.models.Question;
 import com.example.frontend.MainApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,7 +45,7 @@ public class ConfirmDeletion_ScreenController extends ModalController {
         SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeUnused();
         SQLiteDatabaseConnection.CATEGORY_REPOSITORY.removeUnused();
 
-        SharedData.setSelectedEditQuestion(new Question());
+        SharedData.resetEditObjects();
         closeStage(actionEvent);
     }
 
@@ -58,11 +57,21 @@ public class ConfirmDeletion_ScreenController extends ModalController {
             errorLabel.setText(MainApp.resourceBundle.getString("error_course_has_categories"));
         } else {
             SQLiteDatabaseConnection.COURSE_REPOSITORY.remove(SharedData.getSelectedEditCourse());
+            SharedData.resetEditObjects();
             closeStage(actionEvent);
         }
     }
 
     private void deleteStudyProgram(ActionEvent actionEvent) {
-        // TODO
+        int id = SharedData.getSelectedEditStudyProgram().getId();
+        boolean hasCourses = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.hasCourses(id);
+
+        if (hasCourses) {
+            errorLabel.setText(MainApp.resourceBundle.getString("error_study_program_has_courses"));
+        } else {
+            SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.remove(SharedData.getSelectedEditStudyProgram());
+            SharedData.resetEditObjects();
+            closeStage(actionEvent);
+        }
     }
 }

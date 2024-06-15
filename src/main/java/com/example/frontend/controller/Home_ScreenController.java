@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +84,7 @@ public class Home_ScreenController extends ScreenController {
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
             switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         } else {
-            SharedData.setOperation(Message.ERROR_COURSE_NOT_SELECTED);
+            SharedData.setOperation(Message.ERROR_COURSE_AND_SP_NOT_SELECTED);
         }
     }
 
@@ -99,13 +100,13 @@ public class Home_ScreenController extends ScreenController {
         // add option to add a new study program
         Button customButton = new Button(MainApp.resourceBundle.getString("add_study_program"));
         //todo
-        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+        customButton.getStyleClass().add("btn_green");
 
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             studyProgramMenuButton.setText(MainApp.resourceBundle.getString("add_study_program"));
             try {
-                SharedData.setSelectedEditStudyProgram(new StudyProgram());
+                SharedData.resetEditObjects();
                 addStudyProgram();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -147,6 +148,10 @@ public class Home_ScreenController extends ScreenController {
 
     // loads available courses into the menu
     private void loadCourses() {
+        if (SharedData.getSelectedStudyProgram() == null) {
+            return;
+        }
+
         ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId());
 
         for (Course course : courses) {
@@ -155,12 +160,12 @@ public class Home_ScreenController extends ScreenController {
 
         // add button to add a new course
         Button customButton = new Button(MainApp.resourceBundle.getString("add_course"));
-        customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+        customButton.getStyleClass().add("btn_green");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
             coursesMenuButton.setText(MainApp.resourceBundle.getString("add_course"));
             try {
-                SharedData.setSelectedEditCourse(new Course());
+                SharedData.resetEditObjects();
                 addCourse();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -220,6 +225,7 @@ public class Home_ScreenController extends ScreenController {
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
+            resetStudyProgramMenuButton();
             loadStudyPrograms();
         });
         newStage.show();
@@ -227,6 +233,10 @@ public class Home_ScreenController extends ScreenController {
 
     // method to add a new course
     private void addCourse() throws IOException {
+        if (SharedData.getSelectedStudyProgram() == null) {
+            return;
+        }
+
         Stage newStage = new Stage();
         Modal<AddCourse_ScreenController> new_course_modal = new Modal<>("modals/add_Course.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
@@ -247,6 +257,7 @@ public class Home_ScreenController extends ScreenController {
         studyProgramMenuButton.getItems().clear();
         studyProgramMenuButton.setText(MainApp.resourceBundle.getString("study_programs"));
         SharedData.setSelectedStudyProgram(null);
+        SharedData.resetEditObjects();
     }
 
     // helper function to reset course menu button
@@ -254,6 +265,7 @@ public class Home_ScreenController extends ScreenController {
         coursesMenuButton.getItems().clear();
         coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
+        SharedData.resetEditObjects();
     }
 
     public void onLanguageBtnClick(ActionEvent actionEvent) {

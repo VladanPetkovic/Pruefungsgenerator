@@ -15,7 +15,7 @@ public enum Message {
     ERROR_MESSAGE_INPUT_ALL_FIELDS(MainApp.resourceBundle.getString("error_message_input_all_fields"), true),
     ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE(MainApp.resourceBundle.getString("error_message_select_a_folder_save_file"), true),
     ERROR_MESSAGE_FILE_NOT_SELECTED(MainApp.resourceBundle.getString("error_message_file_not_selected"), true),
-    ERROR_COURSE_NOT_SELECTED(MainApp.resourceBundle.getString("error_course_not_selected"), true),
+    ERROR_COURSE_AND_SP_NOT_SELECTED(MainApp.resourceBundle.getString("error_course_and_sp_not_selected"), true),
 
     // error messages for the answer DAO:
     CREATE_ANSWER_ERROR_MESSAGE(MainApp.resourceBundle.getString("create_answer_error_message"), true),

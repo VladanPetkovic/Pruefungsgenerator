@@ -17,14 +17,14 @@
         <RowConstraints maxHeight="132.19998779296873" minHeight="10.0" prefHeight="100.79995117187502" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <Label styleClass="modal_topic_label" text="Confirm the deletion" GridPane.halignment="CENTER" />
-        <Label styleClass="modal_info_label" text="This action can not be undone." GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-        <Button mnemonicParsing="false" onAction="#onCancelBtnClick" prefHeight="40.0" prefWidth="125.0" styleClass="btn_grey" text="Cancel" GridPane.rowIndex="2">
+        <Label styleClass="modal_topic_label" text="%confirm_deletion" GridPane.halignment="CENTER" />
+        <Label styleClass="modal_info_label" text="%action_cannot_be_undone" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+        <Button mnemonicParsing="false" onAction="#onCancelBtnClick" prefHeight="40.0" prefWidth="125.0" styleClass="btn_grey" text="%cancel" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets left="20.0" />
             </GridPane.margin>
         </Button>
-        <Button mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="125.0" styleClass="btn_red" text="Confirm deletion" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+        <Button mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="125.0" styleClass="btn_red" text="%delete" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
             <GridPane.margin>
                 <Insets right="20.0" />
             </GridPane.margin>

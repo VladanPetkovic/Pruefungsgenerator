@@ -90,6 +90,16 @@ public class SharedData {
         testQuestions = new ArrayList<>();
     }
 
+    /**
+     * This function reset objects, that have been selected for editing.
+     * Currently, questions, courses, study-programs
+     */
+    public static void resetEditObjects() {
+        selectedEditQuestion = new Question();
+        selectedEditStudyProgram = new StudyProgram();
+        selectedEditCourse = new Course();
+    }
+
     // Getter and setter for pageTitle
     public static String getPageTitle() {
         return pageTitle.get();
