@@ -33,10 +33,10 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        SharedData.setPageTitle("Exam Generator");
         this.stage = stage;
-        Locale locale = new Locale("de", "AUT");
-        resourceBundle = ResourceBundle.getBundle("common.de", locale);
+        Locale locale = new Locale("en", "US");
+        resourceBundle = ResourceBundle.getBundle("common.en", locale);
+        SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);

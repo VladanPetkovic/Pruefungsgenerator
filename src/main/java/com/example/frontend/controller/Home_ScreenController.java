@@ -14,12 +14,18 @@ import com.example.frontend.modals.Modal;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import static com.example.frontend.controller.SwitchScene.HOME;
 import static com.example.frontend.controller.SwitchScene.switchScene;
 
 /**
@@ -27,12 +33,13 @@ import static com.example.frontend.controller.SwitchScene.switchScene;
  * manages interaction and functionality of the home screen UI components
  */
 public class Home_ScreenController extends ScreenController {
-
+    @FXML
+    public ImageView langImageView;
     @FXML
     private MenuButton studyProgramMenuButton;
-
     @FXML
     private MenuButton coursesMenuButton;
+    private final int LANGUAGE_COUNT = 2;
 
 
     /**
@@ -43,9 +50,10 @@ public class Home_ScreenController extends ScreenController {
     private void initialize() {
         resetStudyProgramMenuButton();
         loadStudyPrograms();
+        initLanguage();
 
         resetCourseMenuButton();
-        MenuItem menuItem = new MenuItem("Choose a StudyProgram first");
+        MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("menuitem_choose_study_program"));
         coursesMenuButton.getItems().add(menuItem);
     }
 
@@ -94,13 +102,13 @@ public class Home_ScreenController extends ScreenController {
         }
 
         // add option to add a new study program
-        Button customButton = new Button("add Study Program");
+        Button customButton = new Button(MainApp.resourceBundle.getString("add_study_program"));
         //todo
         customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
 
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
-            studyProgramMenuButton.setText("add Study Program");
+            studyProgramMenuButton.setText(MainApp.resourceBundle.getString("add_study_program"));
             try {
                 addStudyProgram();
             } catch (IOException ex) {
@@ -127,11 +135,11 @@ public class Home_ScreenController extends ScreenController {
         }
 
         // add button to add a new course
-        Button customButton = new Button("add Course");
+        Button customButton = new Button(MainApp.resourceBundle.getString("add_course"));
         customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
         customButton.setOnAction(e -> {
-            coursesMenuButton.setText("add Course");
+            coursesMenuButton.setText(MainApp.resourceBundle.getString("add_course"));
             try {
                 addCourse();
             } catch (IOException ex) {
@@ -146,7 +154,7 @@ public class Home_ScreenController extends ScreenController {
         Stage newStage = new Stage();
         Modal<AddCourse_ScreenController> new_study_program_modal = new Modal<>("modals/add_StudyProgram.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle("Add Study Program");
+        newStage.setTitle(MainApp.resourceBundle.getString("add_study_program"));
         newStage.setScene(new_study_program_modal.scene);
 
         //listener for when the stage is closed
@@ -161,7 +169,7 @@ public class Home_ScreenController extends ScreenController {
         Stage newStage = new Stage();
         Modal<AddCourse_ScreenController> new_course_modal = new Modal<>("modals/add_Course.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle("Add Study Program");
+        newStage.setTitle(MainApp.resourceBundle.getString("add_course"));
         newStage.setScene(new_course_modal.scene);
 
         //listener for when the stage is closed
@@ -185,5 +193,49 @@ public class Home_ScreenController extends ScreenController {
         coursesMenuButton.getItems().clear();
         coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
+    }
+
+    public void onLanguageBtnClick(ActionEvent actionEvent) {
+        String imagePath = "src/main/resources/com/example/frontend/icons/";
+        Locale locale = new Locale("en", "US");
+        int temp = (SharedData.getCurrentLanguage() + 1) % LANGUAGE_COUNT;
+        SharedData.setCurrentLanguage(temp);
+
+        switch (temp) {
+            case 0:                         // ENGLISH
+                imagePath += "en.png";
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.en", locale);
+                break;
+            case 1:                         // GERMAN
+                imagePath += "de.png";
+                locale = new Locale("de", "AUT");
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.de", locale);
+                break;
+        }
+
+        // setting the image
+        File file = new File(imagePath);
+        Image languageImage = new Image(file.toURI().toString());
+        langImageView.setImage(languageImage);
+        // reloading the scene
+        switchScene(HOME);
+    }
+
+    private void initLanguage() {
+        String imagePath = "src/main/resources/com/example/frontend/icons/";
+
+        switch (SharedData.getCurrentLanguage()) {
+            case 0:                         // ENGLISH
+                imagePath += "en.png";
+                break;
+            case 1:                         // GERMAN
+                imagePath += "de.png";
+                break;
+        }
+
+        // setting the image
+        File file = new File(imagePath);
+        Image languageImage = new Image(file.toURI().toString());
+        langImageView.setImage(languageImage);
     }
 }

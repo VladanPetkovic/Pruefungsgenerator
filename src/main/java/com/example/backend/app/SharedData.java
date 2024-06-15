@@ -28,6 +28,10 @@ public class SharedData {
 
     @Getter
     @Setter
+    private static int currentLanguage = 0; // 0 for english; 1 for german
+
+    @Getter
+    @Setter
     //stores the users course selection from the Home Modal
     private static Course selectedCourse;
 

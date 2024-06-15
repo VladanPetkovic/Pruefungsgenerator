@@ -25,13 +25,18 @@ public class SwitchScene {
     private static final Map<String, String> SCREEN_TITLES = new HashMap<>();
 
     static {
-        SCREEN_TITLES.put(CREATE_TEST_AUTOMATIC, "Automatic Test Creation");
-        SCREEN_TITLES.put(CREATE_TEST_MANUAL, "Manual Test Creation");
-        SCREEN_TITLES.put(CREATE_QUESTION, "Create Question");
-        SCREEN_TITLES.put(EDIT_QUESTION, "Edit Question");
-        SCREEN_TITLES.put(HOME, "Home");
-        SCREEN_TITLES.put(PDF_PREVIEW, "PDF Preview");
-        SCREEN_TITLES.put(SETTINGS, "Settings");
+        loadTitles();
+    }
+
+    private static void loadTitles() {
+        SCREEN_TITLES.clear();
+        SCREEN_TITLES.put(CREATE_TEST_AUTOMATIC, MainApp.resourceBundle.getString("create_test_automatic"));
+        SCREEN_TITLES.put(CREATE_TEST_MANUAL, MainApp.resourceBundle.getString("create_test_manual"));
+        SCREEN_TITLES.put(CREATE_QUESTION, MainApp.resourceBundle.getString("create_question"));
+        SCREEN_TITLES.put(EDIT_QUESTION, MainApp.resourceBundle.getString("edit_question"));
+        SCREEN_TITLES.put(HOME, MainApp.resourceBundle.getString("home"));
+        SCREEN_TITLES.put(PDF_PREVIEW, MainApp.resourceBundle.getString("pdf_preview"));
+        SCREEN_TITLES.put(SETTINGS, MainApp.resourceBundle.getString("settings"));
     }
 
     /**
@@ -44,6 +49,7 @@ public class SwitchScene {
         SharedData.setFilterQuestion(new Question());
 
         // Update pageTitle in SharedData
+        loadTitles();
         String pageTitle = SCREEN_TITLES.get(path);
         if (pageTitle != null) {
             SharedData.setPageTitle(pageTitle);
@@ -51,7 +57,7 @@ public class SwitchScene {
 
         Parent newParent = null;
         try {
-            newParent = FXMLDependencyInjection.load(path);
+            newParent = FXMLDependencyInjection.load(path, MainApp.resourceBundle);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
