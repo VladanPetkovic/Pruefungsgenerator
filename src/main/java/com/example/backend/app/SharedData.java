@@ -21,7 +21,7 @@ import static com.example.frontend.components.TitleBanner_ScreenController.reset
 @AllArgsConstructor
 public class SharedData {
 
-    // Default value for pageTitle // TODO: use @Getter and @Setter if possible
+    // Default value for pageTitle
     private static StringProperty pageTitle = new SimpleStringProperty("");
     private static StringProperty operationStatus = new SimpleStringProperty("");
     private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
@@ -67,7 +67,7 @@ public class SharedData {
 
     @Getter
     @Setter
-    private static Screen currentScreen = Screen.CreateAutomatic;
+    private static Screen currentScreen = Screen.CREATE_AUTOMATIC;
 
     //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
     public static void resetAll() {
@@ -122,15 +122,6 @@ public class SharedData {
     // Property accessor for operationStatus
     public static StringProperty operationStatusProperty() {
         return operationStatus;
-    }
-
-    // Getter and setter for operationIsErrorType
-    public static boolean getOperationIsErrorType() {
-        return operationIsErrorType.get();
-    }
-
-    public static void setOperationIsErrorType(boolean isErrorType) {
-        operationIsErrorType.set(isErrorType);
     }
 
     // Property accessor for operationIsErrorType

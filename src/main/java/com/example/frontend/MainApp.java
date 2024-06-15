@@ -1,6 +1,7 @@
 package com.example.frontend;
 
 import com.example.backend.app.SharedData;
+import com.example.frontend.controller.ControllerFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class MainApp extends Application {
     /** The primary stage of the application. */
     public static Stage stage;
+    public static ControllerFactory controllerFactory = new ControllerFactory();
 
     /**
      * Starts the JavaFX application.

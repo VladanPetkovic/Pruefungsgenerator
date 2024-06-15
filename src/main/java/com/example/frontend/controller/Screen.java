@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 
 /**
  * utility class for managing JavaFX scenes
+ *
  * @param <T> The type of controller associated with the scene
  */
 public class Screen<T> {
@@ -18,9 +19,10 @@ public class Screen<T> {
 
     /**
      * constructs a new Screen object
+     *
      * @param path the path to the FXML file
      */
-    public Screen(String path){
+    public Screen(String path) {
         this.path = path;
         loadComponents(); // load components upon instantiation
     }
@@ -29,7 +31,7 @@ public class Screen<T> {
      * loads the components of the scene
      * initializes FXMLLoader to set the root, scene, and controller variables
      */
-    public void loadComponents(){
+    public void loadComponents() {
         fxmlLoader = new FXMLLoader(MainApp.class.getResource(path));
         try {
             // load FXML file
@@ -45,9 +47,10 @@ public class Screen<T> {
 
     /**
      * disables or enables the current scene
+     *
      * @param state if true, disables the scene; otherwise enables it
      */
-    public void disableScene(boolean state){
+    public void disableScene(boolean state) {
         scene.getRoot().setDisable(state);
     }
 }

@@ -22,6 +22,8 @@ import javafx.scene.paint.Paint;
 
 import java.util.*;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
+
 public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
     private VBox addQuestionVBox; // reference to the VBox containing the "Add Question" button
@@ -274,7 +276,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // reset the question count to zero
         this.questionCount = 0;
-        SharedData.setCurrentScreen(Screen.CreateManual);
-        switchScene(createTestManual, true);
+        SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
+        switchScene(SwitchScene.CREATE_TEST_MANUAL);
     }
 }

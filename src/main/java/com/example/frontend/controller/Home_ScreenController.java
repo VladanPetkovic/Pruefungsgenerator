@@ -8,18 +8,17 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
-import com.example.frontend.MainApp;
 import com.example.frontend.modals.AddCourse_ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.example.frontend.controller.SwitchScene.switchScene;
 
 /**
  * controller class for the home screen
@@ -65,13 +64,13 @@ public class Home_ScreenController extends ScreenController {
     // event handler for continue button click
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
-        SharedData.setCurrentScreen(Screen.CreateAutomatic);
+        SharedData.setCurrentScreen(Screen.CREATE_AUTOMATIC);
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
             Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
-            switchScene(createTestAutomatic, true);
+            switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         }
     }
 

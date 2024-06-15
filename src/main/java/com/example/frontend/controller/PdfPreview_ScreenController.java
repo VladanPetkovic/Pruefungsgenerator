@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
+
 public class PdfPreview_ScreenController extends ScreenController {
     @FXML
     private Slider questionCountSlider;
@@ -55,6 +57,7 @@ public class PdfPreview_ScreenController extends ScreenController {
 
     /**
      * This functions only exports to pdf or docx, if a folder was selected to save the file.
+     *
      * @param export the base class - we are passing either exportDocx or exportPdf.
      */
     private void exportFile(Export export) {
@@ -70,7 +73,7 @@ public class PdfPreview_ScreenController extends ScreenController {
             // reset the stored test questions
             SharedData.resetQuestions();
             // returning to the automatic-test-create-scene
-            switchScene(createTestAutomatic, true);
+            switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         } else {
             SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
         }
@@ -93,6 +96,7 @@ public class PdfPreview_ScreenController extends ScreenController {
 
     /**
      * Showing the preview of the test with the selected parameters.
+     *
      * @param images ArrayList of java.lang.image or so --> every image is one page
      */
     public void showPreview(ArrayList<Image> images) {
@@ -139,7 +143,7 @@ public class PdfPreview_ScreenController extends ScreenController {
     }
 
     public void onGoBackBtnClick(ActionEvent mouseEvent) {
-        SharedData.setCurrentScreen(Screen.CreateManual);
-        switchScene(createTestManual,true);
+        SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
+        switchScene(SwitchScene.CREATE_TEST_MANUAL);
     }
 }

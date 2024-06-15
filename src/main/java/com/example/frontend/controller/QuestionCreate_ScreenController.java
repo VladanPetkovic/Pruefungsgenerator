@@ -26,6 +26,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
+
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
     @FXML
@@ -262,7 +264,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
-            switchScene(questionCreate, true);
+            switchScene(SwitchScene.CREATE_QUESTION);
         }
     }
 

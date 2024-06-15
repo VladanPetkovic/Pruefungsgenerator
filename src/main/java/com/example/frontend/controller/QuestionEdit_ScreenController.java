@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
+
 public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
     @FXML
     private VBox vbox_filteredQuestionsPreview;
@@ -343,7 +345,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(selectedQuestion.getAnswers(), selectedQuestion.getId());
         }
 
-        switchScene(questionEdit, true);
+        switchScene(SwitchScene.EDIT_QUESTION);
     }
 
     private void compareImages(Question question) {
@@ -534,7 +536,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
             if (SharedData.getSelectedEditQuestion().getId() == 0) {
-                switchScene(questionEdit, true);
+                switchScene(SwitchScene.EDIT_QUESTION);
             }
         });
 
