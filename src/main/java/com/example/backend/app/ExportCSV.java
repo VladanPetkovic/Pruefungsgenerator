@@ -19,11 +19,11 @@ public class ExportCSV {
     }
 
     public void initStudyProgram(String studyProgram) {
-        this.selectedStudyProgram = SQLiteDatabaseConnection.studyProgramRepository.get(studyProgram);
+        this.selectedStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
     }
 
     public void initCourse(String course) {
-        this.selectedCourse = SQLiteDatabaseConnection.courseRepository.get(course);
+        this.selectedCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
     }
 
     /**
@@ -40,15 +40,15 @@ public class ExportCSV {
             writer.append("question_string;categoryName_string;difficulty_int;points_float;questionType_string;remark_string;answers_string;keywords_string;courseName_string;studyProgramName_string\n");
 
             if (exportType == 0) {          // export all questions
-                ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
+                ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll();
                 for (StudyProgram studyProgram : studyPrograms) {
-                    ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(studyProgram.getId());
+                    ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(studyProgram.getId());
                     for (Course course : courses) {
                         writeQuestionsToFile(writer, course, studyProgram);
                     }
                 }
             } else if (exportType == 1) {   // export questions for one studyProgram
-                ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(this.selectedStudyProgram.getId());
+                ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(this.selectedStudyProgram.getId());
                 for (Course course : courses) {
                     writeQuestionsToFile(writer, course, this.selectedStudyProgram);
                 }
@@ -68,7 +68,7 @@ public class ExportCSV {
         ArrayList<Question> questions = new ArrayList<>();
         lastQuestionId = 0;     // TODO: this would be an edge-case (questions equal for different studyPrograms)
         do {
-            questions = SQLiteDatabaseConnection.questionRepository.getAll(course, lastQuestionId);
+            questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(course, lastQuestionId);
             Logger.log(getClass().getName(), "Fetched questions from DB: " + questions.size(), LogLevel.INFO);
             // Write question data
             for (Question question : questions) {
@@ -121,11 +121,11 @@ public class ExportCSV {
         int count = 0;
 
         if (exportType == 0) {          // count all questions
-            count = SQLiteDatabaseConnection.questionRepository.getCountOfAllQuestions();
+            count = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getCountOfAllQuestions();
         } else if (exportType == 1) {   // count questions for one studyProgram
-            count = SQLiteDatabaseConnection.questionRepository.getCountOfAllQuestions(this.selectedStudyProgram);
+            count = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getCountOfAllQuestions(this.selectedStudyProgram);
         } else {                        // count questions for one course
-            count = SQLiteDatabaseConnection.questionRepository.getCountOfAllQuestions(this.selectedCourse);
+            count = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getCountOfAllQuestions(this.selectedCourse);
         }
 
         return count;

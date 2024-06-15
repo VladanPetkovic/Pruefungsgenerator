@@ -37,6 +37,10 @@ public class CourseRepository implements Repository<Course> {
         return getCourseDAO().read(course_name);
     }
 
+    public boolean hasCategories(int courseId) {
+        return getCourseDAO().hasCategories(courseId);
+    }
+
     @Override
     public void add(Course course) {
         getCourseDAO().create(course);

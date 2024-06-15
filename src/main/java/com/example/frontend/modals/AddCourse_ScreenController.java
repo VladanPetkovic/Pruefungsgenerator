@@ -1,16 +1,21 @@
 package com.example.frontend.modals;
 
 import com.example.frontend.MainApp;
+import com.example.frontend.controller.SwitchScene;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
+
+import static com.example.frontend.controller.SwitchScene.*;
 
 
 public class AddCourse_ScreenController extends ModalController {
@@ -73,7 +78,7 @@ public class AddCourse_ScreenController extends ModalController {
     }
 
     private void createCourse(String enteredName, int enteredNumber, String enteredLecturer) {
-        ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
+        ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId());
         boolean exists = false;
         for (Course course : courses) {
             if (course.getName().equals(enteredName) || course.getNumber() == enteredNumber) {
@@ -84,14 +89,16 @@ public class AddCourse_ScreenController extends ModalController {
 
         if (!exists) {
             Course newCourse = new Course(enteredName, enteredNumber, enteredLecturer);
-            SQLiteDatabaseConnection.courseRepository.add(newCourse);
-            Course newlyAddedCourse = SQLiteDatabaseConnection.courseRepository.get(newCourse.getName());
-            SQLiteDatabaseConnection.courseRepository.addConnection(SharedData.getSelectedStudyProgram(), newlyAddedCourse);
+            SQLiteDatabaseConnection.COURSE_REPOSITORY.add(newCourse);
+            Course newlyAddedCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(newCourse.getName());
+            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(SharedData.getSelectedStudyProgram(), newlyAddedCourse);
         }
     }
 
     private void updateCourse(String enteredName, int enteredNumber, String enteredLecturer) {
-        // TODO implement
+        int courseId = SharedData.getSelectedEditCourse().getId();
+        Course toUpdate = new Course(courseId, enteredName, enteredNumber, enteredLecturer);
+        SQLiteDatabaseConnection.COURSE_REPOSITORY.update(toUpdate);
     }
 
     public void onCancelBtnClick(ActionEvent actionEvent) {
@@ -99,6 +106,18 @@ public class AddCourse_ScreenController extends ModalController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        // TODO implement with caution
+        Stage confirmStage = new Stage();
+        Modal<ConfirmDeletion_ScreenController> confirm_modal = new Modal<>("modals/confirm_deletion.fxml");
+        confirmStage.initModality(Modality.APPLICATION_MODAL);
+        confirmStage.setScene(confirm_modal.scene);
+
+        confirmStage.setOnHidden((WindowEvent event) -> {
+            // question was deleted
+            if (SharedData.getSelectedEditCourse().getId() == 0) {
+                switchScene(HOME);
+            }
+        });
+
+        confirmStage.show();
     }
 }

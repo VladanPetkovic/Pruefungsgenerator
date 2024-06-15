@@ -8,9 +8,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
+
+import static com.example.frontend.controller.SwitchScene.HOME;
+import static com.example.frontend.controller.SwitchScene.switchScene;
 
 public class AddStudyProgram_ScreenController extends ModalController {
     public Button deleteBtn;
@@ -66,7 +71,7 @@ public class AddStudyProgram_ScreenController extends ModalController {
 
     private void createStudyProgram(String enteredName, String enteredAbbr) {
         //check if name or abbreviation already exists in the database
-        ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
+        ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll();
         boolean exists = false;
         for (StudyProgram studyProgram : studyPrograms) {
             if (studyProgram.getName().equals(enteredName) || studyProgram.getAbbreviation().equals(enteredAbbr)) {
@@ -78,12 +83,14 @@ public class AddStudyProgram_ScreenController extends ModalController {
         //if not, create a new study program entry in the database
         if (!exists) {
             StudyProgram newProgram = new StudyProgram(enteredName, enteredAbbr);
-            SQLiteDatabaseConnection.studyProgramRepository.add(newProgram);
+            SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.add(newProgram);
         }
     }
 
     private void updateStudyProgram(String enteredName, String enteredAbbr) {
-        // TODO implement
+        int id = SharedData.getSelectedEditStudyProgram().getId();
+        StudyProgram toUpdate = new StudyProgram(id, enteredName, enteredAbbr);
+        SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.update(toUpdate);
     }
 
     public void onCancelBtnClick(ActionEvent actionEvent) {
@@ -91,6 +98,18 @@ public class AddStudyProgram_ScreenController extends ModalController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        // TODO implement with caution
+        Stage confirmStage = new Stage();
+        Modal<ConfirmDeletion_ScreenController> confirm_modal = new Modal<>("modals/confirm_deletion.fxml");
+        confirmStage.initModality(Modality.APPLICATION_MODAL);
+        confirmStage.setScene(confirm_modal.scene);
+
+        confirmStage.setOnHidden((WindowEvent event) -> {
+            // question was deleted
+            if (SharedData.getSelectedEditStudyProgram().getId() == 0) {
+                switchScene(HOME);
+            }
+        });
+
+        confirmStage.show();
     }
 }

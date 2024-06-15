@@ -11,7 +11,6 @@ import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
 import com.example.frontend.modals.AddCourse_ScreenController;
-import com.example.frontend.modals.ConfirmDeletion_ScreenController;
 import com.example.frontend.modals.Modal;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,11 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +89,7 @@ public class Home_ScreenController extends ScreenController {
 
     // loads available study programs into the menu
     private void loadStudyPrograms() {
-        ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll();
+        ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll();
         studyProgramMenuButton.getItems().clear();
 
         for (StudyProgram studyProgram : studyPrograms) {
@@ -151,7 +147,7 @@ public class Home_ScreenController extends ScreenController {
 
     // loads available courses into the menu
     private void loadCourses() {
-        ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
+        ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId());
 
         for (Course course : courses) {
             addCourseToMenuButton(course);

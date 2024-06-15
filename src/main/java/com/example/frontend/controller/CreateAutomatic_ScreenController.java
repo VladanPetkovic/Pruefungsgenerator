@@ -50,7 +50,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
     public void initialize() {
         int course_id = SharedData.getSelectedCourse().getId();
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
+        categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(course_id);
 
         // set (press & release) event handlers for all buttons that are dynamically generated
         setButtonEventHandlers(addQuestionVBox.getChildren());
@@ -243,7 +243,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // get the category
             if (!Objects.equals(categoriesMenuButtons.get(i).getText(), "Choose category...")) {
                 selectedCategory = categoriesMenuButtons.get(i).getText();
-                queryQuestion.setCategory(SQLiteDatabaseConnection.CategoryRepository.get(selectedCategory));
+                queryQuestion.setCategory(SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(selectedCategory));
             }
             // get the points
             if (!pointsSpinners.get(i).isDisabled()) {
@@ -258,7 +258,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // perform the database query to retrieve questions based on the criteria
             int pointStatus = pointsSpinnersStatus.get(i);
             int diffStatus = difficultySlidersStatus.get(i);
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {

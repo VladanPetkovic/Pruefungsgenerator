@@ -39,10 +39,10 @@ public class CategoryDAOTests {
         Category category = new Category(0, "TestCategory");
 
         // Act
-        SQLiteDatabaseConnection.CategoryRepository.add(category);
+        SQLiteDatabaseConnection.CATEGORY_REPOSITORY.add(category);
 
         // Assert
-        Category retrievedCategory = SQLiteDatabaseConnection.CategoryRepository.get(category.getName());
+        Category retrievedCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category.getName());
         assertNotNull(retrievedCategory);
         assertEquals(category.getName(), retrievedCategory.getName());
     }
@@ -53,7 +53,7 @@ public class CategoryDAOTests {
 
         // Arrange
         // Act
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll();
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll();
 
         // Assert
         assertNotNull(categories);
@@ -68,7 +68,7 @@ public class CategoryDAOTests {
         int courseId = 1;
 
         // Act
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(courseId);
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(courseId);
 
         // Assert
         assertNotNull(categories);
@@ -83,7 +83,7 @@ public class CategoryDAOTests {
         int categoryId = 1; // Update with existing category ID
 
         // Act
-        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryId);
+        Category category = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryId);
 
         // Assert
         assertNotNull(category);

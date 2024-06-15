@@ -191,6 +191,32 @@ public class CourseDAO implements DAO<Course> {
         return course;
     }
 
+    public boolean hasCategories(int courseId) {
+        boolean hasCategories = false;
+
+        String readStmt = "SELECT CASE " +
+                        "WHEN COUNT(*) > 0 THEN 1 " +
+                        "ELSE 0 " +
+                        "END AS has_categories " +
+                        "FROM has_cc " +
+                        "WHERE fk_course_id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+            preparedStatement.setInt(1, courseId);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    hasCategories = result.getBoolean("has_categories");
+                }
+                setCourseCache(null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return hasCategories;
+    }
+
     /**
      * Updates an existing course record in the database.
      *
@@ -228,21 +254,16 @@ public class CourseDAO implements DAO<Course> {
     @Override
     public void delete(int id) {
         String deleteStmt = "DELETE FROM courses WHERE id = ?;";
-        String deleteHasCCStmt = "DELETE FROM has_cc WHERE fk_course_id = ?;";
         String deleteHasSCStmt = "DELETE FROM has_sc WHERE fk_course_id = ?;";
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
-             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasCCStmt);
-             PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasSCStmt)) {
+             PreparedStatement secondPreparedStmt = connection.prepareStatement(deleteHasSCStmt)) {
             // deleting from Courses table
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            // deleting from hasCC table
-            secondPreparedStatement.setInt(1, id);
-            secondPreparedStatement.executeUpdate();
             // deleting from hasSC table
-            thirdPreparedStatement.setInt(1, id);
-            thirdPreparedStatement.executeUpdate();
+            secondPreparedStmt.setInt(1, id);
+            secondPreparedStmt.executeUpdate();
             setCourseCache(null);
 
             SharedData.setOperation(Message.DELETE_COURSE_SUCCESS_MESSAGE);

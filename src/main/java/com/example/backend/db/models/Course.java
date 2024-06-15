@@ -24,16 +24,16 @@ public class Course {
 
     public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) {
         // check for existence
-        Course newCourse = SQLiteDatabaseConnection.courseRepository.get(course);
+        Course newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
 
         if (newCourse == null) {
             Course addToDatabase = new Course();
             addToDatabase.setName(course);
-            SQLiteDatabaseConnection.courseRepository.add(addToDatabase);
-            newCourse = SQLiteDatabaseConnection.courseRepository.get(course);
-            SQLiteDatabaseConnection.courseRepository.addConnection(studyProgram, newCourse);
+            SQLiteDatabaseConnection.COURSE_REPOSITORY.add(addToDatabase);
+            newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
+            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
         } else {
-            SQLiteDatabaseConnection.courseRepository.addConnection(studyProgram, newCourse);
+            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
         }
 
         return newCourse;

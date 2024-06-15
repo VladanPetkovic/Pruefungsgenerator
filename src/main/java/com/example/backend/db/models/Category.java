@@ -56,15 +56,15 @@ public class Category {
 
     public static Category createNewCategoryInDatabase(String category, Course course) {
         // check for existence
-        Category newCategory = SQLiteDatabaseConnection.CategoryRepository.get(category);
+        Category newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
 
         if (newCategory == null) {
             Category addToDatabase = new Category(category);
-            SQLiteDatabaseConnection.CategoryRepository.add(addToDatabase);
-            newCategory = SQLiteDatabaseConnection.CategoryRepository.get(category);
-            SQLiteDatabaseConnection.CategoryRepository.addConnection(course, newCategory);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.add(addToDatabase);
+            newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
         } else {
-            SQLiteDatabaseConnection.CategoryRepository.addConnection(course, newCategory);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
         }
 
         return newCategory;

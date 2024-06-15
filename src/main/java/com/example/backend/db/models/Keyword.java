@@ -48,13 +48,13 @@ public class Keyword {
     }
 
     public static Keyword createNewKeywordInDatabase(String keyword) {
-        Keyword newKeyword = SQLiteDatabaseConnection.keywordRepository.get(keyword);
+        Keyword newKeyword = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword);
 
         // check for existing keywords
         if (newKeyword == null) {
             Keyword addToDatabase = new Keyword(keyword);
-            SQLiteDatabaseConnection.keywordRepository.add(addToDatabase);
-            newKeyword = SQLiteDatabaseConnection.keywordRepository.get(keyword);
+            SQLiteDatabaseConnection.KEYWORD_REPOSITORY.add(addToDatabase);
+            newKeyword = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword);
         }
         return newKeyword;
     }
@@ -70,6 +70,6 @@ public class Keyword {
         }
 
         // add one or multiple keywords and the connection in the join table (has_kq)
-        SQLiteDatabaseConnection.keywordRepository.add(newQuestion.getKeywords(), newQuestionId);
+        SQLiteDatabaseConnection.KEYWORD_REPOSITORY.add(newQuestion.getKeywords(), newQuestionId);
     }
 }

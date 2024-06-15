@@ -81,8 +81,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
-        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         difficulty.setValue(5);
@@ -238,7 +238,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
 
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
-        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
+        Category category = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryTextField.getText());
 
 
         // Create a new Question object with the provided details
@@ -261,7 +261,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (question_id != 0) {
             // Associate keywords with the uploaded question // TODO: change this to be efficient
             for (Keyword k : selectedKeywords) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
             switchScene(SwitchScene.CREATE_QUESTION);

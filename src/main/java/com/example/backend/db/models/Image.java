@@ -34,7 +34,7 @@ public class Image {
         if (question.getImages() == null) {
             return;
         }
-        SQLiteDatabaseConnection.imageRepository.add(question.getImages(), newQuestionId);
+        SQLiteDatabaseConnection.IMAGE_REPOSITORY.add(question.getImages(), newQuestionId);
     }
 
     private String getFileExtension(String fileName) {

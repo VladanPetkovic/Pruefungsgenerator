@@ -42,8 +42,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     private void initialize() {
         // init auto-completion
-        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId()), null);
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId()), null);
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
         initializeQuestions(this.questionTextField);
         initializeMenuButton(this.questionTypeMenuButton, true);
 
@@ -83,7 +83,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // set category value if provided
         if (!categoryName.isEmpty()) {
-            Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryName);
+            Category category = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryName);
             if (category != null) {
                 filterQuestion.setCategory(category);
             }
@@ -96,7 +96,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
             // split by commas or spaces
             String[] keywordsArray = keywordText.split("[,\\s]+");
             for (String keyword : keywordsArray) {
-                Keyword keywordObj = SQLiteDatabaseConnection.keywordRepository.get(keyword.trim());
+                Keyword keywordObj = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword.trim());
                 if (keywordObj != null) {
                     keywordsList.add(keywordObj);
                 }
@@ -126,7 +126,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         }
 
         // call Repository to search for questions corresponding to filter values
-        ArrayList<Question> result = SQLiteDatabaseConnection.questionRepository.getAll(filterQuestion, SharedData.getSelectedCourse().getName(), pointsSliderStatus, difficultySliderStatus);
+        ArrayList<Question> result = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(filterQuestion, SharedData.getSelectedCourse().getName(), pointsSliderStatus, difficultySliderStatus);
         SharedData.getFilteredQuestions().clear();
 
         if (result.isEmpty()) {

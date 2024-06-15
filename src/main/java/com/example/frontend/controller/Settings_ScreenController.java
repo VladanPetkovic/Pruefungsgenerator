@@ -36,10 +36,10 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     private void initialize() {
-        ArrayList<String> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll().stream()
+        ArrayList<String> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll().stream()
                 .map(StudyProgram::getName)
                 .collect(Collectors.toCollection(ArrayList::new));
-        ArrayList<String> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId())
+        ArrayList<String> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId())
                 .stream()
                 .map(Course::getName)
                 .collect(Collectors.toCollection(ArrayList::new));

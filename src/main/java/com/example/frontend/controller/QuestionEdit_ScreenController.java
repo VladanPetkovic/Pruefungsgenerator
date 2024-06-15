@@ -96,8 +96,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         });
 
         // Retrieves all categories for the selected course from the database.
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
-        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId());
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         // Displays an error alert if no categories are found for the selected course.
@@ -330,7 +330,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         Question question = createQuestionFromInputs();
 
         // Update the question in the database
-        SQLiteDatabaseConnection.questionRepository.update(question);
+        SQLiteDatabaseConnection.QUESTION_REPOSITORY.update(question);
 
         // Compare the keywords and add/remove connections accordingly
         compareKeywords(question);
@@ -358,7 +358,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (!imageFound) {
-                SQLiteDatabaseConnection.imageRepository.removeConnection(image, question);
+                SQLiteDatabaseConnection.IMAGE_REPOSITORY.removeConnection(image, question);
             }
         }
 
@@ -397,7 +397,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (!keywordFound) {
-                SQLiteDatabaseConnection.keywordRepository.removeConnection(keyword1, question);
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.removeConnection(keyword1, question);
             }
         }
 
@@ -410,7 +410,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (keywordNotFound) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1, question.getId());
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(keyword1, question.getId());
             }
         }
     }

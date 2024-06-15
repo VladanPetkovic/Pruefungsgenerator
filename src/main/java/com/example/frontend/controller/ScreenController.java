@@ -168,7 +168,7 @@ public abstract class ScreenController {
     protected void initializeQuestions(TextField questionTextField) {
         ObservableList<String> items = FXCollections.observableArrayList();
         String course_name = SharedData.getSelectedCourse().getName();
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(new Question(), course_name);
         for (int i = 0; i < 10 && i < questions.size(); i++) {
             items.add(questions.get(i).getQuestion());
         }
