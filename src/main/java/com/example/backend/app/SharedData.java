@@ -37,18 +37,8 @@ public class SharedData {
 
     @Getter
     @Setter
-    //stores the course the user wants to add
-    private static Course newCourse = new Course();
-
-    @Getter
-    @Setter
     //stores the users study program selection from the Home Modal
     private static StudyProgram selectedStudyProgram;
-
-    @Getter
-    @Setter
-    //stores the study program the user wants to add
-    private static StudyProgram newStudyProgram = new StudyProgram();
 
     @Getter
     @Setter
@@ -57,6 +47,14 @@ public class SharedData {
     @Getter
     @Setter
     private static Question selectedEditQuestion = new Question();
+
+    @Getter
+    @Setter
+    private static StudyProgram selectedEditStudyProgram = new StudyProgram();
+
+    @Getter
+    @Setter
+    private static Course selectedEditCourse = new Course();
 
     @Getter
     @Setter
@@ -76,11 +74,11 @@ public class SharedData {
     //resets the SharedData class. Used with the HomeScreen Button (FHTW-LOGO)
     public static void resetAll() {
         selectedCourse = null;
-        newCourse = new Course();
         selectedStudyProgram = null;
-        newStudyProgram = new StudyProgram();
         filterQuestion = new Question();
         selectedEditQuestion = new Question();
+        selectedEditStudyProgram = new StudyProgram();
+        selectedEditCourse = new Course();
         testQuestions = new ArrayList<>();
         filteredQuestions = FXCollections.observableArrayList();
         suggestedCategories = new ArrayList<>();

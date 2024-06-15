@@ -6,18 +6,24 @@ import com.example.backend.app.Logger;
 import com.example.backend.app.Screen;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
 import com.example.frontend.modals.AddCourse_ScreenController;
+import com.example.frontend.modals.ConfirmDeletion_ScreenController;
 import com.example.frontend.modals.Modal;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +72,7 @@ public class Home_ScreenController extends ScreenController {
     // event handler for courses button click
     @FXML
     public void onCoursesBtnClick(ActionEvent event) {
-        System.out.println("Selected Study Program ID (loadCourses): " + SharedData.getSelectedStudyProgram().getId());
+        Logger.log(this.getClass().getName(), "Selected Study Program ID (loadCourses): " + SharedData.getSelectedStudyProgram().getId(), LogLevel.DEBUG);
         loadCourses();
     }
 
@@ -80,6 +86,8 @@ public class Home_ScreenController extends ScreenController {
             Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
             switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
+        } else {
+            SharedData.setOperation(Message.ERROR_COURSE_NOT_SELECTED);
         }
     }
 
@@ -89,16 +97,7 @@ public class Home_ScreenController extends ScreenController {
         studyProgramMenuButton.getItems().clear();
 
         for (StudyProgram studyProgram : studyPrograms) {
-            MenuItem menuItem = new MenuItem(studyProgram.getName());
-            menuItem.setOnAction(e -> {
-                studyProgramMenuButton.setText(studyProgram.getName());
-                SharedData.setSelectedStudyProgram(studyProgram);
-                // if the study program menu item is selected then the course menu and the course selection (variable)
-                // is cleared/reset and the associated courses will get loaded in the course menu
-                resetCourseMenuButton();
-                loadCourses();
-            });
-            studyProgramMenuButton.getItems().add(menuItem);
+            addStudyProgramToMenuButton(studyProgram);
         }
 
         // add option to add a new study program
@@ -110,28 +109,52 @@ public class Home_ScreenController extends ScreenController {
         customButton.setOnAction(e -> {
             studyProgramMenuButton.setText(MainApp.resourceBundle.getString("add_study_program"));
             try {
+                SharedData.setSelectedEditStudyProgram(new StudyProgram());
                 addStudyProgram();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
-        //studyProgramMenuButton.getItems().add(menuItem);
+        studyProgramMenuButton.getItems().add(customMenuItem);
+    }
+
+    private void addStudyProgramToMenuButton(StudyProgram studyProgram) {
+        // the studyProgram-text
+        Button textBtn = new Button(studyProgram.getName());
+        textBtn.setStyle("-fx-background-color: none;-fx-text-fill: white");
+        // the edit-btn
+        Button editBtn = createEditBtn();
+
+        HBox content = new HBox(editBtn, textBtn);
+        content.setSpacing(5);
+        CustomMenuItem customMenuItem = new CustomMenuItem(content);
+
+        textBtn.setOnAction(e -> {
+            studyProgramMenuButton.setText(studyProgram.getName());
+            SharedData.setSelectedStudyProgram(studyProgram);
+            // if the study program menu item is selected then the course menu and the course selection (variable)
+            // is cleared/reset and the associated courses will get loaded in the course menu
+            resetCourseMenuButton();
+            loadCourses();
+        });
+
+        editBtn.setOnAction(e -> {
+            try {
+                SharedData.setSelectedEditStudyProgram(studyProgram);
+                addStudyProgram();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         studyProgramMenuButton.getItems().add(customMenuItem);
     }
 
     // loads available courses into the menu
     private void loadCourses() {
         ArrayList<Course> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId());
-        //System.out.println("Selected Study ProgramID in loadCourses(): " + courses.get(0).getCourse_name());
-        //coursesMenuButton.getItems().clear(); // Clear existing items
 
         for (Course course : courses) {
-            MenuItem menuItem = new MenuItem(course.getName());
-            menuItem.setOnAction(e -> {
-                coursesMenuButton.setText(course.getName());
-                SharedData.setSelectedCourse(course);
-            });
-            coursesMenuButton.getItems().add(menuItem);
+            addCourseToMenuButton(course);
         }
 
         // add button to add a new course
@@ -141,6 +164,7 @@ public class Home_ScreenController extends ScreenController {
         customButton.setOnAction(e -> {
             coursesMenuButton.setText(MainApp.resourceBundle.getString("add_course"));
             try {
+                SharedData.setSelectedEditCourse(new Course());
                 addCourse();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -149,12 +173,53 @@ public class Home_ScreenController extends ScreenController {
         coursesMenuButton.getItems().add(customMenuItem);
     }
 
+    private void addCourseToMenuButton(Course course) {
+        // the course-text
+        Button textBtn = new Button(course.getName());
+        textBtn.setStyle("-fx-background-color: none;-fx-text-fill: white");
+        // the edit-btn
+        Button editBtn = createEditBtn();
+
+        HBox content = new HBox(editBtn, textBtn);
+        content.setSpacing(5);
+        CustomMenuItem customMenuItem = new CustomMenuItem(content);
+
+        textBtn.setOnAction(e -> {
+            coursesMenuButton.setText(course.getName());
+            SharedData.setSelectedCourse(course);
+        });
+
+        editBtn.setOnAction(e -> {
+            try {
+                SharedData.setSelectedEditCourse(course);
+                addCourse();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        coursesMenuButton.getItems().add(customMenuItem);
+    }
+
+    private Button createEditBtn() {
+        File file = new File("src/main/resources/com/example/frontend/icons/edit_white.png");
+        Image editImage = new Image(file.toURI().toString());
+        ImageView editImageView = new ImageView();
+        editImageView.setImage(editImage);
+        editImageView.setFitHeight(16);
+        editImageView.setFitWidth(16);
+        Button editBtn = new Button();
+        editBtn.setGraphic(editImageView);
+        editBtn.getStyleClass().add("btn_add_icon");
+
+        return editBtn;
+    }
+
     // method to add a new study program
     private void addStudyProgram() throws IOException {
         Stage newStage = new Stage();
         Modal<AddCourse_ScreenController> new_study_program_modal = new Modal<>("modals/add_StudyProgram.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle(MainApp.resourceBundle.getString("add_study_program"));
+        newStage.setTitle(MainApp.resourceBundle.getString("study_program"));
         newStage.setScene(new_study_program_modal.scene);
 
         //listener for when the stage is closed
@@ -169,7 +234,7 @@ public class Home_ScreenController extends ScreenController {
         Stage newStage = new Stage();
         Modal<AddCourse_ScreenController> new_course_modal = new Modal<>("modals/add_Course.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle(MainApp.resourceBundle.getString("add_course"));
+        newStage.setTitle(MainApp.resourceBundle.getString("course"));
         newStage.setScene(new_course_modal.scene);
 
         //listener for when the stage is closed

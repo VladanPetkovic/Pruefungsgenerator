@@ -4,10 +4,8 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Question;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.stage.Stage;
 
-public class ConfirmDeletion_ScreenController {
+public class ConfirmDeletion_ScreenController extends ModalController {
 
     public void onCancelBtnClick(ActionEvent actionEvent) {
         closeStage(actionEvent);
@@ -30,10 +28,5 @@ public class ConfirmDeletion_ScreenController {
 
         SharedData.setSelectedEditQuestion(new Question());
         closeStage(actionEvent);
-    }
-
-    private void closeStage(ActionEvent actionEvent) {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.close();
     }
 }

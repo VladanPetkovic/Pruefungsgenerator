@@ -5,13 +5,18 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox styleClass="modals" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.modals.AddCourse_ScreenController">
 
 
-    <Label styleClass="modal_topic_label" text="Enter new Course Name:">
+    <Label styleClass="modal_topic_label" text="%enter_course_name">
       <VBox.margin>
          <Insets bottom="10.0" />
       </VBox.margin></Label>
@@ -21,7 +26,7 @@
       </VBox.margin></TextField>
 
     <HBox>
-        <Label styleClass="modal_topic_label" text="Select new course number:">
+        <Label styleClass="modal_topic_label" text="%select_course_number">
          <HBox.margin>
             <Insets right="10.0" />
          </HBox.margin></Label>
@@ -31,7 +36,7 @@
          </HBox.margin></Spinner>
     </HBox>
 
-    <Label styleClass="modal_topic_label" text="Enter new Lecturer:">
+    <Label styleClass="modal_topic_label" text="%enter_lecturer">
       <VBox.margin>
          <Insets bottom="10.0" />
       </VBox.margin></Label>
@@ -39,14 +44,26 @@
       <VBox.margin>
          <Insets bottom="10.0" left="10.0" right="10.0" />
       </VBox.margin></TextField>
-
-    <HBox alignment="CENTER">
-        <Button onAction="#handleConfirm" styleClass="btn_grey" text="Confirm">
-            <HBox.margin>
-                <Insets />
-            </HBox.margin></Button>
-      <VBox.margin>
-         <Insets bottom="10.0" />
-      </VBox.margin>
-    </HBox>
+   <GridPane prefHeight="49.0" prefWidth="414.0">
+     <columnConstraints>
+       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+     </columnConstraints>
+     <rowConstraints>
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+     </rowConstraints>
+      <children>
+           <Button fx:id="saveBtn" onAction="#handleConfirm" styleClass="btn_grey" text="%save" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#onCancelBtnClick" styleClass="btn_orange" text="%cancel" GridPane.halignment="CENTER" />
+         <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDeleteBtnClick" styleClass="btn_add_icon" visible="false">
+            <graphic>
+               <ImageView fitHeight="39.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../icons/delete_trash_can.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+      </children>
+   </GridPane>
 </VBox>
