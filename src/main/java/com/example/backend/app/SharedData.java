@@ -28,7 +28,7 @@ public class SharedData {
 
     @Getter
     @Setter
-    //stores the users course selection from the Home Screen
+    //stores the users course selection from the Home Modal
     private static Course selectedCourse;
 
     @Getter
@@ -38,7 +38,7 @@ public class SharedData {
 
     @Getter
     @Setter
-    //stores the users study program selection from the Home Screen
+    //stores the users study program selection from the Home Modal
     private static StudyProgram selectedStudyProgram;
 
     @Getter

@@ -286,7 +286,7 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-scale-y: 1.0;
 }
 
-/* Home Screen Scene*/
+/* Home Modal Scene*/
 .homeScreen_gridPane {
     -fx-background-color: #3A3A3A;
 }
@@ -364,7 +364,7 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-padding: 20px 50px 20px 50px;
 }
 
-/* Create Manual Screen */
+/* Create Manual Modal */
 .filter_question_preview_vbox {
     -fx-border-color: grey;
     -fx-border-radius: 2%;

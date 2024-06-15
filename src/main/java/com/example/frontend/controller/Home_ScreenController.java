@@ -9,6 +9,7 @@ import com.example.backend.db.models.Course;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
 import com.example.frontend.modals.AddCourse_ScreenController;
+import com.example.frontend.modals.Modal;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -39,7 +40,6 @@ public class Home_ScreenController extends ScreenController {
      */
     @FXML
     private void initialize() {
-        //SharedData.setCurrentScreen(Screen.Home);
         resetStudyProgramMenuButton();
         loadStudyPrograms();
 
@@ -65,7 +65,7 @@ public class Home_ScreenController extends ScreenController {
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
         SharedData.setCurrentScreen(Screen.CREATE_AUTOMATIC);
-        if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram()!= null) {
+        if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram() != null) {
             Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getName(), LogLevel.INFO);
@@ -94,7 +94,7 @@ public class Home_ScreenController extends ScreenController {
 
         // add option to add a new study program
         Button customButton = new Button("add Study Program");
-       //todo
+        //todo
         customButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
 
         CustomMenuItem customMenuItem = new CustomMenuItem(customButton);
@@ -137,14 +137,13 @@ public class Home_ScreenController extends ScreenController {
                 throw new RuntimeException(ex);
             }
         });
-       coursesMenuButton.getItems().add(customMenuItem);
+        coursesMenuButton.getItems().add(customMenuItem);
     }
 
     // method to add a new study program
     private void addStudyProgram() throws IOException {
         Stage newStage = new Stage();
-        com.example.frontend.controller.Screen<AddCourse_ScreenController> new_study_program_modal =
-                new com.example.frontend.controller.Screen<>("modals/add_StudyProgram.fxml");
+        Modal<AddCourse_ScreenController> new_study_program_modal = new Modal<>("modals/add_StudyProgram.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle("Add Study Program");
         newStage.setScene(new_study_program_modal.scene);
@@ -159,8 +158,7 @@ public class Home_ScreenController extends ScreenController {
     // method to add a new course
     private void addCourse() throws IOException {
         Stage newStage = new Stage();
-        com.example.frontend.controller.Screen<AddCourse_ScreenController> new_course_modal =
-                new com.example.frontend.controller.Screen<>("modals/add_Course.fxml");
+        Modal<AddCourse_ScreenController> new_course_modal = new Modal<>("modals/add_Course.fxml");
         newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle("Add Study Program");
         newStage.setScene(new_course_modal.scene);
