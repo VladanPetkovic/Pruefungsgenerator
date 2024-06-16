@@ -1,11 +1,9 @@
 package com.example.frontend.modals;
 
 import com.example.frontend.MainApp;
-import com.example.frontend.controller.SwitchScene;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import com.example.backend.app.SharedData;
@@ -14,9 +12,6 @@ import com.example.backend.db.models.Course;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
-
-import static com.example.frontend.controller.SwitchScene.*;
-
 
 public class AddCourse_ScreenController extends ModalController {
     public Button deleteBtn;
@@ -106,10 +101,7 @@ public class AddCourse_ScreenController extends ModalController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = new Stage();
-        Modal<ConfirmDeletion_ScreenController> confirm_modal = new Modal<>("modals/confirm_deletion.fxml");
-        confirmStage.initModality(Modality.APPLICATION_MODAL);
-        confirmStage.setScene(confirm_modal.scene);
+        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
@@ -117,7 +109,5 @@ public class AddCourse_ScreenController extends ModalController {
                 closeStage(actionEvent);
             }
         });
-
-        confirmStage.show();
     }
 }

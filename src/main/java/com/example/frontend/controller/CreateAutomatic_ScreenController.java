@@ -5,6 +5,7 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
+import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import static com.example.frontend.controller.SwitchScene.switchScene;
@@ -77,14 +79,15 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         VBox questionVBox = new VBox();
 
         // create and add the label indicating the question number
-        createLabel("Question " + questionCount, questionVBox);
+        String questionAndNumber = MessageFormat.format(MainApp.resourceBundle.getString("question_with_number"), questionCount);
+        createLabel(questionAndNumber, questionVBox);
 
         // create and add components to the new VBox
-        createLabel("Category", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("category"), questionVBox);
         createMenuButton(questionVBox);
-        createLabel("Points", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("points"), questionVBox);
         createSpinner(questionVBox);
-        createLabel("Difficulty", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("difficulty"), questionVBox);
         createSlider(questionVBox);
 
         return questionVBox;
@@ -112,7 +115,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     // helper method to create a MenuButton with custom styling
     private void createMenuButton(VBox parentVBox) {
         // create a new MenuButton with default text
-        MenuButton menuButton = new MenuButton("Choose category...");
+        MenuButton menuButton = new MenuButton(MainApp.resourceBundle.getString("question_filter_select_category"));
         // add custom styling to the MenuButton
         menuButton.getStyleClass().add("menuButton_dark");
         // populate the MenuButton with category options and set event handlers for selection
@@ -241,7 +244,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             Question queryQuestion = new Question();
 
             // get the category
-            if (!Objects.equals(categoriesMenuButtons.get(i).getText(), "Choose category...")) {
+            if (!Objects.equals(categoriesMenuButtons.get(i).getText(), MainApp.resourceBundle.getString("question_filter_select_category"))) { // TODO: change to not compare text
                 selectedCategory = categoriesMenuButtons.get(i).getText();
                 queryQuestion.setCategory(SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(selectedCategory));
             }

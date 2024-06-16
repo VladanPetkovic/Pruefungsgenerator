@@ -2,8 +2,7 @@ package com.example.frontend.components;
 
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
-import com.example.frontend.modals.AddCourse_ScreenController;
-import com.example.frontend.modals.Modal;
+import com.example.frontend.modals.ModalOpener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,7 +15,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Setter;
 
@@ -190,11 +188,7 @@ public class PicturePickerController {
         }
 
         private void resizeImage(StackPane stackPane) {
-            Stage newStage = new Stage();
-            Modal<AddCourse_ScreenController> resize_image_modal = new Modal<>("modals/image_resizer.fxml");
-            newStage.initModality(Modality.APPLICATION_MODAL);
-            newStage.setTitle(MainApp.resourceBundle.getString("image_resize_modal_title"));
-            newStage.setScene(resize_image_modal.scene);
+            Stage newStage = ModalOpener.openModal(ModalOpener.IMAGE_RESIZER);
 
             //listener for when the stage is closed
             newStage.setOnHidden(event -> {
@@ -203,7 +197,6 @@ public class PicturePickerController {
                 buttonAndImages.remove(this);
                 removeTagFromTextArea(getTag());
             });
-            newStage.show();
         }
 
         public String getTag() {

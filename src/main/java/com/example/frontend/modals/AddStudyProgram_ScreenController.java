@@ -8,14 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
-
-import static com.example.frontend.controller.SwitchScene.HOME;
-import static com.example.frontend.controller.SwitchScene.switchScene;
 
 public class AddStudyProgram_ScreenController extends ModalController {
     public Button deleteBtn;
@@ -98,10 +94,7 @@ public class AddStudyProgram_ScreenController extends ModalController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = new Stage();
-        Modal<ConfirmDeletion_ScreenController> confirm_modal = new Modal<>("modals/confirm_deletion.fxml");
-        confirmStage.initModality(Modality.APPLICATION_MODAL);
-        confirmStage.setScene(confirm_modal.scene);
+        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
@@ -109,7 +102,5 @@ public class AddStudyProgram_ScreenController extends ModalController {
                 closeStage(actionEvent);
             }
         });
-
-        confirmStage.show();
     }
 }

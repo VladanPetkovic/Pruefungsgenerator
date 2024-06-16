@@ -7,8 +7,7 @@ import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import com.example.frontend.components.PicturePickerController;
-import com.example.frontend.modals.ConfirmDeletion_ScreenController;
-import com.example.frontend.modals.Modal;
+import com.example.frontend.modals.ModalOpener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,10 +17,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 
 import java.io.IOException;
 import java.net.URL;
@@ -527,12 +524,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = new Stage();
-        Modal<ConfirmDeletion_ScreenController> confirm_modal = new Modal<>("modals/confirm_deletion.fxml");
-        confirmStage.setHeight(400);
-        confirmStage.setWidth(600);
-        confirmStage.initModality(Modality.APPLICATION_MODAL);
-        confirmStage.setScene(confirm_modal.scene);
+        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
@@ -540,7 +532,5 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 switchScene(SwitchScene.EDIT_QUESTION);
             }
         });
-
-        confirmStage.show();
     }
 }

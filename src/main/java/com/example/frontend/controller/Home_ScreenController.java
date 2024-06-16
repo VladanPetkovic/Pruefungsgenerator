@@ -10,17 +10,14 @@ import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
-import com.example.frontend.modals.AddCourse_ScreenController;
-import com.example.frontend.modals.Modal;
+import com.example.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static com.example.frontend.controller.SwitchScene.HOME;
 import static com.example.frontend.controller.SwitchScene.switchScene;
+import static com.example.frontend.modals.ModalOpener.openModal;
 
 /**
  * controller class for the home screen
@@ -217,18 +215,13 @@ public class Home_ScreenController extends ScreenController {
 
     // method to add a new study program
     private void addStudyProgram() throws IOException {
-        Stage newStage = new Stage();
-        Modal<AddCourse_ScreenController> new_study_program_modal = new Modal<>("modals/add_StudyProgram.fxml");
-        newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle(MainApp.resourceBundle.getString("study_program"));
-        newStage.setScene(new_study_program_modal.scene);
+        Stage newStage = openModal(ModalOpener.ADD_STUDY_PROGRAM);
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
             resetStudyProgramMenuButton();
             loadStudyPrograms();
         });
-        newStage.show();
     }
 
     // method to add a new course
@@ -237,18 +230,13 @@ public class Home_ScreenController extends ScreenController {
             return;
         }
 
-        Stage newStage = new Stage();
-        Modal<AddCourse_ScreenController> new_course_modal = new Modal<>("modals/add_Course.fxml");
-        newStage.initModality(Modality.APPLICATION_MODAL);
-        newStage.setTitle(MainApp.resourceBundle.getString("course"));
-        newStage.setScene(new_course_modal.scene);
+        Stage newStage = openModal(ModalOpener.ADD_COURSE);
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
             resetCourseMenuButton();
             loadCourses();
         });
-        newStage.show();
     }
 
 
