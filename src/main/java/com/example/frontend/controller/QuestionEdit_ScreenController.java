@@ -23,6 +23,7 @@ import javafx.stage.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -262,14 +263,16 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void initTimeStamps(Question question) {
         // setting the timestamps
         if (question.getCreated_at() == null) {
-            created_at_label.setText("Created at: ");
+            created_at_label.setText(MainApp.resourceBundle.getString("created_at"));
         } else {
-            created_at_label.setText("Created at: " + question.getTimeStampFormatted(question.getCreated_at()));
+            String createdAt = MainApp.resourceBundle.getString("created_at") + " " + question.getTimeStampFormatted(question.getCreated_at());
+            created_at_label.setText(createdAt);
         }
         if (question.getUpdated_at() == null) {
-            updated_at_label.setText("Updated at: ");
+            updated_at_label.setText(MainApp.resourceBundle.getString("updated_at"));
         } else {
-            updated_at_label.setText("Updated at: " + question.getTimeStampFormatted(question.getUpdated_at()));
+            String updatedAt = MainApp.resourceBundle.getString("updated_at") + " " + question.getTimeStampFormatted(question.getUpdated_at());
+            updated_at_label.setText(updatedAt);
         }
     }
 
@@ -462,19 +465,19 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private String validateInput() {
         if (selectedCategory == null) {
-            return "Category needs to be selected.";
+            return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButtonEdit, answers)) {
-            return "You selected multiple choice, but at least one answer is not filled out.";
+            return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
         if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText())) {
-            return "Enter at least two answers, when selecting multiple choice.";
+            return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {
-            return "Question needs to be filled out.";
+            return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
         if (picturePickerController.invalidSyntax()) {
-            return "Every image has to be included at least once.";
+            return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
     }

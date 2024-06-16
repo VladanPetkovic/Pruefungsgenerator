@@ -288,22 +288,22 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     private String checkIfFilled() {
         if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
-            return "Select an existing category - or add a new category.";
+            return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
-            return "Question-Type needs to be selected.";
+            return MainApp.resourceBundle.getString("error_message_question_type_not_selected");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButton, answers)) {
-            return "You selected multiple choice, but at least one answer is not filled out.";
+            return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
         if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
-            return "Enter at least two answers, when selecting multiple choice.";
+            return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {
-            return "Question needs to be filled out.";
+            return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
         if (picturePickerController.invalidSyntax()) {
-            return "Every image has to be included at least once.";
+            return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
     }
