@@ -80,7 +80,7 @@ public class Settings_ScreenController extends ScreenController {
 
     public void onChooseFileBtnClick(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select a CSV File");
+        fileChooser.setTitle(MainApp.resourceBundle.getString("select_csv_file"));
 
         // Set extension filter to only allow CSV files
         fileChooser.getExtensionFilters().add(
@@ -111,7 +111,7 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseQuestionsMenuButton.setText("Questions of study-program");
         this.chooseStudyProgramMenuBtn.setVisible(true);
         this.chooseCourseMenuButton.setVisible(false);
-        this.chooseQuestionsLabel.setText("Select a study-program:");
+        this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
         this.chooseQuestionsLabel.setVisible(true);
     }
 
@@ -119,7 +119,7 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseQuestionsMenuButton.setText("Questions of course");
         this.chooseCourseMenuButton.setVisible(true);
         this.chooseStudyProgramMenuBtn.setVisible(false);
-        this.chooseQuestionsLabel.setText("Select a course:");
+        this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
         this.chooseQuestionsLabel.setVisible(true);
     }
 

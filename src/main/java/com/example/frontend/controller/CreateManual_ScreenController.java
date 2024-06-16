@@ -2,6 +2,7 @@ package com.example.frontend.controller;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.models.*;
+import com.example.frontend.MainApp;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -14,6 +15,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.text.MessageFormat;
 
 import static com.example.frontend.controller.SwitchScene.switchScene;
 
@@ -65,14 +68,13 @@ public class CreateManual_ScreenController extends ScreenController {
             for (Question question : SharedData.getTestQuestions()) {
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
-                Label questionNumberLabel = new Label("Question " + i + " (Erreichbare Punkte: " + question.getPoints() + ")");
-
+                String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), i, question.getPoints());
+                Label questionNumberLabel = new Label(previewLabel);
 
                 // create textarea (= editable) for question text
                 TextArea questionTextArea = new TextArea(question.getQuestion());
                 questionTextArea.setWrapText(true);
                 questionTextArea.setPrefRowCount(3);
-
 
                 //final var for listener
                 final int qi = i - 1;
@@ -157,8 +159,8 @@ public class CreateManual_ScreenController extends ScreenController {
             int numberOfQuestions = this.vbox_testQuestionsPreview.getChildren().size();
             // Create a VBox to hold the question details.
             VBox newQuestionVbox = new VBox();
-            Label questionNumberLabel = new Label("Question " + (numberOfQuestions + 1) + " (Erreichbare Punkte: " + question.getPoints() + ")");
-
+            String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), numberOfQuestions + 1, question.getPoints());
+            Label questionNumberLabel = new Label(previewLabel);
 
             // create textarea (= editable) for question text
             TextArea questionTextArea = new TextArea(question.getQuestion());

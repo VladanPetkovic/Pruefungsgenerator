@@ -38,17 +38,17 @@
                         <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="131.20002441406245" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="Import questions from CSV" />
-                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Import" GridPane.rowIndex="10" />
-                        <Label prefHeight="43.0" prefWidth="254.0" styleClass="topic_label" text="Export questions to CSV" GridPane.columnIndex="1" />
-                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="Destination folder:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+                        <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="%import_questions_from_csv" />
+                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="10" />
+                        <Label prefHeight="43.0" prefWidth="254.0" styleClass="topic_label" text="%export_questions_to_csv" GridPane.columnIndex="1" />
+                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%destination_folder" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
                         <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Choose folder to save file" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="TOP">
                            <cursor>
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>
                         </Button>
-                        <Label prefHeight="34.0" prefWidth="238.0" styleClass="option_label" text="Select which questions to export:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <Label prefHeight="34.0" prefWidth="238.0" styleClass="option_label" text="%select_questions_for_export" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                         <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="All questions" GridPane.columnIndex="1" GridPane.rowIndex="2">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="All questions" />
@@ -56,13 +56,13 @@
                               <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="Questions of course" />
                           </items>
                         </MenuButton>
-                        <Label fx:id="chooseQuestionsLabel" prefHeight="34.0" prefWidth="150.0" styleClass="option_label" text="Select a Course:" visible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                        <Label fx:id="chooseQuestionsLabel" prefHeight="34.0" prefWidth="150.0" styleClass="option_label" text="%select_course" visible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                         <MenuButton fx:id="chooseCourseMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Export" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="Selected File:" GridPane.rowIndex="1" />
+                        <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%selected_file" GridPane.rowIndex="1" />
                         <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="2" />
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Choose CSV-file" GridPane.rowIndex="3">
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="3">
                            <cursor>
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>

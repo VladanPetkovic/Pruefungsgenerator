@@ -241,8 +241,8 @@ public abstract class ScreenController {
         VBox questionVbox = new VBox();
 
         // Create labels to display question information.
-        Label questionNumberLabel = createLabel("Erreichbare Punkte: " + question.getPoints(), Color.WHITE);
-        Label questionDifficultyLabel = createLabel("Difficulty: " + question.getDifficulty(), Color.WHITE);
+        Label questionNumberLabel = createLabel(MainApp.resourceBundle.getString("possible_points") + " " + question.getPoints(), Color.WHITE);
+        Label questionDifficultyLabel = createLabel(MainApp.resourceBundle.getString("create_manual_difficulty") + " " + question.getDifficulty(), Color.WHITE);
         Label questionTextLabel = createLabel(question.getQuestion(), Color.WHITE);
         Label questionAnswersLabel = createLabel(question.getAnswersAsString(), Color.WHITE);
         Label questionRemarksLabel = createLabel(question.getRemark(), Color.WHITE);
@@ -406,7 +406,7 @@ public abstract class ScreenController {
      */
     protected void chooseDirectory(Label label_selectedDirectory) {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select Folder to Save File");
+        chooser.setTitle(MainApp.resourceBundle.getString("choose_folder_to_save_file"));
         if (!label_selectedDirectory.getText().equals("\"\"")) {
             chooser.setInitialDirectory(new File(label_selectedDirectory.getText()));
         }
