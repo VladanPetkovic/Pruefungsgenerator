@@ -217,6 +217,26 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+.btn_image_icon {
+    -fx-background-color: none;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+/*
+This rule slightly scales up the button for visual feedback.
+*/
+.btn_image_icon:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+/*
+This rule rotates the button by 45 degrees and applies a darker drop shadow effect when the button is pressed.
+*/
+.btn_image_icon:pressed {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
 .optionAreaBox {
     -fx-background-color: #3a3a3a; /* medium dark grey background color */
 }

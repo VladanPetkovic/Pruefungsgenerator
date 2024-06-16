@@ -3,16 +3,10 @@ package com.example.frontend.modals;
 import com.example.frontend.components.PicturePickerController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
-import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class ImageResizer_ScreenController implements Initializable {
+public class ImageResizer_ScreenController extends ModalController {
 
     @FXML
     private Slider sliderWidth;
@@ -20,14 +14,14 @@ public class ImageResizer_ScreenController implements Initializable {
     private ImageView imageDisplay;
 
     private PicturePickerController picturePickerController = null;
-
     private Image originalImage;
     public Image outputImage = null;
 
-    public ImageResizer_ScreenController() {}
+    public ImageResizer_ScreenController() {
+    }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         configureSlider(sliderWidth);
         sliderWidth.valueProperty().addListener((observableValue, number, t1) -> {
             double scaleFactor = t1.doubleValue() / originalImage.getWidth();
@@ -73,11 +67,6 @@ public class ImageResizer_ScreenController implements Initializable {
         closeStage(actionEvent);
     }
 
-    private void closeStage(ActionEvent actionEvent) {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.close();
-    }
-
     private Image rescaleImage(Image image, int newWidth, int newHeight) {
         WritableImage writableImage = new WritableImage(newWidth, newHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
@@ -88,7 +77,7 @@ public class ImageResizer_ScreenController implements Initializable {
 
         for (int y = 0; y < newHeight; y++) {
             for (int x = 0; x < newWidth; x++) {
-                pixelWriter.setArgb(x, y, pixelReader.getArgb((int)(x * scaleX), (int)(y * scaleY)));
+                pixelWriter.setArgb(x, y, pixelReader.getArgb((int) (x * scaleX), (int) (y * scaleY)));
             }
         }
         return writableImage;

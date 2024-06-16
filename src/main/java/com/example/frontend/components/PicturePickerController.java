@@ -2,7 +2,9 @@ package com.example.frontend.components;
 
 import com.example.backend.app.SharedData;
 import com.example.frontend.MainApp;
+import com.example.frontend.modals.AddCourse_ScreenController;
 import com.example.frontend.modals.ImageResizer_ScreenController;
+import com.example.frontend.modals.Modal;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -18,10 +20,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Setter;
 
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,29 +87,31 @@ public class PicturePickerController {
                 return;
             }
             Image image = new Image(file.toURI().toString());
-            try {
-                FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("modals/image_resizer.fxml"));
-                VBox imageResizer = loader.load();
-                ImageResizer_ScreenController imageResizerScreenController = loader.getController();
-                imageResizerScreenController.setPicturePickerController(this);
-                imageResizerScreenController.setImage(image);
-                Scene scene = new Scene(imageResizer);
-                Stage newStage = new Stage();
-                newStage.setTitle("Resize Image");
-                newStage.setScene(scene);
-
-                // Show the stage and wait for it to close
-                newStage.showAndWait();
-
-                // After the resizer stage is closed, check the output image
-                Image resizedImage = imageResizerScreenController.outputImage;
-                if (resizedImage != null) {
-                    buttonAndImages.add(new ButtonAndImage(fileName, resizedImage));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            buttonAndImages.add(new ButtonAndImage(fileName, image));
+            // TODO...
+//            try {
+////                FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("modals/image_resizer.fxml"));
+////                VBox imageResizer = loader.load();
+////                ImageResizer_ScreenController imageResizerScreenController = loader.getController();
+////                imageResizerScreenController.setPicturePickerController(this);
+////                imageResizerScreenController.setImage(image);
+////                Scene scene = new Scene(imageResizer);
+////                Stage newStage = new Stage();
+////                newStage.setTitle(MainApp.resourceBundle.getString("image_resize_modal_title"));
+////                newStage.setScene(scene);
+////
+////                // Show the stage and wait for it to close
+////                newStage.showAndWait();
+//
+//                // After the resizer stage is closed, check the output image
+////                Image resizedImage = imageResizerScreenController.outputImage;
+////                if (resizedImage != null) {
+////                    buttonAndImages.add(new ButtonAndImage(fileName, resizedImage));
+////                }
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -128,34 +132,20 @@ public class PicturePickerController {
     public class ButtonAndImage {
         public final String imageName;
         public final Image image;
-        private final ImageView imageView;
-        private final Button removeButton;
-        private final StackPane stackPane;
 
         public ButtonAndImage(String imageName, Image image) {
             this.imageName = imageName;
             this.image = image;
 
-            String deleteImagePath = "src/main/resources/com/example/frontend/icons/delete_trash_can.png";
-            File file = new File(deleteImagePath);
-            ImageView deleteImageView = new ImageView();
-            deleteImageView.setImage(new Image(file.toURI().toString()));
-            deleteImageView.setFitHeight(32);
-            deleteImageView.setFitWidth(32);
-            removeButton = new Button();
-            removeButton.setGraphic(deleteImageView);
-            removeButton.getStyleClass().add("btn_add_icon");
+            Button resizeButton = addScaleBtn();
+            Button removeButton = addRemoveBtn();
+            Button imageButton = getImageButton(image);
+            StackPane stackPane = new StackPane();
 
-            stackPane = new StackPane();
+            stackPane.getChildren().addAll(imageButton, removeButton, resizeButton);
 
-            imageView = new ImageView(image);
-            imageView.setFitHeight(100); // Set a width for the image view
-            imageView.setPreserveRatio(true); // Preserve aspect ratio
-
-            stackPane.getChildren().addAll(imageView, removeButton);
-
+            StackPane.setAlignment(resizeButton, Pos.TOP_LEFT);
             StackPane.setAlignment(removeButton, Pos.TOP_RIGHT);
-            StackPane.setMargin(removeButton, new javafx.geometry.Insets(5));
 
             removeButton.setOnAction(actionEvent -> {
                 displayImages.getChildren().remove(stackPane);
@@ -163,7 +153,11 @@ public class PicturePickerController {
                 removeTagFromTextArea(getTag());
             });
 
-            imageView.setOnMouseClicked(event -> {
+            resizeButton.setOnAction(actionEvent -> {
+                resizeImage();
+            });
+
+            imageButton.setOnAction(actionEvent -> {
                 Clipboard clipboard = Clipboard.getSystemClipboard();
                 ClipboardContent content = new ClipboardContent();
                 content.putString(getTag());
@@ -171,9 +165,65 @@ public class PicturePickerController {
                 SharedData.setOperation("Tag was copied to clipboard, paste into question text.", false);
             });
 
-            Tooltip.install(imageView, new Tooltip(imageName));
+            Tooltip.install(imageButton, new Tooltip(imageName));
 
             displayImages.getChildren().add(stackPane);
+        }
+
+        private Button getImageButton(Image image) {
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(100); // Set a width for the image view
+            imageView.setPreserveRatio(true); // Preserve aspect ratio
+            Button button = new Button();
+            button.setGraphic(imageView);
+            button.getStyleClass().add("btn_add_icon");
+            return button;
+        }
+
+        /**
+         * This function creates the remove-btn: a trashcan.
+         *
+         * @return the button for deleting the image.
+         */
+        private Button addRemoveBtn() {
+            String deleteImagePath = "src/main/resources/com/example/frontend/icons/delete_trash_can.png";
+            return getButton(deleteImagePath);
+        }
+
+        /**
+         * This function creates the scale-btn: a scale-icon.
+         *
+         * @return the button for scaling the image.
+         */
+        private Button addScaleBtn() {
+            String resizeImagePath = "src/main/resources/com/example/frontend/icons/resize.png";
+            return getButton(resizeImagePath);
+        }
+
+        private Button getButton(String resizeImagePath) {
+            File file = new File(resizeImagePath);
+            ImageView resizeImageView = new ImageView();
+            resizeImageView.setImage(new Image(file.toURI().toString()));
+            resizeImageView.setFitHeight(25);
+            resizeImageView.setFitWidth(25);
+            Button button = new Button();
+            button.setGraphic(resizeImageView);
+            button.getStyleClass().add("btn_image_icon");
+            return button;
+        }
+
+        private void resizeImage() {
+            Stage newStage = new Stage();
+            Modal<AddCourse_ScreenController> resize_image_modal = new Modal<>("modals/image_resizer.fxml");
+            newStage.initModality(Modality.APPLICATION_MODAL);
+            newStage.setTitle(MainApp.resourceBundle.getString("image_resize_modal_title"));
+            newStage.setScene(resize_image_modal.scene);
+
+            //listener for when the stage is closed
+            newStage.setOnHidden(event -> {
+                // TODO
+            });
+            newStage.show();
         }
 
         public String getTag() {
