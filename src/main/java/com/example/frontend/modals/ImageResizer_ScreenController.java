@@ -1,6 +1,8 @@
 package com.example.frontend.modals;
 
-import com.example.frontend.components.PicturePickerController;
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
+import com.example.backend.app.SharedData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
@@ -12,8 +14,6 @@ public class ImageResizer_ScreenController extends ModalController {
     private Slider sliderWidth;
     @FXML
     private ImageView imageDisplay;
-
-    private PicturePickerController picturePickerController = null;
     private Image originalImage;
     public Image outputImage = null;
 
@@ -22,7 +22,13 @@ public class ImageResizer_ScreenController extends ModalController {
 
     @FXML
     public void initialize() {
-        configureSlider(sliderWidth);
+        if (SharedData.getResizeImage() == null) {
+            Logger.log(getClass().getName(), "The image is null", LogLevel.ERROR);
+            return;
+        }
+
+        initImage(SharedData.getResizeImage());
+
         sliderWidth.valueProperty().addListener((observableValue, number, t1) -> {
             double scaleFactor = t1.doubleValue() / originalImage.getWidth();
             imageDisplay.setFitWidth(t1.doubleValue());
@@ -30,40 +36,26 @@ public class ImageResizer_ScreenController extends ModalController {
         });
     }
 
-    private void configureSlider(Slider slider) {
-        slider.setMin(100);
-        slider.setMax(600);
-        slider.setValue(500);
-        slider.setShowTickLabels(true);
-        slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(100);
-    }
-
-    public void setPicturePickerController(PicturePickerController picturePickerController) {
-        if (this.picturePickerController == null) {
-            this.picturePickerController = picturePickerController;
-        }
-    }
-
-    public void setImage(Image image) {
+    public void initImage(Image image) {
         originalImage = image;
         imageDisplay.setImage(image);
         sliderWidth.setValue(image.getWidth());
     }
 
     @FXML
-    private void onActionSaveChanges(ActionEvent actionEvent) {
+    private void onSaveBtnClick(ActionEvent actionEvent) {
         if (originalImage != null) {
             double scaleFactor = sliderWidth.getValue() / originalImage.getWidth();
             int newWidth = (int) sliderWidth.getValue();
             int newHeight = (int) (originalImage.getHeight() * scaleFactor);
             outputImage = rescaleImage(originalImage, newWidth, newHeight);
+            SharedData.setResizeImage(outputImage);
             closeStage(actionEvent);
         }
     }
 
     @FXML
-    private void onActionCancelChanges(ActionEvent actionEvent) {
+    private void onCancelBtnClick(ActionEvent actionEvent) {
         closeStage(actionEvent);
     }
 

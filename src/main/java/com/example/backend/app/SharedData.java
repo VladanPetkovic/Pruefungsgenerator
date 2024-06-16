@@ -4,6 +4,7 @@ import com.example.backend.db.models.*;
 import com.example.backend.db.models.Question;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -55,6 +56,10 @@ public class SharedData {
     @Getter
     @Setter
     private static Course selectedEditCourse = new Course();
+
+    @Getter
+    @Setter
+    private static Image resizeImage = null;
 
     @Getter
     @Setter

@@ -158,8 +158,12 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     private boolean previewQuestionShouldBeVisible() {
-        if (picturePickerController.invalidSyntax()) return false;
-        if (picturePickerController.buttonAndImages.size() == 0) return false;
+        if (picturePickerController.invalidSyntax()) {
+            return false;
+        }
+        if (picturePickerController.buttonAndImages.isEmpty()) {
+            return false;
+        }
         return true;
     }
 
