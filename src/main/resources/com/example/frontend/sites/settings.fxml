@@ -49,11 +49,11 @@
                            </cursor>
                         </Button>
                         <Label prefHeight="34.0" prefWidth="238.0" styleClass="option_label" text="%select_questions_for_export" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                        <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="All questions" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%all_questions" GridPane.columnIndex="1" GridPane.rowIndex="2">
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="All questions" />
-                            <MenuItem mnemonicParsing="false" onAction="#questionsOfSPselected" text="Questions of study-program" />
-                              <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="Questions of course" />
+                            <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="%all_questions" />
+                            <MenuItem mnemonicParsing="false" onAction="#questionsOfSPselected" text="%questions_of_study_program" />
+                              <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="%questions_of_course" />
                           </items>
                         </MenuButton>
                         <Label fx:id="chooseQuestionsLabel" prefHeight="34.0" prefWidth="150.0" styleClass="option_label" text="%select_course" visible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />

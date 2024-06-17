@@ -84,7 +84,7 @@ public class Settings_ScreenController extends ScreenController {
 
         // Set extension filter to only allow CSV files
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+                new FileChooser.ExtensionFilter(MainApp.resourceBundle.getString("csv_files"), "*.csv")
         );
 
         File file = fileChooser.showOpenDialog(MainApp.stage);
@@ -98,7 +98,7 @@ public class Settings_ScreenController extends ScreenController {
     }
 
     public void allQuestionsSelectedForExport(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("All questions");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("all_questions"));
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setVisible(false);
@@ -108,7 +108,7 @@ public class Settings_ScreenController extends ScreenController {
      * SP ... StudyProgram
      */
     public void questionsOfSPselected(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("Questions of study-program");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("questions_of_study_program"));
         this.chooseStudyProgramMenuBtn.setVisible(true);
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
@@ -116,7 +116,7 @@ public class Settings_ScreenController extends ScreenController {
     }
 
     public void questionsOfCourseSelected(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("Questions of course");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("questions_of_course"));
         this.chooseCourseMenuButton.setVisible(true);
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
@@ -130,10 +130,10 @@ public class Settings_ScreenController extends ScreenController {
 
         ExportCSV exportCSV = new ExportCSV(this.label_selectedDirectory.getText());
         int exportType = 0;     // all questions
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of study-program")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
             exportType = 1;     // only for studyProgram
             exportCSV.initStudyProgram(chooseStudyProgramMenuBtn.getText());
-        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of course")) {
+        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
             exportType = 2;     // only for course
             exportCSV.initCourse(chooseCourseMenuButton.getText());
         }
@@ -151,13 +151,13 @@ public class Settings_ScreenController extends ScreenController {
      */
     private boolean allFieldsSetProperly() {
         // check if everything was filled out
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of course")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
             if (Objects.equals(chooseCourseMenuButton.getText(), "")) {
                 SharedData.setOperation(Message.ERROR_MESSAGE_INPUT_ALL_FIELDS);
                 return false;
             }
         }
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of study-program")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
             if (Objects.equals(chooseStudyProgramMenuBtn.getText(), "")) {
                 SharedData.setOperation(Message.ERROR_MESSAGE_INPUT_ALL_FIELDS);
                 return false;

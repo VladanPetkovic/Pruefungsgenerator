@@ -194,9 +194,9 @@ public abstract class ScreenController {
 
         if (allowAllTypes) {
             // add "showAll" to showAll QuestionTypes
-            MenuItem menuItem = new MenuItem("all types");
+            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
             menuItem.setOnAction(e -> {
-                menuButton.setText("all types");
+                menuButton.setText(MainApp.resourceBundle.getString("all_types"));
             });
             menuButton.getItems().add(menuItem);
         }
