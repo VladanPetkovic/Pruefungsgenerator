@@ -15,8 +15,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -27,6 +30,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.example.frontend.controller.SwitchScene.switchScene;
 
@@ -77,6 +82,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
+    @FXML
+    private TextFlow questionPreview;
+
+    @FXML
+    private Button previewQuestion;
+
+
     /**
      * Initializes the Question Edit screen.
      *
@@ -124,6 +136,61 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        chooseQuestion.textProperty().addListener((observableValue, s, t1) -> {
+            previewQuestion.setVisible(previewQuestionShouldBeVisible());
+        });
+    }
+
+    private boolean questionPreviewVisible = false;
+
+    @FXML
+    private void onActionPreviewQuestion() {
+        if (!questionPreviewVisible) {
+            chooseQuestion.setVisible(false);
+            questionPreview.setVisible(true);
+            questionPreview.getChildren().clear();
+            parseAndDisplayContent();
+            questionPreviewVisible = true;
+            return;
+        }
+        chooseQuestion.setVisible(true);
+        questionPreview.setVisible(false);
+        questionPreviewVisible = false;
+    }
+
+    public void parseAndDisplayContent() {
+        Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
+        Matcher matcher = pattern.matcher(chooseQuestion.getText());
+        int lastIndex = 0;
+        while (matcher.find()) {
+            String textBeforeImage = chooseQuestion.getText().substring(lastIndex, matcher.start());
+            if (!textBeforeImage.isEmpty()) {
+                questionPreview.getChildren().add(new Text(textBeforeImage));
+            }
+            String imageName = matcher.group(1);
+            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
+                if (image.imageName.equals(imageName)) {
+                    ImageView imageView = new ImageView(image.image);
+                    questionPreview.getChildren().add(imageView);
+                }
+            }
+            lastIndex = matcher.end();
+        }
+        String textAfterLastImage = chooseQuestion.getText().substring(lastIndex);
+        if (!textAfterLastImage.isEmpty()) {
+            questionPreview.getChildren().add(new Text(textAfterLastImage));
+        }
+    }
+
+    private boolean previewQuestionShouldBeVisible() {
+        if (picturePickerController.invalidSyntax()) {
+            return false;
+        }
+        if (picturePickerController.buttonAndImages.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     /**
