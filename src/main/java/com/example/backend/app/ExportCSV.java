@@ -37,7 +37,9 @@ public class ExportCSV {
         // open and write a csv file
         try (FileWriter writer = new FileWriter(this.directoryName + "\\" + createFileName())) {
             // Write CSV header
-            writer.append("question_string;categoryName_string;difficulty_int;points_float;questionType_string;remark_string;answers_string;keywords_string;courseName_string;studyProgramName_string\n");
+            //TODO: question ID should be exported as well, because we will need it for later import
+            // also the question is: do we need the course name and the study program name?
+            writer.append("question_id;question_string;categoryName_string;difficulty_int;points_float;questionType_string;remark_string;answers_string;keywords_string;courseName_string;studyProgramName_string\n");
 
             if (exportType == 0) {          // export all questions
                 ArrayList<StudyProgram> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll();
@@ -64,15 +66,18 @@ public class ExportCSV {
     }
 
     // TODO: add later the possibility to add the question_id or not (for updating questions)
+    // correction: the question_id is needed in every case, so it should be exported as well
     private void writeQuestionsToFile(FileWriter writer, Course course, StudyProgram studyProgram) throws IOException {
         ArrayList<Question> questions = new ArrayList<>();
         lastQuestionId = 0;     // TODO: this would be an edge-case (questions equal for different studyPrograms)
         do {
+            // this function returns all question, that have a larger id than the specified minQuestionID
             questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(course, lastQuestionId);
             Logger.log(getClass().getName(), "Fetched questions from DB: " + questions.size(), LogLevel.INFO);
             // Write question data
             for (Question question : questions) {
                 lastQuestionId = question.getId();
+                writer.append("\"").append(String.valueOf(question.getId())).append("\"").append(";");
                 writer.append("\"").append(question.getQuestion()).append("\"").append(";");
                 writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");
                 writer.append(String.valueOf(question.getDifficulty())).append(";");

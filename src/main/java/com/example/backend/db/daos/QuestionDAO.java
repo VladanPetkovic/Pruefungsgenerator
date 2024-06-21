@@ -8,7 +8,9 @@ import com.example.backend.db.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class QuestionDAO implements DAO<Question> {
     private final String selectColumns =
@@ -119,6 +121,9 @@ public class QuestionDAO implements DAO<Question> {
                 "LIMIT 500;";
         Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
+        // create a treemap to save question ordered by their IDs
+        TreeMap<Integer, Question> questionMap = new TreeMap<>(Comparator.naturalOrder());
+
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
 
@@ -127,8 +132,9 @@ public class QuestionDAO implements DAO<Question> {
             try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                 while (questionsResultSet.next()) {
                     Question newQuestion = createModelFromResultSet(questionsResultSet);
-                    if(newQuestion != null) {
-                        this.questionCache.add(newQuestion);
+                    if (newQuestion != null) {
+                        // put the new question instance into the treemap
+                        questionMap.put(newQuestion.getId(), newQuestion);
                     }
                 }
             }
@@ -136,6 +142,9 @@ public class QuestionDAO implements DAO<Question> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // add the questions from the sorted treemap to the cache
+        this.questionCache.addAll(questionMap.values());
 
         return this.questionCache;
     }
