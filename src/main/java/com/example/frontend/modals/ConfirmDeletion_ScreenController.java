@@ -7,6 +7,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+import java.io.IOException;
+
 public class ConfirmDeletion_ScreenController extends ModalController {
 
     public Label errorLabel;
@@ -20,7 +22,7 @@ public class ConfirmDeletion_ScreenController extends ModalController {
         closeStage(actionEvent);
     }
 
-    public void onDeleteBtnClick(ActionEvent actionEvent) {
+    public void onDeleteBtnClick(ActionEvent actionEvent) throws IOException {
         if (SharedData.getSelectedEditQuestion().getId() != 0) {
             deleteQuestion(actionEvent);
         } else if (SharedData.getSelectedEditCourse().getId() != 0) {
@@ -30,7 +32,7 @@ public class ConfirmDeletion_ScreenController extends ModalController {
         }
     }
 
-    private void deleteQuestion(ActionEvent actionEvent) {
+    private void deleteQuestion(ActionEvent actionEvent) throws IOException {
         // remove from other arrays
         int questionId = SharedData.getSelectedEditQuestion().getId();
         SharedData.getTestQuestions().removeIf(question -> question.getId() == questionId);
@@ -49,7 +51,7 @@ public class ConfirmDeletion_ScreenController extends ModalController {
         closeStage(actionEvent);
     }
 
-    private void deleteCourse(ActionEvent actionEvent) {
+    private void deleteCourse(ActionEvent actionEvent) throws IOException {
         int courseId = SharedData.getSelectedEditCourse().getId();
         boolean hasCategories = SQLiteDatabaseConnection.COURSE_REPOSITORY.hasCategories(courseId);
 
@@ -62,7 +64,7 @@ public class ConfirmDeletion_ScreenController extends ModalController {
         }
     }
 
-    private void deleteStudyProgram(ActionEvent actionEvent) {
+    private void deleteStudyProgram(ActionEvent actionEvent) throws IOException {
         int id = SharedData.getSelectedEditStudyProgram().getId();
         boolean hasCourses = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.hasCourses(id);
 

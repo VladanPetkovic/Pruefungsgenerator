@@ -232,7 +232,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * upload is successful.
      */
     @FXML
-    private void onActionUpload() {
+    private void onActionUpload() throws IOException {
         // Check if all required fields are filled
         String s = checkIfFilled();
         // If any field is missing, display an error alert and return
@@ -308,13 +308,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         return null;
     }
 
-    public void on_add_category_btn_click(ActionEvent actionEvent) {
+    public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
             addCategoryBtnClick(categoryTextField, add_category_btn);
         }
     }
 
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
             Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText());

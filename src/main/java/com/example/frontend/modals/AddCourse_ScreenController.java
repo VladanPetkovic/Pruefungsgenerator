@@ -11,6 +11,7 @@ import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Course;
 import javafx.stage.WindowEvent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AddCourse_ScreenController extends ModalController {
@@ -55,7 +56,7 @@ public class AddCourse_ScreenController extends ModalController {
     }
 
     @FXML
-    private void handleConfirm() {
+    private void handleConfirm() throws IOException {
         String enteredName = inputName.getText();
         int enteredNumber = numericSpinner.getValue();
         String enteredLecturer = inputLecturer.getText();
@@ -72,7 +73,7 @@ public class AddCourse_ScreenController extends ModalController {
         }
     }
 
-    private void createCourse(String enteredName, int enteredNumber, String enteredLecturer) {
+    private void createCourse(String enteredName, int enteredNumber, String enteredLecturer) throws IOException {
         ArrayList<Course> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId());
         boolean exists = false;
         for (Course course : courses) {

@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Category implements Serializable {
     private int id;
     private String name;
 
@@ -29,7 +32,7 @@ public class Category {
      * @param newCategory The provided category
      * @return String - the error-message, returns null if everything is fine.
      */
-    public static String checkNewCategory(String newCategory) {
+    public static String checkNewCategory(String newCategory) throws IOException {
         if (newCategory == null) {
             return "No category provided!";
         }

@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PicturePickerController {
@@ -68,7 +69,7 @@ public class PicturePickerController {
     }
 
     @FXML
-    private void onActionUploadPicture() {
+    private void onActionUploadPicture() throws IOException {
         if (buttonAndImages.size() == 10) {
             SharedData.setOperation("Can't upload more than 10 pictures.", true);
             return;
@@ -90,7 +91,7 @@ public class PicturePickerController {
         }
     }
 
-    private boolean isFileAlreadyUploaded(String fileName) {
+    private boolean isFileAlreadyUploaded(String fileName) throws IOException {
         for (ButtonAndImage bai : buttonAndImages) {
             if (bai.imageName.equals(fileName)) {
                 SharedData.setOperation("Can't upload picture with same name twice.", true);
@@ -138,6 +139,7 @@ public class PicturePickerController {
                 content.putString(getTag());
                 clipboard.setContent(content);
                 SharedData.setOperation("Tag was copied to clipboard, paste into question text.", false);
+
             });
 
             Tooltip.install(imageButton, new Tooltip(imageName));

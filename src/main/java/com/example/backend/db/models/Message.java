@@ -3,8 +3,10 @@ package com.example.backend.db.models;
 import com.example.frontend.MainApp;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public enum Message {
+public enum Message implements Serializable {
     SUCCESS_MESSAGE_OPERATION(MainApp.resourceBundle.getString("success_message_operation"), false),
     SUCCESS_MESSAGE_DATA_SAVED(MainApp.resourceBundle.getString("success_message_data_saved"), false),
     SUCCESS_MESSAGE_QUESTIONS_EXPORTED(MainApp.resourceBundle.getString("success_message_questions_exported"), false),

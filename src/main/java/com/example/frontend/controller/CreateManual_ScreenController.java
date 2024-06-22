@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 
 import static com.example.frontend.controller.SwitchScene.switchScene;
@@ -42,7 +43,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
     // event handler for the "Apply Export" button click
     @FXML
-    private void applyExportButtonClicked(ActionEvent event) {
+    private void applyExportButtonClicked(ActionEvent event) throws IOException {
         // check if there are test questions to export
         if (!SharedData.getTestQuestions().isEmpty()) {
             switchScene(SwitchScene.PDF_PREVIEW);

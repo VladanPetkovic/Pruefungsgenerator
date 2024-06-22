@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,7 @@ public class QuestionRepository implements Repository<Question> {
     }
 
     @Override
-    public void add(Question question) {
+    public void add(Question question) throws IOException {
         getQuestionDAO().create(question);
     }
 

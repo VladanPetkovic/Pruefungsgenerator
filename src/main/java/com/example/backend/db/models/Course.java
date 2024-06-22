@@ -6,23 +6,26 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course {
+public class Course implements Serializable {
     private int id;
     private String name;
     private int number;
     private String lector;
 
-    public Course(String name, int number, String lector) {
+    public Course(String name, int number, String lector)  {
         setName(name);
         setNumber(number);
         setLector(lector);
     }
 
-    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) {
+    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) throws IOException {
         // check for existence
         Course newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
 

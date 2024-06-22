@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
 
+import java.io.IOException;
+
 public class ImageResizer_ScreenController extends ModalController {
 
     @FXML
@@ -43,7 +45,7 @@ public class ImageResizer_ScreenController extends ModalController {
     }
 
     @FXML
-    private void onSaveBtnClick(ActionEvent actionEvent) {
+    private void onSaveBtnClick(ActionEvent actionEvent) throws IOException {
         if (originalImage != null) {
             double scaleFactor = sliderWidth.getValue() / originalImage.getWidth();
             int newWidth = (int) sliderWidth.getValue();

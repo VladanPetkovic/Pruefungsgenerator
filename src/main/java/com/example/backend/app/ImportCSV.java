@@ -127,7 +127,7 @@ public class ImportCSV {
     }
 
     private int insertQuestion(Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
-                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) {
+                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) throws IOException {
         Question question = new Question();
         question.setCategory(category);
         question.setDifficulty(difficulty);

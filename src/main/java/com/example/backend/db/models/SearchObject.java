@@ -3,9 +3,11 @@ package com.example.backend.db.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class SearchObject<T> {
+public class SearchObject<T> implements Serializable {
     private String column_name;
     private String objectName;
     private T valueOfObject;

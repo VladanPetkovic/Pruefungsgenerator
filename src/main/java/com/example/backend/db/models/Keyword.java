@@ -6,10 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class Keyword {
+public class Keyword implements Serializable {
     private int id;
     private String keyword;
 
@@ -22,7 +25,7 @@ public class Keyword {
      * @param newKeyword The provided keyword
      * @return String - the error-message, returns null if everything is fine.
      */
-    public static String checkNewKeyword(String newKeyword) {
+    public static String checkNewKeyword(String newKeyword) throws IOException {
         if (newKeyword == null) {
             return "No keyword provided!";
         }

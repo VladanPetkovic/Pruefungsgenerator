@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CourseRepository implements Repository<Course> {
@@ -42,7 +43,7 @@ public class CourseRepository implements Repository<Course> {
     }
 
     @Override
-    public void add(Course course) {
+    public void add(Course course) throws IOException {
         getCourseDAO().create(course);
     }
 

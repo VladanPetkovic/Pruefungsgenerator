@@ -1,6 +1,10 @@
 package com.example.frontend;
 
+import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
+import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Question;
+import com.example.backend.db.models.StudyProgram;
 import com.example.frontend.controller.ControllerFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +17,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -32,16 +40,47 @@ public class MainApp extends Application {
      * @throws IOException If an error occurs while loading the FXML file.
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, ClassNotFoundException {
         this.stage = stage;
         Locale locale = new Locale("en", "US");
         resourceBundle = ResourceBundle.getBundle("common.en", locale);
-        SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
-        Scene scene = new Scene(fxmlLoader.load());
+
+        Path path = Paths.get(SharedData.getFilepath());
+        Scene scene;
+        if (Files.exists(path)) {
+            System.out.println("CrashFile exists.");
+            SharedData.loadFromFile();
+
+            path = Paths.get(SharedData.getFilepath());
+            Files.delete(path);
+
+            System.out.println("PageTitle:"+ SharedData.getPageTitle());
+            System.out.println("OPStatus:"+ SharedData.getOperationStatus());
+            System.out.println("Lang:"+ SharedData.getCurrentLanguage());
+            System.out.println("currentScreen:"+ SharedData.getCurrentScreen());
+
+            if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram() != null && SharedData.getCurrentScreen() != null) {
+                System.out.println("selectedCourse:" + SharedData.getSelectedCourse().getName());
+                //SharedData.setPageTitle(MainApp.resourceBundle.getString(SharedData.getPageTitle()));
+
+                FXMLLoader fxmlLoader = selectScreen();
+                scene = new Scene(fxmlLoader.load());
+
+            } else {
+                SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
+                FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+                scene = new Scene(fxmlLoader.load());
+            }
+            //System.out.println("SelectedStudyProgram"+ SharedData.getSelectedStudyProgram().getName());
+        } else {
+            System.out.println("CrashFile does not exist.");
+            SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            scene = new Scene(fxmlLoader.load());
+        }
+
         stage.setScene(scene);
         setWindowsSize(stage);
-
         //set onCloseRequest eventhandler
         stage.setOnCloseRequest(this::handleWindowCloseRequest);
         stage.show();
@@ -66,6 +105,15 @@ public class MainApp extends Application {
             event.consume();
         } else {
             //user clicks OK
+
+            try {
+                Path path = Paths.get(SharedData.getFilepath());
+                Files.delete(path);
+                System.out.println("CrashFile deleted successfully.");
+            } catch (IOException e) {
+                // Handle any exceptions that may occur
+                System.err.println("An error occurred while deleting the CrashFile: " + e.getMessage());
+            }
         }
     }
 
@@ -89,4 +137,17 @@ public class MainApp extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+    private  FXMLLoader selectScreen() {
+        //enhanced switch case (suggestion from ide)
+        return switch (SharedData.getCurrentScreen()) {
+            case HOME -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            case CREATE_AUTOMATIC -> new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"), resourceBundle);
+            case CREATE_MANUAL -> new FXMLLoader(MainApp.class.getResource("sites/create_manual.fxml"), resourceBundle);
+            case QUESTION_CREATE -> new FXMLLoader(MainApp.class.getResource("sites/question_create.fxml"), resourceBundle);
+            case QUESTION_EDIT -> new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"), resourceBundle);
+            case SETTINGS -> new FXMLLoader(MainApp.class.getResource("sites/settings.fxml"), resourceBundle);
+        };
+    }
+
 }

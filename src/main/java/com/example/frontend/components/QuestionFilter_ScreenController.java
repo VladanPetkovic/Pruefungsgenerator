@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -51,7 +52,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
     }
 
-    public void on_add_category_btn_click(ActionEvent actionEvent) {
+    public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
             addCategoryBtnClick(categoryTextField, add_category_btn);
         }

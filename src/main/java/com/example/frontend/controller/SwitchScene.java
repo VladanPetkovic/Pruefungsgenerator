@@ -44,7 +44,7 @@ public class SwitchScene {
      *
      * @param path the path to the specific screen
      */
-    public static void switchScene(String path) {
+    public static void switchScene(String path) throws IOException {
         // resetting filterquestion
         SharedData.setFilterQuestion(new Question());
 

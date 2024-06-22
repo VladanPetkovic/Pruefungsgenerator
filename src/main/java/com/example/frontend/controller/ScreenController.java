@@ -30,6 +30,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.TextFields;
 
+import java.io.IOException;
 import java.util.*;
 
 import java.io.File;
@@ -129,7 +130,7 @@ public abstract class ScreenController {
         }
 
         // in java everything is passed by reference, so changes in items make changes in SharedData
-        ArrayList<String> items = SharedData.getSuggestedCategories();
+        ObservableList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
             // don't add existing categories --> good for, when switching scenes
             if (!items.contains(c.getName())) {
@@ -153,7 +154,7 @@ public abstract class ScreenController {
      * @param categoryTextField the textField, where category is inputted
      * @param add_category_btn  the add-btn that is clicked for adding a new category
      */
-    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) {
+    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) throws IOException {
         SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
         Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
         SharedData.getSuggestedCategories().add(newCategory.getName());

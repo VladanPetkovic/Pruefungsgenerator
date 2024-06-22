@@ -235,7 +235,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         questionVbox.setOnMouseClicked(event -> {
             // save the value of the clicked question
             selectedQuestion = clickedQuestion;
-            SharedData.setSelectedEditQuestion(selectedQuestion);
+            try {
+                SharedData.setSelectedEditQuestion(selectedQuestion);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             // Make the scroll pane transparent to allow interaction with underlying elements.
             chooseScrollPane.setMouseTransparent(false);
@@ -384,7 +388,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * If there is any validation error, it shows an error alert.
      */
     @FXML
-    private void onChooseButton() {
+    private void onChooseButton() throws IOException {
         // Validate input fields
         String errorMessage = validateInput();
         if (errorMessage != null) {
@@ -580,7 +584,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         return chooseQuestion.getText().isEmpty();
     }
 
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
         // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
@@ -599,7 +603,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
             if (SharedData.getSelectedEditQuestion().getId() == 0) {
-                switchScene(SwitchScene.EDIT_QUESTION);
+                try {
+                    switchScene(SwitchScene.EDIT_QUESTION);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

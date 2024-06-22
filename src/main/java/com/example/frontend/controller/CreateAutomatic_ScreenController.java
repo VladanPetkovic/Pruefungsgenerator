@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -233,7 +234,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     // method triggered when the "Create Test" button is clicked
     @FXML
-    protected void onCreateAutTestBtnClick(ActionEvent event) {
+    protected void onCreateAutTestBtnClick(ActionEvent event) throws IOException {
         // clear previous questions from manual-create
         SharedData.getTestQuestions().clear();
 

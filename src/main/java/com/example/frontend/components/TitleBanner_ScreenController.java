@@ -11,6 +11,8 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 import static com.example.frontend.controller.SwitchScene.switchScene;
 
 public class TitleBanner_ScreenController extends ScreenController {
@@ -38,7 +40,7 @@ public class TitleBanner_ScreenController extends ScreenController {
     /**
      * handles click event for navigating to the home screen and resetting shared data
      */
-    public void onFHTWLogoClick() {
+    public void onFHTWLogoClick() throws IOException {
         // navigate to the home screen and reset shared data
         switchScene(SwitchScene.HOME);
         SharedData.resetAll();
@@ -53,7 +55,7 @@ public class TitleBanner_ScreenController extends ScreenController {
 
         // create a new timeline with a keyframe that sets the operationStatus to an empty string after 5 seconds
         statusResetTimer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-            SharedData.setOperation("", false);
+                SharedData.setOperation("", false);
         }));
         statusResetTimer.play();
     }

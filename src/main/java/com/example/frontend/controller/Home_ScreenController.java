@@ -48,7 +48,7 @@ public class Home_ScreenController extends ScreenController {
      * resets and loads study programs and sets up initial UI state
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         resetStudyProgramMenuButton();
         loadStudyPrograms();
         initLanguage();
@@ -126,10 +126,18 @@ public class Home_ScreenController extends ScreenController {
 
         textBtn.setOnAction(e -> {
             studyProgramMenuButton.setText(studyProgram.getName());
-            SharedData.setSelectedStudyProgram(studyProgram);
+            try {
+                SharedData.setSelectedStudyProgram(studyProgram);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             // if the study program menu item is selected then the course menu and the course selection (variable)
             // is cleared/reset and the associated courses will get loaded in the course menu
-            resetCourseMenuButton();
+            try {
+                resetCourseMenuButton();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             loadCourses();
         });
 
@@ -185,7 +193,11 @@ public class Home_ScreenController extends ScreenController {
 
         textBtn.setOnAction(e -> {
             coursesMenuButton.setText(course.getName());
-            SharedData.setSelectedCourse(course);
+            try {
+                SharedData.setSelectedCourse(course);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         editBtn.setOnAction(e -> {
@@ -219,7 +231,11 @@ public class Home_ScreenController extends ScreenController {
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
-            resetStudyProgramMenuButton();
+            try {
+                resetStudyProgramMenuButton();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             loadStudyPrograms();
         });
     }
@@ -234,14 +250,18 @@ public class Home_ScreenController extends ScreenController {
 
         //listener for when the stage is closed
         newStage.setOnHidden(event -> {
-            resetCourseMenuButton();
+            try {
+                resetCourseMenuButton();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             loadCourses();
         });
     }
 
 
     // helper function to reset study program menu button
-    void resetStudyProgramMenuButton() {
+    void resetStudyProgramMenuButton() throws IOException {
         studyProgramMenuButton.getItems().clear();
         studyProgramMenuButton.setText(MainApp.resourceBundle.getString("study_programs"));
         SharedData.setSelectedStudyProgram(null);
@@ -249,14 +269,14 @@ public class Home_ScreenController extends ScreenController {
     }
 
     // helper function to reset course menu button
-    void resetCourseMenuButton() {
+    void resetCourseMenuButton() throws IOException {
         coursesMenuButton.getItems().clear();
         coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
         SharedData.resetEditObjects();
     }
 
-    public void onLanguageBtnClick(ActionEvent actionEvent) {
+    public void onLanguageBtnClick(ActionEvent actionEvent) throws IOException {
         String imagePath = "src/main/resources/com/example/frontend/icons/";
         Locale locale = new Locale("en", "US");
         int temp = (SharedData.getCurrentLanguage() + 1) % LANGUAGE_COUNT;
