@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
 import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Course;
@@ -48,7 +50,7 @@ public class MainApp extends Application {
         Path path = Paths.get(SharedData.getFilepath());
         Scene scene;
         if (Files.exists(path)) {
-            System.out.println("CrashFile exists.");
+            Logger.log(getClass().getName(), "Loading existing CrashFile", LogLevel.INFO);
             SharedData.loadFromFile();
 
             path = Paths.get(SharedData.getFilepath());
@@ -81,6 +83,7 @@ public class MainApp extends Application {
 
         stage.setScene(scene);
         setWindowsSize(stage);
+
         //set onCloseRequest eventhandler
         stage.setOnCloseRequest(this::handleWindowCloseRequest);
         stage.show();
@@ -108,10 +111,12 @@ public class MainApp extends Application {
 
             try {
                 Path path = Paths.get(SharedData.getFilepath());
-                Files.delete(path);
-                System.out.println("CrashFile deleted successfully.");
+
+                if (Files.exists(path)) {
+                    Files.delete(path);
+                    Logger.log(getClass().getName(), "CrashFile deleted successfully.", LogLevel.INFO);
+                }
             } catch (IOException e) {
-                // Handle any exceptions that may occur
                 System.err.println("An error occurred while deleting the CrashFile: " + e.getMessage());
             }
         }
@@ -139,6 +144,10 @@ public class MainApp extends Application {
     }
 
     private  FXMLLoader selectScreen() {
+
+        Locale locale = new Locale("en", "US");
+        int lang = SharedData.getCurrentLanguage();
+
         //enhanced switch case (suggestion from ide)
         return switch (SharedData.getCurrentScreen()) {
             case HOME -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
