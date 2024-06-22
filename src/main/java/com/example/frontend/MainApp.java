@@ -148,6 +148,16 @@ public class MainApp extends Application {
         Locale locale = new Locale("en", "US");
         int lang = SharedData.getCurrentLanguage();
 
+        switch (lang) {
+            case 0:                         // ENGLISH
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.en", locale);
+                break;
+            case 1:                         // GERMAN
+                locale = new Locale("de", "AUT");
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.de", locale);
+                break;
+        }
+
         //enhanced switch case (suggestion from ide)
         return switch (SharedData.getCurrentScreen()) {
             case HOME -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
