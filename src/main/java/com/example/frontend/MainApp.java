@@ -56,15 +56,7 @@ public class MainApp extends Application {
             path = Paths.get(SharedData.getFilepath());
             Files.delete(path);
 
-            System.out.println("PageTitle:"+ SharedData.getPageTitle());
-            System.out.println("OPStatus:"+ SharedData.getOperationStatus());
-            System.out.println("Lang:"+ SharedData.getCurrentLanguage());
-            System.out.println("currentScreen:"+ SharedData.getCurrentScreen());
-
             if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram() != null && SharedData.getCurrentScreen() != null) {
-                System.out.println("selectedCourse:" + SharedData.getSelectedCourse().getName());
-                //SharedData.setPageTitle(MainApp.resourceBundle.getString(SharedData.getPageTitle()));
-
                 FXMLLoader fxmlLoader = selectScreen();
                 scene = new Scene(fxmlLoader.load());
 
@@ -73,9 +65,9 @@ public class MainApp extends Application {
                 FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
                 scene = new Scene(fxmlLoader.load());
             }
-            //System.out.println("SelectedStudyProgram"+ SharedData.getSelectedStudyProgram().getName());
+
         } else {
-            System.out.println("CrashFile does not exist.");
+            Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
             SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
             FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
             scene = new Scene(fxmlLoader.load());
