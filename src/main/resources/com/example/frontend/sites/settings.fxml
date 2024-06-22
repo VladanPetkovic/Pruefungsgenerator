@@ -39,7 +39,9 @@
                      </rowConstraints>
                      <children>
                         <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="%import_questions_from_csv" />
-                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="10" />
+                         <!-- New button for choosing goal study program and course -->
+                         <Button fx:id="chooseTargetBtn" text="%choose_targets" onAction="#onChooseTargetBtnClick" GridPane.rowIndex="5" />
+                         <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="11" />
                         <Label prefHeight="43.0" prefWidth="254.0" styleClass="topic_label" text="%export_questions_to_csv" GridPane.columnIndex="1" />
                         <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%destination_folder" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
                         <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />

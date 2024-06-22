@@ -8,12 +8,15 @@ import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import com.example.frontend.MainApp;
+import com.example.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,6 +36,8 @@ public class Settings_ScreenController extends ScreenController {
     public Label label_selectedFile;
     @FXML
     Button settingsImportBtn;
+    @FXML
+    private Button chooseTargetBtn;
 
     @FXML
     private void initialize() {
@@ -57,6 +62,26 @@ public class Settings_ScreenController extends ScreenController {
             });
             menuButton.getItems().add(menuItem);
         }
+    }
+
+    @FXML
+    private void onChooseTargetBtnClick(ActionEvent event) {
+        try {
+            Stage newStage = openModal(ModalOpener.TARGET_SELECTION);
+            //listener for when the stage is closed
+            newStage.setOnHidden(e -> {
+
+            });
+        } catch (IOException e) {
+            //SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
+            e.printStackTrace();
+        }
+    }
+
+    private Stage openModal(String modalPath) throws IOException {
+        Stage newStage = ModalOpener.openModal(modalPath);
+        newStage.setTitle(MainApp.resourceBundle.getString("import_target_selection"));
+        return newStage;
     }
 
     @FXML

@@ -69,6 +69,14 @@ public class SharedData {
     private static ObservableList<String> suggestedCategories = FXCollections.observableArrayList();
 
     @Getter
+    @Setter
+    private static String importTargetStudyProgram;
+
+    @Getter
+    @Setter
+    private static String importTargetCourse;
+
+    @Getter
     private static Screen currentScreen;
 
 

@@ -14,9 +14,15 @@ import java.util.ArrayList;
 
 public class ImportCSV {
     private String filePath;
+    private String ImportTargetStudyProgram;
+    private String ImportTargetCourse;
 
     public ImportCSV(String filePath) {
         this.filePath = filePath;
+        if (SharedData.getImportTargetStudyProgram() != null && SharedData.getImportTargetCourse() != null){
+            ImportTargetStudyProgram = SharedData.getImportTargetStudyProgram();
+            ImportTargetCourse = SharedData.getImportTargetCourse();
+        }
     }
 
     public boolean importData() {
