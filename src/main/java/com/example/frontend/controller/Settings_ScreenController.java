@@ -66,22 +66,11 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     private void onChooseTargetBtnClick(ActionEvent event) {
-        try {
-            Stage newStage = openModal(ModalOpener.TARGET_SELECTION);
-            //listener for when the stage is closed
-            newStage.setOnHidden(e -> {
+        Stage newStage = ModalOpener.openModal(ModalOpener.TARGET_SELECTION);
+        //listener for when the stage is closed
+        newStage.setOnHidden(e -> {
 
-            });
-        } catch (IOException e) {
-            //SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
-            e.printStackTrace();
-        }
-    }
-
-    private Stage openModal(String modalPath) throws IOException {
-        Stage newStage = ModalOpener.openModal(modalPath);
-        newStage.setTitle(MainApp.resourceBundle.getString("import_target_selection"));
-        return newStage;
+        });
     }
 
     @FXML
