@@ -43,12 +43,17 @@
                           import related elements
                           -->
                           <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="%import_questions_from_csv" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                          <Button fx:id="chooseTargetBtn" text="%choose_targets" onAction="#onChooseTargetBtnClick" styleClass="btn_dark" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="CENTER">
-
-                          </Button>
-                          <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%selected_file" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                          <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="4" GridPane.columnIndex="0">
+                          <!-- New MenuButton for Import Mode -->
+                          <MenuButton fx:id="importModeMenuButton" text="%choose_import_mode" styleClass="menuButton_dark" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+                              <items>
+                                  <MenuItem text="%update_existing_questions" onAction="#onUpdateExistingQuestionsSelected"/>
+                                  <MenuItem text="%insert_new_questions" onAction="#onInsertNewQuestionsSelected"/>
+                              </items>
+                          </MenuButton>
+                          <Button fx:id="chooseTargetBtn" text="%choose_targets" onAction="#onChooseTargetBtnClick" styleClass="btn_dark" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.halignment="CENTER" disable="${controller.chooseTargetDisabled}"/>
+                          <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%selected_file" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                          <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="8" GridPane.columnIndex="0">
                               <cursor>
                                   <Cursor fx:constant="DEFAULT" />
                               </cursor>

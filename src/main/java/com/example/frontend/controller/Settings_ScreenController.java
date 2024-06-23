@@ -9,6 +9,8 @@ import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import com.example.frontend.MainApp;
 import com.example.frontend.modals.ModalOpener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -37,7 +39,12 @@ public class Settings_ScreenController extends ScreenController {
     @FXML
     Button settingsImportBtn;
     @FXML
+    private MenuButton importModeMenuButton;
+    @FXML
     private Button chooseTargetBtn;
+    // Property to manage the enable/disable state of the chooseTargetBtn
+    private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
+    private String modeOfImport = "";
 
     @FXML
     private void initialize() {
@@ -50,6 +57,9 @@ public class Settings_ScreenController extends ScreenController {
                 .collect(Collectors.toCollection(ArrayList::new));
         initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
         initializeMenuButton(chooseCourseMenuButton, courses);
+
+        // Bind the disabled state of chooseTargetBtn to chooseTargetDisabled property
+        chooseTargetBtn.disableProperty().bind(chooseTargetDisabled);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems) {
@@ -157,6 +167,22 @@ public class Settings_ScreenController extends ScreenController {
         } else {
             SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
         }
+    }
+
+    @FXML
+    private void onUpdateExistingQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("update_existing_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        chooseTargetDisabled.set(true); // Disable chooseTargetBtn
+    }
+
+    @FXML
+    private void onInsertNewQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("insert_new_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        chooseTargetDisabled.set(false); // Enable chooseTargetBtn
     }
 
     /**

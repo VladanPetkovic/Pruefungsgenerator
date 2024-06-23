@@ -76,6 +76,10 @@ public class SharedData {
     @Setter
     private static String importTargetCourse;
 
+    @Setter
+    @Getter
+    private static String modeOfImport;
+
     @Getter
     private static Screen currentScreen;
 
