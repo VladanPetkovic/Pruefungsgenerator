@@ -77,7 +77,7 @@ public class ExportCSV {
             // Write question data
             for (Question question : questions) {
                 lastQuestionId = question.getId();
-                writer.append("\"").append(String.valueOf(question.getId())).append("\"").append(";");
+                writer.append(String.valueOf(question.getId())).append(";");
                 writer.append("\"").append(question.getQuestion()).append("\"").append(";");
                 writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");
                 writer.append(String.valueOf(question.getDifficulty())).append(";");

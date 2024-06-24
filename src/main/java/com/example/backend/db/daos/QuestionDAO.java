@@ -34,8 +34,8 @@ public class QuestionDAO implements DAO<Question> {
     public void create(Question question) {
         String insertStmt =
                 "INSERT INTO questions " +
-                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?);";
+                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -48,6 +48,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(5, question.getType().getId());
             preparedStatement.setString(6, question.getRemark());
             preparedStatement.setString(7, question.getCreated_at().toString());
+            preparedStatement.setString(8, question.getUpdated_at().toString());
 
             preparedStatement.executeUpdate();
 
@@ -483,7 +484,7 @@ public class QuestionDAO implements DAO<Question> {
     public void update(Question question) {
         String updateStmt =
                 "UPDATE questions " +
-                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
+                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, fk_question_type_id = ?" +
                 "remark = ?, updated_at = ? " +
                 "WHERE id = ?;";
 
@@ -496,9 +497,10 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestion());
-            preparedStatement.setString(5, question.getRemark());
-            preparedStatement.setString(6, String.valueOf(question.getUpdated_at()));
-            preparedStatement.setInt(7, question.getId());
+            preparedStatement.setInt(5, question.getType().getId());
+            preparedStatement.setString(6, question.getRemark());
+            preparedStatement.setString(7, String.valueOf(question.getUpdated_at()));
+            preparedStatement.setInt(8, question.getId());
 
             preparedStatement.executeUpdate();
 
