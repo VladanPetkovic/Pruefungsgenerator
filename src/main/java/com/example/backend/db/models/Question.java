@@ -75,6 +75,8 @@ public class Question implements Serializable {
      * @return id of the created question
      */
     public static int createNewQuestionInDatabase(Question question)  throws IOException  {
+        QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
+        question.setType(qt);
         SQLiteDatabaseConnection.QUESTION_REPOSITORY.add(question);
         // get the created question_id
         int new_question_id = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getMaxQuestionId();

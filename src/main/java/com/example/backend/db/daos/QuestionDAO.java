@@ -8,9 +8,7 @@ import com.example.backend.db.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Objects;
-import java.util.TreeMap;
 
 public class QuestionDAO implements DAO<Question> {
     private final String selectColumns =
@@ -119,11 +117,9 @@ public class QuestionDAO implements DAO<Question> {
                 "LEFT JOIN has_cc ON q.fk_category_id = has_cc.fk_category_id " +
                 "LEFT JOIN courses ON has_cc.fk_course_id = courses.id " +
                 "WHERE courses.id = ? AND q.id > ? " +
+                "ORDER BY q.id " +
                 "LIMIT 500;";
         Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
-
-        // create a treemap to save question ordered by their IDs
-        TreeMap<Integer, Question> questionMap = new TreeMap<>(Comparator.naturalOrder());
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
              PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
@@ -134,8 +130,7 @@ public class QuestionDAO implements DAO<Question> {
                 while (questionsResultSet.next()) {
                     Question newQuestion = createModelFromResultSet(questionsResultSet);
                     if (newQuestion != null) {
-                        // put the new question instance into the treemap
-                        questionMap.put(newQuestion.getId(), newQuestion);
+                        this.questionCache.add(newQuestion);
                     }
                 }
             }
@@ -143,9 +138,6 @@ public class QuestionDAO implements DAO<Question> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        // add the questions from the sorted treemap to the cache
-        this.questionCache.addAll(questionMap.values());
 
         return this.questionCache;
     }
@@ -484,7 +476,7 @@ public class QuestionDAO implements DAO<Question> {
     public void update(Question question) {
         String updateStmt =
                 "UPDATE questions " +
-                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, fk_question_type_id = ?" +
+                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
                 "remark = ?, updated_at = ? " +
                 "WHERE id = ?;";
 
@@ -497,10 +489,9 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(2, question.getDifficulty());
             preparedStatement.setFloat(3, question.getPoints());
             preparedStatement.setString(4, question.getQuestion());
-            preparedStatement.setInt(5, question.getType().getId());
-            preparedStatement.setString(6, question.getRemark());
-            preparedStatement.setString(7, String.valueOf(question.getUpdated_at()));
-            preparedStatement.setInt(8, question.getId());
+            preparedStatement.setString(5, question.getRemark());
+            preparedStatement.setString(6, String.valueOf(question.getUpdated_at()));
+            preparedStatement.setInt(7, question.getId());
 
             preparedStatement.executeUpdate();
 

@@ -254,7 +254,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 questionType,
                 remarks.getText(),
                 new Timestamp(System.currentTimeMillis()),
-                null,               // this can only be changed when editing a question
+                new Timestamp(System.currentTimeMillis()),
                 getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
                 selectedKeywords,
                 picturePickerController.getImages()         // TODO: placeholder for photos
