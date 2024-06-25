@@ -10,6 +10,7 @@ public enum Message implements Serializable {
     SUCCESS_MESSAGE_OPERATION(MainApp.resourceBundle.getString("success_message_operation"), false),
     SUCCESS_MESSAGE_DATA_SAVED(MainApp.resourceBundle.getString("success_message_data_saved"), false),
     SUCCESS_MESSAGE_QUESTIONS_EXPORTED(MainApp.resourceBundle.getString("success_message_questions_exported"), false),
+    SUCCESS_MESSAGE_FILE_SAVED(MainApp.resourceBundle.getString("success_message_file_saved"), false),
 
     ERROR_MESSAGE_ERROR_OCCURRED(MainApp.resourceBundle.getString("error_message_error_occurred"), true),
     ERROR_MESSAGE_LOAD_DATA(MainApp.resourceBundle.getString("error_message_load_data"), true),

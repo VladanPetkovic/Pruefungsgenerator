@@ -77,10 +77,9 @@ public class PdfPreview_ScreenController extends ScreenController {
             export.exportDocument(questionsList);
             //export.exportDocument((ArrayList<Question>) SharedData.getTestQuestions());
 
-            // reset the stored test questions
-            SharedData.resetQuestions();
-            // returning to the automatic-test-create-scene
-            switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
+//            // reset the stored test questions
+//            SharedData.resetQuestions();
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_FILE_SAVED);
         } else {
             SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
         }
