@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.geometry.Insets?>
 <VBox minHeight="698.0" minWidth="1120.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.Settings_ScreenController">
     <children>
         <fx:include source="../components/title_banner.fxml" />
@@ -20,57 +21,72 @@
                 <HBox minWidth="500.0" HBox.hgrow="ALWAYS">
                 <children>
                   <GridPane alignment="CENTER" minHeight="100.0" prefHeight="602.0" prefWidth="877.0" styleClass="homeScreen_gridPane" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
-                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.1998962402344" minWidth="10.0" prefWidth="508.7999755859375" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="669.0" minWidth="0.0" prefWidth="511.2000244140625" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="92.59998779296875" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="24.999993896484384" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="43.40000610351561" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="50.400000000000006" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="28.800012207031273" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="33.5999755859375" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="31.80000000000001" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="69.39999999999998" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="293.9999755859375" minHeight="10.0" prefHeight="49.5999755859375" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="131.20002441406245" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="Import questions from CSV" />
-                        <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Import" GridPane.rowIndex="10" />
-                        <Label prefHeight="43.0" prefWidth="254.0" styleClass="topic_label" text="Export questions to CSV" GridPane.columnIndex="1" />
-                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="Destination folder:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-                        <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Choose folder to save file" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                      <columnConstraints>
+                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.1998962402344" minWidth="10.0" prefWidth="508.7999755859375" />
+                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="669.0" minWidth="0.0" prefWidth="511.2000244140625" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="92.59998779296875" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="24.999993896484384" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="43.40000610351561" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="50.400000000000006" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="28.800012207031273" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="33.5999755859375" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="31.80000000000001" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="69.39999999999998" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="293.9999755859375" minHeight="10.0" prefHeight="49.5999755859375" vgrow="SOMETIMES" />
+                          <RowConstraints maxHeight="497.9999755859375" minHeight="10.0" prefHeight="131.20002441406245" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <children>
+                          <!--
+                          import related elements
+                          -->
+                          <Label prefHeight="51.0" prefWidth="286.0" styleClass="topic_label" text="%import_questions_from_csv" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                          <!-- New MenuButton for Import Mode -->
+                          <MenuButton fx:id="importModeMenuButton" text="%choose_import_mode" styleClass="menuButton_dark" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+                              <items>
+                                  <MenuItem text="%update_existing_questions" onAction="#onUpdateExistingQuestionsSelected"/>
+                                  <MenuItem text="%insert_new_questions" onAction="#onInsertNewQuestionsSelected"/>
+                              </items>
+                          </MenuButton>
+                          <Button fx:id="chooseTargetBtn" text="%choose_targets" onAction="#onChooseTargetBtnClick" styleClass="btn_dark" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.halignment="CENTER" disable="${controller.chooseTargetDisabled}"/>
+                          <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%selected_file" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                          <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="8" GridPane.columnIndex="0">
+                              <cursor>
+                                  <Cursor fx:constant="DEFAULT" />
+                              </cursor>
+                          </Button>
+                          <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+
+                          <!--
+                          export related elements
+                          -->
+                         <Label prefHeight="43.0" prefWidth="254.0" styleClass="topic_label" text="%export_questions_to_csv" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                          <Label prefHeight="34.0" prefWidth="238.0" styleClass="option_label" text="%select_questions_for_export" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                          <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%all_questions" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                              <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="%all_questions" />
+                                  <MenuItem mnemonicParsing="false" onAction="#questionsOfSPselected" text="%questions_of_study_program" />
+                                  <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="%questions_of_course" />
+                              </items>
+                          </MenuButton>
+                          <Label fx:id="chooseQuestionsLabel" prefHeight="34.0" prefWidth="150.0" styleClass="option_label" text="%select_course" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                          <MenuButton fx:id="chooseCourseMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                          <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                         <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="%destination_folder" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                         <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                         <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" GridPane.rowIndex="8" GridPane.columnIndex="1" GridPane.valignment="TOP">
                            <cursor>
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>
-                        </Button>
-                        <Label prefHeight="34.0" prefWidth="238.0" styleClass="option_label" text="Select which questions to export:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                        <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="All questions" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="All questions" />
-                            <MenuItem mnemonicParsing="false" onAction="#questionsOfSPselected" text="Questions of study-program" />
-                              <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="Questions of course" />
-                          </items>
-                        </MenuButton>
-                        <Label fx:id="chooseQuestionsLabel" prefHeight="34.0" prefWidth="150.0" styleClass="option_label" text="Select a Course:" visible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                        <MenuButton fx:id="chooseCourseMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Export" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <Label prefHeight="34.0" prefWidth="165.0" styleClass="option_label" text="Selected File:" GridPane.rowIndex="1" />
-                        <Label fx:id="label_selectedFile" prefHeight="38.0" prefWidth="379.0" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="2" />
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onChooseFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Choose CSV-file" GridPane.rowIndex="3">
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </Button>
+                         </Button>
+                         <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
                      </children>
                   </GridPane>
                 </children>
-            </HBox>
+                </HBox>
             </children>
         </HBox>
     </children>

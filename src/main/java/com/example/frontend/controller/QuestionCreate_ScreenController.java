@@ -26,6 +26,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
+
 
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
     @FXML
@@ -79,8 +81,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
-        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         difficulty.setValue(5);
@@ -156,8 +158,12 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     }
 
     private boolean previewQuestionShouldBeVisible() {
-        if (picturePickerController.invalidSyntax()) return false;
-        if (picturePickerController.buttonAndImages.size() == 0) return false;
+        if (picturePickerController.invalidSyntax()) {
+            return false;
+        }
+        if (picturePickerController.buttonAndImages.isEmpty()) {
+            return false;
+        }
         return true;
     }
 
@@ -226,7 +232,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * upload is successful.
      */
     @FXML
-    private void onActionUpload() {
+    private void onActionUpload() throws IOException {
         // Check if all required fields are filled
         String s = checkIfFilled();
         // If any field is missing, display an error alert and return
@@ -236,7 +242,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
 
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
-        Category category = SQLiteDatabaseConnection.CategoryRepository.get(categoryTextField.getText());
+        Category category = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryTextField.getText());
 
 
         // Create a new Question object with the provided details
@@ -248,7 +254,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 questionType,
                 remarks.getText(),
                 new Timestamp(System.currentTimeMillis()),
-                null,               // this can only be changed when editing a question
+                new Timestamp(System.currentTimeMillis()),
                 getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
                 selectedKeywords,
                 picturePickerController.getImages()         // TODO: placeholder for photos
@@ -259,10 +265,10 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (question_id != 0) {
             // Associate keywords with the uploaded question // TODO: change this to be efficient
             for (Keyword k : selectedKeywords) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(k, question_id);
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(k, question_id);
             }
             // Switch the scene to the question upload screen
-            switchScene(questionCreate, true);
+            switchScene(SwitchScene.CREATE_QUESTION);
         }
     }
 
@@ -282,33 +288,33 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     private String checkIfFilled() {
         if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
-            return "Select an existing category - or add a new category.";
+            return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
-            return "Question-Type needs to be selected.";
+            return MainApp.resourceBundle.getString("error_message_question_type_not_selected");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButton, answers)) {
-            return "You selected multiple choice, but at least one answer is not filled out.";
+            return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
         if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
-            return "Enter at least two answers, when selecting multiple choice.";
+            return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {
-            return "Question needs to be filled out.";
+            return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
         if (picturePickerController.invalidSyntax()) {
-            return "Every image has to be included at least once.";
+            return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
     }
 
-    public void on_add_category_btn_click(ActionEvent actionEvent) {
+    public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
             addCategoryBtnClick(categoryTextField, add_category_btn);
         }
     }
 
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
             Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText());

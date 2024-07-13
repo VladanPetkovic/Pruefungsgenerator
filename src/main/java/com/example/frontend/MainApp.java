@@ -1,6 +1,13 @@
 package com.example.frontend;
 
+import com.example.backend.app.LogLevel;
+import com.example.backend.app.Logger;
+import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
+import com.example.backend.db.models.Course;
+import com.example.backend.db.models.Question;
+import com.example.backend.db.models.StudyProgram;
+import com.example.frontend.controller.ControllerFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,11 +19,21 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class MainApp extends Application {
-    /** The primary stage of the application. */
+    /**
+     * The primary stage of the application.
+     */
     public static Stage stage;
+    public static ControllerFactory controllerFactory = new ControllerFactory();
+    public static ResourceBundle resourceBundle;
 
     /**
      * Starts the JavaFX application.
@@ -25,23 +42,49 @@ public class MainApp extends Application {
      * @throws IOException If an error occurs while loading the FXML file.
      */
     @Override
-    public void start(Stage stage) throws IOException {
-        SharedData.setPageTitle("Exam Generator");
+    public void start(Stage stage) throws IOException, ClassNotFoundException {
         this.stage = stage;
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Locale locale = new Locale("en", "US");
+        resourceBundle = ResourceBundle.getBundle("common.en", locale);
+
+        Path path = Paths.get(SharedData.getFilepath());
+        Scene scene;
+        if (Files.exists(path)) {
+            Logger.log(getClass().getName(), "Loading existing CrashFile", LogLevel.INFO);
+            SharedData.loadFromFile();
+
+            path = Paths.get(SharedData.getFilepath());
+            Files.delete(path);
+
+            if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram() != null && SharedData.getCurrentScreen() != null) {
+                FXMLLoader fxmlLoader = selectScreen();
+                scene = new Scene(fxmlLoader.load());
+
+            } else {
+                SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
+                FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+                scene = new Scene(fxmlLoader.load());
+            }
+
+        } else {
+            Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
+            SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            scene = new Scene(fxmlLoader.load());
+        }
+
         stage.setScene(scene);
         setWindowsSize(stage);
 
         //set onCloseRequest eventhandler
-        stage.setOnCloseRequest(event -> handleWindowCloseRequest(event));
+        stage.setOnCloseRequest(this::handleWindowCloseRequest);
         stage.show();
     }
 
     private void handleWindowCloseRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Exit");
-        alert.setHeaderText("Are you sure you want to exit?");
+        alert.setTitle(resourceBundle.getString("confirm_exit"));
+        alert.setHeaderText(resourceBundle.getString("confirm_exit_info"));
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(getClass().getResource("css/main.css").toExternalForm());
@@ -57,6 +100,17 @@ public class MainApp extends Application {
             event.consume();
         } else {
             //user clicks OK
+
+            try {
+                Path path = Paths.get(SharedData.getFilepath());
+
+                if (Files.exists(path)) {
+                    Files.delete(path);
+                    Logger.log(getClass().getName(), "CrashFile deleted successfully.", LogLevel.INFO);
+                }
+            } catch (IOException e) {
+                System.err.println("An error occurred while deleting the CrashFile: " + e.getMessage());
+            }
         }
     }
 
@@ -80,4 +134,31 @@ public class MainApp extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+    private  FXMLLoader selectScreen() {
+
+        Locale locale = new Locale("en", "US");
+        int lang = SharedData.getCurrentLanguage();
+
+        switch (lang) {
+            case 0:                         // ENGLISH
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.en", locale);
+                break;
+            case 1:                         // GERMAN
+                locale = new Locale("de", "AUT");
+                MainApp.resourceBundle = ResourceBundle.getBundle("common.de", locale);
+                break;
+        }
+
+        //enhanced switch case (suggestion from ide)
+        return switch (SharedData.getCurrentScreen()) {
+            case HOME -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            case CREATE_AUTOMATIC -> new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"), resourceBundle);
+            case CREATE_MANUAL -> new FXMLLoader(MainApp.class.getResource("sites/create_manual.fxml"), resourceBundle);
+            case QUESTION_CREATE -> new FXMLLoader(MainApp.class.getResource("sites/question_create.fxml"), resourceBundle);
+            case QUESTION_EDIT -> new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"), resourceBundle);
+            case SETTINGS -> new FXMLLoader(MainApp.class.getResource("sites/settings.fxml"), resourceBundle);
+        };
+    }
+
 }

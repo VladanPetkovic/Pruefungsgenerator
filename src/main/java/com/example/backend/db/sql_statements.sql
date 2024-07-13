@@ -328,3 +328,30 @@ DELETE FROM categories;
 -- DROP TABLE IF EXISTS study_programs;
 -- DROP TABLE IF EXISTS courses;
 -- DROP TABLE IF EXISTS categories;
+
+----------------------------------------------------------------------------
+-- Select statements to test the questions in the database
+SELECT * FROM questions WHERE question = 'Berechnen Sie die Eigenwerte der Matrix:';
+SELECT * FROM questions WHERE question = 'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x²';
+SELECT * FROM questions WHERE question = 'Welche No-SQL datenbanken gibt es';
+SELECT * FROM questions WHERE question = 'Was ist der Unterschied zwischen INNER JOIN und LEFT JOIN in SQL?';
+SELECT * FROM questions WHERE question = 'Berechnen Sie die zweite Ableitung der Funktion: f(x) = x² + 2';
+SELECT * FROM questions WHERE question = 'Nennen Sie drei Vorteile von NoSQL-Datenbanken gegenüber relationalen Datenbanken.';
+SELECT * FROM questions WHERE question = 'Lösen Sie die folgende Gleichung: 2x + 5 = 15';
+SELECT * FROM questions WHERE question = 'Definieren Sie den Begriff "Eigenvector" in der linearen Algebra.';
+SELECT * FROM questions WHERE question = 'Was ist der Zweck von SQL-Indizes?';
+SELECT * FROM questions WHERE question = 'Erklären Sie den Begriff "Sharding" in Bezug auf NoSQL-Datenbanken.';
+SELECT * FROM questions WHERE question = 'Berechnen Sie das bestimmte Integral von sin(x) von 0 bis pi.';
+SELECT * FROM questions WHERE question = 'Was sind Gruppen in der Algebra?';
+SELECT * FROM questions WHERE question = 'Erklären Sie den Begriff "Subquery" in SQL.';
+SELECT * FROM questions WHERE question = 'Welche NoSQL-Datenbank wird häufig für die Speicherung von Dokumenten verwendet?';
+SELECT * FROM questions WHERE question = 'Was ist die Ableitung von ln(x)?';
+SELECT * FROM questions WHERE question = 'Erläutern Sie den Begriff "Polynomdivision" in der Algebra.';
+SELECT * FROM questions WHERE question = 'Was sind die Vor- und Nachteile von dokumentenorientierten NoSQL-Datenbanken?';
+SELECT * FROM questions WHERE question = 'Wie erstellt man eine gespeicherte Prozedur in SQL?';
+SELECT * FROM questions WHERE question = 'Lösen Sie die Gleichungssysteme: 2x + y = 5 und 3x - 2y = 1';
+SELECT * FROM questions WHERE question = 'Was ist eine invertierbare Matrix?';
+SELECT * FROM questions WHERE question = 'Erklären Sie den Begriff "Caching" in Bezug auf NoSQL-Datenbanken.';
+SELECT * FROM questions WHERE question = 'Was sind Joins in SQL?';
+SELECT * FROM questions WHERE question = 'Berechnen Sie das unbestimmte Integral von e^(2x)dx.';
+SELECT * FROM questions WHERE question = 'Was sind komplexe Zahlen?';

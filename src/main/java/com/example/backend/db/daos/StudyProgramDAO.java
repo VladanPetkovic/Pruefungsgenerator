@@ -131,6 +131,32 @@ public class StudyProgramDAO implements DAO<StudyProgram> {
         return program;
     }
 
+    public boolean hasCourses(int studyProgramId) {
+        boolean hasCourses = false;
+
+        String readStmt = "SELECT CASE " +
+                "WHEN COUNT(*) > 0 THEN 1 " +
+                "ELSE 0 " +
+                "END AS has_courses " +
+                "FROM has_sc " +
+                "WHERE fk_program_id = ?;";
+        Logger.log(getClass().getName(), readStmt, LogLevel.DEBUG);
+        try (Connection connection = SQLiteDatabaseConnection.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(readStmt)) {
+            preparedStatement.setInt(1, studyProgramId);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    hasCourses = result.getBoolean("has_courses");
+                }
+                setStudyProgramCache(null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return hasCourses;
+    }
+
     /**
      * Updates a study program in the database.
      *

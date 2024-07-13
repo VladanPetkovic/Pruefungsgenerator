@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudyProgram {
+public class StudyProgram implements Serializable {
     private int id;
     private String name;
     private String abbreviation;
@@ -22,13 +24,13 @@ public class StudyProgram {
 
     public static StudyProgram createNewStudyProgramInDatabase(String studyProgram) {
         // check for existence
-        StudyProgram newStudyProgram = SQLiteDatabaseConnection.studyProgramRepository.get(studyProgram);
+        StudyProgram newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
 
         if (newStudyProgram == null) {
             StudyProgram addToDatabase = new StudyProgram();
             addToDatabase.setName(studyProgram);
-            SQLiteDatabaseConnection.studyProgramRepository.add(addToDatabase);
-            newStudyProgram = SQLiteDatabaseConnection.studyProgramRepository.get(studyProgram);
+            SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.add(addToDatabase);
+            newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
         }
 
         return newStudyProgram;

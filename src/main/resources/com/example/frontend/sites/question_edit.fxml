@@ -18,6 +18,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.TextFlow?>
 <VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.controller.QuestionEdit_ScreenController">
    <children>
       <fx:include source="../components/title_banner.fxml" />
@@ -50,8 +52,8 @@
                                   <RowConstraints />
                                 </rowConstraints>
                                  <children>
-                                    <Label fx:id="updated_at_label" styleClass="option_label" text="Updated at:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
-                                    <Label fx:id="created_at_label" styleClass="option_label" text="Created at:" />
+                                    <Label fx:id="updated_at_label" styleClass="option_label" text="%updated_at" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                                    <Label fx:id="created_at_label" styleClass="option_label" text="%created_at" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="40.0" right="40.0" top="10.0" />
@@ -59,21 +61,21 @@
                               </GridPane>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Category" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%category" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
                                     <VBox prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
                                        <children>
-                                          <MenuButton fx:id="chooseCategory" mnemonicParsing="false" styleClass="menuButton_dark" text="Choose Category..." />
+                                          <MenuButton fx:id="chooseCategory" mnemonicParsing="false" styleClass="menuButton_dark" text="%question_filter_select_category" />
                                        </children>
                                     </VBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Difficulty" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%difficulty" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -87,7 +89,7 @@
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Points" textFill="#e8e4e4">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%points" textFill="#e8e4e4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -101,33 +103,43 @@
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Question Text" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%question_text" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <VBox prefHeight="33.0" styleClass="question_vbox">
+                                    <ScrollPane fitToWidth="true" fitToHeight="true" minHeight="200.0" maxHeight="300.0" VBox.vgrow="ALWAYS">
+                                       <content>
+                                          <StackPane prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                             <TextArea fx:id="chooseQuestion" prefWidth="500.0" promptText="%prompt_text_default" VBox.vgrow="ALWAYS" />
+                                             <TextFlow fx:id="questionPreview" visible="false" VBox.vgrow="ALWAYS" />
+                                          </StackPane>
+                                       </content>
+                                    </ScrollPane>
+                                    <HBox>
                                        <children>
-                                          <TextArea fx:id="chooseQuestion" minHeight="200.0" prefHeight="200.0" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                    <VBox fx:id="picturePickerPlaceholder">
-                                       <children>
+                                          <VBox fx:id="picturePickerPlaceholder">
+                                             <children>
 
+                                             </children>
+                                          </VBox>
+                                          <VBox styleClass="question_vbox">
+                                             <Button onAction="#onActionPreviewQuestion" fx:id="previewQuestion" visible="false" styleClass="btn_grey">Preview Question</Button>
+                                          </VBox>
                                        </children>
-                                    </VBox>
+                                    </HBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Question-Type" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%question_type" textFill="#e8e4e4" VBox.vgrow="ALWAYS">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
                                     <VBox prefHeight="200.0" prefWidth="100.0" styleClass="question_vbox">
                                        <children>
-                                          <MenuButton fx:id="questionTypeMenuButtonEdit" disable="true" mnemonicParsing="false" styleClass="menuButton_dark" text="Question-Type...">
+                                          <MenuButton fx:id="questionTypeMenuButtonEdit" disable="true" mnemonicParsing="false" styleClass="menuButton_dark" text="%question_filter_select_type">
                                              <items>
                                                 <MenuItem mnemonicParsing="false" text="Action 1" />
                                              </items>
@@ -137,7 +149,7 @@
                                           </MenuButton>
                                           <VBox fx:id="multipleChoiceVBox" prefHeight="200.0" prefWidth="100.0" visible="false">
                                              <children>
-                                                <Button mnemonicParsing="false" onAction="#onAddNewAnswerBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="Add new answer" />
+                                                <Button mnemonicParsing="false" onAction="#onAddNewAnswerBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%add_new_answer" />
                                                 <VBox fx:id="multipleChoiceAnswerVBox" prefHeight="200.0" prefWidth="100.0" />
                                              </children>
                                           </VBox>
@@ -147,21 +159,21 @@
                               </VBox>
                               <VBox prefHeight="150.0" prefWidth="1000.0">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Answer" textFill="#e8e4e4">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%answer" textFill="#e8e4e4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
                                     <VBox minHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                        <children>
-                                          <TextArea fx:id="chooseAnswerTextArea" disable="true" prefWidth="1000.0" promptText="Type..." />
+                                          <TextArea fx:id="chooseAnswerTextArea" disable="true" prefWidth="1000.0" promptText="%prompt_text_default" />
                                        </children>
                                     </VBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Remarks" textFill="#e8e4e4">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%remarks" textFill="#e8e4e4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -175,7 +187,7 @@
                               </VBox>
                               <VBox prefHeight="150.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="Keywords" textFill="#e8e4e4">
+                                    <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%keywords" textFill="#e8e4e4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -183,7 +195,7 @@
                                     <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
                                        <children>
                                           <HBox fx:id="keywordsHBox" prefHeight="100.0" prefWidth="200.0" />
-                                          <MenuButton fx:id="keywordMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="Choose Keywords..." />
+                                          <MenuButton fx:id="keywordMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%question_filter_select_keyword" />
                                           <GridPane>
                                              <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.7999267578125" minWidth="10.0" prefWidth="304.5999755859375" />
@@ -193,7 +205,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <TextField fx:id="keywordTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="Create new Keyword..." style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                                                <TextField fx:id="keywordTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="%prompt_text_create_keyword" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
                                                 <Button fx:id="addKeywordBtn" disable="true" mnemonicParsing="false" onAction="#onAddKeywordBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
                                                    <graphic>
                                                       <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
@@ -235,7 +247,7 @@
                                                       </ImageView>
                                                   </graphic>
                                               </Button>
-                                              <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onChooseButton" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="Save Changes" textFill="WHITE" GridPane.halignment="CENTER">
+                                              <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onChooseButton" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="%update" textFill="WHITE" GridPane.halignment="CENTER">
                                                   <font>
                                                       <Font size="20.0" />
                                                   </font>

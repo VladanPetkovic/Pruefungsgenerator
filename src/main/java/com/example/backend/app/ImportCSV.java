@@ -2,6 +2,7 @@ package com.example.backend.app;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
+import com.example.frontend.MainApp;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,9 +15,15 @@ import java.util.ArrayList;
 
 public class ImportCSV {
     private String filePath;
+    private String modeOfImport;
+    private String importTargetStudyProgram;
+    private String importTargetCourse;
 
     public ImportCSV(String filePath) {
         this.filePath = filePath;
+        this.modeOfImport = SharedData.getModeOfImport();
+        this.importTargetStudyProgram = SharedData.getImportTargetStudyProgram();
+        this.importTargetCourse = SharedData.getImportTargetCourse();
     }
 
     public boolean importData() {
@@ -60,56 +67,103 @@ public class ImportCSV {
     }
 
     private void importRow(String[] values) {
-        // Check if the CSV row contains exactly 10 values
-        if (values.length != 10) {
+        // Check if the CSV row contains exactly 11 values
+        // question_id, question_text, category_name, difficulty, points, question_type, remarks, answers, keywords, course_name, studyprogram_name
+        if (values.length != 11) {
             Logger.log(getClass().getName(), "Invalid CSV format.", LogLevel.INFO);
             return;
         }
 
         // Parse values from the CSV row, removing any double quotes
-        String questionText = values[0].replace("\"", "");
-        String categoryName = values[1].replace("\"", "");
-        int difficulty = Integer.parseInt(values[2]);
-        float points = Float.parseFloat(values[3]);
-        String questionTypeName = values[4].replace("\"", "");
-        String remark = values[5].replace("\"", "");
-        String answersText = values[6].replace("\"", "");
-        String keywordsText = values[7].replace("\"", "");
-        String courseName = values[8].replace("\"", "");
-        String studyProgramName = values[9].replace("\"", "");
+        int question_id = Integer.parseInt(values[0]);
+        String questionText = values[1].replace("\"", "");
+        String categoryName = values[2].replace("\"", "");
+        int difficulty = Integer.parseInt(values[3]);
+        float points = Float.parseFloat(values[4]);
+        String questionTypeName = values[5].replace("\"", "");
+        String remark = values[6].replace("\"", "");
+        String answersText = values[7].replace("\"", "");
+        String keywordsText = values[8].replace("\"", "");
+        String courseName = values[9].replace("\"", "");
+        String studyProgramName = values[10].replace("\"", "");
 
-        // Handle database operations
-        try (Connection connection = SQLiteDatabaseConnection.connect()) {
-            // Disable auto-commit mode to start a database transaction
-            connection.setAutoCommit(false);
-            try {
-                StudyProgram studyProgram = StudyProgram.createNewStudyProgramInDatabase(studyProgramName);
-                Course course = Course.createNewCourseInDatabase(courseName, studyProgram);
-                Category category = Category.createNewCategoryInDatabase(categoryName, course);
+        //TODO: differentiate between modes of import here
 
-                QuestionType questionType = getQuestionType(questionTypeName);
+        // mode of import: insert the questions from the file into a different studyprogram and course
+        if (modeOfImport.equals(MainApp.resourceBundle.getString("insert_new_questions"))){
+            courseName = importTargetCourse;
+            studyProgramName = importTargetStudyProgram;
 
-                // Split the answers text by commas to get individual answers
-                String[] answersArray = answersText.split(",");
-                // Create a list of Answer objects from the split answers
-                ArrayList<Answer> answers = createAnswers(answersArray);
-                // Split the keywords text by commas to get individual keywords
-                String[] keywordsArray = keywordsText.split(",");
-                // Create a list of Keyword objects from the split keywords
-                ArrayList<Keyword> keywords = createKeywords(keywordsArray);
+            // Handle database operations
+            try (Connection connection = SQLiteDatabaseConnection.connect()) {
+                // Disable auto-commit mode to start a database transaction
+                connection.setAutoCommit(false);
+                try {
+                    StudyProgram studyProgram = StudyProgram.createNewStudyProgramInDatabase(studyProgramName);
+                    Course course = Course.createNewCourseInDatabase(courseName, studyProgram);
+                    Category category = Category.createNewCategoryInDatabase(categoryName, course);
 
-                int questionId = insertQuestion(category, difficulty, points, questionText, questionType, remark, answers, keywords);
+                    QuestionType questionType = getQuestionType(questionTypeName);
 
-                // Commit the transaction if all operations succeed
-                connection.commit();
-            } catch (Exception e) {
-                // Rollback the transaction in case of an exception
-                connection.rollback();
+                    // Split the answers text by commas to get individual answers
+                    String[] answersArray = answersText.split(",");
+                    // Create a list of Answer objects from the split answers
+                    ArrayList<Answer> answers = createAnswers(answersArray);
+                    // Split the keywords text by commas to get individual keywords
+                    String[] keywordsArray = keywordsText.split(",");
+                    // Create a list of Keyword objects from the split keywords
+                    ArrayList<Keyword> keywords = createKeywords(keywordsArray);
+
+                    insertQuestion(category, difficulty, points, questionText, questionType, remark, answers, keywords);
+
+                    // Commit the transaction if all operations succeed
+                    connection.commit();
+                } catch (Exception e) {
+                    // Rollback the transaction in case of an exception
+                    connection.rollback();
+                    e.printStackTrace();
+                }
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+        } else {
+            // mode of import: update the questions from the file in the same studyprogram and course, as specified in the file
+            // Handle database operations
+            try (Connection connection = SQLiteDatabaseConnection.connect()) {
+                // Disable auto-commit mode to start a database transaction
+                connection.setAutoCommit(false);
+                try {
+                    StudyProgram studyProgram = StudyProgram.createNewStudyProgramInDatabase(studyProgramName);
+                    Course course = Course.createNewCourseInDatabase(courseName, studyProgram);
+                    Category category = Category.createNewCategoryInDatabase(categoryName, course);
+
+                    QuestionType questionType = getQuestionType(questionTypeName);
+
+                    // Split the answers text by commas to get individual answers
+                    String[] answersArray = answersText.split(",");
+                    // Create a list of Answer objects from the split answers
+                    ArrayList<Answer> answers = createAnswers(answersArray);
+                    // Split the keywords text by commas to get individual keywords
+                    String[] keywordsArray = keywordsText.split(",");
+                    // Create a list of Keyword objects from the split keywords
+                    ArrayList<Keyword> keywords = createKeywords(keywordsArray);
+
+                    updateQuestion(question_id, category, difficulty, points, questionText, questionType, remark, answers, keywords);
+
+                    // Commit the transaction if all operations succeed
+                    connection.commit();
+                } catch (Exception e) {
+                    // Rollback the transaction in case of an exception
+                    connection.rollback();
+                    e.printStackTrace();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+
+
     }
 
     private QuestionType getQuestionType(String questionTypeName) {
@@ -126,8 +180,8 @@ public class ImportCSV {
         return newQuestionType;
     }
 
-    private int insertQuestion(Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
-                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) {
+    private void insertQuestion(Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
+                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) throws IOException {
         Question question = new Question();
         question.setCategory(category);
         question.setDifficulty(difficulty);
@@ -142,7 +196,33 @@ public class ImportCSV {
         //question.setImages(images);
 
         Question.createNewQuestionInDatabase(question);
-        return question.getId();
+    }
+
+    private void updateQuestion(int question_id, Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
+                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) throws IOException {
+        Question question = new Question();
+        question.setId(question_id);
+        question.setCategory(category);
+        question.setDifficulty(difficulty);
+        question.setPoints(points);
+        question.setQuestion(questionText);
+        question.setType(questionType);
+        question.setRemark(remark);
+        question.setUpdated_at(Timestamp.from(Instant.now()));
+        question.setAnswers(answers);
+        question.setKeywords(keywords);
+        //question.setImages(images);
+
+        for (Answer answer : answers) {
+            SQLiteDatabaseConnection.ANSWER_REPOSITORY.update(answer);
+        }
+
+        for (Keyword keyword : keywords) {
+            SQLiteDatabaseConnection.KEYWORD_REPOSITORY.update(keyword);
+        }
+
+        // Update the question in the database
+        SQLiteDatabaseConnection.QUESTION_REPOSITORY.update(question);
     }
 
     private ArrayList<Answer> createAnswers(String[] answers) {

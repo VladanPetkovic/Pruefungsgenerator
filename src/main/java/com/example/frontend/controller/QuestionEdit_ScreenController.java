@@ -7,7 +7,7 @@ import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 
 import com.example.frontend.components.PicturePickerController;
-import com.example.frontend.modals.ConfirmDeletion_ScreenController;
+import com.example.frontend.modals.ModalOpener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,19 +15,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.example.frontend.controller.SwitchScene.switchScene;
 
 public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
     @FXML
@@ -76,6 +82,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
+    @FXML
+    private TextFlow questionPreview;
+
+    @FXML
+    private Button previewQuestion;
+
+
     /**
      * Initializes the Question Edit screen.
      *
@@ -93,8 +106,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         });
 
         // Retrieves all categories for the selected course from the database.
-        ArrayList<Category> categories = SQLiteDatabaseConnection.CategoryRepository.getAll(SharedData.getSelectedCourse().getId());
-        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.keywordRepository.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        ArrayList<Category> categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId());
+        ArrayList<Keyword> keywords = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         // Displays an error alert if no categories are found for the selected course.
@@ -123,6 +136,61 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        chooseQuestion.textProperty().addListener((observableValue, s, t1) -> {
+            previewQuestion.setVisible(previewQuestionShouldBeVisible());
+        });
+    }
+
+    private boolean questionPreviewVisible = false;
+
+    @FXML
+    private void onActionPreviewQuestion() {
+        if (!questionPreviewVisible) {
+            chooseQuestion.setVisible(false);
+            questionPreview.setVisible(true);
+            questionPreview.getChildren().clear();
+            parseAndDisplayContent();
+            questionPreviewVisible = true;
+            return;
+        }
+        chooseQuestion.setVisible(true);
+        questionPreview.setVisible(false);
+        questionPreviewVisible = false;
+    }
+
+    public void parseAndDisplayContent() {
+        Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
+        Matcher matcher = pattern.matcher(chooseQuestion.getText());
+        int lastIndex = 0;
+        while (matcher.find()) {
+            String textBeforeImage = chooseQuestion.getText().substring(lastIndex, matcher.start());
+            if (!textBeforeImage.isEmpty()) {
+                questionPreview.getChildren().add(new Text(textBeforeImage));
+            }
+            String imageName = matcher.group(1);
+            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
+                if (image.imageName.equals(imageName)) {
+                    ImageView imageView = new ImageView(image.image);
+                    questionPreview.getChildren().add(imageView);
+                }
+            }
+            lastIndex = matcher.end();
+        }
+        String textAfterLastImage = chooseQuestion.getText().substring(lastIndex);
+        if (!textAfterLastImage.isEmpty()) {
+            questionPreview.getChildren().add(new Text(textAfterLastImage));
+        }
+    }
+
+    private boolean previewQuestionShouldBeVisible() {
+        if (picturePickerController.invalidSyntax()) {
+            return false;
+        }
+        if (picturePickerController.buttonAndImages.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -167,7 +235,11 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         questionVbox.setOnMouseClicked(event -> {
             // save the value of the clicked question
             selectedQuestion = clickedQuestion;
-            SharedData.setSelectedEditQuestion(selectedQuestion);
+            try {
+                SharedData.setSelectedEditQuestion(selectedQuestion);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             // Make the scroll pane transparent to allow interaction with underlying elements.
             chooseScrollPane.setMouseTransparent(false);
@@ -262,14 +334,16 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void initTimeStamps(Question question) {
         // setting the timestamps
         if (question.getCreated_at() == null) {
-            created_at_label.setText("Created at: ");
+            created_at_label.setText(MainApp.resourceBundle.getString("created_at"));
         } else {
-            created_at_label.setText("Created at: " + question.getTimeStampFormatted(question.getCreated_at()));
+            String createdAt = MainApp.resourceBundle.getString("created_at") + " " + question.getTimeStampFormatted(question.getCreated_at());
+            created_at_label.setText(createdAt);
         }
         if (question.getUpdated_at() == null) {
-            updated_at_label.setText("Updated at: ");
+            updated_at_label.setText(MainApp.resourceBundle.getString("updated_at"));
         } else {
-            updated_at_label.setText("Updated at: " + question.getTimeStampFormatted(question.getUpdated_at()));
+            String updatedAt = MainApp.resourceBundle.getString("updated_at") + " " + question.getTimeStampFormatted(question.getUpdated_at());
+            updated_at_label.setText(updatedAt);
         }
     }
 
@@ -314,7 +388,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * If there is any validation error, it shows an error alert.
      */
     @FXML
-    private void onChooseButton() {
+    private void onChooseButton() throws IOException {
         // Validate input fields
         String errorMessage = validateInput();
         if (errorMessage != null) {
@@ -327,7 +401,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         Question question = createQuestionFromInputs();
 
         // Update the question in the database
-        SQLiteDatabaseConnection.questionRepository.update(question);
+        SQLiteDatabaseConnection.QUESTION_REPOSITORY.update(question);
 
         // Compare the keywords and add/remove connections accordingly
         compareKeywords(question);
@@ -343,7 +417,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(selectedQuestion.getAnswers(), selectedQuestion.getId());
         }
 
-        switchScene(questionEdit, true);
+        switchScene(SwitchScene.EDIT_QUESTION);
     }
 
     private void compareImages(Question question) {
@@ -355,7 +429,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (!imageFound) {
-                SQLiteDatabaseConnection.imageRepository.removeConnection(image, question);
+                SQLiteDatabaseConnection.IMAGE_REPOSITORY.removeConnection(image, question);
             }
         }
 
@@ -394,7 +468,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (!keywordFound) {
-                SQLiteDatabaseConnection.keywordRepository.removeConnection(keyword1, question);
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.removeConnection(keyword1, question);
             }
         }
 
@@ -407,7 +481,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
             if (keywordNotFound) {
-                SQLiteDatabaseConnection.keywordRepository.addConnection(keyword1, question.getId());
+                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(keyword1, question.getId());
             }
         }
     }
@@ -462,19 +536,19 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private String validateInput() {
         if (selectedCategory == null) {
-            return "Category needs to be selected.";
+            return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButtonEdit, answers)) {
-            return "You selected multiple choice, but at least one answer is not filled out.";
+            return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
         if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText())) {
-            return "Enter at least two answers, when selecting multiple choice.";
+            return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {
-            return "Question needs to be filled out.";
+            return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
         if (picturePickerController.invalidSyntax()) {
-            return "Every image has to be included at least once.";
+            return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
     }
@@ -510,7 +584,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         return chooseQuestion.getText().isEmpty();
     }
 
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
         // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
@@ -524,20 +598,17 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = new Stage();
-        Screen<ConfirmDeletion_ScreenController> confirm_modal = new Screen<>("modals/confirm_deletion.fxml");
-        confirmStage.setHeight(400);
-        confirmStage.setWidth(600);
-        confirmStage.initModality(Modality.APPLICATION_MODAL);
-        confirmStage.setScene(confirm_modal.scene);
+        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
             if (SharedData.getSelectedEditQuestion().getId() == 0) {
-                switchScene(questionEdit, true);
+                try {
+                    switchScene(SwitchScene.EDIT_QUESTION);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
-
-        confirmStage.show();
     }
 }

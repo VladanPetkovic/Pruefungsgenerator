@@ -30,6 +30,10 @@ public class StudyProgramRepository implements Repository<StudyProgram> {
         return getStudyProgramDAO().read(name);
     }
 
+    public boolean hasCourses(int studyProgramId) {
+        return getStudyProgramDAO().hasCourses(studyProgramId);
+    }
+
     @Override
     public void add(StudyProgram program) {
         getStudyProgramDAO().create(program);

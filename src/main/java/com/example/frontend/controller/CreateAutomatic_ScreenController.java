@@ -5,6 +5,7 @@ import com.example.backend.app.SharedData;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.Category;
+import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +21,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
+
+import static com.example.frontend.controller.SwitchScene.switchScene;
 
 public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
@@ -48,7 +53,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
     public void initialize() {
         int course_id = SharedData.getSelectedCourse().getId();
-        categories = SQLiteDatabaseConnection.CategoryRepository.getAll(course_id);
+        categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(course_id);
 
         // set (press & release) event handlers for all buttons that are dynamically generated
         setButtonEventHandlers(addQuestionVBox.getChildren());
@@ -75,14 +80,15 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         VBox questionVBox = new VBox();
 
         // create and add the label indicating the question number
-        createLabel("Question " + questionCount, questionVBox);
+        String questionAndNumber = MessageFormat.format(MainApp.resourceBundle.getString("question_with_number"), questionCount);
+        createLabel(questionAndNumber, questionVBox);
 
         // create and add components to the new VBox
-        createLabel("Category", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("category"), questionVBox);
         createMenuButton(questionVBox);
-        createLabel("Points", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("points"), questionVBox);
         createSpinner(questionVBox);
-        createLabel("Difficulty", questionVBox);
+        createLabel(MainApp.resourceBundle.getString("difficulty"), questionVBox);
         createSlider(questionVBox);
 
         return questionVBox;
@@ -110,7 +116,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     // helper method to create a MenuButton with custom styling
     private void createMenuButton(VBox parentVBox) {
         // create a new MenuButton with default text
-        MenuButton menuButton = new MenuButton("Choose category...");
+        MenuButton menuButton = new MenuButton(MainApp.resourceBundle.getString("question_filter_select_category"));
         // add custom styling to the MenuButton
         menuButton.getStyleClass().add("menuButton_dark");
         // populate the MenuButton with category options and set event handlers for selection
@@ -228,7 +234,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
     // method triggered when the "Create Test" button is clicked
     @FXML
-    protected void onCreateAutTestBtnClick(ActionEvent event) {
+    protected void onCreateAutTestBtnClick(ActionEvent event) throws IOException {
         // clear previous questions from manual-create
         SharedData.getTestQuestions().clear();
 
@@ -239,9 +245,9 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             Question queryQuestion = new Question();
 
             // get the category
-            if (!Objects.equals(categoriesMenuButtons.get(i).getText(), "Choose category...")) {
+            if (!Objects.equals(categoriesMenuButtons.get(i).getText(), MainApp.resourceBundle.getString("question_filter_select_category"))) { // TODO: change to not compare text
                 selectedCategory = categoriesMenuButtons.get(i).getText();
-                queryQuestion.setCategory(SQLiteDatabaseConnection.CategoryRepository.get(selectedCategory));
+                queryQuestion.setCategory(SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(selectedCategory));
             }
             // get the points
             if (!pointsSpinners.get(i).isDisabled()) {
@@ -256,7 +262,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // perform the database query to retrieve questions based on the criteria
             int pointStatus = pointsSpinnersStatus.get(i);
             int diffStatus = difficultySlidersStatus.get(i);
-            ArrayList<Question> queryResult = SQLiteDatabaseConnection.questionRepository.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
+            ArrayList<Question> queryResult = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {
@@ -274,7 +280,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // reset the question count to zero
         this.questionCount = 0;
-        SharedData.setCurrentScreen(Screen.CreateManual);
-        switchScene(createTestManual, true);
+        SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
+        switchScene(SwitchScene.CREATE_TEST_MANUAL);
     }
 }

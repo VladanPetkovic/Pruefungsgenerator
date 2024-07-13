@@ -30,74 +30,24 @@ import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.TextFields;
 
+import java.io.IOException;
 import java.util.*;
 
 import java.io.File;
 
 /**
  * the base class for all screen controllers
- * provides functionality to switch between screens and handle common UI events
+ * provides functionality to handle common UI events
  */
 
 public abstract class ScreenController {
 
-    // define and initialize screens for different functionalities
-    public static Screen<CreateAutomatic_ScreenController> createTestAutomatic = new Screen<>("sites/create_automatic.fxml");
-    public static Screen<CreateManual_ScreenController> createTestManual = new Screen<>("sites/create_manual.fxml");
-    public static Screen<QuestionCreate_ScreenController> questionCreate = new Screen<>("sites/question_create.fxml");
-    public static Screen<QuestionEdit_ScreenController> questionEdit = new Screen<>("sites/question_edit.fxml");
-    public static Screen<QuestionEdit_ScreenController> home = new Screen<>("sites/home.fxml");
-    public static Screen<PdfPreview_ScreenController> pdf_preview = new Screen<>("sites/pdf_preview.fxml");
-    public static Screen<Settings_ScreenController> settings = new Screen<>("sites/settings.fxml");
-
-
-
-
-    // Define a hashmap for the title banner for the different pages
-    private static final Map<Screen, String> SCREEN_TITLES = new HashMap<>();
-    static {
-        SCREEN_TITLES.put(createTestAutomatic, "Automatic Test Creation");
-        SCREEN_TITLES.put(createTestManual, "Manual Test Creation");
-        SCREEN_TITLES.put(questionCreate, "Create Question");
-        SCREEN_TITLES.put(questionEdit, "Edit Question");
-        SCREEN_TITLES.put(home, "Home");
-        SCREEN_TITLES.put(pdf_preview, "PDF Preview");
-        SCREEN_TITLES.put(settings, "Settings");
-    }
-
-    /**
-     * switches to the specified screen and optionally refreshes its components
-     * @param screen the screen to switch to
-     * @param refresh indicates whether to refresh the screen components
-     */
-    public static void switchScene(Screen screen, boolean refresh){
-        // reload components, if refresh is true
-        if (refresh) {
-            screen.loadComponents();
-        }
-
-        // resetting filterquestion
-        SharedData.setFilterQuestion(new Question());
-
-        // Update pageTitle in SharedData
-        String pageTitle = SCREEN_TITLES.get(screen);
-        if (pageTitle != null) {
-            SharedData.setPageTitle(pageTitle);
-        }
-
-        // set the scene and display it
-        MainApp.stage.setHeight(MainApp.stage.getHeight());
-        MainApp.stage.setWidth(MainApp.stage.getWidth());
-        MainApp.stage.setScene(screen.scene);
-        MainApp.stage.show();
-    }
-
-
     /**
      * This function activates/deactivates/sets to min/sets to max a slider/spinner and changes the image accordingly.
+     *
      * @param sliderOrSpinner Either a difficulty or points slider (or some other)
-     * @param toggleImage The image, we want to change (toggle off or toggle on)
-     * @param status The status of the sliderOrSpinner object.
+     * @param toggleImage     The image, we want to change (toggle off or toggle on)
+     * @param status          The status of the sliderOrSpinner object.
      */
     public void on_toggle_btn_click(Object sliderOrSpinner, ImageView toggleImage, int status) {
         String imagePath = "src/main/resources/com/example/frontend/icons/";
@@ -142,6 +92,7 @@ public abstract class ScreenController {
     /**
      * Initializes the auto-completion of the keywords in the search-area of edit-question
      * And displays an add-btn, when the inputted text is changed AND not in the db
+     *
      * @param addKeywordBtn When passed null, then we cannot add keywords
      */
     protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords, Button addKeywordBtn) {
@@ -179,7 +130,7 @@ public abstract class ScreenController {
         }
 
         // in java everything is passed by reference, so changes in items make changes in SharedData
-        ArrayList<String> items = SharedData.getSuggestedCategories();
+        ObservableList<String> items = SharedData.getSuggestedCategories();
         for (Category c : categories) {
             // don't add existing categories --> good for, when switching scenes
             if (!items.contains(c.getName())) {
@@ -199,10 +150,11 @@ public abstract class ScreenController {
 
     /**
      * Function used to add a new category when clicked on the plus-button.
+     *
      * @param categoryTextField the textField, where category is inputted
-     * @param add_category_btn the add-btn that is clicked for adding a new category
+     * @param add_category_btn  the add-btn that is clicked for adding a new category
      */
-    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) {
+    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) throws IOException {
         SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
         Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
         SharedData.getSuggestedCategories().add(newCategory.getName());
@@ -217,7 +169,7 @@ public abstract class ScreenController {
     protected void initializeQuestions(TextField questionTextField) {
         ObservableList<String> items = FXCollections.observableArrayList();
         String course_name = SharedData.getSelectedCourse().getName();
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(new Question(), course_name);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(new Question(), course_name);
         for (int i = 0; i < 10 && i < questions.size(); i++) {
             items.add(questions.get(i).getQuestion());
         }
@@ -226,6 +178,7 @@ public abstract class ScreenController {
 
     /**
      * This function initializes the MenuButton with the QuestionTypes.
+     *
      * @param menuButton - the menuButton used in the scene
      */
     protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes) {
@@ -242,9 +195,9 @@ public abstract class ScreenController {
 
         if (allowAllTypes) {
             // add "showAll" to showAll QuestionTypes
-            MenuItem menuItem = new MenuItem("all types");
+            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
             menuItem.setOnAction(e -> {
-                menuButton.setText("all types");
+                menuButton.setText(MainApp.resourceBundle.getString("all_types"));
             });
             menuButton.getItems().add(menuItem);
         }
@@ -253,7 +206,7 @@ public abstract class ScreenController {
     /**
      * Creates a label with the specified text and text fill color.
      *
-     * @param text The text content of the label.
+     * @param text     The text content of the label.
      * @param textFill The color used to fill the label's text.
      * @return The created label with the specified text and text fill color, or null if the text is null.
      */
@@ -289,8 +242,8 @@ public abstract class ScreenController {
         VBox questionVbox = new VBox();
 
         // Create labels to display question information.
-        Label questionNumberLabel = createLabel("Erreichbare Punkte: " + question.getPoints(), Color.WHITE);
-        Label questionDifficultyLabel = createLabel("Difficulty: " + question.getDifficulty(), Color.WHITE);
+        Label questionNumberLabel = createLabel(MainApp.resourceBundle.getString("possible_points") + " " + question.getPoints(), Color.WHITE);
+        Label questionDifficultyLabel = createLabel(MainApp.resourceBundle.getString("create_manual_difficulty") + " " + question.getDifficulty(), Color.WHITE);
         Label questionTextLabel = createLabel(question.getQuestion(), Color.WHITE);
         Label questionAnswersLabel = createLabel(question.getAnswersAsString(), Color.WHITE);
         Label questionRemarksLabel = createLabel(question.getRemark(), Color.WHITE);
@@ -308,8 +261,9 @@ public abstract class ScreenController {
 
     /**
      * Check, if questions contains the question_id
+     *
      * @param question_id ID of the question, that is going to be checked.
-     * @param questions, the array of questions to be checked
+     * @param questions,  the array of questions to be checked
      * @return true, if testQuestions contains this question with id = question_id, return false otherwise.
      */
     protected boolean containsQuestionWithId(int question_id, List<Question> questions) {
@@ -328,6 +282,7 @@ public abstract class ScreenController {
     /**
      * Converts the answers provided either in mc-TextAreas or in the one simple-answer-Textarea to
      * an ArrayList of Answer/s.
+     *
      * @return An Arraylist of Answer-objects
      */
     protected ArrayList<Answer> getAnswerArrayList(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
@@ -345,6 +300,7 @@ public abstract class ScreenController {
 
     /**
      * Creates a JavaFX Button with the given text and disables focus traversal.
+     *
      * @param text The text to display on the button.
      * @return The created Button
      */
@@ -356,8 +312,9 @@ public abstract class ScreenController {
 
     /**
      * Checks if a keyword is already present in the list of selected keywords.
+     *
      * @param selectedKeywords The ArrayList containing selected keywords.
-     * @param k The keyword to check.
+     * @param k                The keyword to check.
      * @return True if the keyword is already present, false otherwise.
      */
     protected boolean containsKeyword(Keyword k, ArrayList<Keyword> selectedKeywords) {
@@ -382,6 +339,7 @@ public abstract class ScreenController {
         // Add MenuItem to keywordMenuButton
         keywordMenuButton.getItems().add(menuItem);
     }
+
     protected void addSelectedKeyword(Keyword newKeyword, ArrayList<Keyword> selectedKeywords, HBox keywordsHBox) {
         if (containsKeyword(newKeyword, selectedKeywords)) {
             return;
@@ -391,6 +349,7 @@ public abstract class ScreenController {
         Button removalButton = createRemovalButton(newKeyword, keywordsHBox, selectedKeywords);
         keywordsHBox.getChildren().add(removalButton);
     }
+
     protected Button createRemovalButton(Keyword newKeyword, HBox keywordsHBox, ArrayList<Keyword> selectedKeywords) {
         Button button = createButton(newKeyword.getKeyword() + " X");
 
@@ -436,18 +395,19 @@ public abstract class ScreenController {
     //
 
 
-
     //
     // START REGION EXPORT FILE
     //
+
     /**
      * This function opens a new Dialog to get the destination folder for saving the export-file.
      * If a folder was chosen previously, then it will set the previous choice as default.
+     *
      * @param label_selectedDirectory Label, which shows the selected directory.
      */
     protected void chooseDirectory(Label label_selectedDirectory) {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select Folder to Save File");
+        chooser.setTitle(MainApp.resourceBundle.getString("choose_folder_to_save_file"));
         if (!label_selectedDirectory.getText().equals("\"\"")) {
             chooser.setInitialDirectory(new File(label_selectedDirectory.getText()));
         }
@@ -575,20 +535,4 @@ public abstract class ScreenController {
         // Remove ripple effect
         menuButton.setEffect(null);
     }
-
-
-    // currently not needed --> maybe for "deleting all questions",...
-    //    /**
-//     * Displays an error alert dialog.
-//     * @param title       The title of the error alert dialog.
-//     * @param headerText  The header text of the error alert dialog.
-//     * @param contentText The content text of the error alert dialog.
-//     */
-//    protected void showErrorAlert(String title, String headerText, String contentText) {
-//        Alert alert = new Alert(Alert.AlertType.ERROR);
-//        alert.setTitle(title);
-//        alert.setHeaderText(headerText);
-//        alert.setContentText(contentText);
-//        alert.showAndWait();
-//    }
 }

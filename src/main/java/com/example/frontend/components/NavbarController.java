@@ -1,7 +1,7 @@
 package com.example.frontend.components;
 
 import com.example.backend.app.SharedData;
-import com.example.frontend.controller.ScreenController;
+import com.example.frontend.controller.SwitchScene;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -11,9 +11,10 @@ import com.example.backend.app.Screen;
 
 import java.io.IOException;
 
+import static com.example.frontend.controller.SwitchScene.switchScene;
 
 
-public class NavbarController extends ScreenController {
+public class NavbarController {
 
     @FXML
     ImageView createTestAutomaticNavImageView;
@@ -37,21 +38,21 @@ public class NavbarController extends ScreenController {
     Label settingsNavLabel;
 
     @FXML
-    public void initialize(){
-        switch(SharedData.getCurrentScreen()) {
-            case CreateAutomatic:
+    public void initialize() {
+        switch (SharedData.getCurrentScreen()) {
+            case CREATE_AUTOMATIC:
                 createAutomaticSelected();
                 break;
-            case CreateManual:
+            case CREATE_MANUAL:
                 createManualSelected();
                 break;
-            case QuestionCreate:
+            case QUESTION_CREATE:
                 createQuestionSelected();
                 break;
-            case QuestionEdit:
+            case QUESTION_EDIT:
                 editQuestionSelected();
                 break;
-            case Settings:
+            case SETTINGS:
                 settingsSelected();
                 break;
             default:
@@ -60,55 +61,56 @@ public class NavbarController extends ScreenController {
 
     /**
      * handles click event for navigating to the create automatic test screen
+     *
      * @param event the mouse click event
      * @throws IOException if there is an error loading the screen
      */
     @FXML
     protected void onCreateAutTestNavBtnClick(MouseEvent event) throws IOException {
-        SharedData.setCurrentScreen(Screen.CreateAutomatic);
-        switchScene(createTestAutomatic,true);
+        SharedData.setCurrentScreen(Screen.CREATE_AUTOMATIC);
+        switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
     }
 
     /**
      * handles click event for navigating to the create manual test screen
+     *
      * @param event the mouse click event
      * @throws IOException if there is an error loading the screen
      */
     @FXML
     protected void onCreateManTestNavBtnClick(MouseEvent event) throws IOException {
-        SharedData.setCurrentScreen(Screen.CreateManual);
-        switchScene(createTestManual,true);
+        SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
+        switchScene(SwitchScene.CREATE_TEST_MANUAL);
     }
 
     /**
      * handles click event for navigating to the question upload screen
+     *
      * @param event the mouse click event
      * @throws IOException if there is an error loading the screen
      */
     @FXML
-    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        SharedData.setCurrentScreen(Screen.QuestionCreate);
-        switchScene(questionCreate,true);
+    protected void onUploadQuestionNavBtnClick(MouseEvent event) throws IOException {
+        SharedData.setCurrentScreen(Screen.QUESTION_CREATE);
+        switchScene(SwitchScene.CREATE_QUESTION);
     }
 
     /**
      * handles click event for navigating to the question edit screen
+     *
      * @param event the mouse click event
      * @throws IOException if there is an error loading the screen
      */
     @FXML
-    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException
-    {
-        SharedData.setCurrentScreen(Screen.QuestionEdit);
-        switchScene(questionEdit,true);
+    protected void onEditQuestionNavBtnClick(MouseEvent event) throws IOException {
+        SharedData.setCurrentScreen(Screen.QUESTION_EDIT);
+        switchScene(SwitchScene.EDIT_QUESTION);
     }
 
     @FXML
-    protected void onSettingsNavBtnClick(MouseEvent event) throws IOException
-    {
-        SharedData.setCurrentScreen(Screen.Settings);
-        switchScene(settings,true);
+    protected void onSettingsNavBtnClick(MouseEvent event) throws IOException {
+        SharedData.setCurrentScreen(Screen.SETTINGS);
+        switchScene(SwitchScene.SETTINGS);
     }
 
     private void createAutomaticSelected() {

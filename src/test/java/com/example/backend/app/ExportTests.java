@@ -40,7 +40,7 @@ public class ExportTests {
         String testHeader = "Test: Datenmanagement";
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(testQuestion, "Datenmanagement");
         export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
         boolean pdfWasCreated = export.exportDocument(questions);
 
@@ -55,7 +55,7 @@ public class ExportTests {
         String testHeader = "Test: all questions";
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll();
         export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
         boolean pdfWasCreated = export.exportDocument(questions);
 
@@ -70,7 +70,7 @@ public class ExportTests {
         String testHeader = "Test: all questions";
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll();
         exportDocx.setOptions(testHeader, 6, "C:\\Users\\vlada\\Downloads", true, true);
         boolean docxWasCreated = exportDocx.exportDocument(questions);
 

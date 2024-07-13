@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Category implements Serializable {
     private int id;
     private String name;
 
@@ -29,7 +32,7 @@ public class Category {
      * @param newCategory The provided category
      * @return String - the error-message, returns null if everything is fine.
      */
-    public static String checkNewCategory(String newCategory) {
+    public static String checkNewCategory(String newCategory) throws IOException {
         if (newCategory == null) {
             return "No category provided!";
         }
@@ -56,15 +59,15 @@ public class Category {
 
     public static Category createNewCategoryInDatabase(String category, Course course) {
         // check for existence
-        Category newCategory = SQLiteDatabaseConnection.CategoryRepository.get(category);
+        Category newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
 
         if (newCategory == null) {
             Category addToDatabase = new Category(category);
-            SQLiteDatabaseConnection.CategoryRepository.add(addToDatabase);
-            newCategory = SQLiteDatabaseConnection.CategoryRepository.get(category);
-            SQLiteDatabaseConnection.CategoryRepository.addConnection(course, newCategory);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.add(addToDatabase);
+            newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
         } else {
-            SQLiteDatabaseConnection.CategoryRepository.addConnection(course, newCategory);
+            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
         }
 
         return newCategory;

@@ -32,8 +32,8 @@ public class QuestionDAO implements DAO<Question> {
     public void create(Question question) {
         String insertStmt =
                 "INSERT INTO questions " +
-                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?);";
+                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 
         try (Connection connection = SQLiteDatabaseConnection.connect();
@@ -46,6 +46,7 @@ public class QuestionDAO implements DAO<Question> {
             preparedStatement.setInt(5, question.getType().getId());
             preparedStatement.setString(6, question.getRemark());
             preparedStatement.setString(7, question.getCreated_at().toString());
+            preparedStatement.setString(8, question.getUpdated_at().toString());
 
             preparedStatement.executeUpdate();
 
@@ -116,6 +117,7 @@ public class QuestionDAO implements DAO<Question> {
                 "LEFT JOIN has_cc ON q.fk_category_id = has_cc.fk_category_id " +
                 "LEFT JOIN courses ON has_cc.fk_course_id = courses.id " +
                 "WHERE courses.id = ? AND q.id > ? " +
+                "ORDER BY q.id " +
                 "LIMIT 500;";
         Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
 
@@ -127,7 +129,7 @@ public class QuestionDAO implements DAO<Question> {
             try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
                 while (questionsResultSet.next()) {
                     Question newQuestion = createModelFromResultSet(questionsResultSet);
-                    if(newQuestion != null) {
+                    if (newQuestion != null) {
                         this.questionCache.add(newQuestion);
                     }
                 }

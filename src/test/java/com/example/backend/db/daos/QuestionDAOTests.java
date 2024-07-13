@@ -35,7 +35,7 @@ public class QuestionDAOTests {
         // REMINDER: question with this id can be deleted or changed, so tests will fail in the future, when db changes
 
         // arrange
-        Question question = SQLiteDatabaseConnection.questionRepository.get(1);
+        Question question = SQLiteDatabaseConnection.QUESTION_REPOSITORY.get(1);
         ArrayList<Question> questions = new ArrayList<>();
         questions.add(question);
 
@@ -56,7 +56,7 @@ public class QuestionDAOTests {
 
         // arrange
         Category category = new Category(4, "Algebra");
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(category);
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(category);
         int expectedLength = 6;
 
         // show results
@@ -79,7 +79,7 @@ public class QuestionDAOTests {
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "Datenmanagement");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(testQuestion, "Datenmanagement");
         // show results
         printQuestions(questions);
 
@@ -99,7 +99,7 @@ public class QuestionDAOTests {
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -122,7 +122,7 @@ public class QuestionDAOTests {
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -141,7 +141,7 @@ public class QuestionDAOTests {
         // all other field are not set
 
         // act
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll(testQuestion, "MACS1");
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(testQuestion, "MACS1");
         // show results
         printQuestions(questions);
 
@@ -161,7 +161,7 @@ public class QuestionDAOTests {
         int expectedQuestionsCount = 2;
 
         // act
-        ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.questionRepository.getAll(question1, "MACS1");
+        ArrayList<Question> actualQuestions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(question1, "MACS1");
 
         // show results
         printQuestions(actualQuestions);
@@ -179,7 +179,7 @@ public class QuestionDAOTests {
 
         // act
         long startTime = System.currentTimeMillis();
-        ArrayList<Question> questions = SQLiteDatabaseConnection.questionRepository.getAll();
+        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll();
         long stopTime = System.currentTimeMillis();
 
         // printQuestions(questions);

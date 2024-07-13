@@ -56,6 +56,60 @@ This rule restores the background color to red and applies a darker drop shadow 
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+.btn_orange {
+    -fx-background-color: orange;
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+/*
+This rule changes the background color to a lighter shade of red and slightly scales up the button for visual feedback.
+*/
+.btn_orange:hover {
+    -fx-background-color: #734500;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+/*
+This rule restores the background color to red and applies a darker drop shadow effect when the button is pressed.
+*/
+.btn_orange:pressed {
+    -fx-background-color: orange;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
+.btn_green {
+    -fx-background-color: green;
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+/*
+This rule changes the background color to a lighter shade of red and slightly scales up the button for visual feedback.
+*/
+.btn_green:hover {
+    -fx-background-color: darkgreen;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+/*
+This rule restores the background color to red and applies a darker drop shadow effect when the button is pressed.
+*/
+.btn_green:pressed {
+    -fx-background-color: green;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
 /*
 This rule sets the background color to a shade of grey, text color to white, and applies rounded corners to the background and border.
 Additionally, it specifies padding, cursor as a hand symbol, a drop shadow effect, and a transition effect for smoother visual changes.
@@ -161,6 +215,21 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .btn_add_icon:pressed {
     -fx-rotate: 45;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
+.btn_image_icon {
+    -fx-background-color: none;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+.btn_image_icon:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.btn_image_icon:pressed {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
 }
 
 .optionAreaBox {
@@ -286,7 +355,7 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-scale-y: 1.0;
 }
 
-/* Home Screen Scene*/
+/* Home Modal Scene*/
 .homeScreen_gridPane {
     -fx-background-color: #3A3A3A;
 }
@@ -364,7 +433,7 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-padding: 20px 50px 20px 50px;
 }
 
-/* Create Manual Screen */
+/* Create Manual Modal */
 .filter_question_preview_vbox {
     -fx-border-color: grey;
     -fx-border-radius: 2%;
@@ -393,6 +462,7 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 /** MODALS **/
 .modals {
     -fx-background-color: #2f2f2f;
+    -fx-padding: 20px;
 }
 .modal_topic_label {
     -fx-alignment: center;

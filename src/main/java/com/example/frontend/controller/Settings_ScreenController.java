@@ -8,12 +8,17 @@ import com.example.backend.db.models.Course;
 import com.example.backend.db.models.Message;
 import com.example.backend.db.models.StudyProgram;
 import com.example.frontend.MainApp;
+import com.example.frontend.modals.ModalOpener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,18 +38,28 @@ public class Settings_ScreenController extends ScreenController {
     public Label label_selectedFile;
     @FXML
     Button settingsImportBtn;
+    @FXML
+    private MenuButton importModeMenuButton;
+    @FXML
+    private Button chooseTargetBtn;
+    // Property to manage the enable/disable state of the chooseTargetBtn
+    private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
+    private String modeOfImport = "";
 
     @FXML
     private void initialize() {
-        ArrayList<String> studyPrograms = SQLiteDatabaseConnection.studyProgramRepository.getAll().stream()
+        ArrayList<String> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll().stream()
                 .map(StudyProgram::getName)
                 .collect(Collectors.toCollection(ArrayList::new));
-        ArrayList<String> courses = SQLiteDatabaseConnection.courseRepository.getAll(SharedData.getSelectedStudyProgram().getId())
+        ArrayList<String> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId())
                 .stream()
                 .map(Course::getName)
                 .collect(Collectors.toCollection(ArrayList::new));
         initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
         initializeMenuButton(chooseCourseMenuButton, courses);
+
+        // Bind the disabled state of chooseTargetBtn to chooseTargetDisabled property
+        chooseTargetBtn.disableProperty().bind(chooseTargetDisabled);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems) {
@@ -57,6 +72,15 @@ public class Settings_ScreenController extends ScreenController {
             });
             menuButton.getItems().add(menuItem);
         }
+    }
+
+    @FXML
+    private void onChooseTargetBtnClick(ActionEvent event) {
+        Stage newStage = ModalOpener.openModal(ModalOpener.TARGET_SELECTION);
+        //listener for when the stage is closed
+        newStage.setOnHidden(e -> {
+
+        });
     }
 
     @FXML
@@ -80,11 +104,11 @@ public class Settings_ScreenController extends ScreenController {
 
     public void onChooseFileBtnClick(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select a CSV File");
+        fileChooser.setTitle(MainApp.resourceBundle.getString("select_csv_file"));
 
         // Set extension filter to only allow CSV files
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+                new FileChooser.ExtensionFilter(MainApp.resourceBundle.getString("csv_files"), "*.csv")
         );
 
         File file = fileChooser.showOpenDialog(MainApp.stage);
@@ -98,7 +122,7 @@ public class Settings_ScreenController extends ScreenController {
     }
 
     public void allQuestionsSelectedForExport(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("All questions");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("all_questions"));
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setVisible(false);
@@ -108,18 +132,18 @@ public class Settings_ScreenController extends ScreenController {
      * SP ... StudyProgram
      */
     public void questionsOfSPselected(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("Questions of study-program");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("questions_of_study_program"));
         this.chooseStudyProgramMenuBtn.setVisible(true);
         this.chooseCourseMenuButton.setVisible(false);
-        this.chooseQuestionsLabel.setText("Select a study-program:");
+        this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
         this.chooseQuestionsLabel.setVisible(true);
     }
 
     public void questionsOfCourseSelected(ActionEvent actionEvent) {
-        this.chooseQuestionsMenuButton.setText("Questions of course");
+        this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("questions_of_course"));
         this.chooseCourseMenuButton.setVisible(true);
         this.chooseStudyProgramMenuBtn.setVisible(false);
-        this.chooseQuestionsLabel.setText("Select a course:");
+        this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
         this.chooseQuestionsLabel.setVisible(true);
     }
 
@@ -130,10 +154,10 @@ public class Settings_ScreenController extends ScreenController {
 
         ExportCSV exportCSV = new ExportCSV(this.label_selectedDirectory.getText());
         int exportType = 0;     // all questions
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of study-program")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
             exportType = 1;     // only for studyProgram
             exportCSV.initStudyProgram(chooseStudyProgramMenuBtn.getText());
-        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of course")) {
+        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
             exportType = 2;     // only for course
             exportCSV.initCourse(chooseCourseMenuButton.getText());
         }
@@ -145,19 +169,35 @@ public class Settings_ScreenController extends ScreenController {
         }
     }
 
+    @FXML
+    private void onUpdateExistingQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("update_existing_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        chooseTargetDisabled.set(true); // Disable chooseTargetBtn
+    }
+
+    @FXML
+    private void onInsertNewQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("insert_new_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        chooseTargetDisabled.set(false); // Enable chooseTargetBtn
+    }
+
     /**
      * Function that checks, if everything was inputted properly.
      * @return True, when user submitted everything, and false otherwise.
      */
     private boolean allFieldsSetProperly() {
         // check if everything was filled out
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of course")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
             if (Objects.equals(chooseCourseMenuButton.getText(), "")) {
                 SharedData.setOperation(Message.ERROR_MESSAGE_INPUT_ALL_FIELDS);
                 return false;
             }
         }
-        if (Objects.equals(chooseQuestionsMenuButton.getText(), "Questions of study-program")) {
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
             if (Objects.equals(chooseStudyProgramMenuBtn.getText(), "")) {
                 SharedData.setOperation(Message.ERROR_MESSAGE_INPUT_ALL_FIELDS);
                 return false;

@@ -1,15 +1,19 @@
-package com.example.frontend.controller;
+package com.example.frontend.modals;
 
 import com.example.frontend.MainApp;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * utility class for managing JavaFX scenes
+ *
  * @param <T> The type of controller associated with the scene
  */
-public class Screen<T> {
+public class Modal<T> {
     private FXMLLoader fxmlLoader; // FXMLLoader for loading FXML files
     private Parent root; // root node of the scene
     private String path; // path to the FXML file
@@ -17,10 +21,11 @@ public class Screen<T> {
     public T controller; // Controller associated with the scene
 
     /**
-     * constructs a new Screen object
+     * constructs a new Modal object
+     *
      * @param path the path to the FXML file
      */
-    public Screen(String path){
+    public Modal(String path) {
         this.path = path;
         loadComponents(); // load components upon instantiation
     }
@@ -29,8 +34,8 @@ public class Screen<T> {
      * loads the components of the scene
      * initializes FXMLLoader to set the root, scene, and controller variables
      */
-    public void loadComponents(){
-        fxmlLoader = new FXMLLoader(MainApp.class.getResource(path));
+    public void loadComponents() {
+        fxmlLoader = new FXMLLoader(MainApp.class.getResource(path), MainApp.resourceBundle);
         try {
             // load FXML file
             root = fxmlLoader.load();
@@ -41,13 +46,5 @@ public class Screen<T> {
         }
         // get the controller associated with the scene
         controller = fxmlLoader.getController();
-    }
-
-    /**
-     * disables or enables the current scene
-     * @param state if true, disables the scene; otherwise enables it
-     */
-    public void disableScene(boolean state){
-        scene.getRoot().setDisable(state);
     }
 }

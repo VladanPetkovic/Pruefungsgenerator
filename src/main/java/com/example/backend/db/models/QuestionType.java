@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class QuestionType {
+public class QuestionType implements Serializable {
     private int id;
     private String name;
     private Type type;

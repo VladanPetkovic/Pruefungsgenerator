@@ -11,11 +11,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class Image {
+public class Image implements Serializable {
     private int id;
     private byte[] image;
     private String name;
@@ -34,7 +35,7 @@ public class Image {
         if (question.getImages() == null) {
             return;
         }
-        SQLiteDatabaseConnection.imageRepository.add(question.getImages(), newQuestionId);
+        SQLiteDatabaseConnection.IMAGE_REPOSITORY.add(question.getImages(), newQuestionId);
     }
 
     private String getFileExtension(String fileName) {

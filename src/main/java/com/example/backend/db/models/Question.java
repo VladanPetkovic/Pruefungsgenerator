@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.security.Key;
+import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question {
+public class Question implements Serializable {
     private int id;
     private Category category;
     private int difficulty;
@@ -73,12 +74,12 @@ public class Question {
      * @param question provided question for creation
      * @return id of the created question
      */
-    public static int createNewQuestionInDatabase(Question question) {
+    public static int createNewQuestionInDatabase(Question question)  throws IOException  {
         QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
         question.setType(qt);
-        SQLiteDatabaseConnection.questionRepository.add(question);
+        SQLiteDatabaseConnection.QUESTION_REPOSITORY.add(question);
         // get the created question_id
-        int new_question_id = SQLiteDatabaseConnection.questionRepository.getMaxQuestionId();
+        int new_question_id = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getMaxQuestionId();
         // create one or multiple answers
         Answer.createAnswers(question, new_question_id);
         // create one or multiple keywords

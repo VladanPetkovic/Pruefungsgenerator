@@ -1,11 +1,11 @@
 package com.example.backend.app;
 
 public enum Screen {
-    Home,
-    CreateAutomatic,
-    CreateManual,
-    QuestionCreate,
-    QuestionEdit,
-    Settings
+    HOME,
+    CREATE_AUTOMATIC,
+    CREATE_MANUAL,
+    QUESTION_CREATE,
+    QUESTION_EDIT,
+    SETTINGS
 
 }

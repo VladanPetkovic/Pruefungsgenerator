@@ -13,12 +13,12 @@ import java.sql.SQLException;
 public class SQLiteDatabaseConnection {
     private static final String DATABASE_URL = getDatabaseUrl();
 
-    public static final CourseRepository courseRepository = new CourseRepository(new CourseDAO());
-    public static final ImageRepository imageRepository =  new ImageRepository(new ImageDAO());
-    public static final KeywordRepository keywordRepository = new KeywordRepository(new KeywordDAO());
-    public static final QuestionRepository questionRepository = new QuestionRepository(new QuestionDAO());
-    public static final StudyProgramRepository studyProgramRepository = new StudyProgramRepository(new StudyProgramDAO());
-    public static final CategoryRepository CategoryRepository = new CategoryRepository(new CategoryDAO());
+    public static final CourseRepository COURSE_REPOSITORY = new CourseRepository(new CourseDAO());
+    public static final ImageRepository IMAGE_REPOSITORY =  new ImageRepository(new ImageDAO());
+    public static final KeywordRepository KEYWORD_REPOSITORY = new KeywordRepository(new KeywordDAO());
+    public static final QuestionRepository QUESTION_REPOSITORY = new QuestionRepository(new QuestionDAO());
+    public static final StudyProgramRepository STUDY_PROGRAM_REPOSITORY = new StudyProgramRepository(new StudyProgramDAO());
+    public static final CategoryRepository CATEGORY_REPOSITORY = new CategoryRepository(new CategoryDAO());
     public static final QuestionTypeRepository QUESTION_TYPE_REPOSITORY = new QuestionTypeRepository(new QuestionTypeDAO());
     public static final AnswerRepository ANSWER_REPOSITORY = new AnswerRepository(new AnswerDAO());
     public static Connection connect() {
