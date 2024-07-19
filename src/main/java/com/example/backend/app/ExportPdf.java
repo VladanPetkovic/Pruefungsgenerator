@@ -4,31 +4,24 @@ import com.example.backend.db.models.Answer;
 import com.example.backend.db.models.Question;
 import com.example.backend.db.models.Type;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.Chunk;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 
-import javax.swing.text.StyleConstants;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -179,7 +172,7 @@ public class ExportPdf extends Export<Document> {
                 .setFixedLeading(fontSize)
                 .setTextAlignment(TextAlignment.RIGHT);
         document.showTextAligned(dateParagraph, margin, pageSize.getHeight() - margin + 10, TextAlignment.LEFT);
-        document.showTextAligned(nameParagraph, pageSize.getWidth()/2, pageSize.getHeight() - margin + 10, TextAlignment.CENTER);
+        document.showTextAligned(nameParagraph, pageSize.getWidth() / 2, pageSize.getHeight() - margin + 10, TextAlignment.CENTER);
         document.showTextAligned(uidParagraph, pageSize.getWidth() - 2 * margin, pageSize.getHeight() - margin + 10, TextAlignment.RIGHT);
     }
 
@@ -256,11 +249,11 @@ public class ExportPdf extends Export<Document> {
         // first page
         if (questionNumber < this.questionsPerSite) {
             // mind the title
-            return (int) (paragraphsOnOnePage - 2)/this.questionsPerSite;
+            return (int) (paragraphsOnOnePage - 2) / this.questionsPerSite;
         }
 
         // following pages
-        return (int) paragraphsOnOnePage/this.questionsPerSite;
+        return (int) paragraphsOnOnePage / this.questionsPerSite;
     }
 
     private Rectangle getPageSize(Document document) {
