@@ -2,11 +2,7 @@ package com.example.frontend;
 
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
-import com.example.backend.app.Screen;
 import com.example.backend.app.SharedData;
-import com.example.backend.db.models.Course;
-import com.example.backend.db.models.Question;
-import com.example.backend.db.models.StudyProgram;
 import com.example.frontend.controller.ControllerFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,16 +13,19 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+@SpringBootApplication
 public class MainApp extends Application {
     /**
      * The primary stage of the application.
@@ -34,6 +33,26 @@ public class MainApp extends Application {
     public static Stage stage;
     public static ControllerFactory controllerFactory = new ControllerFactory();
     public static ResourceBundle resourceBundle;
+    private ConfigurableApplicationContext springContext;
+
+    /**
+     * Launches the JavaFX application.
+     *
+     * @param args Command-line arguments.
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void init() {
+        springContext = SpringApplication.run(MainApp.class);
+    }
+
+    @Override
+    public void stop() {
+        springContext.close();
+    }
 
     /**
      * Starts the JavaFX application.
@@ -126,16 +145,7 @@ public class MainApp extends Application {
         stage.setMinHeight(550);
     }
 
-    /**
-     * Launches the JavaFX application.
-     *
-     * @param args Command-line arguments.
-     */
-    public static void main(String[] args) {
-        launch();
-    }
-
-    private  FXMLLoader selectScreen() {
+    private FXMLLoader selectScreen() {
 
         Locale locale = new Locale("en", "US");
         int lang = SharedData.getCurrentLanguage();
@@ -153,9 +163,11 @@ public class MainApp extends Application {
         //enhanced switch case (suggestion from ide)
         return switch (SharedData.getCurrentScreen()) {
             case HOME -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
-            case CREATE_AUTOMATIC -> new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"), resourceBundle);
+            case CREATE_AUTOMATIC ->
+                    new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"), resourceBundle);
             case CREATE_MANUAL -> new FXMLLoader(MainApp.class.getResource("sites/create_manual.fxml"), resourceBundle);
-            case QUESTION_CREATE -> new FXMLLoader(MainApp.class.getResource("sites/question_create.fxml"), resourceBundle);
+            case QUESTION_CREATE ->
+                    new FXMLLoader(MainApp.class.getResource("sites/question_create.fxml"), resourceBundle);
             case QUESTION_EDIT -> new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"), resourceBundle);
             case SETTINGS -> new FXMLLoader(MainApp.class.getResource("sites/settings.fxml"), resourceBundle);
         };

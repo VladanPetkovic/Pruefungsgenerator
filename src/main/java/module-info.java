@@ -16,8 +16,15 @@ module com.example.demo {
     requires kernel;
     requires io;
     requires itextpdf;
+    requires spring.boot.autoconfigure;
+    requires spring.context;
+    requires spring.boot;
+    requires spring.jdbc;
+    requires spring.beans;
+    requires spring.core;
+    requires jakarta.persistence;
 
-    opens com.example.frontend to javafx.fxml;
+    opens com.example.frontend to javafx.fxml, spring.core;
     exports com.example.frontend;
     exports com.example.frontend.controller;
     opens com.example.frontend.controller to javafx.fxml;

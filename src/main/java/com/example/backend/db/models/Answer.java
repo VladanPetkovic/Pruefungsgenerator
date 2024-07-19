@@ -1,20 +1,26 @@
 package com.example.backend.db.models;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "logs")
 public class Answer implements Serializable {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "answer", nullable = false)
     private String answer;
 
     public Answer(String answer) {
@@ -29,6 +35,7 @@ public class Answer implements Serializable {
     /**
      * This method creates answers and their connection for a new question.
      * If same answers exists, only the connection is made.
+     *
      * @param newQuestion A new question with possible answers (possible Multiple-choice)
      */
     public static void createAnswers(Question newQuestion, int newQuestionId) {
