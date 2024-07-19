@@ -1,6 +1,7 @@
 package com.example.backend.db.models;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -14,38 +15,63 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "questions")
 public class Question implements Serializable {
-    private int id;
-    private Category category;
-    private int difficulty;
-    private float points;
-    private String question;
-    private QuestionType type;
-    private String remark;
-    private Timestamp created_at;
-    private Timestamp updated_at;
-    private ArrayList<Answer> answers;
-    private ArrayList<Keyword> keywords;
-    private ArrayList<Image> images;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Question(Category category, int difficulty, float points, String question,
-                    QuestionType type, String remark, Timestamp created_at,
-                    Timestamp updated_at, ArrayList<Answer> answers,
-                    ArrayList<Keyword> keywords, ArrayList<Image> images) {
+    @ManyToOne
+    @JoinColumn(name = "fk_category_id", nullable = false)
+    private Category category;
+
+    @Column(nullable = false)
+    private Integer difficulty;
+
+    @Column(nullable = false)
+    private Float points;
+
+    @Column(nullable = false)
+    private String question;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_question_type_id", nullable = false)
+    private QuestionType type;
+
+    private String remark;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
+
+    @ManyToMany
+    private Set<Answer> answers = new HashSet<>();
+
+    @ManyToMany(mappedBy = "questions")
+    private Set<Image> images = new HashSet<>();
+
+    @ManyToMany(mappedBy = "questions")
+    private Set<Keyword> keywords = new HashSet<>();
+
+    public Question(Category category, int difficulty, float points, String question, QuestionType type, String remark, Timestamp created_at, Timestamp updated_at, ArrayList<Answer> answers, ArrayList<Keyword> keywords, ArrayList<Image> images) {
         setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);
         setQuestion(question);
         setType(type);
         setRemark(remark);
-        setCreated_at(created_at);
-        setUpdated_at(updated_at);
+        setCreatedAt(created_at);
+        setUpdatedAt(updated_at);
         setAnswers(answers);
         setKeywords(keywords);
         setImages(images);
@@ -71,10 +97,11 @@ public class Question implements Serializable {
 
     /**
      * Returns the created question-id.
+     *
      * @param question provided question for creation
      * @return id of the created question
      */
-    public static int createNewQuestionInDatabase(Question question)  throws IOException  {
+    public static int createNewQuestionInDatabase(Question question) throws IOException {
         QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
         question.setType(qt);
         SQLiteDatabaseConnection.QUESTION_REPOSITORY.add(question);
@@ -91,6 +118,7 @@ public class Question implements Serializable {
 
     /**
      * This function returns the formatted string of a timestamp (created_at, updated_at)
+     *
      * @param time the time to format
      * @return A String, which we can use in the frontend
      */
@@ -118,7 +146,7 @@ public class Question implements Serializable {
         }
     }
 
-    private boolean containsAnswerWithId(int answer_id, ArrayList<Answer> answers) {
+    private boolean containsAnswerWithId(Long answer_id, ArrayList<Answer> answers) {
         for (Answer answer : answers) {
             if (answer.getId() == answer_id) {
                 return true;
@@ -126,7 +154,8 @@ public class Question implements Serializable {
         }
         return false;
     }
-    private boolean containsKeywordWithId(int keyword_id, ArrayList<Keyword> keywords) {
+
+    private boolean containsKeywordWithId(Long keyword_id, ArrayList<Keyword> keywords) {
         for (Keyword keyword : keywords) {
             if (keyword.getId() == keyword_id) {
                 return true;

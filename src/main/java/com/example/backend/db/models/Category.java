@@ -2,6 +2,7 @@ package com.example.backend.db.models;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -9,14 +10,28 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "categories")
 public class Category implements Serializable {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private Set<Question> questions = new HashSet<>();
+
+    @ManyToMany(mappedBy = "categories")
+    private Set<Course> courses = new HashSet<>();
 
     public Category(Category other) {
         setId(other.getId());
@@ -29,6 +44,7 @@ public class Category implements Serializable {
 
     /**
      * This function checks the provided category, no special chars permitted and no leading and ending space.
+     *
      * @param newCategory The provided category
      * @return String - the error-message, returns null if everything is fine.
      */

@@ -1,20 +1,33 @@
 package com.example.backend.db.models;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "question_types")
 public class QuestionType implements Serializable {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Transient
     private Type type;
 
-    public QuestionType(int id, String name) {
+    public QuestionType(Long id, String name) {
         setId(id);
         setName(name);
         setType(name);
@@ -64,6 +77,7 @@ public class QuestionType implements Serializable {
 
     /**
      * This function is used to check whether the questionType was set or not.
+     *
      * @param typeName The string we are reading from the MenuButton
      * @return A Boolean, true, if the typeName matches any enum Type; false otherwise.
      */

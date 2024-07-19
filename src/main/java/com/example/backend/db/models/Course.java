@@ -1,6 +1,7 @@
 package com.example.backend.db.models;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -8,18 +9,36 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "courses")
 public class Course implements Serializable {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String name;
-    private int number;
+
+    @Column(nullable = false)
+    private Integer number;
+
+    @Column(nullable = false)
     private String lector;
 
-    public Course(String name, int number, String lector)  {
+    @ManyToMany
+    private Set<Category> categories = new HashSet<>();
+
+    @ManyToMany
+    private Set<StudyProgram> studyPrograms = new HashSet<>();
+
+    public Course(String name, int number, String lector) {
         setName(name);
         setNumber(number);
         setLector(lector);

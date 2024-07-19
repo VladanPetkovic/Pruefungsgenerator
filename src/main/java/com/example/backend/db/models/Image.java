@@ -1,9 +1,11 @@
 package com.example.backend.db.models;
 
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import javafx.embed.swing.SwingFXUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.imageio.ImageIO;
@@ -12,15 +14,29 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "images")
 public class Image implements Serializable {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Lob
+    @Column(nullable = false)
     private byte[] image;
+
     private String name;
-    private int position;
+
+    @Column(nullable = false)
+    private Integer position;
+
     private String comment;
 
     public Image(javafx.scene.image.Image image, String name) {

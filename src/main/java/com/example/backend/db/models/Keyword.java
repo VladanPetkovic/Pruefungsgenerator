@@ -2,18 +2,29 @@ package com.example.backend.db.models;
 
 import com.example.backend.app.SharedData;
 import com.example.backend.db.SQLiteDatabaseConnection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "keywords")
 public class Keyword implements Serializable {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String keyword;
 
     public Keyword(String keyword) {
@@ -22,6 +33,7 @@ public class Keyword implements Serializable {
 
     /**
      * This function checks the provided keyword, no special chars permitted and no leading and ending space.
+     *
      * @param newKeyword The provided keyword
      * @return String - the error-message, returns null if everything is fine.
      */
@@ -65,6 +77,7 @@ public class Keyword implements Serializable {
     /**
      * This method creates keywords and their connection for a new question.
      * If same keywords exists, only the connection is made.
+     *
      * @param newQuestion A new question with keywords
      */
     public static void createKeywords(Question newQuestion, int newQuestionId) {
