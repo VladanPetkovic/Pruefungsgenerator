@@ -3,7 +3,6 @@ package com.example.frontend.controller;
 import com.example.backend.app.LogLevel;
 import com.example.backend.app.Logger;
 import com.example.backend.app.SharedData;
-import com.example.backend.db.SQLiteDatabaseConnection;
 import com.example.backend.db.models.*;
 import com.example.frontend.MainApp;
 import com.example.frontend.components.CustomDoubleSpinner;

@@ -30,6 +30,7 @@ Table "images" {
   "name" TEXT
   "position" INTEGER [not null]
   "comment" TEXT
+  "fk_question_id" INTEGER [not null]
 }
 
 Table "keywords" {
@@ -57,15 +58,7 @@ Table "question_types" {
 Table "answers" {
   "id" INTEGER [pk]
   "answer" TEXT [not null]
-}
-
-Table "has_aq" {
-  "fk_answer_id" INT
-  "fk_question_id" INT
-
-Indexes {
-  (fk_answer_id, fk_question_id) [pk]
-}
+  "fk_question_id" INTEGER [not null]
 }
 
 Table "has_sc" {
@@ -86,15 +79,6 @@ Indexes {
 }
 }
 
-Table "has_iq" {
-  "fk_image_id" INT
-  "fk_question_id" INT
-
-Indexes {
-  (fk_image_id, fk_question_id) [pk]
-}
-}
-
 Table "has_kq" {
   "fk_keyword_id" INT
   "fk_question_id" INT
@@ -108,9 +92,7 @@ Ref:"categories"."id" < "questions"."fk_category_id"
 
 Ref:"question_types"."id" < "questions"."fk_question_type_id"
 
-Ref:"answers"."id" < "has_aq"."fk_answer_id"
-
-Ref:"questions"."id" < "has_aq"."fk_question_id"
+Ref:"questions"."id" < "answers"."fk_question_id"
 
 Ref:"study_programs"."id" < "has_sc"."fk_program_id"
 
@@ -120,9 +102,7 @@ Ref:"courses"."id" < "has_cc"."fk_course_id"
 
 Ref:"categories"."id" < "has_cc"."fk_category_id"
 
-Ref:"images"."id" < "has_iq"."fk_image_id"
-
-Ref:"questions"."id" < "has_iq"."fk_question_id"
+Ref:"questions"."id" < "images"."fk_question_id"
 
 Ref:"keywords"."id" < "has_kq"."fk_keyword_id"
 

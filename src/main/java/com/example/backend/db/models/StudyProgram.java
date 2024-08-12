@@ -28,7 +28,7 @@ public class StudyProgram implements Serializable {
     @Column(nullable = false)
     private String abbreviation;
 
-    @ManyToMany(mappedBy = "studyPrograms")
+    @ManyToMany
     private Set<Course> courses = new HashSet<>();
 
     public StudyProgram(String name, String abbreviation) {
@@ -36,18 +36,18 @@ public class StudyProgram implements Serializable {
         setAbbreviation(abbreviation);
     }
 
-    public static StudyProgram createNewStudyProgramInDatabase(String studyProgram) {
-        // check for existence
-        StudyProgram newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
-
-        if (newStudyProgram == null) {
-            StudyProgram addToDatabase = new StudyProgram();
-            addToDatabase.setName(studyProgram);
-            SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.add(addToDatabase);
-            newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
-        }
-
-        return newStudyProgram;
-    }
+//    public static StudyProgram createNewStudyProgramInDatabase(String studyProgram) {
+//        // check for existence
+//        StudyProgram newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
+//
+//        if (newStudyProgram == null) {
+//            StudyProgram addToDatabase = new StudyProgram();
+//            addToDatabase.setName(studyProgram);
+//            SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.add(addToDatabase);
+//            newStudyProgram = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.get(studyProgram);
+//        }
+//
+//        return newStudyProgram;
+//    }
 
 }

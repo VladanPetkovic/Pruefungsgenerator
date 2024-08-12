@@ -54,16 +54,16 @@ public class Question implements Serializable {
 
     private LocalDateTime updatedAt;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "questions", cascade = CascadeType.ALL)
     private Set<Answer> answers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "questions")
+    @OneToMany(mappedBy = "questions", cascade = CascadeType.ALL)
     private Set<Image> images = new HashSet<>();
 
-    @ManyToMany(mappedBy = "questions")
+    @ManyToMany
     private Set<Keyword> keywords = new HashSet<>();
 
-    public Question(Category category, int difficulty, float points, String question, QuestionType type, String remark, Timestamp created_at, Timestamp updated_at, ArrayList<Answer> answers, ArrayList<Keyword> keywords, ArrayList<Image> images) {
+    public Question(Category category, int difficulty, float points, String question, QuestionType type, String remark, LocalDateTime created_at, LocalDateTime updated_at, Set<Answer> answers, Set<Keyword> keywords, Set<Image> images) {
         setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);
@@ -82,7 +82,7 @@ public class Question implements Serializable {
 
         // return the first answer of answers, if only one is available
         if (answers.size() == 1) {
-            return answers.get(0).getAnswer();
+            return answers.iterator().next().getAnswer();
         }
 
         for (Answer answer : answers) {
@@ -95,26 +95,26 @@ public class Question implements Serializable {
         return String.valueOf(answersCombined);
     }
 
-    /**
-     * Returns the created question-id.
-     *
-     * @param question provided question for creation
-     * @return id of the created question
-     */
-    public static int createNewQuestionInDatabase(Question question) throws IOException {
-        QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
-        question.setType(qt);
-        SQLiteDatabaseConnection.QUESTION_REPOSITORY.add(question);
-        // get the created question_id
-        int new_question_id = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getMaxQuestionId();
-        // create one or multiple answers
-        Answer.createAnswers(question, new_question_id);
-        // create one or multiple keywords
-        Keyword.createKeywords(question, new_question_id);
-        // create one or multiple images
-        Image.createImages(question, new_question_id);
-        return new_question_id;
-    }
+//    /**
+//     * Returns the created question-id.
+//     *
+//     * @param question provided question for creation
+//     * @return id of the created question
+//     */
+//    public static int createNewQuestionInDatabase(Question question) throws IOException {
+//        QuestionType qt = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.get(question.getType().getName());
+//        question.setType(qt);
+//        SQLiteDatabaseConnection.QUESTION_REPOSITORY.add(question);
+//        // get the created question_id
+//        int new_question_id = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getMaxQuestionId();
+//        // create one or multiple answers
+//        Answer.createAnswers(question, new_question_id);
+//        // create one or multiple keywords
+//        Keyword.createKeywords(question, new_question_id);
+//        // create one or multiple images
+//        Image.createImages(question, new_question_id);
+//        return new_question_id;
+//    }
 
     /**
      * This function returns the formatted string of a timestamp (created_at, updated_at)
@@ -129,38 +129,38 @@ public class Question implements Serializable {
         return updatedAt.format(formatter);
     }
 
-    public void removeDuplicates() {
-        ArrayList<Answer> uniqueAnswers = new ArrayList<>();
-        for (Answer answer : this.answers) {
-            if (!containsAnswerWithId(answer.getId(), uniqueAnswers)) {
-                uniqueAnswers.add(answer);
-            }
-        }
-        this.answers = uniqueAnswers;
+//    public void removeDuplicates() {
+//        ArrayList<Answer> uniqueAnswers = new ArrayList<>();
+//        for (Answer answer : this.answers) {
+//            if (!containsAnswerWithId(answer.getId(), uniqueAnswers)) {
+//                uniqueAnswers.add(answer);
+//            }
+//        }
+//        this.answers = uniqueAnswers;
+//
+//        ArrayList<Keyword> uniqueKeywords = new ArrayList<>();
+//        for (Keyword keyword : this.keywords) {
+//            if (!containsKeywordWithId(keyword.getId(), uniqueKeywords)) {
+//                uniqueKeywords.add(keyword);
+//            }
+//        }
+//    }
 
-        ArrayList<Keyword> uniqueKeywords = new ArrayList<>();
-        for (Keyword keyword : this.keywords) {
-            if (!containsKeywordWithId(keyword.getId(), uniqueKeywords)) {
-                uniqueKeywords.add(keyword);
-            }
-        }
-    }
-
-    private boolean containsAnswerWithId(Long answer_id, ArrayList<Answer> answers) {
-        for (Answer answer : answers) {
-            if (answer.getId() == answer_id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean containsKeywordWithId(Long keyword_id, ArrayList<Keyword> keywords) {
-        for (Keyword keyword : keywords) {
-            if (keyword.getId() == keyword_id) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean containsAnswerWithId(Long answer_id, ArrayList<Answer> answers) {
+//        for (Answer answer : answers) {
+//            if (answer.getId() == answer_id) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    private boolean containsKeywordWithId(Long keyword_id, ArrayList<Keyword> keywords) {
+//        for (Keyword keyword : keywords) {
+//            if (keyword.getId() == keyword_id) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 }

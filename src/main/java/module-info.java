@@ -24,6 +24,7 @@ module com.example.demo {
     requires spring.core;
     requires jakarta.persistence;
     requires org.apache.logging.log4j;
+    requires spring.data.jpa;
 
     opens com.example.frontend to javafx.fxml, spring.core;
     exports com.example.frontend;

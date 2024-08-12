@@ -39,20 +39,24 @@ public class Image implements Serializable {
 
     private String comment;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_question_id", nullable = false, updatable = false)
+    private Question question = new Question();
+
     public Image(javafx.scene.image.Image image, String name) {
         this.image = imageToByteArray(image, getFileExtension(name));
         this.name = name;
     }
 
-    public static void createImages(Question question, int newQuestionId) {
-        if (question == null) {
-            return;
-        }
-        if (question.getImages() == null) {
-            return;
-        }
-        SQLiteDatabaseConnection.IMAGE_REPOSITORY.add(question.getImages(), newQuestionId);
-    }
+//    public static void createImages(Question question, int newQuestionId) {
+//        if (question == null) {
+//            return;
+//        }
+//        if (question.getImages() == null) {
+//            return;
+//        }
+//        SQLiteDatabaseConnection.IMAGE_REPOSITORY.add(question.getImages(), newQuestionId);
+//    }
 
     private String getFileExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {

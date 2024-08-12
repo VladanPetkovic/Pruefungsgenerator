@@ -87,7 +87,9 @@ CREATE TABLE images (
     image BLOB NOT NULL,
     name TEXT,
     position INTEGER NOT NULL,
-    comment TEXT
+    comment TEXT,
+    fk_question_id INTEGER NOT NULL,
+    FOREIGN KEY (fk_question_id) REFERENCES questions(id)
 );
 
 CREATE TABLE keywords (
@@ -116,14 +118,8 @@ CREATE TABLE question_types (
 
 CREATE TABLE answers (
     id INTEGER PRIMARY KEY,
-    answer TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE has_aq (
-    fk_answer_id INT,
-    fk_question_id INT,
-    PRIMARY KEY (fk_answer_id, fk_question_id),
-    FOREIGN KEY (fk_answer_id) REFERENCES answers(id),
+    answer TEXT NOT NULL,
+    fk_question_id INTEGER NOT NULL,
     FOREIGN KEY (fk_question_id) REFERENCES questions(id)
 );
 
@@ -141,14 +137,6 @@ CREATE TABLE has_cc (
     PRIMARY KEY (fk_course_id, fk_category_id),
     FOREIGN KEY (fk_course_id) REFERENCES courses(id),
     FOREIGN KEY (fk_category_id) REFERENCES categories(id)
-);
-
-CREATE TABLE has_iq (
-    fk_image_id INT,
-    fk_question_id INT,
-    PRIMARY KEY (fk_image_id, fk_question_id),
-    FOREIGN KEY (fk_image_id) REFERENCES images(id),
-    FOREIGN KEY (fk_question_id) REFERENCES questions(id)
 );
 
 CREATE TABLE has_kq (
@@ -225,31 +213,6 @@ INSERT INTO questions (fk_category_id, difficulty, points, question, fk_question
 INSERT INTO questions (fk_category_id, difficulty, points, question, fk_question_type_id) VALUES(1, 5, 6.0, 'Was sind Joins in SQL?', 1);
 INSERT INTO questions (fk_category_id, difficulty, points, question, fk_question_type_id) VALUES(2, 8, 9.5, 'Berechnen Sie das unbestimmte Integral von e^(2x)dx.', 1);
 INSERT INTO questions (fk_category_id, difficulty, points, question, fk_question_type_id) VALUES(4, 4, 5.5, 'Was sind komplexe Zahlen?', 1);
-
-INSERT INTO has_aq VALUES(1, 1);
-INSERT INTO has_aq VALUES(2, 2);
-INSERT INTO has_aq VALUES(1, 3);
-INSERT INTO has_aq VALUES(1, 4);
-INSERT INTO has_aq VALUES(1, 5);
-INSERT INTO has_aq VALUES(1, 6);
-INSERT INTO has_aq VALUES(1, 7);
-INSERT INTO has_aq VALUES(1, 8);
-INSERT INTO has_aq VALUES(1, 9);
-INSERT INTO has_aq VALUES(1, 10);
-INSERT INTO has_aq VALUES(1, 11);
-INSERT INTO has_aq VALUES(1, 12);
-INSERT INTO has_aq VALUES(1, 13);
-INSERT INTO has_aq VALUES(1, 14);
-INSERT INTO has_aq VALUES(1, 15);
-INSERT INTO has_aq VALUES(1, 16);
-INSERT INTO has_aq VALUES(1, 17);
-INSERT INTO has_aq VALUES(1, 18);
-INSERT INTO has_aq VALUES(1, 19);
-INSERT INTO has_aq VALUES(1, 20);
-INSERT INTO has_aq VALUES(1, 21);
-INSERT INTO has_aq VALUES(1, 22);
-INSERT INTO has_aq VALUES(1, 23);
-INSERT INTO has_aq VALUES(1, 24);
 
 INSERT INTO has_sc VALUES(1, 1);
 INSERT INTO has_sc VALUES(1, 2);

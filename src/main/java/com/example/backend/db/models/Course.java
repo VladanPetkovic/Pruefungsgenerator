@@ -1,13 +1,11 @@
 package com.example.backend.db.models;
 
-import com.example.backend.db.SQLiteDatabaseConnection;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,21 +42,21 @@ public class Course implements Serializable {
         setLector(lector);
     }
 
-    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) throws IOException {
-        // check for existence
-        Course newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
-
-        if (newCourse == null) {
-            Course addToDatabase = new Course();
-            addToDatabase.setName(course);
-            SQLiteDatabaseConnection.COURSE_REPOSITORY.add(addToDatabase);
-            newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
-            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
-        } else {
-            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
-        }
-
-        return newCourse;
-    }
+//    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) throws IOException {
+//        // check for existence
+//        Course newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
+//
+//        if (newCourse == null) {
+//            Course addToDatabase = new Course();
+//            addToDatabase.setName(course);
+//            SQLiteDatabaseConnection.COURSE_REPOSITORY.add(addToDatabase);
+//            newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
+//            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
+//        } else {
+//            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
+//        }
+//
+//        return newCourse;
+//    }
 
 }

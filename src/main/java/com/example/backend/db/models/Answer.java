@@ -1,6 +1,5 @@
 package com.example.backend.db.models;
 
-import com.example.backend.db.SQLiteDatabaseConnection;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +22,10 @@ public class Answer implements Serializable {
     @Column(nullable = false)
     private String answer;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_question_id", nullable = false, updatable = false)
+    private Question question = new Question();
+
     public Answer(String answer) {
         setAnswer(answer);
     }
@@ -32,18 +35,18 @@ public class Answer implements Serializable {
         setAnswer(other.getAnswer());
     }
 
-    /**
-     * This method creates answers and their connection for a new question.
-     * If same answers exists, only the connection is made.
-     *
-     * @param newQuestion A new question with possible answers (possible Multiple-choice)
-     */
-    public static void createAnswers(Question newQuestion, int newQuestionId) {
-        if (newQuestion == null || newQuestion.getAnswers() == null) {
-            return;
-        }
-
-        // add one or multiple answers and the connection in the join table (has_aq)
-        SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(newQuestion.getAnswers(), newQuestionId);
-    }
+//    /**
+//     * This method creates answers and their connection for a new question.
+//     * If same answers exists, only the connection is made.
+//     *
+//     * @param newQuestion A new question with possible answers (possible Multiple-choice)
+//     */
+//    public static void createAnswers(Question newQuestion, int newQuestionId) {
+//        if (newQuestion == null || newQuestion.getAnswers() == null) {
+//            return;
+//        }
+//
+//        // add one or multiple answers and the connection in the join table (has_aq)
+//        SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(newQuestion.getAnswers(), newQuestionId);
+//    }
 }
