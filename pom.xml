@@ -169,7 +169,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.demo/com.example.frontend.MainApp</mainClass>
+                            <mainClass>com.example.demo/com.example.application.MainApp</mainClass>
                             <options>
                                 <option>--add-exports</option>
                                 <option>javafx.base/com.sun.javafx.event=org.controlsfx.controls</option>
@@ -195,7 +195,7 @@
                         <configuration>
                             <classifier>spring-boot</classifier>
                             <mainClass>
-                                com.example.frontend.MainApp
+                                com.example.application.MainApp
                             </mainClass>
                         </configuration>
                     </execution>
