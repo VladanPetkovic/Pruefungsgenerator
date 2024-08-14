@@ -1,11 +1,11 @@
 package com.example.application.backend.db.services;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import com.example.application.backend.db.repositories.QuestionTypeRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class QuestionService {
-    private static final Logger logger = LogManager.getLogger(QuestionService.class);
     private final QuestionRepository questionRepository;
     private final CategoryRepository categoryRepository;
     private final QuestionTypeRepository questionTypeRepository;
@@ -29,33 +28,33 @@ public class QuestionService {
 
     public Question add(Question question, Long categoryId, Long questionTypeId) {
         question.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
-            logger.error("Category not found with ID: {}", categoryId);
+            Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
             return new RuntimeException("Category not found");
         }));
 
         question.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
-            logger.error("QuestionType not found with ID: {}", questionTypeId);
+            Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
             return new RuntimeException("QuestionType not found");
         }));
 
         Question newQuestion = questionRepository.save(question);
-        logger.info("Question saved with ID: {}", newQuestion.getId());
+        Logger.log(this.getClass().getName(), "Question saved with ID: " + newQuestion.getId(), LogLevel.INFO);
         return newQuestion;
     }
 
     public Question getById(Long id) {
         Question question = questionRepository.findById(id).orElse(null);
         if (question != null) {
-            logger.info("Question found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Question found with ID: " + id, LogLevel.INFO);
         } else {
-            logger.warn("Question not found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Question not found with ID: " + id, LogLevel.WARN);
         }
         return question;
     }
 
     public List<Question> getAll() {
         List<Question> questions = questionRepository.findAll();
-        logger.info("Retrieved all questions, count: {}", questions.size());
+        Logger.log(this.getClass().getName(), "Retrieved all questions, count: " + questions.size(), LogLevel.INFO);
         return questions;
     }
 
@@ -63,12 +62,12 @@ public class QuestionService {
         Question existingQuestion = questionRepository.findById(question.getId()).orElse(null);
         if (existingQuestion != null) {
             existingQuestion.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
-                logger.error("Category not found with ID: {}", categoryId);
+                Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
                 return new RuntimeException("Category not found");
             }));
 
             existingQuestion.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
-                logger.error("QuestionType not found with ID: {}", questionTypeId);
+                Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
                 return new RuntimeException("QuestionType not found");
             }));
 
@@ -78,10 +77,10 @@ public class QuestionService {
             existingQuestion.setRemark(question.getRemark());
 
             Question updatedQuestion = questionRepository.save(existingQuestion);
-            logger.info("Question updated successfully for ID: {}", question.getId());
+            Logger.log(this.getClass().getName(), "Question updated successfully for ID: " + question.getId(), LogLevel.INFO);
             return updatedQuestion;
         } else {
-            logger.error("Failed to find question with ID: {}", question.getId());
+            Logger.log(this.getClass().getName(), "Failed to find question with ID: " + question.getId(), LogLevel.ERROR);
             throw new RuntimeException("Question not found");
         }
     }
@@ -89,9 +88,9 @@ public class QuestionService {
     public void remove(Long id) {
         try {
             questionRepository.deleteById(id);
-            logger.info("Question deleted successfully with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Question deleted successfully with ID: " + id, LogLevel.INFO);
         } catch (Exception e) {
-            logger.error("Failed to delete question with ID: {}", id, e);
+            Logger.log(this.getClass().getName(), "Failed to delete question with ID: " + id, LogLevel.ERROR);
             throw e;
         }
     }

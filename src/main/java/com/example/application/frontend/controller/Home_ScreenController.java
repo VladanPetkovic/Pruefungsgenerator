@@ -41,10 +41,8 @@ import static com.example.application.frontend.modals.ModalOpener.openModal;
 @Component
 @Scope("prototype")
 public class Home_ScreenController extends ScreenController {
-    @Autowired
-    public StudyProgramService studyProgramService;
-    @Autowired
-    public CourseService courseService;
+    private final StudyProgramService studyProgramService;
+    private final CourseService courseService;
     @FXML
     public ImageView langImageView;
     @FXML
@@ -53,6 +51,11 @@ public class Home_ScreenController extends ScreenController {
     private MenuButton coursesMenuButton;
     private final int LANGUAGE_COUNT = 2;
 
+    public Home_ScreenController(StudyProgramService studyProgramService, CourseService courseService) {
+        super();
+        this.studyProgramService = studyProgramService;
+        this.courseService = courseService;
+    }
 
     /**
      * initializes the home screen

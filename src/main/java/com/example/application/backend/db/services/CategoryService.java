@@ -1,11 +1,11 @@
 package com.example.application.backend.db.services;
 
-import com.example.application.backend.db.repositories.QuestionRepository;
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Category;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import com.example.application.backend.db.repositories.CourseRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-    private static final Logger logger = LogManager.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
     private final CourseRepository courseRepository;
@@ -29,23 +28,23 @@ public class CategoryService {
 
     public Category add(Category category) {
         Category newCategory = categoryRepository.save(category);
-        logger.info("Category saved with ID: {}", newCategory.getId());
+        Logger.log(this.getClass().getName(), "Category saved with ID: " + newCategory.getId(), LogLevel.INFO);
         return newCategory;
     }
 
     public Category getById(Long id) {
         Category category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
-            logger.info("Category found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Category found with ID: " + id, LogLevel.INFO);
         } else {
-            logger.warn("Category not found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Category not found with ID: " + id, LogLevel.WARN);
         }
         return category;
     }
 
     public List<Category> getAll() {
         List<Category> categories = categoryRepository.findAll();
-        logger.info("Retrieved all categories, count: {}", categories.size());
+        Logger.log(this.getClass().getName(), "Retrieved all categories, count: " + categories.size(), LogLevel.INFO);
         return categories;
     }
 
@@ -55,10 +54,10 @@ public class CategoryService {
             existingCategory.setName(category.getName());
 
             Category updatedCategory = categoryRepository.save(existingCategory);
-            logger.info("Category updated successfully for ID: {}", category.getId());
+            Logger.log(this.getClass().getName(), "Category updated successfully for ID: " + category.getId(), LogLevel.INFO);
             return updatedCategory;
         } else {
-            logger.error("Failed to find category with ID: {}", category.getId());
+            Logger.log(this.getClass().getName(), "Failed to find category with ID: " + category.getId(), LogLevel.ERROR);
             throw new RuntimeException("Category not found");
         }
     }
@@ -66,9 +65,9 @@ public class CategoryService {
     public void remove(Long id) {
         try {
             categoryRepository.deleteById(id);
-            logger.info("Category deleted successfully with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Category deleted successfully with ID: " + id, LogLevel.INFO);
         } catch (Exception e) {
-            logger.error("Failed to delete category with ID: {}", id, e);
+            Logger.log(this.getClass().getName(), "Failed to delete category with ID: " + id, LogLevel.ERROR);
             throw e;
         }
     }

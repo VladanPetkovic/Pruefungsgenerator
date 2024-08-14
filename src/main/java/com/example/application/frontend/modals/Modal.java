@@ -33,6 +33,7 @@ public class Modal<T> {
      */
     public void loadComponents() {
         fxmlLoader = new FXMLLoader(MainApp.class.getResource(path), MainApp.resourceBundle);
+        // TODO: hier auf FXMLDependencyInjection verweisen und nicht direkt so aufrufen
         try {
             // load FXML file
             root = fxmlLoader.load();

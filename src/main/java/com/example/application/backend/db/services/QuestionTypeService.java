@@ -1,9 +1,9 @@
 package com.example.application.backend.db.services;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.QuestionType;
 import com.example.application.backend.db.repositories.QuestionTypeRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class QuestionTypeService {
-    private static final Logger logger = LogManager.getLogger(QuestionTypeService.class);
     private final QuestionTypeRepository questionTypeRepository;
 
     @Autowired
@@ -21,23 +20,23 @@ public class QuestionTypeService {
 
     public QuestionType add(QuestionType questionType) {
         QuestionType newQuestionType = questionTypeRepository.save(questionType);
-        logger.info("QuestionType saved with ID: {}", newQuestionType.getId());
+        Logger.log(this.getClass().getName(), "QuestionType saved with ID: " + newQuestionType.getId(), LogLevel.INFO);
         return newQuestionType;
     }
 
     public QuestionType getById(Long id) {
         QuestionType questionType = questionTypeRepository.findById(id).orElse(null);
         if (questionType != null) {
-            logger.info("QuestionType found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "QuestionType found with ID: " + id, LogLevel.INFO);
         } else {
-            logger.warn("QuestionType not found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + id, LogLevel.WARN);
         }
         return questionType;
     }
 
     public List<QuestionType> getAll() {
         List<QuestionType> questionTypes = questionTypeRepository.findAll();
-        logger.info("Retrieved all question types, count: {}", questionTypes.size());
+        Logger.log(this.getClass().getName(), "Retrieved all question types, count: " + questionTypes.size(), LogLevel.INFO);
         return questionTypes;
     }
 
@@ -47,10 +46,10 @@ public class QuestionTypeService {
             existingQuestionType.setName(questionType.getName());
 
             QuestionType updatedQuestionType = questionTypeRepository.save(existingQuestionType);
-            logger.info("QuestionType updated successfully for ID: {}", questionType.getId());
+            Logger.log(this.getClass().getName(), "QuestionType updated successfully for ID: " + questionType.getId(), LogLevel.INFO);
             return updatedQuestionType;
         } else {
-            logger.error("Failed to find question type with ID: {}", questionType.getId());
+            Logger.log(this.getClass().getName(), "Failed to find question type with ID: " + questionType.getId(), LogLevel.ERROR);
             throw new RuntimeException("Question type not found");
         }
     }
@@ -58,9 +57,9 @@ public class QuestionTypeService {
     public void remove(Long id) {
         try {
             questionTypeRepository.deleteById(id);
-            logger.info("QuestionType deleted successfully with ID: {}", id);
+            Logger.log(this.getClass().getName(), "QuestionType deleted successfully with ID: " + id, LogLevel.INFO);
         } catch (Exception e) {
-            logger.error("Failed to delete question type with ID: {}", id, e);
+            Logger.log(this.getClass().getName(), "Failed to delete question type with ID: " + id, LogLevel.ERROR);
             throw e;
         }
     }

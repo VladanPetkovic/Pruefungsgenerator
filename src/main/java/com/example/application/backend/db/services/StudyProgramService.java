@@ -1,9 +1,9 @@
 package com.example.application.backend.db.services;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.backend.db.repositories.StudyProgramRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class StudyProgramService {
-    private static final Logger logger = LogManager.getLogger(StudyProgramService.class);
     private final StudyProgramRepository studyProgramRepository;
 
     @Autowired
@@ -25,27 +24,27 @@ public class StudyProgramService {
 
     public StudyProgram add(StudyProgram studyProgram) {
         if (studyProgramExists(studyProgram.getName(), studyProgram.getAbbreviation())) {
-            logger.info("StudyProgram already exists");
+            Logger.log(this.getClass().getName(), "StudyProgram already exists", LogLevel.INFO);
             return null;
         }
         StudyProgram newStudyProgram = studyProgramRepository.save(studyProgram);
-        logger.info("StudyProgram saved with ID: {}", newStudyProgram.getId());
+        Logger.log(this.getClass().getName(), "StudyProgram saved with ID: " + newStudyProgram.getId(), LogLevel.INFO);
         return newStudyProgram;
     }
 
     public StudyProgram getById(Long id) {
         StudyProgram studyProgram = studyProgramRepository.findById(id).orElse(null);
         if (studyProgram != null) {
-            logger.info("StudyProgram found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "StudyProgram found with ID: " + id, LogLevel.INFO);
         } else {
-            logger.warn("StudyProgram not found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "StudyProgram not found with ID: " + id, LogLevel.WARN);
         }
         return studyProgram;
     }
 
     public List<StudyProgram> getAll() {
         List<StudyProgram> studyPrograms = studyProgramRepository.findAll();
-        logger.info("Retrieved all study programs, count: {}", studyPrograms.size());
+        Logger.log(this.getClass().getName(), "Retrieved all study programs, count: " + studyPrograms.size(), LogLevel.INFO);
         return studyPrograms;
     }
 
@@ -56,10 +55,10 @@ public class StudyProgramService {
             existingStudyProgram.setAbbreviation(studyProgram.getAbbreviation());
 
             StudyProgram updatedStudyProgram = studyProgramRepository.save(existingStudyProgram);
-            logger.info("StudyProgram updated successfully for ID: {}", studyProgram.getId());
+            Logger.log(this.getClass().getName(), "StudyProgram updated successfully for ID: " + studyProgram.getId(), LogLevel.INFO);
             return updatedStudyProgram;
         } else {
-            logger.error("Failed to find study program with ID: {}", studyProgram.getId());
+            Logger.log(this.getClass().getName(), "Failed to find study program with ID: " + studyProgram.getId(), LogLevel.ERROR);
             throw new RuntimeException("Study program not found");
         }
     }
@@ -67,9 +66,9 @@ public class StudyProgramService {
     public void remove(Long id) {
         try {
             studyProgramRepository.deleteById(id);
-            logger.info("Study program deleted successfully with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Study program deleted successfully with ID: " + id, LogLevel.INFO);
         } catch (Exception e) {
-            logger.error("Failed to delete study program with ID: {}", id, e);
+            Logger.log(this.getClass().getName(), "Failed to delete study program with ID: " + id, LogLevel.ERROR);
             throw e;
         }
     }

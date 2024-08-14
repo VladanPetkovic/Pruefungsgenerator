@@ -1,9 +1,9 @@
 package com.example.application.backend.db.services;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.repositories.KeywordRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class KeywordService {
-    private static final Logger logger = LogManager.getLogger(KeywordService.class);
     private final KeywordRepository keywordRepository;
 
     @Autowired
@@ -21,23 +20,23 @@ public class KeywordService {
 
     public Keyword add(Keyword keyword) {
         Keyword newKeyword = keywordRepository.save(keyword);
-        logger.info("Keyword saved with ID: {}", newKeyword.getId());
+        Logger.log(this.getClass().getName(), "Keyword saved with ID: " + newKeyword.getId(), LogLevel.INFO);
         return newKeyword;
     }
 
     public Keyword getById(Long id) {
         Keyword keyword = keywordRepository.findById(id).orElse(null);
         if (keyword != null) {
-            logger.info("Keyword found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Keyword found with ID: " + id, LogLevel.INFO);
         } else {
-            logger.warn("Keyword not found with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Keyword not found with ID: " + id, LogLevel.WARN);
         }
         return keyword;
     }
 
     public List<Keyword> getAll() {
         List<Keyword> keywords = keywordRepository.findAll();
-        logger.info("Retrieved all keywords, count: {}", keywords.size());
+        Logger.log(this.getClass().getName(), "Retrieved all keywords, count: " + keywords.size(), LogLevel.INFO);
         return keywords;
     }
 
@@ -47,10 +46,10 @@ public class KeywordService {
             existingKeyword.setKeyword(keyword.getKeyword());
 
             Keyword updatedKeyword = keywordRepository.save(existingKeyword);
-            logger.info("Keyword updated successfully for ID: {}", keyword.getId());
+            Logger.log(this.getClass().getName(), "Keyword updated successfully for ID: " + keyword.getId(), LogLevel.INFO);
             return updatedKeyword;
         } else {
-            logger.error("Failed to find keyword with ID: {}", keyword.getId());
+            Logger.log(this.getClass().getName(), "Failed to find keyword with ID: " + keyword.getId(), LogLevel.ERROR);
             throw new RuntimeException("Keyword not found");
         }
     }
@@ -58,9 +57,9 @@ public class KeywordService {
     public void remove(Long id) {
         try {
             keywordRepository.deleteById(id);
-            logger.info("Keyword deleted successfully with ID: {}", id);
+            Logger.log(this.getClass().getName(), "Keyword deleted successfully with ID: " + id, LogLevel.INFO);
         } catch (Exception e) {
-            logger.error("Failed to delete keyword with ID: {}", id, e);
+            Logger.log(this.getClass().getName(), "Failed to delete keyword with ID: " + id, LogLevel.ERROR);
             throw e;
         }
     }

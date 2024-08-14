@@ -4,6 +4,7 @@ import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.SharedData;
 import com.example.application.frontend.controller.ControllerFactory;
+import com.example.application.frontend.controller.FXMLDependencyInjection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -33,9 +34,9 @@ public class MainApp extends Application {
      */
     public static Stage stage;
     private Parent root;
-    public static ConfigurableApplicationContext springContext;
-    public static ControllerFactory controllerFactory = new ControllerFactory();
-    public static ResourceBundle resourceBundle;
+    public static ConfigurableApplicationContext springContext;     // needed for Dependency-Injection when working with SpringBoot
+    public static ResourceBundle resourceBundle;                    // needed for adding languages
+    public static ControllerFactory controllerFactory;              // needed for switching screens
 
     public static void main(String[] args) {
         launch(MainApp.class, args);
@@ -44,6 +45,7 @@ public class MainApp extends Application {
     @Override
     public void init() throws IOException {
         springContext = SpringApplication.run(MainApp.class);
+        controllerFactory = new ControllerFactory(springContext);
         FXMLLoader fxmlLoader = selectScreen();
         fxmlLoader.setControllerFactory(springContext::getBean);
         root = fxmlLoader.load();
@@ -146,18 +148,16 @@ public class MainApp extends Application {
         }
 
         if (SharedData.getCurrentScreen() == null) {
-            return new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            return FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
         }
 
         return switch (SharedData.getCurrentScreen()) {
-            case CREATE_AUTOMATIC ->
-                    new FXMLLoader(MainApp.class.getResource("sites/create_automatic.fxml"), resourceBundle);
-            case CREATE_MANUAL -> new FXMLLoader(MainApp.class.getResource("sites/create_manual.fxml"), resourceBundle);
-            case QUESTION_CREATE ->
-                    new FXMLLoader(MainApp.class.getResource("sites/question_create.fxml"), resourceBundle);
-            case QUESTION_EDIT -> new FXMLLoader(MainApp.class.getResource("sites/question_edit.fxml"), resourceBundle);
-            case SETTINGS -> new FXMLLoader(MainApp.class.getResource("sites/settings.fxml"), resourceBundle);
-            default -> new FXMLLoader(MainApp.class.getResource("sites/home.fxml"), resourceBundle);
+            case CREATE_AUTOMATIC -> FXMLDependencyInjection.getLoader("sites/create_automatic.fxml", resourceBundle);
+            case CREATE_MANUAL -> FXMLDependencyInjection.getLoader("sites/create_manual.fxml", resourceBundle);
+            case QUESTION_CREATE -> FXMLDependencyInjection.getLoader("sites/question_create.fxml", resourceBundle);
+            case QUESTION_EDIT -> FXMLDependencyInjection.getLoader("sites/question_edit.fxml", resourceBundle);
+            case SETTINGS -> FXMLDependencyInjection.getLoader("sites/settings.fxml", resourceBundle);
+            default -> FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
         };
     }
 

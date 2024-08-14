@@ -7,6 +7,7 @@ public class Logger {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RED = "\u001B[31m";
 
     public static void log(String className, String message, LogLevel level) {
@@ -23,6 +24,10 @@ public class Logger {
                 break;
             case DEBUG:
                 logLevelString = "DEBUG";
+                color = ANSI_BLUE;
+                break;
+            case WARN:
+                logLevelString = "WARNING";
                 color = ANSI_YELLOW;
                 break;
             case ERROR:
