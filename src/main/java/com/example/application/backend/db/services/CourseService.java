@@ -22,6 +22,10 @@ public class CourseService {
         this.studyProgramRepository = studyProgramRepository;
     }
 
+    public boolean hasCategories(Long courseId) {
+        return courseRepository.hasCategories(courseId);
+    }
+
     public Course add(Course course, Long studyProgramId) {
         Course newCourse = courseRepository.save(course);
         Logger.log(this.getClass().getName(), "Course saved with ID: " + newCourse.getId(), LogLevel.INFO);
@@ -34,6 +38,16 @@ public class CourseService {
             Logger.log(this.getClass().getName(), "Course found with ID: " + id, LogLevel.INFO);
         } else {
             Logger.log(this.getClass().getName(), "Course not found with ID: " + id, LogLevel.WARN);
+        }
+        return course;
+    }
+
+    public Course getById(String name) {
+        Course course = courseRepository.findCourseByName(name);
+        if (course != null) {
+            Logger.log(this.getClass().getName(), "Course found with name: " + name, LogLevel.INFO);
+        } else {
+            Logger.log(this.getClass().getName(), "Course not found with name: " + name, LogLevel.WARN);
         }
         return course;
     }

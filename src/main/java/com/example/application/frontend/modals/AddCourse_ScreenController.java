@@ -1,6 +1,7 @@
 package com.example.application.frontend.modals;
 
 import com.example.application.MainApp;
+import com.example.application.backend.db.services.CourseService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,11 +10,15 @@ import javafx.stage.Stage;
 import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.models.Course;
 import javafx.stage.WindowEvent;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
+@Component
+@Scope("prototype")
 public class AddCourse_ScreenController extends ModalController {
+    private final CourseService courseService;
     public Button deleteBtn;
     public Button saveBtn;
     @FXML
@@ -22,6 +27,11 @@ public class AddCourse_ScreenController extends ModalController {
     private Spinner<Integer> numericSpinner;
     @FXML
     private TextField inputLecturer;
+
+    public AddCourse_ScreenController(CourseService courseService) {
+        super();
+        this.courseService = courseService;
+    }
 
     @FXML
     private void initialize() {

@@ -22,6 +22,10 @@ public class StudyProgramService {
         return studyProgramRepository.existsByNameOrAbbreviation(name, abbreviation);
     }
 
+    public boolean hasCourses(Long studyProgramId) {
+        return studyProgramRepository.hasCourses(studyProgramId);
+    }
+
     public StudyProgram add(StudyProgram studyProgram) {
         if (studyProgramExists(studyProgram.getName(), studyProgram.getAbbreviation())) {
             Logger.log(this.getClass().getName(), "StudyProgram already exists", LogLevel.INFO);
@@ -38,6 +42,16 @@ public class StudyProgramService {
             Logger.log(this.getClass().getName(), "StudyProgram found with ID: " + id, LogLevel.INFO);
         } else {
             Logger.log(this.getClass().getName(), "StudyProgram not found with ID: " + id, LogLevel.WARN);
+        }
+        return studyProgram;
+    }
+
+    public StudyProgram getByName(String name) {
+        StudyProgram studyProgram = studyProgramRepository.findStudyProgramByName(name);
+        if (studyProgram != null) {
+            Logger.log(this.getClass().getName(), "StudyProgram found with name: " + name, LogLevel.INFO);
+        } else {
+            Logger.log(this.getClass().getName(), "StudyProgram not found with name: " + name, LogLevel.WARN);
         }
         return studyProgram;
     }

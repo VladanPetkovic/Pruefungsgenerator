@@ -10,9 +10,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
+@Component
+@Scope("prototype")
 public class TargetSelectionController {
     @FXML
     private MenuButton targetStudyProgramMenuBtn;

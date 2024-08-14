@@ -1,6 +1,7 @@
 package com.example.application.frontend.modals;
 
 import com.example.application.MainApp;
+import com.example.application.frontend.controller.FXMLDependencyInjection;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -32,8 +33,7 @@ public class Modal<T> {
      * initializes FXMLLoader to set the root, scene, and controller variables
      */
     public void loadComponents() {
-        fxmlLoader = new FXMLLoader(MainApp.class.getResource(path), MainApp.resourceBundle);
-        // TODO: hier auf FXMLDependencyInjection verweisen und nicht direkt so aufrufen
+        fxmlLoader = FXMLDependencyInjection.getLoader(path, MainApp.resourceBundle);
         try {
             // load FXML file
             root = fxmlLoader.load();

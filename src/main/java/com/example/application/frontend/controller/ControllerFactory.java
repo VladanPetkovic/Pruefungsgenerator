@@ -1,10 +1,10 @@
 package com.example.application.frontend.controller;
 
-import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 import com.example.application.frontend.components.NavbarController;
 import com.example.application.frontend.components.QuestionFilter_ScreenController;
 import com.example.application.frontend.components.TitleBanner_ScreenController;
+import com.example.application.frontend.modals.*;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class ControllerFactory {
@@ -44,6 +44,12 @@ public class ControllerFactory {
             case "NavbarController" -> new NavbarController();
             case "QuestionFilter_ScreenController" -> new QuestionFilter_ScreenController();
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();
+            /* MODALS */
+            case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);
+            case "AddStudyProgram_ScreenController" -> new AddStudyProgram_ScreenController(studyProgramService);
+            case "ConfirmDeletion_ScreenController" -> new ConfirmDeletion_ScreenController(studyProgramService, courseService, questionService);
+            case "ImageResizer_ScreenController" -> new ImageResizer_ScreenController();
+            case "TargetSelectionController" -> new TargetSelectionController();
             default -> throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
         };
     }

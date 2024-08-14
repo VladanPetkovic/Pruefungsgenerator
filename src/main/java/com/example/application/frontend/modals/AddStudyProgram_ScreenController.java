@@ -10,15 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
 public class AddStudyProgram_ScreenController extends ModalController {
-    @Autowired
-    public StudyProgramService studyProgramService;
+    private final StudyProgramService studyProgramService;
     public Button deleteBtn;
     public Button saveBtn;
     @FXML
@@ -28,10 +26,13 @@ public class AddStudyProgram_ScreenController extends ModalController {
     @FXML
     private VBox inputLayout;
 
+    public AddStudyProgram_ScreenController(StudyProgramService studyProgramService) {
+        super();
+        this.studyProgramService = studyProgramService;
+    }
+
     @FXML
     private void initialize() {
-        studyProgramService = MainApp.springContext.getBean(StudyProgramService.class);
-
         // check, if a studyProgram was selected for editing
         StudyProgram toEdit = SharedData.getSelectedEditStudyProgram();
         if (toEdit.getId() != null) {
@@ -92,7 +93,7 @@ public class AddStudyProgram_ScreenController extends ModalController {
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
-            if (SharedData.getSelectedEditStudyProgram().getId() == 0) {
+            if (SharedData.getSelectedEditStudyProgram().getId() == null) {
                 closeStage(actionEvent);
             }
         });

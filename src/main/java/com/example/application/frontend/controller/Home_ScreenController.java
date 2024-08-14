@@ -19,13 +19,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -172,7 +170,7 @@ public class Home_ScreenController extends ScreenController {
             return;
         }
 
-//        ArrayList<Course> courses = courseService.getAll(SharedData.getSelectedStudyProgram().getId());
+//        ArrayList<Course> courses = courseService.getAll(SharedData.getSelectedStudyProgram().getId()); TODO
         List<Course> courses = courseService.getAll();
         for (Course course : courses) {
             addCourseToMenuButton(course);
