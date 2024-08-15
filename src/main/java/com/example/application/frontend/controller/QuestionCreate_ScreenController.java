@@ -3,6 +3,9 @@ package com.example.application.frontend.controller;
 import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
+import com.example.application.backend.db.services.CategoryService;
+import com.example.application.backend.db.services.KeywordService;
+import com.example.application.backend.db.services.QuestionTypeService;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 
 import com.example.application.frontend.components.PicturePickerController;
@@ -16,18 +19,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+@Component
+@Scope("prototype")
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
+    private final CategoryService categoryService;
+    private final KeywordService keywordService;
+    private final QuestionTypeService questionTypeService;
     @FXML
     private TextField categoryTextField;
     @FXML
@@ -68,6 +78,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
+    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionTypeService questionTypeService) {
+        super();
+        this.categoryService = categoryService;
+        this.keywordService = keywordService;
+        this.questionTypeService = questionTypeService;
+    }
+
     /**
      * Initializes the controller after its root element has been completely processed.
      * This method is called once all FXML elements have been processed, but before the elements have been
@@ -80,8 +97,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
 
 //        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
-        ArrayList<Keyword> keywords = null;
-//                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId());
+        List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
         difficulty.setValue(5);
@@ -101,7 +117,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
         }
 
-        initializeMenuButton(questionTypeMenuButton, false);
+        List<QuestionType> questionTypes = questionTypeService.getAll();
+        initializeMenuButton(questionTypeMenuButton, false, questionTypes);
         initQuestionTypeListener();
 
         try {

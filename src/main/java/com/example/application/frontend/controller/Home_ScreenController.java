@@ -170,8 +170,7 @@ public class Home_ScreenController extends ScreenController {
             return;
         }
 
-//        ArrayList<Course> courses = courseService.getAll(SharedData.getSelectedStudyProgram().getId()); TODO
-        List<Course> courses = courseService.getAll();
+        List<Course> courses = courseService.getAllByStudyProgram(SharedData.getSelectedStudyProgram().getId());
         for (Course course : courses) {
             addCourseToMenuButton(course);
         }
@@ -241,7 +240,7 @@ public class Home_ScreenController extends ScreenController {
     private void addStudyProgram() throws IOException {
         Stage newStage = openModal(ModalOpener.ADD_STUDY_PROGRAM);
 
-        //listener for when the stage is closed
+        // listener for when the stage is closed
         newStage.setOnHidden(event -> {
             try {
                 resetStudyProgramMenuButton();
@@ -260,7 +259,7 @@ public class Home_ScreenController extends ScreenController {
 
         Stage newStage = openModal(ModalOpener.ADD_COURSE);
 
-        //listener for when the stage is closed
+        // listener for when the stage is closed
         newStage.setOnHidden(event -> {
             try {
                 resetCourseMenuButton();

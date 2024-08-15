@@ -5,6 +5,8 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.Category;
 import com.example.application.MainApp;
+import com.example.application.backend.db.services.CategoryService;
+import com.example.application.backend.db.services.QuestionService;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,21 +21,33 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
+@Component
+@Scope("prototype")
 public class CreateAutomatic_ScreenController extends ScreenController {
+    private final QuestionService questionService;
+    private final CategoryService categoryService;
     @FXML
     private VBox addQuestionVBox; // reference to the VBox containing the "Add Question" button
     private int questionCount = 0;
     private ArrayList<MenuButton> categoriesMenuButtons = new ArrayList<>();
-    private ArrayList<Category> categories;
+    private List<Category> categories;
     private ArrayList<Slider> difficultySliders = new ArrayList<>();
     private ArrayList<Integer> difficultySlidersStatus = new ArrayList<>();
     private ArrayList<CustomDoubleSpinner> pointsSpinners = new ArrayList<>();
     private ArrayList<Integer> pointsSpinnersStatus = new ArrayList<>();
+
+    public CreateAutomatic_ScreenController(QuestionService questionService, CategoryService categoryService) {
+        super();
+        this.questionService = questionService;
+        this.categoryService = categoryService;
+    }
 
     private void setButtonEventHandlers(List<Node> nodes) {
         for (Node node : nodes) {
@@ -50,7 +64,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
     @FXML
     public void initialize() {
         Long course_id = SharedData.getSelectedCourse().getId();
-//        categories = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(course_id);
+        categories = categoryService.getAllByCourseId(course_id);
 
         // set (press & release) event handlers for all buttons that are dynamically generated
         setButtonEventHandlers(addQuestionVBox.getChildren());
@@ -244,7 +258,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // get the category
             if (!Objects.equals(categoriesMenuButtons.get(i).getText(), MainApp.resourceBundle.getString("question_filter_select_category"))) { // TODO: change to not compare text
                 selectedCategory = categoriesMenuButtons.get(i).getText();
-//                queryQuestion.setCategory(SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(selectedCategory));
+                queryQuestion.setCategory(categoryService.getByName(selectedCategory));
             }
             // get the points
             if (!pointsSpinners.get(i).isDisabled()) {
@@ -260,7 +274,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             int pointStatus = pointsSpinnersStatus.get(i);
             int diffStatus = difficultySlidersStatus.get(i);
             ArrayList<Question> queryResult = new ArrayList<>();
-//                    SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus);
+//                    SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus); TODO
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {

@@ -94,7 +94,7 @@ public abstract class ScreenController {
      *
      * @param addKeywordBtn When passed null, then we cannot add keywords
      */
-    protected void initializeKeywords(TextField keywordTextField, ArrayList<Keyword> keywords, Button addKeywordBtn) {
+    protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords, Button addKeywordBtn) {
         if (keywords.isEmpty()) {
             return;
         }
@@ -123,7 +123,7 @@ public abstract class ScreenController {
      * TODO: maybe rewrite: initializeKeywords and initializeCategories to one function with additional boolean value
      * And displays an add-btn, when the inputted text is changed AND not in the db
      */
-    protected void initializeCategories(TextField categoryTextField, ArrayList<Category> categories, Button add_category_btn) {
+    protected void initializeCategories(TextField categoryTextField, List<Category> categories, Button add_category_btn) {
         if (categories.isEmpty()) {
             return;
         }
@@ -180,26 +180,25 @@ public abstract class ScreenController {
      *
      * @param menuButton - the menuButton used in the scene
      */
-    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes) {
-//        ArrayList<QuestionType> questionTypes = SQLiteDatabaseConnection.QUESTION_TYPE_REPOSITORY.getAll();
-//        menuButton.getItems().clear();
-//
-//        for (QuestionType questionType : questionTypes) {
-//            MenuItem menuItem = new MenuItem(questionType.getName());
-//            menuItem.setOnAction(e -> {
-//                menuButton.setText(questionType.getName());
-//            });
-//            menuButton.getItems().add(menuItem);
-//        }
-//
-//        if (allowAllTypes) {
-//            // add "showAll" to showAll QuestionTypes
-//            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
-//            menuItem.setOnAction(e -> {
-//                menuButton.setText(MainApp.resourceBundle.getString("all_types"));
-//            });
-//            menuButton.getItems().add(menuItem);
-//        }
+    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<QuestionType> questionTypes) {
+        menuButton.getItems().clear();
+
+        for (QuestionType questionType : questionTypes) {
+            MenuItem menuItem = new MenuItem(questionType.getName());
+            menuItem.setOnAction(e -> {
+                menuButton.setText(questionType.getName());
+            });
+            menuButton.getItems().add(menuItem);
+        }
+
+        if (allowAllTypes) {
+            // add "showAll" to showAll QuestionTypes
+            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
+            menuItem.setOnAction(e -> {
+                menuButton.setText(MainApp.resourceBundle.getString("all_types"));
+            });
+            menuButton.getItems().add(menuItem);
+        }
     }
 
     /**

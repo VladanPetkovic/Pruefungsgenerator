@@ -36,27 +36,16 @@ public class Course implements Serializable {
     @ManyToMany
     private Set<StudyProgram> studyPrograms = new HashSet<>();
 
-    public Course(String name, int number, String lector) {
+    public Course(Long id, String name, int number, String lector) {
+        setId(id);
         setName(name);
         setNumber(number);
         setLector(lector);
     }
 
-//    public static Course createNewCourseInDatabase(String course, StudyProgram studyProgram) throws IOException {
-//        // check for existence
-//        Course newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
-//
-//        if (newCourse == null) {
-//            Course addToDatabase = new Course();
-//            addToDatabase.setName(course);
-//            SQLiteDatabaseConnection.COURSE_REPOSITORY.add(addToDatabase);
-//            newCourse = SQLiteDatabaseConnection.COURSE_REPOSITORY.get(course);
-//            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
-//        } else {
-//            SQLiteDatabaseConnection.COURSE_REPOSITORY.addConnection(studyProgram, newCourse);
-//        }
-//
-//        return newCourse;
-//    }
-
+    public Course(String name, int number, String lector) {
+        setName(name);
+        setNumber(number);
+        setLector(lector);
+    }
 }

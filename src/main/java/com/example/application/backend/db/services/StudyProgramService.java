@@ -19,7 +19,7 @@ public class StudyProgramService {
     }
 
     public boolean studyProgramExists(String name, String abbreviation) {
-        return studyProgramRepository.existsByNameOrAbbreviation(name, abbreviation);
+        return studyProgramRepository.existsStudyProgramByNameOrAbbreviation(name, abbreviation);
     }
 
     public boolean hasCourses(Long studyProgramId) {

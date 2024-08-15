@@ -76,6 +76,7 @@ public class AddStudyProgram_ScreenController extends ModalController {
     private void createStudyProgram(String enteredName, String enteredAbbr) {
         StudyProgram newProgram = new StudyProgram(enteredName, enteredAbbr);
         studyProgramService.add(newProgram);
+        // TODO: the add() method returns a studyProgram -> check whether null and display an appropriate message
     }
 
     private void updateStudyProgram(String enteredName, String enteredAbbr) {

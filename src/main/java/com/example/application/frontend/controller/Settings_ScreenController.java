@@ -7,6 +7,8 @@ import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
+import com.example.application.backend.db.services.CourseService;
+import com.example.application.backend.db.services.StudyProgramService;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,13 +17,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Component
+@Scope("prototype")
 public class Settings_ScreenController extends ScreenController {
+    private final StudyProgramService studyProgramService;
+    private final CourseService courseService;
     @FXML
     public MenuButton chooseQuestionsMenuButton;
     @FXML
@@ -44,20 +52,26 @@ public class Settings_ScreenController extends ScreenController {
     private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
     private String modeOfImport = "";
 
+    public Settings_ScreenController(StudyProgramService studyProgramService, CourseService courseService) {
+        super();
+        this.studyProgramService = studyProgramService;
+        this.courseService = courseService;
+    }
+
     @FXML
     private void initialize() {
-//        ArrayList<String> studyPrograms = SQLiteDatabaseConnection.STUDY_PROGRAM_REPOSITORY.getAll().stream()
-//                .map(StudyProgram::getName)
-//                .collect(Collectors.toCollection(ArrayList::new));
-//        ArrayList<String> courses = SQLiteDatabaseConnection.COURSE_REPOSITORY.getAll(SharedData.getSelectedStudyProgram().getId())
-//                .stream()
-//                .map(Course::getName)
-//                .collect(Collectors.toCollection(ArrayList::new));
-//        initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
-//        initializeMenuButton(chooseCourseMenuButton, courses);
-//
-//        // Bind the disabled state of chooseTargetBtn to chooseTargetDisabled property
-//        chooseTargetBtn.disableProperty().bind(chooseTargetDisabled);
+        ArrayList<String> studyPrograms = studyProgramService.getAll().stream()
+                .map(StudyProgram::getName)
+                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> courses = courseService.getAllByStudyProgram(SharedData.getSelectedStudyProgram().getId())
+                .stream()
+                .map(Course::getName)
+                .collect(Collectors.toCollection(ArrayList::new));
+        initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
+        initializeMenuButton(chooseCourseMenuButton, courses);
+
+        // Bind the disabled state of chooseTargetBtn to chooseTargetDisabled property
+        chooseTargetBtn.disableProperty().bind(chooseTargetDisabled);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems) {

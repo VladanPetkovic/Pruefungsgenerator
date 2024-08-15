@@ -3,8 +3,8 @@ package com.example.application.backend.db.services;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Course;
+import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.backend.db.repositories.CourseRepository;
-import com.example.application.backend.db.repositories.StudyProgramRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +13,26 @@ import java.util.List;
 @Service
 public class CourseService {
     private final CourseRepository courseRepository;
-    private final StudyProgramRepository studyProgramRepository;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository,
-                         StudyProgramRepository studyProgramRepository) {
+    public CourseService(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
-        this.studyProgramRepository = studyProgramRepository;
+    }
+
+    public boolean courseExists(Integer number, String name, Long studyProgramId) {
+        return courseRepository.existsCourseByNumberOrNameAndStudyProgramId(number, name, studyProgramId);
     }
 
     public boolean hasCategories(Long courseId) {
         return courseRepository.hasCategories(courseId);
     }
 
-    public Course add(Course course, Long studyProgramId) {
+    public Course add(Course course, StudyProgram studyProgram) {
+        if (courseExists(course.getNumber(), course.getName(), studyProgram.getId())) {
+            Logger.log(this.getClass().getName(), "Course already exists", LogLevel.INFO);
+            return null;
+        }
+        course.getStudyPrograms().add(studyProgram);
         Course newCourse = courseRepository.save(course);
         Logger.log(this.getClass().getName(), "Course saved with ID: " + newCourse.getId(), LogLevel.INFO);
         return newCourse;
@@ -42,7 +48,7 @@ public class CourseService {
         return course;
     }
 
-    public Course getById(String name) {
+    public Course getByName(String name) {
         Course course = courseRepository.findCourseByName(name);
         if (course != null) {
             Logger.log(this.getClass().getName(), "Course found with name: " + name, LogLevel.INFO);
@@ -55,6 +61,12 @@ public class CourseService {
     public List<Course> getAll() {
         List<Course> courses = courseRepository.findAll();
         Logger.log(this.getClass().getName(), "Retrieved all courses, count: " + courses.size(), LogLevel.INFO);
+        return courses;
+    }
+
+    public List<Course> getAllByStudyProgram(Long studyProgramId) {
+        List<Course> courses = courseRepository.findAllCoursesByStudyProgramId(studyProgramId);
+        Logger.log(this.getClass().getName(), "Retrieved all courses for a study-program, count: " + courses.size(), LogLevel.INFO);
         return courses;
     }
 

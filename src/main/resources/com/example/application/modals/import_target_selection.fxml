@@ -34,12 +34,12 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Button fx:id="okBtn" onAction="#onOkBtnClick" styleClass="btn_green" text="%confirm" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <Button onAction="#onOkBtnClick" styleClass="btn_green" text="%confirm" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                <GridPane.margin>
                   <Insets top="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelBtnClick" styleClass="btn_orange" text="%cancel" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#onCancelBtnClick" styleClass="btn_orange" text="%cancel" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets top="10.0" />
                </GridPane.margin>

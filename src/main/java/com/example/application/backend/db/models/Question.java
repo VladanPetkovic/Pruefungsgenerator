@@ -119,11 +119,9 @@ public class Question implements Serializable {
      * @param time the time to format
      * @return A String, which we can use in the frontend
      */
-    public String getTimeStampFormatted(Timestamp time) {
-        Instant instant = time.toInstant();
-        LocalDateTime updatedAt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    public String getTimeStampFormatted(LocalDateTime time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-        return updatedAt.format(formatter);
+        return time.format(formatter);
     }
 
 //    public void removeDuplicates() {

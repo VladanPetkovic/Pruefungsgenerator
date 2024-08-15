@@ -34,9 +34,25 @@ public class KeywordService {
         return keyword;
     }
 
+    public Keyword getByName(String name) {
+        Keyword keyword = keywordRepository.findKeywordByKeyword(name);
+        if (keyword != null) {
+            Logger.log(this.getClass().getName(), "Keyword found with name: " + name, LogLevel.INFO);
+        } else {
+            Logger.log(this.getClass().getName(), "Keyword not found with name: " + name, LogLevel.WARN);
+        }
+        return keyword;
+    }
+
     public List<Keyword> getAll() {
         List<Keyword> keywords = keywordRepository.findAll();
         Logger.log(this.getClass().getName(), "Retrieved all keywords, count: " + keywords.size(), LogLevel.INFO);
+        return keywords;
+    }
+
+    public List<Keyword> getAllByCourseId(Long courseId) {
+        List<Keyword> keywords = keywordRepository.findAllByCourseId(courseId);
+        Logger.log(this.getClass().getName(), "Retrieved all keywords for one course, count: " + keywords.size(), LogLevel.INFO);
         return keywords;
     }
 

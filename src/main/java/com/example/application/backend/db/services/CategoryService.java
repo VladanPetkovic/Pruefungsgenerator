@@ -42,9 +42,25 @@ public class CategoryService {
         return category;
     }
 
+    public Category getByName(String name) {
+        Category category = categoryRepository.findCategoryByName(name);
+        if (category != null) {
+            Logger.log(this.getClass().getName(), "Category found with name: " + name, LogLevel.INFO);
+        } else {
+            Logger.log(this.getClass().getName(), "Category not found with name: " + name, LogLevel.WARN);
+        }
+        return category;
+    }
+
     public List<Category> getAll() {
         List<Category> categories = categoryRepository.findAll();
         Logger.log(this.getClass().getName(), "Retrieved all categories, count: " + categories.size(), LogLevel.INFO);
+        return categories;
+    }
+
+    public List<Category> getAllByCourseId(Long courseId) {
+        List<Category> categories = categoryRepository.findAllByCourseId(courseId);
+        Logger.log(this.getClass().getName(), "Retrieved all categories for one course, count: " + categories.size(), LogLevel.INFO);
         return categories;
     }
 

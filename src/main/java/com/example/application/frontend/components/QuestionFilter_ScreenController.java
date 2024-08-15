@@ -4,19 +4,28 @@ import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.SharedData;
+import com.example.application.backend.db.services.CategoryService;
+import com.example.application.backend.db.services.KeywordService;
+import com.example.application.backend.db.services.QuestionService;
+import com.example.application.backend.db.services.QuestionTypeService;
 import com.example.application.frontend.controller.ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
+@Component
+@Scope("prototype")
 public class QuestionFilter_ScreenController extends ScreenController {
+    private final QuestionService questionService;
+    private final QuestionTypeService questionTypeService;
+    private final KeywordService keywordService;
+    private final CategoryService categoryService;
     @FXML
     public MenuButton questionTypeMenuButton;
     @FXML
@@ -41,13 +50,22 @@ public class QuestionFilter_ScreenController extends ScreenController {
     private int pointsSliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
     private int difficultySliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
 
+    public QuestionFilter_ScreenController(QuestionService questionService, QuestionTypeService questionTypeService, KeywordService keywordService, CategoryService categoryService) {
+        super();
+        this.questionService = questionService;
+        this.questionTypeService = questionTypeService;
+        this.keywordService = keywordService;
+        this.categoryService = categoryService;
+    }
+
     @FXML
     private void initialize() {
         // init auto-completion
-//        initializeKeywords(this.keywordTextField, SQLiteDatabaseConnection.KEYWORD_REPOSITORY.getAllOneCourse(SharedData.getSelectedCourse().getId()), null);
-//        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()), null);
+        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
         initializeQuestions(this.questionTextField);
-        initializeMenuButton(this.questionTypeMenuButton, true);
+        List<QuestionType> questionTypes = questionTypeService.getAll();
+        initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
 
         // displays the selected course above the filter window
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
@@ -85,10 +103,10 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // set category value if provided
         if (!categoryName.isEmpty()) {
-//            Category category = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryName);
-//            if (category != null) {
-//                filterQuestion.setCategory(category);
-//            }
+            Category category = categoryService.getByName(categoryName);
+            if (category != null) {
+                filterQuestion.setCategory(category);
+            }
         }
 
         // set keyword value if provided
@@ -98,10 +116,10 @@ public class QuestionFilter_ScreenController extends ScreenController {
             // split by commas or spaces
             String[] keywordsArray = keywordText.split("[,\\s]+");
             for (String keyword : keywordsArray) {
-//                Keyword keywordObj = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword.trim());
-//                if (keywordObj != null) {
-//                    keywordsList.add(keywordObj);
-//                }
+                Keyword keywordObj = keywordService.getByName(keyword.trim());
+                if (keywordObj != null) {
+                    keywordsList.add(keywordObj);
+                }
             }
         }
         if (!keywordsList.isEmpty()) {
