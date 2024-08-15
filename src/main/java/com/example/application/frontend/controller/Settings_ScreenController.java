@@ -1,13 +1,13 @@
 package com.example.application.frontend.controller;
 
-//import com.example.application.backend.app.ExportCSV;
-//import com.example.application.backend.app.ImportCSV;
+import com.example.application.backend.app.ExportCSV;
 import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.CourseService;
+import com.example.application.backend.db.services.QuestionService;
 import com.example.application.backend.db.services.StudyProgramService;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.beans.property.BooleanProperty;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class Settings_ScreenController extends ScreenController {
     private final StudyProgramService studyProgramService;
     private final CourseService courseService;
+    private final QuestionService questionService;
     @FXML
     public MenuButton chooseQuestionsMenuButton;
     @FXML
@@ -52,10 +53,11 @@ public class Settings_ScreenController extends ScreenController {
     private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
     private String modeOfImport = "";
 
-    public Settings_ScreenController(StudyProgramService studyProgramService, CourseService courseService) {
+    public Settings_ScreenController(StudyProgramService studyProgramService, CourseService courseService, QuestionService questionService) {
         super();
         this.studyProgramService = studyProgramService;
         this.courseService = courseService;
+        this.questionService = questionService;
     }
 
     @FXML
@@ -160,25 +162,25 @@ public class Settings_ScreenController extends ScreenController {
     }
 
     public void applyExportBtnClicked(ActionEvent actionEvent) {
-//        if (!allFieldsSetProperly()) {
-//            return;
-//        }
-//
-//        ExportCSV exportCSV = new ExportCSV(this.label_selectedDirectory.getText());
-//        int exportType = 0;     // all questions
-//        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
-//            exportType = 1;     // only for studyProgram
-//            exportCSV.initStudyProgram(chooseStudyProgramMenuBtn.getText());
-//        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
-//            exportType = 2;     // only for course
-//            exportCSV.initCourse(chooseCourseMenuButton.getText());
-//        }
-//
-//        if (exportCSV.export(exportType)) {
-//            SharedData.setOperation(Message.SUCCESS_MESSAGE_QUESTIONS_EXPORTED);
-//        } else {
-//            SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
-//        }
+        if (!allFieldsSetProperly()) {
+            return;
+        }
+
+        ExportCSV exportCSV = new ExportCSV(this.label_selectedDirectory.getText(), studyProgramService, courseService, questionService);
+        int exportType = 0;     // all questions
+        if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_study_program"))) {
+            exportType = 1;     // only for studyProgram
+            exportCSV.initStudyProgram(chooseStudyProgramMenuBtn.getText());
+        } else if (Objects.equals(chooseQuestionsMenuButton.getText(), MainApp.resourceBundle.getString("questions_of_course"))) {
+            exportType = 2;     // only for course
+            exportCSV.initCourse(chooseCourseMenuButton.getText());
+        }
+
+        if (exportCSV.export(exportType)) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_QUESTIONS_EXPORTED);
+        } else {
+            SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
+        }
     }
 
     @FXML

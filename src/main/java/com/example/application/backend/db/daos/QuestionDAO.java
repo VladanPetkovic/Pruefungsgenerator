@@ -1,71 +1,14 @@
-//package com.example.backend.db.daos;
-//
-//import com.example.backend.app.LogLevel;
-//import com.example.backend.app.Logger;
-//import com.example.backend.app.SharedData;
-//import com.example.backend.db.SQLiteDatabaseConnection;
-//import com.example.backend.db.models.*;
-//
-//import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.Objects;
-//
-//public class QuestionDAO implements DAO<Question> {
 //    private final String selectColumns =
 //            "SELECT q.id AS question_id, q.fk_category_id, q.difficulty, q.points, q.question, q.fk_question_type_id, q.remark, q.created_at, q.updated_at, " +
 //            "a.id AS answer_id, a.answer, c.name AS category_name, " +
 //            "k.id AS keyword_id, k.keyword, qt.name AS question_type, " +
 //            "i.id AS image_id, i.image, i.name AS image_name, i.position, i.comment ";
 //
-//    // questionCache needed for staging questions before sending them to the user
-//    ArrayList<Question> questionCache;
-//    public QuestionDAO() {
-//        this.questionCache = new ArrayList<>();
-//    }
-//
-//    /**
-//     * Creates a new question in the database.
-//     *
-//     * @param question The question to be created.
-//     */
-//    @Override
-//    public void create(Question question) {
+
 //        String insertStmt =
 //                "INSERT INTO questions " +
 //                "(fk_category_id, difficulty, points, question, fk_question_type_id, remark, created_at, updated_at) " +
 //                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-//        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement preparedStatement = connection.prepareStatement(insertStmt)) {
-//
-//            preparedStatement.setInt(1, question.getCategory().getId());
-//            preparedStatement.setInt(2, question.getDifficulty());
-//            preparedStatement.setFloat(3, question.getPoints());
-//            preparedStatement.setString(4, question.getQuestion());
-//            preparedStatement.setInt(5, question.getType().getId());
-//            preparedStatement.setString(6, question.getRemark());
-//            preparedStatement.setString(7, question.getCreated_at().toString());
-//            preparedStatement.setString(8, question.getUpdated_at().toString());
-//
-//            preparedStatement.executeUpdate();
-//
-//            SharedData.setOperation(Message.CREATE_QUESTION_SUCCESS_MESSAGE);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            SharedData.setOperation(Message.CREATE_QUESTION_ERROR_MESSAGE);
-//        }
-//    }
-//
-//    /**
-//     * Retrieves all questions from the database.
-//     *
-//     * @return ArrayList of all questions.
-//     */
-//    @Override
-//    public ArrayList<Question> readAll() {
-//        // deleting old questions, if they are existing in this cache
-//        this.questionCache.clear();
 //
 //        String selectQuestionsStmt =
 //            this.selectColumns +
@@ -79,30 +22,7 @@
 //            "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
 //            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
 //            "LIMIT 500;";
-//        Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt);
-//             ResultSet questionsResultSet = questionsStatement.executeQuery()) {
-//
-//            while (questionsResultSet.next()) {
-//                Question newQuestion = createModelFromResultSet(questionsResultSet);
-//                if(newQuestion != null) {
-//                    this.questionCache.add(newQuestion);
-//                }
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return this.questionCache;
-//    }
-//
-//    public ArrayList<Question> readAll(Course course, int minQuestionId) {
-//        // deleting old questions, if they are existing in this cache
-//        this.questionCache.clear();
-//
+
 //        String selectQuestionsStmt =
 //                "SELECT q.id AS question_id, q.fk_category_id, q.difficulty, q.points, q.question, q.fk_question_type_id, q.remark, q.created_at, q.updated_at, " +
 //                "a.id AS answer_id, a.answer, c.name AS category_name, " +
@@ -119,73 +39,14 @@
 //                "WHERE courses.id = ? AND q.id > ? " +
 //                "ORDER BY q.id " +
 //                "LIMIT 500;";
-//        Logger.log(getClass().getName(), selectQuestionsStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement questionsStatement = connection.prepareStatement(selectQuestionsStmt)) {
-//
-//            questionsStatement.setInt(1, course.getId());
-//            questionsStatement.setInt(2, minQuestionId);
-//            try (ResultSet questionsResultSet = questionsStatement.executeQuery()) {
-//                while (questionsResultSet.next()) {
-//                    Question newQuestion = createModelFromResultSet(questionsResultSet);
-//                    if (newQuestion != null) {
-//                        this.questionCache.add(newQuestion);
-//                    }
-//                }
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return this.questionCache;
-//    }
-//
-//    public int readQuestionCount() {
-//        int questionCount = 0;
-//
+
 //        String selectStmt = "SELECT COUNT() AS question_count FROM questions;";
-//        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt);
-//             ResultSet count = questionsStatement.executeQuery()) {
-//
-//            if (count.next()) {
-//                questionCount = count.getInt("question_count");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return questionCount;
-//    }
-//
-//    public int readQuestionCount(Course course) {
-//        int questionCount = 0;
 //
 //        String selectStmt = "SELECT COUNT(DISTINCT questions.id) AS question_count " +
 //                "FROM questions " +
 //                "JOIN has_cc ON questions.fk_category_id = has_cc.fk_category_id " +
 //                "JOIN courses ON has_cc.fk_course_id = courses.id " +
 //                "WHERE courses.id = ?;";
-//        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt)) {
-//
-//            questionsStatement.setInt(1, course.getId());
-//            try (ResultSet count = questionsStatement.executeQuery()) {
-//                questionCount = count.getInt("question_count");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return questionCount;
-//    }
-//
-//    public int readQuestionCount(int studyProgramId) {
-//        int questionCount = 0;
 //
 //        String selectStmt = "SELECT COUNT(DISTINCT questions.id) AS question_count " +
 //                "FROM questions " +
@@ -194,20 +55,6 @@
 //                "JOIN has_sc ON courses.id = has_sc.fk_course_id " +
 //                "JOIN study_programs ON has_sc.fk_program_id = study_programs.id " +
 //                "WHERE study_programs.id = ?;";
-//        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement questionsStatement = connection.prepareStatement(selectStmt)) {
-//
-//            questionsStatement.setInt(1, studyProgramId);
-//            try (ResultSet count = questionsStatement.executeQuery()) {
-//                questionCount = count.getInt("question_count");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return questionCount;
-//    }
 //
 //    /**
 //     * Retrieves all questions belonging to a specific category from the database.
@@ -393,18 +240,6 @@
 //            stmt.append(" ").append(searchObject.getColumn_name()).append(" <= ? AND");
 //        }
 //    }
-//
-//    /**
-//     * Retrieves a question by its ID from the database.
-//     *
-//     * @param questionId The ID of the question to retrieve.
-//     * @return The Question object corresponding to the given ID.
-//     */
-//    @Override
-//    public Question read(int questionId) {
-//        // deleting old questions, if they are existing in this cache
-//        this.questionCache.clear();
-//
 //        String selectStmt =
 //            this.selectColumns +
 //            "FROM Questions q " +
@@ -417,36 +252,6 @@
 //            "LEFT JOIN images i ON hiq.fk_image_id = i.id " +
 //            "LEFT JOIN question_types qt ON q.fk_question_type_id = qt.id " +
 //            "WHERE q.id = ?;";
-//        Logger.log(getClass().getName(), selectStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement preparedStatement = connection.prepareStatement(selectStmt)) {
-//
-//            preparedStatement.setInt(1, questionId);
-//            try (ResultSet questionsResultSet = preparedStatement.executeQuery()) {
-//                while (questionsResultSet.next()) {
-//                    Question newQuestion = createModelFromResultSet(questionsResultSet);
-//                    if(newQuestion != null) {
-//                        this.questionCache.add(createModelFromResultSet(questionsResultSet));
-//                    }
-//                }
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if(!this.questionCache.isEmpty()) {
-//            return this.questionCache.get(0);
-//        }
-//
-//        return null;
-//    }
-//
-//    /**
-//     * This function gets the id from the latest created question.
-//     * @return the latest id, which was created.
-//     */
 //    public int getMaxQuestionId() {
 //        this.questionCache.clear();
 //
@@ -466,84 +271,6 @@
 //
 //        return -1;
 //    }
-//
-//    /**
-//     * Updates an existing question in the database.
-//     *
-//     * @param question The question to be updated.
-//     */
-//    @Override
-//    public void update(Question question) {
-//        String updateStmt =
-//                "UPDATE questions " +
-//                "SET fk_category_id = ?, difficulty = ?, points = ?, question = ?, " +
-//                "remark = ?, updated_at = ? " +
-//                "WHERE id = ?;";
-//
-//        Logger.log(getClass().getName(), updateStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement preparedStatement = connection.prepareStatement(updateStmt)) {
-//
-//            preparedStatement.setInt(1, question.getCategory().getId());
-//            preparedStatement.setInt(2, question.getDifficulty());
-//            preparedStatement.setFloat(3, question.getPoints());
-//            preparedStatement.setString(4, question.getQuestion());
-//            preparedStatement.setString(5, question.getRemark());
-//            preparedStatement.setString(6, String.valueOf(question.getUpdated_at()));
-//            preparedStatement.setInt(7, question.getId());
-//
-//            preparedStatement.executeUpdate();
-//
-//            SharedData.setOperation(Message.UPDATE_QUESTION_SUCCESS_MESSAGE);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            SharedData.setOperation(Message.UPDATE_QUESTION_ERROR_MESSAGE);
-//        }
-//    }
-//
-//    /**
-//     * Deletes a question from the database.
-//     *
-//     * @param id The ID of the question to delete.
-//     */
-//    @Override
-//    public void delete(int id) {
-//        String deleteStmt = "DELETE FROM questions WHERE id = ?;";
-//        String deleteHasIQStmt = "DELETE FROM has_iq WHERE fk_question_id = ?;";
-//        String deleteHasKQStmt = "DELETE FROM has_kq WHERE fk_question_id = ?;";
-//        String deleteHasAQStmt = "DELETE FROM has_aq WHERE fk_question_id = ?;";
-//
-//        Logger.log(getClass().getName(), deleteStmt, LogLevel.DEBUG);
-//        Logger.log(getClass().getName(), deleteHasIQStmt, LogLevel.DEBUG);
-//        Logger.log(getClass().getName(), deleteHasKQStmt, LogLevel.DEBUG);
-//        Logger.log(getClass().getName(), deleteHasAQStmt, LogLevel.DEBUG);
-//
-//        try (Connection connection = SQLiteDatabaseConnection.connect();
-//             PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
-//             PreparedStatement secondPreparedStatement = connection.prepareStatement(deleteHasIQStmt);
-//             PreparedStatement thirdPreparedStatement = connection.prepareStatement(deleteHasKQStmt);
-//             PreparedStatement fourthPreparedStatement = connection.prepareStatement(deleteHasAQStmt)) {
-//
-//            preparedStatement.setInt(1, id);
-//            preparedStatement.executeUpdate();
-//
-//            secondPreparedStatement.setInt(1, id);
-//            secondPreparedStatement.executeUpdate();
-//
-//            thirdPreparedStatement.setInt(1, id);
-//            thirdPreparedStatement.executeUpdate();
-//
-//            fourthPreparedStatement.setInt(1, id);
-//            fourthPreparedStatement.executeUpdate();
-//
-//            SharedData.setOperation(Message.DELETE_QUESTION_SUCCESS_MESSAGE);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            SharedData.setOperation(Message.DELETE_QUESTION_ERROR_MESSAGE);
-//        }
-//    }
-//
 //    /**
 //     * Creates a Question object from a ResultSet.
 //     *

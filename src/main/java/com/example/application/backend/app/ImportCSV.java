@@ -1,31 +1,31 @@
-//package com.example.backend.app;
-//
-//import com.example.backend.db.SQLiteDatabaseConnection;
-//import com.example.backend.db.models.*;
-//import com.example.frontend.MainApp;
-//
-//import java.io.BufferedReader;
-//import java.io.FileReader;
-//import java.io.IOException;
-//import java.sql.Connection;
-//import java.sql.SQLException;
-//import java.sql.Timestamp;
-//import java.time.Instant;
-//import java.util.ArrayList;
-//
-//public class ImportCSV {
-//    private String filePath;
-//    private String modeOfImport;
-//    private String importTargetStudyProgram;
-//    private String importTargetCourse;
-//
-//    public ImportCSV(String filePath) {
-//        this.filePath = filePath;
-//        this.modeOfImport = SharedData.getModeOfImport();
-//        this.importTargetStudyProgram = SharedData.getImportTargetStudyProgram();
-//        this.importTargetCourse = SharedData.getImportTargetCourse();
-//    }
-//
+package com.example.application.backend.app;
+
+import com.example.application.backend.db.models.*;
+import com.example.application.MainApp;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+public class ImportCSV {
+    private String filePath;
+    private String modeOfImport;
+    private String importTargetStudyProgram;
+    private String importTargetCourse;
+
+    public ImportCSV(String filePath) {
+        this.filePath = filePath;
+        this.modeOfImport = SharedData.getModeOfImport();
+        this.importTargetStudyProgram = SharedData.getImportTargetStudyProgram();
+        this.importTargetCourse = SharedData.getImportTargetCourse();
+    }
+
 //    public boolean importData() {
 //        // Checks if the filePath is null, which means no file was selected
 //        if (filePath == null) {
@@ -75,7 +75,7 @@
 //        }
 //
 //        // Parse values from the CSV row, removing any double quotes
-//        int question_id = Integer.parseInt(values[0]);
+//        Long question_id = Long.parseLong(values[0]);
 //        String questionText = values[1].replace("\"", "");
 //        String categoryName = values[2].replace("\"", "");
 //        int difficulty = Integer.parseInt(values[3]);
@@ -189,8 +189,8 @@
 //        question.setQuestion(questionText);
 //        question.setType(questionType);
 //        question.setRemark(remark);
-//        question.setCreated_at(Timestamp.from(Instant.now()));
-//        question.setUpdated_at(Timestamp.from(Instant.now()));
+//        question.setCreatedAt(LocalDateTime.now());
+//        question.setUpdatedAt(LocalDateTime.now());
 //        question.setAnswers(answers);
 //        question.setKeywords(keywords);
 //        //question.setImages(images);
@@ -198,7 +198,7 @@
 //        Question.createNewQuestionInDatabase(question);
 //    }
 //
-//    private void updateQuestion(int question_id, Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
+//    private void updateQuestion(Long question_id, Category category, int difficulty, float points, String questionText, QuestionType questionType, String remark, ArrayList<Answer> answers,
 //                               ArrayList<Keyword> keywords /*, ArrayList<Image> images*/) throws IOException {
 //        Question question = new Question();
 //        question.setId(question_id);
@@ -208,7 +208,7 @@
 //        question.setQuestion(questionText);
 //        question.setType(questionType);
 //        question.setRemark(remark);
-//        question.setUpdated_at(Timestamp.from(Instant.now()));
+//        question.setUpdatedAt(LocalDateTime.now());
 //        question.setAnswers(answers);
 //        question.setKeywords(keywords);
 //        //question.setImages(images);
@@ -248,5 +248,5 @@
 //
 //        return newKeywords;
 //    }
-//
-//}
+
+}

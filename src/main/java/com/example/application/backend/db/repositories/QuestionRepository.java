@@ -1,36 +1,28 @@
 package com.example.application.backend.db.repositories;
 
 import com.example.application.backend.db.models.Question;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+    @Query("SELECT COUNT(q) FROM Question q JOIN q.category cat JOIN cat.courses c JOIN c.studyPrograms sp WHERE sp.id = :studyProgramId")
+    long getCountByStudyProgramId(@Param("studyProgramId") Long studyProgramId);
 
-//    final ArrayList<String> columnNames = new ArrayList<>(List.of(
-//            "q.id", "q.fk_category_id", "difficulty", "points", "question", "question_type",
-//            "remark", "created_at", "updated_at", "fk_answer_id", "fk_keyword_id", "fk_image_id"));
-//
+    @Query("SELECT COUNT(q) FROM Question q JOIN q.category cat JOIN cat.courses c WHERE c.id = :courseId")
+    long getCountByCourseId(@Param("courseId") Long courseId);
 
-//
-//    public int getCountOfAllQuestions() {
-//        return getQuestionDAO().readQuestionCount();
-//    }
-//
-//    public int getCountOfAllQuestions(StudyProgram studyProgram) {
-//        return getQuestionDAO().readQuestionCount(studyProgram.getId());
-//    }
-//    public int getCountOfAllQuestions(Course course) {
-//        return getQuestionDAO().readQuestionCount(course);
-//    }
+    List<Question> findQuestionsByCategoryId(Long categoryId);
 
-//
-//    // getting all questions for one category
-//    public ArrayList<Question> getAll(Category category) {
-//        return getQuestionDAO().readAll(category);
-//    }
-//
-//    public ArrayList<Question> getAll(Course course, int minQuestionId) {
-//        return getQuestionDAO().readAll(course, minQuestionId);
-//    }
+    @Query("SELECT q FROM Question q JOIN q.category cat JOIN cat.courses c WHERE c.id = :courseId AND q.id > :minQuestionId")
+    List<Question> findByCourseIdAndIdGreaterThan(@Param("courseId") Long courseId, @Param("minQuestionId") Long minQuestionId, Pageable pageable);
+
+    @Query("SELECT MAX(q.id) FROM Question q")
+    Long getMaxQuestionId();
+
 //
 //    /**
 //     * getting all questions for a dynamic search
@@ -99,10 +91,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 //        }
 //
 //        return getQuestionDAO().readAll(searchOptions, course, pointsStatus, difficultyStatus);
-//    }
-//
-//
-//    public int getMaxQuestionId() {
-//        return getQuestionDAO().getMaxQuestionId();
 //    }
 }

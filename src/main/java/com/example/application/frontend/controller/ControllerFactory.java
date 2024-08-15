@@ -39,7 +39,7 @@ public class ControllerFactory {
             case "PdfPreview_ScreenController" -> new PdfPreview_ScreenController();
             case "QuestionCreate_ScreenController" -> new QuestionCreate_ScreenController(keywordService, categoryService, questionTypeService);
             case "QuestionEdit_ScreenController" -> new QuestionEdit_ScreenController(keywordService, categoryService, answerService, questionService, imageService);
-            case "Settings_ScreenController" -> new Settings_ScreenController(studyProgramService, courseService);
+            case "Settings_ScreenController" -> new Settings_ScreenController(studyProgramService, courseService, questionService);
             /* COMPONENTS */
             case "NavbarController" -> new NavbarController();
             case "QuestionFilter_ScreenController" -> new QuestionFilter_ScreenController(questionService, questionTypeService, keywordService, categoryService);

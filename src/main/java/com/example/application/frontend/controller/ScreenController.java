@@ -124,9 +124,9 @@ public abstract class ScreenController {
      * And displays an add-btn, when the inputted text is changed AND not in the db
      */
     protected void initializeCategories(TextField categoryTextField, List<Category> categories, Button add_category_btn) {
-        if (categories.isEmpty()) {
-            return;
-        }
+//        if (categories.isEmpty()) {   // maybe when the application crashed this code is necessary - to be checked/tested
+//            return;
+//        }
 
         // in java everything is passed by reference, so changes in items make changes in SharedData
         ObservableList<String> items = SharedData.getSuggestedCategories();

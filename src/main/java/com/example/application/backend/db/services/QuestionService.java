@@ -7,6 +7,8 @@ import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import com.example.application.backend.db.repositories.QuestionTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,15 +29,7 @@ public class QuestionService {
     }
 
     public Question add(Question question, Long categoryId, Long questionTypeId) {
-        question.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
-            Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
-            return new RuntimeException("Category not found");
-        }));
-
-        question.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
-            Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
-            return new RuntimeException("QuestionType not found");
-        }));
+        checkCategoryAndQuestionType(question, categoryId, questionTypeId);
 
         Question newQuestion = questionRepository.save(question);
         Logger.log(this.getClass().getName(), "Question saved with ID: " + newQuestion.getId(), LogLevel.INFO);
@@ -58,18 +52,45 @@ public class QuestionService {
         return questions;
     }
 
+    public List<Question> getAllByCategory(Long categoryId) {
+        List<Question> questions = questionRepository.findQuestionsByCategoryId(categoryId);
+        Logger.log(this.getClass().getName(), "Retrieved all questions for a category, count: " + questions.size(), LogLevel.INFO);
+        return questions;
+    }
+
+    /**
+     * This db-call is solely used when exporting to avoid a stack-overflow (getting to many questions at once)
+     * @param courseId The id for the course the questions belong to.
+     * @param minQuestionId The next questionId to get another 250 questions.
+     * @return List of questions.
+     */
+    public List<Question> getAllByCourseAndIdGreaterThan(Long courseId, Long minQuestionId) {
+        Pageable pageable = PageRequest.of(0, 250);
+        List<Question> questions = questionRepository.findByCourseIdAndIdGreaterThan(courseId, minQuestionId, pageable);
+        Logger.log(this.getClass().getName(), "Retrieved all questions for a category, count: " + questions.size(), LogLevel.INFO);
+        return questions;
+    }
+
+    public long getCount() {
+        return questionRepository.count();
+    }
+
+    public long getCountByStudyProgram(Long studyProgramId) {
+        return questionRepository.getCountByStudyProgramId(studyProgramId);
+    }
+
+    public long getCountByCourse(Long courseId) {
+        return questionRepository.getCountByCourseId(courseId);
+    }
+
+    public Long getMaxQuestionId() {
+        return questionRepository.getMaxQuestionId();
+    }
+
     public Question update(Question question, Long categoryId, Long questionTypeId) {
         Question existingQuestion = questionRepository.findById(question.getId()).orElse(null);
         if (existingQuestion != null) {
-            existingQuestion.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
-                Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
-                return new RuntimeException("Category not found");
-            }));
-
-            existingQuestion.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
-                Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
-                return new RuntimeException("QuestionType not found");
-            }));
+            checkCategoryAndQuestionType(existingQuestion, categoryId, questionTypeId);
 
             existingQuestion.setDifficulty(question.getDifficulty());
             existingQuestion.setPoints(question.getPoints());
@@ -93,5 +114,17 @@ public class QuestionService {
             Logger.log(this.getClass().getName(), "Failed to delete question with ID: " + id, LogLevel.ERROR);
             throw e;
         }
+    }
+
+    private void checkCategoryAndQuestionType(Question question, Long categoryId, Long questionTypeId) {
+        question.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
+            Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
+            return new RuntimeException("Category not found");
+        }));
+
+        question.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
+            Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
+            return new RuntimeException("QuestionType not found");
+        }));
     }
 }

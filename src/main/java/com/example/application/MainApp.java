@@ -7,7 +7,6 @@ import com.example.application.frontend.controller.ControllerFactory;
 import com.example.application.frontend.controller.FXMLDependencyInjection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -33,7 +32,6 @@ public class MainApp extends Application {
      * The primary stage of the application.
      */
     public static Stage stage;
-    private Parent root;
     public static ConfigurableApplicationContext springContext;     // needed for Dependency-Injection when working with SpringBoot
     public static ResourceBundle resourceBundle;                    // needed for adding languages
     public static ControllerFactory controllerFactory;              // needed for switching screens
@@ -46,9 +44,6 @@ public class MainApp extends Application {
     public void init() throws IOException {
         springContext = SpringApplication.run(MainApp.class);
         controllerFactory = new ControllerFactory(springContext);
-        FXMLLoader fxmlLoader = selectScreen();
-        fxmlLoader.setControllerFactory(springContext::getBean);
-        root = fxmlLoader.load();
     }
 
     @Override
@@ -69,17 +64,20 @@ public class MainApp extends Application {
         resourceBundle = ResourceBundle.getBundle("common.en", locale);
 
         Path path = Paths.get(SharedData.getFilepath());
+        // checking if the application has crashed last time
         if (Files.exists(path)) {
             Logger.log(getClass().getName(), "Loading existing CrashFile", LogLevel.INFO);
             SharedData.loadFromFile();
-
             path = Paths.get(SharedData.getFilepath());
             Files.delete(path);
         } else {
             Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
             SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
         }
-        Scene scene = new Scene(root);
+
+        FXMLLoader fxmlLoader = selectScreen();
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         setWindowsSize(stage);
 
@@ -160,5 +158,4 @@ public class MainApp extends Application {
             default -> FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
         };
     }
-
 }
