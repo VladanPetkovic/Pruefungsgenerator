@@ -14,7 +14,6 @@ public class ControllerFactory {
     private ImageService imageService;
     private KeywordService keywordService;
     private QuestionService questionService;
-    private QuestionTypeService questionTypeService;
     private final StudyProgramService studyProgramService;
 
     public ControllerFactory(ConfigurableApplicationContext springContext) {
@@ -24,7 +23,6 @@ public class ControllerFactory {
         imageService = springContext.getBean(ImageService.class);
         keywordService = springContext.getBean(KeywordService.class);
         questionService = springContext.getBean(QuestionService.class);
-        questionTypeService = springContext.getBean(QuestionTypeService.class);
         studyProgramService = springContext.getBean(StudyProgramService.class);
     }
 
@@ -40,7 +38,7 @@ public class ControllerFactory {
             case "Home_ScreenController" -> new Home_ScreenController(studyProgramService, courseService);
             case "PdfPreview_ScreenController" -> new PdfPreview_ScreenController();
             case "QuestionCreate_ScreenController" ->
-                    new QuestionCreate_ScreenController(keywordService, categoryService, questionService, questionTypeService);
+                    new QuestionCreate_ScreenController(keywordService, categoryService, questionService);
             case "QuestionEdit_ScreenController" ->
                     new QuestionEdit_ScreenController(keywordService, categoryService, answerService, questionService, imageService);
             case "Settings_ScreenController" ->
@@ -48,7 +46,7 @@ public class ControllerFactory {
             /* COMPONENTS */
             case "NavbarController" -> new NavbarController();
             case "QuestionFilter_ScreenController" ->
-                    new QuestionFilter_ScreenController(questionService, questionTypeService, keywordService, categoryService);
+                    new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();
             /* MODALS */
             case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);

@@ -316,16 +316,16 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private void initSelectedQuestionType(Question selectedQuestion) {
         multipleChoiceAnswerVBox.getChildren().clear();
         chooseAnswerTextArea.setText("");
-        questionTypeMenuButtonEdit.textProperty().setValue(selectedQuestion.getType().getName());
+        questionTypeMenuButtonEdit.textProperty().setValue(selectedQuestion.getType());
 
         // question = MC
-        if (selectedQuestion.getType().checkQuestionType(Type.MULTIPLE_CHOICE)) {
+        if (Type.isMultipleChoice(selectedQuestion.getType())) {
             for (Answer answer : selectedQuestion.getAnswers()) {
                 addNewAnswer(answer);
             }
             multipleChoiceVBox.setVisible(true);
             chooseAnswerTextArea.setDisable(true);
-        } else if (selectedQuestion.getType().getType() == Type.TRUE_FALSE) {
+        } else if (Type.isTrueFalse(selectedQuestion.getType())) {
             multipleChoiceVBox.setVisible(false);
             chooseAnswerTextArea.setDisable(true);
         } else {
@@ -423,7 +423,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         compareImages(question);
 
         // compare answers and add/remove connections accordingly
-        if (selectedQuestion.getType().getType() == Type.MULTIPLE_CHOICE) {
+        if (Type.isMultipleChoice(selectedQuestion.getType())) {
             compareAnswers();
         } else {
 //            SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeConnection(selectedQuestion.getAnswers().get(0), selectedQuestion.getId());    // not MC --> we have only one answer
@@ -554,7 +554,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         if (checkIfEmptyAnswers(questionTypeMenuButtonEdit, answers)) {
             return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
-        if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButtonEdit.getText())) {
+        if (answers.size() < 2 && Type.isMultipleChoice(questionTypeMenuButtonEdit.getText())) {
             return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {

@@ -40,9 +40,8 @@ public class Question implements Serializable {
     @Column(nullable = false)
     private String question;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_question_type_id", nullable = false)
-    private QuestionType type;
+    @Column(nullable = false)
+    private String type;
 
     private String remark;
 
@@ -60,7 +59,7 @@ public class Question implements Serializable {
     @ManyToMany(mappedBy = "questions")
     private Set<Keyword> keywords = new HashSet<>();
 
-    public Question(Category category, int difficulty, float points, String question, QuestionType type, String remark, LocalDateTime created_at, LocalDateTime updated_at, Set<Answer> answers, Set<Keyword> keywords, Set<Image> images) {
+    public Question(Category category, int difficulty, float points, String question, String type, String remark, LocalDateTime created_at, LocalDateTime updated_at, Set<Answer> answers, Set<Keyword> keywords, Set<Image> images) {
         setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);

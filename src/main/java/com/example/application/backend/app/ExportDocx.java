@@ -181,14 +181,14 @@ public class ExportDocx extends Export<XWPFDocument> {
             XWPFRun answerRun = questionParagraph.createRun();
             answerRun.setBold(false);
             // different questionTypes
-            if (question.getType().getType() == Type.OPEN) {
+            if (Type.isOpen(question.getType())) {
                 answerRun.addCarriageReturn();
                 answerRun.setText("A:");
-            } else if (question.getType().getType() == Type.MULTIPLE_CHOICE) {
+            } else if (Type.isMultipleChoice(question.getType())) {
                 for (Answer answer : question.getAnswers()) {
                     setMcAnswer(answer.getAnswer(), answerRun);
                 }
-            } else if (question.getType().getType() == Type.TRUE_FALSE) {
+            } else if (Type.isTrueFalse(question.getType())) {
                 setMcAnswer("True", answerRun);
                 setMcAnswer("False", answerRun);
             }

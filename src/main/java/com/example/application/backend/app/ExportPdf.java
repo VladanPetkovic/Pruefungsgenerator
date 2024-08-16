@@ -207,17 +207,17 @@ public class ExportPdf extends Export<Document> {
             document.add(questionParagraph);
 
             // using normal font instead of bold
-            if (question.getType().getType() == Type.OPEN) {
+            if (Type.isOpen(question.getType())) {
                 Paragraph answerParagraph = new Paragraph("A: ")
                         .setFont(font)
                         .setFontSize(12)
                         .setTextAlignment(TextAlignment.LEFT);
                 document.add(answerParagraph);
-            } else if (question.getType().getType() == Type.MULTIPLE_CHOICE) {
+            } else if (Type.isMultipleChoice(question.getType())) {
                 for (Answer answer : question.getAnswers()) {
                     document.add(setMcAnswer(" " + answer.getAnswer(), font));
                 }
-            } else if (question.getType().getType() == Type.TRUE_FALSE) {
+            } else if (Type.isTrueFalse(question.getType())) {
                 document.add(setMcAnswer(" True", font));
                 document.add(setMcAnswer(" False", font));
             }

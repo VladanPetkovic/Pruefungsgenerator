@@ -91,7 +91,7 @@ public class ExportCSV {
                 writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");
                 writer.append(String.valueOf(question.getDifficulty())).append(";");
                 writer.append(String.valueOf(question.getPoints())).append(";");
-                writer.append("\"").append(question.getType().getName()).append("\"").append(";");
+                writer.append("\"").append(question.getType()).append("\"").append(";");
                 writer.append("\"").append(question.getRemark()).append("\"").append(";");
                 writeAnswers(question, writer);
                 writeKeywords(question, writer);

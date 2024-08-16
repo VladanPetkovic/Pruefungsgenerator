@@ -6,7 +6,6 @@ import com.example.application.MainApp;
 import com.example.application.backend.db.services.CategoryService;
 import com.example.application.backend.db.services.KeywordService;
 import com.example.application.backend.db.services.QuestionService;
-import com.example.application.backend.db.services.QuestionTypeService;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 
 import com.example.application.frontend.components.PicturePickerController;
@@ -37,7 +36,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private final CategoryService categoryService;
     private final KeywordService keywordService;
     private final QuestionService questionService;
-    private final QuestionTypeService questionTypeService;
     @FXML
     private TextField categoryTextField;
     @FXML
@@ -78,12 +76,11 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
-    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, QuestionTypeService questionTypeService) {
+    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService) {
         super();
         this.categoryService = categoryService;
         this.keywordService = keywordService;
         this.questionService = questionService;
-        this.questionTypeService = questionTypeService;
     }
 
     /**
@@ -96,8 +93,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-//        initializeCategories(this.categoryTextField, SQLiteDatabaseConnection.CATEGORY_REPOSITORY.getAll(SharedData.getSelectedCourse().getId()), add_category_btn);
+        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
@@ -118,7 +114,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
         }
 
-        List<QuestionType> questionTypes = questionTypeService.getAll();
+        List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(questionTypeMenuButton, false, questionTypes);
         initQuestionTypeListener();
 
@@ -189,8 +185,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     public void initQuestionTypeListener() {
         questionTypeMenuButton.textProperty().addListener((observable) -> {
-            if (QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
-                switch (new QuestionType(questionTypeMenuButton.getText()).getType()) {
+            if (Type.checkType(questionTypeMenuButton.getText())) {
+                switch (Type.getType(questionTypeMenuButton.getText())) {
                     case MULTIPLE_CHOICE:
                         initMultipleChoiceVBox();
                         break;
@@ -258,7 +254,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             return;
         }
 
-        QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
         Category category = categoryService.getByName(categoryTextField.getText());
 
         // Create a new Question object with the provided details
@@ -267,7 +262,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 (int) difficulty.getValue(),
                 points.getValue().floatValue(),
                 question.getText(),
-                questionType,
+                questionTypeMenuButton.getText(),
                 remarks.getText(),
                 LocalDateTime.now(),    // createdAt
                 LocalDateTime.now(),    // updatedAt
@@ -300,13 +295,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
             return MainApp.resourceBundle.getString("error_message_no_category");
         }
-        if (!QuestionType.checkExistingType(questionTypeMenuButton.getText())) {
+        if (!Type.checkType(questionTypeMenuButton.getText())) {
             return MainApp.resourceBundle.getString("error_message_question_type_not_selected");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButton, answers)) {
             return MainApp.resourceBundle.getString("error_message_mc_no_answer");
         }
-        if (answers.size() < 2 && QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+        if (answers.size() < 2 && Type.isMultipleChoice(questionTypeMenuButton.getText())) {
             return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
         if (checkIfQuestionIsEmpty()) {

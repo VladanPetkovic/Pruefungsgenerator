@@ -7,7 +7,6 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.services.CategoryService;
 import com.example.application.backend.db.services.KeywordService;
 import com.example.application.backend.db.services.QuestionService;
-import com.example.application.backend.db.services.QuestionTypeService;
 import com.example.application.frontend.controller.ScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +22,6 @@ import java.util.*;
 @Scope("prototype")
 public class QuestionFilter_ScreenController extends ScreenController {
     private final QuestionService questionService;
-    private final QuestionTypeService questionTypeService;
     private final KeywordService keywordService;
     private final CategoryService categoryService;
     @FXML
@@ -50,10 +48,9 @@ public class QuestionFilter_ScreenController extends ScreenController {
     private int pointsSliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
     private int difficultySliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
 
-    public QuestionFilter_ScreenController(QuestionService questionService, QuestionTypeService questionTypeService, KeywordService keywordService, CategoryService categoryService) {
+    public QuestionFilter_ScreenController(QuestionService questionService, KeywordService keywordService, CategoryService categoryService) {
         super();
         this.questionService = questionService;
-        this.questionTypeService = questionTypeService;
         this.keywordService = keywordService;
         this.categoryService = categoryService;
     }
@@ -64,7 +61,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()), null);
         initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
         initializeQuestions(this.questionTextField);
-        List<QuestionType> questionTypes = questionTypeService.getAll();
+        List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
 
         // displays the selected course above the filter window
@@ -139,9 +136,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
         }
 
         // set questionType value
-        if (QuestionType.checkExistingType(questionTypeString)) {
-            QuestionType filterQuestionType = new QuestionType(questionTypeString);
-            filterQuestion.setType(filterQuestionType);
+        if (Type.checkType(questionTypeString)) {
+            filterQuestion.setType(questionTypeString);
         }
 
         // call Repository to search for questions corresponding to filter values

@@ -181,13 +181,13 @@ public abstract class ScreenController {
      *
      * @param menuButton - the menuButton used in the scene
      */
-    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<QuestionType> questionTypes) {
+    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<Type> types) {
         menuButton.getItems().clear();
 
-        for (QuestionType questionType : questionTypes) {
-            MenuItem menuItem = new MenuItem(questionType.getName());
+        for (Type type : types) {
+            MenuItem menuItem = new MenuItem(type.toString());
             menuItem.setOnAction(e -> {
-                menuButton.setText(questionType.getName());
+                menuButton.setText(type.toString());
             });
             menuButton.getItems().add(menuItem);
         }
@@ -357,7 +357,7 @@ public abstract class ScreenController {
      */
     protected boolean checkIfEmptyAnswers(MenuButton questionTypeMenuButton, ArrayList<TextArea> answers) {
         // Check if multiple choice is selected
-        if (QuestionType.checkMultipleChoiceType(questionTypeMenuButton.getText())) {
+        if (Type.isMultipleChoice(questionTypeMenuButton.getText())) {
             // Iterate through the list of answers
             for (TextArea t : answers) {
                 // Check if the current answer is empty

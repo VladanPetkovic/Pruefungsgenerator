@@ -29,14 +29,14 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             "AND (:difficulty IS NULL OR q.difficulty = :difficulty) " +
             "AND (:points IS NULL OR q.points = :points) " +
             "AND (:categoryId IS NULL OR q.category.id = :categoryId) " +
-            "AND (:questionTypeId IS NULL OR q.type.id = :questionTypeId) " +
+            "AND (:type IS NULL OR q.type = :type) " +
             "AND c.id = :courseId")
     List<Question> findByFilters(
             @Param("question") String question,
             @Param("difficulty") Integer difficulty,
             @Param("points") Float points,
             @Param("categoryId") Long categoryId,
-            @Param("questionTypeId") Long questionTypeId,
+            @Param("type") String type,
             @Param("courseId") Long courseId
     );
 

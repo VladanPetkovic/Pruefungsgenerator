@@ -5,7 +5,6 @@ import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
-import com.example.application.backend.db.repositories.QuestionTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,19 +16,16 @@ import java.util.List;
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final CategoryRepository categoryRepository;
-    private final QuestionTypeRepository questionTypeRepository;
 
     @Autowired
     public QuestionService(QuestionRepository questionRepository,
-                           CategoryRepository categoryRepository,
-                           QuestionTypeRepository questionTypeRepository) {
+                           CategoryRepository categoryRepository) {
         this.questionRepository = questionRepository;
         this.categoryRepository = categoryRepository;
-        this.questionTypeRepository = questionTypeRepository;
     }
 
     public Question add(Question question) {
-        checkCategoryAndQuestionType(question, question.getCategory().getId(), question.getType().getId()); // TODO: maybe redundant check
+        checkCategory(question, question.getCategory().getId()); // TODO: maybe redundant check
         Question newQuestion = questionRepository.save(question);
         Logger.log(this.getClass().getName(), "Question saved with ID: " + newQuestion.getId(), LogLevel.INFO);
         return newQuestion;
@@ -59,14 +55,13 @@ public class QuestionService {
 
     public List<Question> getByFilters(Question filterQuestion, Long courseId) {
         Long categoryId = filterQuestion.getCategory() != null ? filterQuestion.getCategory().getId() : null;
-        Long questionTypeId = filterQuestion.getType() != null ? filterQuestion.getType().getId() : null;
 
         List<Question> questions = questionRepository.findByFilters(
                 filterQuestion.getQuestion(),
                 filterQuestion.getDifficulty(),
                 filterQuestion.getPoints(),
                 categoryId,
-                questionTypeId,
+                filterQuestion.getType(),
                 courseId);
         Logger.log(this.getClass().getName(), "Retrieved all filtered questions, count: " + questions.size(), LogLevel.INFO);
         return questions;
@@ -104,7 +99,7 @@ public class QuestionService {
     public Question update(Question q) {
         Question existingQuestion = questionRepository.findById(q.getId()).orElse(null);
         if (existingQuestion != null) {
-            checkCategoryAndQuestionType(existingQuestion, q.getCategory().getId(), q.getType().getId());
+            checkCategory(existingQuestion, q.getCategory().getId());
 
             existingQuestion.setDifficulty(q.getDifficulty());
             existingQuestion.setPoints(q.getPoints());
@@ -130,15 +125,10 @@ public class QuestionService {
         }
     }
 
-    private void checkCategoryAndQuestionType(Question question, Long categoryId, Long questionTypeId) {
+    private void checkCategory(Question question, Long categoryId) {
         question.setCategory(categoryRepository.findById(categoryId).orElseThrow(() -> {
             Logger.log(this.getClass().getName(), "Category not found with ID: " + categoryId, LogLevel.ERROR);
             return new RuntimeException("Category not found");
-        }));
-
-        question.setType(questionTypeRepository.findById(questionTypeId).orElseThrow(() -> {
-            Logger.log(this.getClass().getName(), "QuestionType not found with ID: " + questionTypeId, LogLevel.ERROR);
-            return new RuntimeException("QuestionType not found");
         }));
     }
 }
