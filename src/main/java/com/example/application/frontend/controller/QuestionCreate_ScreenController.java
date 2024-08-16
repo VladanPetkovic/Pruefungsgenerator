@@ -5,6 +5,7 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.CategoryService;
 import com.example.application.backend.db.services.KeywordService;
+import com.example.application.backend.db.services.QuestionService;
 import com.example.application.backend.db.services.QuestionTypeService;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 
@@ -26,9 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +36,7 @@ import java.util.regex.Pattern;
 public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
     private final CategoryService categoryService;
     private final KeywordService keywordService;
+    private final QuestionService questionService;
     private final QuestionTypeService questionTypeService;
     @FXML
     private TextField categoryTextField;
@@ -71,17 +71,18 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private TextField keywordTextField;
     @FXML
     private HBox keywordsHBox;
-    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
+    private Set<Keyword> selectedKeywords = new HashSet<>();
     private ArrayList<TextArea> answers = new ArrayList<>();
 
     @FXML
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
-    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionTypeService questionTypeService) {
+    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, QuestionTypeService questionTypeService) {
         super();
         this.categoryService = categoryService;
         this.keywordService = keywordService;
+        this.questionService = questionService;
         this.questionTypeService = questionTypeService;
     }
 
@@ -258,35 +259,27 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         }
 
         QuestionType questionType = new QuestionType(questionTypeMenuButton.getText());
-        Category category = null;
-//                SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(categoryTextField.getText());
-
+        Category category = categoryService.getByName(categoryTextField.getText());
 
         // Create a new Question object with the provided details
-//        Question q = new Question(
-//                category,
-//                (int) difficulty.getValue(),
-//                points.getValue().floatValue(),
-//                question.getText(),
-//                questionType,
-//                remarks.getText(),
-//                LocalDateTime.now(),
-//                new Timestamp(System.currentTimeMillis()),
-//                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
-//                selectedKeywords,
-//                picturePickerController.getImages()         // TODO: placeholder for photos
-//        );
-//
-//        int question_id = Question.createNewQuestionInDatabase(q);
-//        // If the question upload was successful
-//        if (question_id != 0) {
-//            // Associate keywords with the uploaded question // TODO: change this to be efficient
-//            for (Keyword k : selectedKeywords) {
-//                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(k, question_id);
-//            }
-//            // Switch the scene to the question upload screen
-//            SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
-//        }
+        Question q = new Question(
+                category,
+                (int) difficulty.getValue(),
+                points.getValue().floatValue(),
+                question.getText(),
+                questionType,
+                remarks.getText(),
+                LocalDateTime.now(),    // createdAt
+                LocalDateTime.now(),    // updatedAt
+                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
+                selectedKeywords,
+                picturePickerController.getImages()
+        );
+
+        Question newQuestion = questionService.add(q);
+        if (newQuestion.getId() != null) {
+            SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
+        }
     }
 
     /**
@@ -327,16 +320,17 @@ public class QuestionCreate_ScreenController extends ScreenController implements
 
     public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            addCategoryBtnClick(categoryTextField, add_category_btn);
+            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
+            addCategoryBtnClick(newCategory, add_category_btn);
         }
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
-//            Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText());
-//            // add to our KeywordMenuButton
-//            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+            Keyword newKeyword = keywordService.add(new Keyword(keywordTextField.getText()), SharedData.getSelectedCourse());
+            // add to our KeywordMenuButton
+            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
             // return a message
             SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
             addKeywordBtn.setDisable(true);

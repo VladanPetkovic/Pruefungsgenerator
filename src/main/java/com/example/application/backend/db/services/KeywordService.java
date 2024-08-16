@@ -2,6 +2,7 @@ package com.example.application.backend.db.services;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
+import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.repositories.KeywordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,16 @@ public class KeywordService {
         this.keywordRepository = keywordRepository;
     }
 
-    public Keyword add(Keyword keyword) {
+    public boolean keywordExists(String name, Long courseId) {
+        return keywordRepository.existsKeywordByNameAndCourseId(name, courseId);
+    }
+
+    public Keyword add(Keyword keyword, Course course) {
+        if (keywordExists(keyword.getKeyword(), course.getId())) {
+            Logger.log(this.getClass().getName(), "Keyword already exists for this course", LogLevel.INFO);
+            return null;
+        }
+        keyword.setCourse(course);
         Keyword newKeyword = keywordRepository.save(keyword);
         Logger.log(this.getClass().getName(), "Keyword saved with ID: " + newKeyword.getId(), LogLevel.INFO);
         return newKeyword;

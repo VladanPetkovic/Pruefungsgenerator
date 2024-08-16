@@ -95,9 +95,9 @@ public abstract class ScreenController {
      * @param addKeywordBtn When passed null, then we cannot add keywords
      */
     protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords, Button addKeywordBtn) {
-        if (keywords.isEmpty()) {
-            return;
-        }
+//        if (keywords.isEmpty()) {     // maybe when the application crashed this code is necessary - to be checked/tested
+//            return;
+//        }
 
         ArrayList<String> items = new ArrayList<>();
         for (Keyword k : keywords) {
@@ -148,17 +148,18 @@ public abstract class ScreenController {
     }
 
     /**
-     * Function used to add a new category when clicked on the plus-button.
+     * Function used to add a new category to the suggested-categories when clicked on the plus-button.
      *
-     * @param categoryTextField the textField, where category is inputted
-     * @param add_category_btn  the add-btn that is clicked for adding a new category
+     * @param newCategory the created category
+     * @param addCategoryBtn  the add-btn that is clicked for adding a new category
      */
-    protected void addCategoryBtnClick(TextField categoryTextField, Button add_category_btn) throws IOException {
-        SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-//        Category newCategory = Category.createNewCategoryInDatabase(categoryTextField.getText(), SharedData.getSelectedCourse());
-//        SharedData.getSuggestedCategories().add(newCategory.getName());
+    protected void addCategoryBtnClick(Category newCategory, Button addCategoryBtn) throws IOException {
+        if (newCategory.getId() != null) {
+            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
+            SharedData.getSuggestedCategories().add(newCategory.getName());
 
-        add_category_btn.setDisable(true);
+            addCategoryBtn.setDisable(true);
+        }
     }
 
     /**
@@ -283,17 +284,17 @@ public abstract class ScreenController {
      *
      * @return An Arraylist of Answer-objects
      */
-    protected ArrayList<Answer> getAnswerArrayList(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
-        ArrayList<Answer> answerArrayList = new ArrayList<>();
+    protected Set<Answer> getAnswerArrayList(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
+        Set<Answer> answerHashSet = new HashSet<>();
 
         if (type == Type.MULTIPLE_CHOICE) {
             for (TextArea answerTextArea : mc_answers) {
-                answerArrayList.add(new Answer(answerTextArea.getText()));
+                answerHashSet.add(new Answer(answerTextArea.getText()));
             }
         } else if (simple_answer != null) {
-            answerArrayList.add(new Answer(simple_answer.getText()));
+            answerHashSet.add(new Answer(simple_answer.getText()));
         }
-        return answerArrayList;
+        return answerHashSet;
     }
 
     /**
@@ -309,27 +310,11 @@ public abstract class ScreenController {
     }
 
     /**
-     * Checks if a keyword is already present in the list of selected keywords.
-     *
-     * @param selectedKeywords The ArrayList containing selected keywords.
-     * @param k                The keyword to check.
-     * @return True if the keyword is already present, false otherwise.
-     */
-    protected boolean containsKeyword(Keyword k, ArrayList<Keyword> selectedKeywords) {
-        for (Keyword keyword : selectedKeywords) {
-            if (keyword.getId() == k.getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * This function fills the MenuButton with a keyword.
      * It sets an ActionEvent, when clicked --> the keyword is displayed.
      * The displayed keyword can be removed via button click.
      */
-    protected void fillKeywordMenuButtonWithKeyword(Keyword newKeyword, ArrayList<Keyword> selectedKeywords, HBox keywordsHBox, MenuButton keywordMenuButton) {
+    protected void fillKeywordMenuButtonWithKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox, MenuButton keywordMenuButton) {
         // Create keyword MenuItem
         MenuItem menuItem = new MenuItem(newKeyword.getKeyword());
         // Add action event for keyword MenuItem
@@ -338,8 +323,8 @@ public abstract class ScreenController {
         keywordMenuButton.getItems().add(menuItem);
     }
 
-    protected void addSelectedKeyword(Keyword newKeyword, ArrayList<Keyword> selectedKeywords, HBox keywordsHBox) {
-        if (containsKeyword(newKeyword, selectedKeywords)) {
+    protected void addSelectedKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox) {
+        if (selectedKeywords.contains(newKeyword)) {
             return;
         }
 
@@ -348,7 +333,7 @@ public abstract class ScreenController {
         keywordsHBox.getChildren().add(removalButton);
     }
 
-    protected Button createRemovalButton(Keyword newKeyword, HBox keywordsHBox, ArrayList<Keyword> selectedKeywords) {
+    protected Button createRemovalButton(Keyword newKeyword, HBox keywordsHBox, Set<Keyword> selectedKeywords) {
         Button button = createButton(newKeyword.getKeyword() + " X");
 
         button.setOnAction(new EventHandler<ActionEvent>() {

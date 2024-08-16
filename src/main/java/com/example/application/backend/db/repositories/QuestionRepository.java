@@ -23,6 +23,23 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT MAX(q.id) FROM Question q")
     Long getMaxQuestionId();
 
+    @Query("SELECT q FROM Question q " +
+            "JOIN q.category cat JOIN cat.courses c " +
+            "WHERE (:question IS NULL OR q.question = :question) " +
+            "AND (:difficulty IS NULL OR q.difficulty = :difficulty) " +
+            "AND (:points IS NULL OR q.points = :points) " +
+            "AND (:categoryId IS NULL OR q.category.id = :categoryId) " +
+            "AND (:questionTypeId IS NULL OR q.type.id = :questionTypeId) " +
+            "AND c.id = :courseId")
+    List<Question> findByFilters(
+            @Param("question") String question,
+            @Param("difficulty") Integer difficulty,
+            @Param("points") Float points,
+            @Param("categoryId") Long categoryId,
+            @Param("questionTypeId") Long questionTypeId,
+            @Param("courseId") Long courseId
+    );
+
 //
 //    /**
 //     * getting all questions for a dynamic search

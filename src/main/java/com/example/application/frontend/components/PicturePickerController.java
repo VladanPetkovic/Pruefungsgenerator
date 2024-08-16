@@ -21,6 +21,8 @@ import lombok.Setter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PicturePickerController {
     @FXML
@@ -32,8 +34,8 @@ public class PicturePickerController {
     private static final FileChooser.ExtensionFilter EXTENSION_FILTER =
             new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg");
 
-    public ArrayList<com.example.application.backend.db.models.Image> getImages() {
-        ArrayList<com.example.application.backend.db.models.Image> images = new ArrayList<>();
+    public Set<com.example.application.backend.db.models.Image> getImages() {
+        Set<com.example.application.backend.db.models.Image> images = new HashSet<>();
         for (ButtonAndImage bai : buttonAndImages) {
             images.add(new com.example.application.backend.db.models.Image(bai.image, bai.imageName));
         }

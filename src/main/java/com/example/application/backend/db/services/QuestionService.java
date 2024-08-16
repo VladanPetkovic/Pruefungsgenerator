@@ -28,9 +28,8 @@ public class QuestionService {
         this.questionTypeRepository = questionTypeRepository;
     }
 
-    public Question add(Question question, Long categoryId, Long questionTypeId) {
-        checkCategoryAndQuestionType(question, categoryId, questionTypeId);
-
+    public Question add(Question question) {
+        checkCategoryAndQuestionType(question, question.getCategory().getId(), question.getType().getId()); // TODO: maybe redundant check
         Question newQuestion = questionRepository.save(question);
         Logger.log(this.getClass().getName(), "Question saved with ID: " + newQuestion.getId(), LogLevel.INFO);
         return newQuestion;
@@ -55,6 +54,21 @@ public class QuestionService {
     public List<Question> getAllByCategory(Long categoryId) {
         List<Question> questions = questionRepository.findQuestionsByCategoryId(categoryId);
         Logger.log(this.getClass().getName(), "Retrieved all questions for a category, count: " + questions.size(), LogLevel.INFO);
+        return questions;
+    }
+
+    public List<Question> getByFilters(Question filterQuestion, Long courseId) {
+        Long categoryId = filterQuestion.getCategory() != null ? filterQuestion.getCategory().getId() : null;
+        Long questionTypeId = filterQuestion.getType() != null ? filterQuestion.getType().getId() : null;
+
+        List<Question> questions = questionRepository.findByFilters(
+                filterQuestion.getQuestion(),
+                filterQuestion.getDifficulty(),
+                filterQuestion.getPoints(),
+                categoryId,
+                questionTypeId,
+                courseId);
+        Logger.log(this.getClass().getName(), "Retrieved all filtered questions, count: " + questions.size(), LogLevel.INFO);
         return questions;
     }
 
@@ -87,21 +101,21 @@ public class QuestionService {
         return questionRepository.getMaxQuestionId();
     }
 
-    public Question update(Question question, Long categoryId, Long questionTypeId) {
-        Question existingQuestion = questionRepository.findById(question.getId()).orElse(null);
+    public Question update(Question q) {
+        Question existingQuestion = questionRepository.findById(q.getId()).orElse(null);
         if (existingQuestion != null) {
-            checkCategoryAndQuestionType(existingQuestion, categoryId, questionTypeId);
+            checkCategoryAndQuestionType(existingQuestion, q.getCategory().getId(), q.getType().getId());
 
-            existingQuestion.setDifficulty(question.getDifficulty());
-            existingQuestion.setPoints(question.getPoints());
-            existingQuestion.setQuestion(question.getQuestion());
-            existingQuestion.setRemark(question.getRemark());
+            existingQuestion.setDifficulty(q.getDifficulty());
+            existingQuestion.setPoints(q.getPoints());
+            existingQuestion.setQuestion(q.getQuestion());
+            existingQuestion.setRemark(q.getRemark());
 
             Question updatedQuestion = questionRepository.save(existingQuestion);
-            Logger.log(this.getClass().getName(), "Question updated successfully for ID: " + question.getId(), LogLevel.INFO);
+            Logger.log(this.getClass().getName(), "Question updated successfully for ID: " + q.getId(), LogLevel.INFO);
             return updatedQuestion;
         } else {
-            Logger.log(this.getClass().getName(), "Failed to find question with ID: " + question.getId(), LogLevel.ERROR);
+            Logger.log(this.getClass().getName(), "Failed to find question with ID: " + q.getId(), LogLevel.ERROR);
             throw new RuntimeException("Question not found");
         }
     }

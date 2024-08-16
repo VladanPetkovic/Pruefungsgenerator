@@ -16,10 +16,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 
+@Component
+@Scope("prototype")
 public class CreateManual_ScreenController extends ScreenController {
     @FXML
     private VBox vbox_testQuestionsPreview;

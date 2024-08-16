@@ -3,6 +3,7 @@ package com.example.application.backend.db.services;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Category;
+import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import com.example.application.backend.db.repositories.CourseRepository;
 import com.example.application.backend.db.repositories.QuestionRepository;
@@ -26,7 +27,16 @@ public class CategoryService {
         this.courseRepository = courseRepository;
     }
 
-    public Category add(Category category) {
+    public boolean categoryExists(String name, Long courseId) {
+        return categoryRepository.existsCategoryByNameAndCourseId(name, courseId);
+    }
+
+    public Category add(Category category, Course course) {
+        if (categoryExists(category.getName(), course.getId())) {
+            Logger.log(this.getClass().getName(), "Category already exists for this course", LogLevel.INFO);
+            return null;
+        }
+        category.getCourses().add(course);
         Category newCategory = categoryRepository.save(category);
         Logger.log(this.getClass().getName(), "Category saved with ID: " + newCategory.getId(), LogLevel.INFO);
         return newCategory;

@@ -30,6 +30,11 @@ public class Category implements Serializable {
     private Set<Question> questions = new HashSet<>();
 
     @ManyToMany
+    @JoinTable(
+            name = "categories_courses",
+            joinColumns = @JoinColumn(name = "fk_category_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_course_id")
+    )
     private Set<Course> courses = new HashSet<>();
 
     public Category(Category other) {

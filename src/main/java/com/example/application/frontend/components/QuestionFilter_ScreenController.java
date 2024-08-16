@@ -73,7 +73,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
     public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            addCategoryBtnClick(categoryTextField, add_category_btn);
+            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
+            addCategoryBtnClick(newCategory, add_category_btn);
         }
     }
 
@@ -104,9 +105,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         // set category value if provided
         if (!categoryName.isEmpty()) {
             Category category = categoryService.getByName(categoryName);
-            if (category != null) {
-                filterQuestion.setCategory(category);
-            }
+            filterQuestion.setCategory(category);
         }
 
         // set keyword value if provided
@@ -147,18 +146,18 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // call Repository to search for questions corresponding to filter values
 //        ArrayList<Question> result = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(filterQuestion, SharedData.getSelectedCourse().getName(), pointsSliderStatus, difficultySliderStatus);
-//        SharedData.getFilteredQuestions().clear();
-//
-//        if (result.isEmpty()) {
-//            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
-//            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
-//            return;
-//        }
-//
-//        // save to our SharedData
-//        for (Question question : result) {
-////            question.removeDuplicates();
-//            SharedData.getFilteredQuestions().add(question);
-//        }
+        List<Question> result = questionService.getByFilters(filterQuestion, SharedData.getSelectedCourse().getId());   // TODO: add min/max
+        SharedData.getFilteredQuestions().clear();
+
+        if (result.isEmpty()) {
+            SharedData.setOperation(Message.NO_QUESTIONS_FOUND);
+            Logger.log(getClass().getName(), "No questions found", LogLevel.INFO);
+            return;
+        }
+
+        // save to our SharedData
+        for (Question question : result) {
+            SharedData.getFilteredQuestions().add(question);
+        }
     }
 }

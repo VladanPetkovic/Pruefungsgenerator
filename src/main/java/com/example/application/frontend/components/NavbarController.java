@@ -8,12 +8,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import com.example.application.backend.app.Screen;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static com.example.application.frontend.controller.SwitchScene.switchScene;
 
-
+@Component
+@Scope("prototype")
 public class NavbarController {
 
     @FXML

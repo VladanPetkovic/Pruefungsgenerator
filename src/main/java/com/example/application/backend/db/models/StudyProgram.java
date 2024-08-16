@@ -27,7 +27,7 @@ public class StudyProgram implements Serializable {
     @Column(nullable = false)
     private String abbreviation;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "studyPrograms")
     private Set<Course> courses = new HashSet<>();
 
     public StudyProgram(String name, String abbreviation) {

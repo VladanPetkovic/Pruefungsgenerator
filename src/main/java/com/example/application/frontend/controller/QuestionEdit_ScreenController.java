@@ -29,10 +29,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,7 +80,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private ArrayList<TextArea> answers = new ArrayList<>();
     private ArrayList<Answer> originalAnswers = new ArrayList<>();
     private Question selectedQuestion = new Question();
-    private ArrayList<Keyword> selectedKeywords = new ArrayList<>();
+    private Set<Keyword> selectedKeywords = new HashSet<>();
     private Category selectedCategory = null;
 
     @FXML
@@ -277,7 +274,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             keywordsHBox.getChildren().clear();
 
             for (Keyword k : clickedQuestion.getKeywords()) {
-                if (k.getKeyword() != null && !containsKeyword(k, selectedKeywords)) {
+                if (k.getKeyword() != null && !selectedKeywords.contains(k)) {
                     selectedKeywords.add(k);
                     Button b = createButton(k.getKeyword() + " X");
                     b.setOnAction(e -> {

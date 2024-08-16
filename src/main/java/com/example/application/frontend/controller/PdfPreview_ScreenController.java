@@ -14,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.Objects;
 
 import static com.example.application.frontend.controller.SwitchScene.switchScene;
 
+@Component
+@Scope("prototype")
 public class PdfPreview_ScreenController extends ScreenController {
     @FXML
     private Slider questionCountSlider;

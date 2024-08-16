@@ -30,10 +30,18 @@ public class Course implements Serializable {
     @Column(nullable = false)
     private String lector;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Keyword> keywords = new HashSet<>();
+
+    @ManyToMany(mappedBy = "courses")
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany
+    @JoinTable(
+            name = "study_programs_courses",
+            joinColumns = @JoinColumn(name = "fk_course_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_study_program_id")
+    )
     private Set<StudyProgram> studyPrograms = new HashSet<>();
 
     public Course(Long id, String name, int number, String lector) {

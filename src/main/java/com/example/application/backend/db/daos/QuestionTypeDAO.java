@@ -1,26 +1,4 @@
-//package com.example.backend.db.daos;
-//
-//import com.example.backend.app.LogLevel;
-//import com.example.backend.app.Logger;
-//import com.example.backend.app.SharedData;
-//import com.example.backend.db.SQLiteDatabaseConnection;
-//import com.example.backend.db.models.Message;
-//import com.example.backend.db.models.QuestionType;
-//import lombok.AccessLevel;
-//import lombok.Setter;
-//
-//import java.sql.Connection;
-//import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.util.ArrayList;
-//
-//public class QuestionTypeDAO implements DAO<QuestionType> {
-//    @Setter(AccessLevel.PRIVATE)
-//    ArrayList<QuestionType> questionTypeCache;
-//
-//    @Override
-//    public void create(QuestionType type) {
+
 //        String insertStmt = "INSERT INTO question_types (name) VALUES (?);";
 //        Logger.log(getClass().getName(), insertStmt, LogLevel.DEBUG);
 //

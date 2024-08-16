@@ -26,7 +26,16 @@ public class Keyword implements Serializable {
     @Column(nullable = false)
     private String keyword;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_course_id")
+    private Course course;
+
     @ManyToMany
+    @JoinTable(
+            name = "questions_keywords",
+            joinColumns = @JoinColumn(name = "fk_keyword_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_question_id")
+    )
     private Set<Question> questions = new HashSet<>();
 
     public Keyword(String keyword) {
@@ -63,31 +72,4 @@ public class Keyword implements Serializable {
 
         return null;
     }
-
-//    public static Keyword createNewKeywordInDatabase(String keyword) {
-//        Keyword newKeyword = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword);
-//
-//        // check for existing keywords
-//        if (newKeyword == null) {
-//            Keyword addToDatabase = new Keyword(keyword);
-//            SQLiteDatabaseConnection.KEYWORD_REPOSITORY.add(addToDatabase);
-//            newKeyword = SQLiteDatabaseConnection.KEYWORD_REPOSITORY.get(keyword);
-//        }
-//        return newKeyword;
-//    }
-
-//    /**
-//     * This method creates keywords and their connection for a new question.
-//     * If same keywords exists, only the connection is made.
-//     *
-//     * @param newQuestion A new question with keywords
-//     */
-//    public static void createKeywords(Question newQuestion, int newQuestionId) {
-//        if (newQuestion == null || newQuestion.getKeywords() == null) {
-//            return;
-//        }
-//
-//        // add one or multiple keywords and the connection in the join table (has_kq)
-//        SQLiteDatabaseConnection.KEYWORD_REPOSITORY.add(newQuestion.getKeywords(), newQuestionId);
-//    }
 }
