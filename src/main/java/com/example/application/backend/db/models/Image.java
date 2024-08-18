@@ -31,7 +31,6 @@ public class Image implements Serializable {
 
     private String name;
 
-    @Column(nullable = false)
     private Integer position;
 
     private String comment;
@@ -44,16 +43,6 @@ public class Image implements Serializable {
         this.image = imageToByteArray(image, getFileExtension(name));
         this.name = name;
     }
-
-//    public static void createImages(Question question, int newQuestionId) {
-//        if (question == null) {
-//            return;
-//        }
-//        if (question.getImages() == null) {
-//            return;
-//        }
-//        SQLiteDatabaseConnection.IMAGE_REPOSITORY.add(question.getImages(), newQuestionId);
-//    }
 
     private String getFileExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
@@ -101,6 +90,4 @@ public class Image implements Serializable {
         }
         return null;
     }
-
-
 }

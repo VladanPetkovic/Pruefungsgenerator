@@ -76,20 +76,4 @@ public class Category implements Serializable {
 
         return null;
     }
-
-//    public static Category createNewCategoryInDatabase(String category, Course course) {
-//        // check for existence
-//        Category newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
-//
-//        if (newCategory == null) {
-//            Category addToDatabase = new Category(category);
-//            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.add(addToDatabase);
-//            newCategory = SQLiteDatabaseConnection.CATEGORY_REPOSITORY.get(category);
-//            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
-//        } else {
-//            SQLiteDatabaseConnection.CATEGORY_REPOSITORY.addConnection(course, newCategory);
-//        }
-//
-//        return newCategory;
-//    }
 }

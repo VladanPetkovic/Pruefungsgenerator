@@ -50,16 +50,21 @@ public class Question implements Serializable {
 
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Answer> answers = new HashSet<>();
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Image> images = new HashSet<>();
 
-    @ManyToMany(mappedBy = "questions")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "questions_keywords",
+            joinColumns = @JoinColumn(name = "fk_question_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_keyword_id")
+    )
     private Set<Keyword> keywords = new HashSet<>();
 
-    public Question(Category category, int difficulty, float points, String question, String type, String remark, LocalDateTime created_at, LocalDateTime updated_at, Set<Answer> answers, Set<Keyword> keywords, Set<Image> images) {
+    public Question(Category category, int difficulty, float points, String question, String type, String remark, LocalDateTime created_at, LocalDateTime updated_at, Set<Keyword> keywords) {
         setCategory(category);
         setDifficulty(difficulty);
         setPoints(points);
@@ -68,9 +73,7 @@ public class Question implements Serializable {
         setRemark(remark);
         setCreatedAt(created_at);
         setUpdatedAt(updated_at);
-        setAnswers(answers);
         setKeywords(keywords);
-        setImages(images);
     }
 
     public String getAnswersAsString() {

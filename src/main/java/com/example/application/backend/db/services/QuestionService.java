@@ -2,6 +2,7 @@ package com.example.application.backend.db.services;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
+import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
@@ -47,21 +48,43 @@ public class QuestionService {
         return questions;
     }
 
-    public List<Question> getAllByCategory(Long categoryId) {
-        List<Question> questions = questionRepository.findQuestionsByCategoryId(categoryId);
-        Logger.log(this.getClass().getName(), "Retrieved all questions for a category, count: " + questions.size(), LogLevel.INFO);
+    public List<Question> getAllByCourseId(Long courseId) {
+        List<Question> questions = questionRepository.findQuestionsByCourseId(courseId);
+        Logger.log(this.getClass().getName(), "Retrieved all questions for a course, count: " + questions.size(), LogLevel.INFO);
         return questions;
     }
 
-    public List<Question> getByFilters(Question filterQuestion, Long courseId) {
+    /**
+     * Filters questions.
+     *
+     * @param filterQuestion         The question with fields used for filtering
+     * @param courseId               The course we are filtering for
+     * @param pointsFilterMethod     0 = disabled; 1 = enabled; 2 = min; 3 = max
+     * @param difficultyFilterMethod 0 = disabled; 1 = enabled; 2 = min; 3 = max
+     * @return List of questions
+     */
+    public List<Question> getByFilters(Question filterQuestion, Long courseId, int pointsFilterMethod, int difficultyFilterMethod) {
         Long categoryId = filterQuestion.getCategory() != null ? filterQuestion.getCategory().getId() : null;
+
+        // set filter values for difficulty and points
+        Integer difficulty = difficultyFilterMethod == 1 ? filterQuestion.getDifficulty() : null;
+        Integer minDifficulty = difficultyFilterMethod == 2 ? filterQuestion.getDifficulty() : null;
+        Integer maxDifficulty = difficultyFilterMethod == 3 ? filterQuestion.getDifficulty() : null;
+        Float points = pointsFilterMethod == 1 ? filterQuestion.getPoints() : null;
+        Float minPoints = pointsFilterMethod == 2 ? filterQuestion.getPoints() : null;
+        Float maxPoints = pointsFilterMethod == 3 ? filterQuestion.getPoints() : null;
 
         List<Question> questions = questionRepository.findByFilters(
                 filterQuestion.getQuestion(),
-                filterQuestion.getDifficulty(),
-                filterQuestion.getPoints(),
+                difficulty,
+                minDifficulty,
+                maxDifficulty,
+                points,
+                minPoints,
+                maxPoints,
                 categoryId,
                 filterQuestion.getType(),
+                Keyword.getKeywordsAsString(filterQuestion.getKeywords()),
                 courseId);
         Logger.log(this.getClass().getName(), "Retrieved all filtered questions, count: " + questions.size(), LogLevel.INFO);
         return questions;
@@ -69,7 +92,8 @@ public class QuestionService {
 
     /**
      * This db-call is solely used when exporting to avoid a stack-overflow (getting to many questions at once)
-     * @param courseId The id for the course the questions belong to.
+     *
+     * @param courseId      The id for the course the questions belong to.
      * @param minQuestionId The next questionId to get another 250 questions.
      * @return List of questions.
      */
@@ -105,6 +129,7 @@ public class QuestionService {
             existingQuestion.setPoints(q.getPoints());
             existingQuestion.setQuestion(q.getQuestion());
             existingQuestion.setRemark(q.getRemark());
+            existingQuestion.setUpdatedAt(q.getUpdatedAt());
 
             Question updatedQuestion = questionRepository.save(existingQuestion);
             Logger.log(this.getClass().getName(), "Question updated successfully for ID: " + q.getId(), LogLevel.INFO);

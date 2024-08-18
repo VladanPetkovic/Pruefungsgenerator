@@ -45,8 +45,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     public ImageView points_toggle_image_view;
 
-    private int pointsSliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
-    private int difficultySliderStatus = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
+    private int pointsFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
+    private int difficultyFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
 
     public QuestionFilter_ScreenController(QuestionService questionService, KeywordService keywordService, CategoryService categoryService) {
         super();
@@ -60,7 +60,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         // init auto-completion
         initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()), null);
         initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
-        initializeQuestions(this.questionTextField);
+        initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
 
@@ -76,13 +76,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
-        on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view, difficultySliderStatus);
-        difficultySliderStatus = (difficultySliderStatus + 1) % 4;
+        on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view, difficultyFilterMethod);
+        difficultyFilterMethod = (difficultyFilterMethod + 1) % 4;
     }
 
     public void on_toggle_points_btn_click(ActionEvent actionEvent) {
-        on_toggle_btn_click(pointsSlider, points_toggle_image_view, pointsSliderStatus);
-        pointsSliderStatus = (pointsSliderStatus + 1) % 4;
+        on_toggle_btn_click(pointsSlider, points_toggle_image_view, pointsFilterMethod);
+        pointsFilterMethod = (pointsFilterMethod + 1) % 4;
     }
 
     public void applyFilterButtonClicked(ActionEvent actionEvent) {
@@ -107,19 +107,19 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // set keyword value if provided
         // handle multiple keywords as ArrayList<Keyword>
-        Set<Keyword> keywordsList = new HashSet<>();
+        Set<Keyword> keywordHashSet = new HashSet<>();
         if (!keywordText.isEmpty()) {
             // split by commas or spaces
             String[] keywordsArray = keywordText.split("[,\\s]+");
             for (String keyword : keywordsArray) {
                 Keyword keywordObj = keywordService.getByName(keyword.trim());
                 if (keywordObj != null) {
-                    keywordsList.add(keywordObj);
+                    keywordHashSet.add(keywordObj);
                 }
             }
         }
-        if (!keywordsList.isEmpty()) {
-            filterQuestion.setKeywords(keywordsList);
+        if (!keywordHashSet.isEmpty()) {
+            filterQuestion.setKeywords(keywordHashSet);
         }
 
         // set the question text
@@ -141,8 +141,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         }
 
         // call Repository to search for questions corresponding to filter values
-//        ArrayList<Question> result = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(filterQuestion, SharedData.getSelectedCourse().getName(), pointsSliderStatus, difficultySliderStatus);
-        List<Question> result = questionService.getByFilters(filterQuestion, SharedData.getSelectedCourse().getId());   // TODO: add min/max
+        List<Question> result = questionService.getByFilters(filterQuestion, SharedData.getSelectedCourse().getId(), pointsFilterMethod, difficultyFilterMethod);
         SharedData.getFilteredQuestions().clear();
 
         if (result.isEmpty()) {

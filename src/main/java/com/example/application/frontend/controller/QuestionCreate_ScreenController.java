@@ -3,9 +3,7 @@ package com.example.application.frontend.controller;
 import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
-import com.example.application.backend.db.services.CategoryService;
-import com.example.application.backend.db.services.KeywordService;
-import com.example.application.backend.db.services.QuestionService;
+import com.example.application.backend.db.services.*;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 
 import com.example.application.frontend.components.PicturePickerController;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -36,6 +33,8 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private final CategoryService categoryService;
     private final KeywordService keywordService;
     private final QuestionService questionService;
+    private final AnswerService answerService;
+    private final ImageService imageService;
     @FXML
     private TextField categoryTextField;
     @FXML
@@ -76,11 +75,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private VBox picturePickerPlaceholder;
     private PicturePickerController picturePickerController;
 
-    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService) {
+    public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, AnswerService answerService, ImageService imageService) {
         super();
         this.categoryService = categoryService;
         this.keywordService = keywordService;
         this.questionService = questionService;
+        this.answerService = answerService;
+        this.imageService = imageService;
     }
 
     /**
@@ -266,14 +267,15 @@ public class QuestionCreate_ScreenController extends ScreenController implements
                 remarks.getText(),
                 LocalDateTime.now(),    // createdAt
                 LocalDateTime.now(),    // updatedAt
-                getAnswerArrayList(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers),
-                selectedKeywords,
-                picturePickerController.getImages()
+                selectedKeywords
         );
 
         Question newQuestion = questionService.add(q);
         if (newQuestion.getId() != null) {
+            answerService.addAnswers(newQuestion.getId(), getAnswersSet(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers));
+            imageService.addImages(newQuestion.getId(), picturePickerController.getImages());
             SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
+            SharedData.setOperation(Message.CREATE_QUESTION_SUCCESS_MESSAGE);
         }
     }
 
@@ -317,6 +319,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         if (Category.checkNewCategory(categoryTextField.getText()) == null) {
             Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
             addCategoryBtnClick(newCategory, add_category_btn);
+            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
         }
     }
 

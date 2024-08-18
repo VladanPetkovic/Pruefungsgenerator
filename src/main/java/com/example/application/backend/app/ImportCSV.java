@@ -26,7 +26,7 @@ public class ImportCSV {
         this.importTargetCourse = SharedData.getImportTargetCourse();
     }
 
-//    public boolean importData() {
+    public boolean importData() {
 //        // Checks if the filePath is null, which means no file was selected
 //        if (filePath == null) {
 //            Logger.log(getClass().getName(), "No file selected.", LogLevel.INFO);
@@ -38,9 +38,9 @@ public class ImportCSV {
 //            Logger.log(getClass().getName(), "Failed to import data from file: " + filePath, LogLevel.INFO);
 //            return false;
 //        }
-//        // Returns true if the data import is successful
-//        return true;
-//    }
+        // Returns true if the data import is successful
+        return true;
+    }
 //
 //    private boolean importDataFromFile(String filePath) {
 //        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {

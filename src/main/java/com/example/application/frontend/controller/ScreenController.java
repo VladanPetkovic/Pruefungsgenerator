@@ -150,8 +150,8 @@ public abstract class ScreenController {
     /**
      * Function used to add a new category to the suggested-categories when clicked on the plus-button.
      *
-     * @param newCategory the created category
-     * @param addCategoryBtn  the add-btn that is clicked for adding a new category
+     * @param newCategory    the created category
+     * @param addCategoryBtn the add-btn that is clicked for adding a new category
      */
     protected void addCategoryBtnClick(Category newCategory, Button addCategoryBtn) throws IOException {
         if (newCategory.getId() != null) {
@@ -166,13 +166,11 @@ public abstract class ScreenController {
      * Initializes the auto-completion of the questions in the search-area of edit-question.
      * Shows only 10 questions max
      */
-    protected void initializeQuestions(TextField questionTextField) {
+    protected void initializeQuestions(TextField questionTextField, List<Question> questions) {
         ObservableList<String> items = FXCollections.observableArrayList();
-        String course_name = SharedData.getSelectedCourse().getName();
-//        ArrayList<Question> questions = SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(new Question(), course_name);
-//        for (int i = 0; i < 10 && i < questions.size(); i++) {
-//            items.add(questions.get(i).getQuestion());
-//        }
+        for (int i = 0; i < 10 && i < questions.size(); i++) {
+            items.add(questions.get(i).getQuestion());
+        }
         TextFields.bindAutoCompletion(questionTextField, items);
     }
 
@@ -284,7 +282,7 @@ public abstract class ScreenController {
      *
      * @return An Arraylist of Answer-objects
      */
-    protected Set<Answer> getAnswerArrayList(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
+    protected Set<Answer> getAnswersSet(Type type, TextArea simple_answer, ArrayList<TextArea> mc_answers) {
         Set<Answer> answerHashSet = new HashSet<>();
 
         if (type == Type.MULTIPLE_CHOICE) {

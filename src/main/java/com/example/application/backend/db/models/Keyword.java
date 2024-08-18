@@ -30,12 +30,7 @@ public class Keyword implements Serializable {
     @JoinColumn(name = "fk_course_id")
     private Course course;
 
-    @ManyToMany
-    @JoinTable(
-            name = "questions_keywords",
-            joinColumns = @JoinColumn(name = "fk_keyword_id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_question_id")
-    )
+    @ManyToMany(mappedBy = "keywords", fetch = FetchType.LAZY)
     private Set<Question> questions = new HashSet<>();
 
     public Keyword(String keyword) {
@@ -71,5 +66,26 @@ public class Keyword implements Serializable {
         }
 
         return null;
+    }
+
+    /**
+     * This function is used for filtering questions.
+     * We can pass a Set of Strings and not Objects to the database.
+     *
+     * @param keywords the objects we want to "transform"
+     * @return Set of Strings
+     */
+    public static Set<String> getKeywordsAsString(Set<Keyword> keywords) {
+        if (keywords.isEmpty()) {
+            return null;
+        }
+
+        Set<String> keywordStrings = new HashSet<>();
+        for (Keyword keyword : keywords) {
+            if (keyword != null && keyword.getKeyword() != null) {
+                keywordStrings.add(keyword.getKeyword());
+            }
+        }
+        return keywordStrings;
     }
 }

@@ -3,22 +3,42 @@ package com.example.application.backend.db.services;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Image;
+import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.repositories.ImageRepository;
+import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ImageService {
     private final ImageRepository imageRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public ImageService(ImageRepository imageRepository) {
+    public ImageService(ImageRepository imageRepository, QuestionRepository questionRepository) {
         this.imageRepository = imageRepository;
+        this.questionRepository = questionRepository;
+    }
+
+    public HashSet<Image> addImages(Long questionId, Set<Image> images) {
+        // TODO: https://stackoverflow.com/questions/50363639/how-spring-boot-jpahibernate-saves-images
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> {
+            Logger.log(this.getClass().getName(), "Question not found with ID: " + questionId, LogLevel.ERROR);
+            return new RuntimeException("Question not found");
+        });
+        for (Image image : images) {
+            image.setQuestion(question);
+        }
+        Logger.log(this.getClass().getName(), "Saving multiple Images", LogLevel.INFO);
+        return new HashSet<>(imageRepository.saveAll(images));
     }
 
     public Image add(Image image) {
+        // TODO: https://stackoverflow.com/questions/50363639/how-spring-boot-jpahibernate-saves-images
         Image newImage = imageRepository.save(image);
         Logger.log(this.getClass().getName(), "Image saved with ID: " + newImage.getId(), LogLevel.INFO);
         return newImage;

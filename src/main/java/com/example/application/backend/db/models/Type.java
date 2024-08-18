@@ -3,9 +3,7 @@ package com.example.application.backend.db.models;
 public enum Type {
     OPEN,
     MULTIPLE_CHOICE,
-    TRUE_FALSE,
-    SHORT_ANSWER,
-    ESSAY;
+    TRUE_FALSE;
 
     /**
      * This function is used to check whether the questionType was set or not.

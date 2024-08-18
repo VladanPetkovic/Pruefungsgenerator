@@ -5,6 +5,7 @@ import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.repositories.KeywordRepository;
+import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,12 @@ import java.util.List;
 @Service
 public class KeywordService {
     private final KeywordRepository keywordRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public KeywordService(KeywordRepository keywordRepository) {
+    public KeywordService(KeywordRepository keywordRepository, QuestionRepository questionRepository) {
         this.keywordRepository = keywordRepository;
+        this.questionRepository = questionRepository;
     }
 
     public boolean keywordExists(String name, Long courseId) {

@@ -9,7 +9,9 @@ import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AnswerService {
@@ -20,6 +22,18 @@ public class AnswerService {
     public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
+    }
+
+    public Set<Answer> addAnswers(Long questionId, Set<Answer> answers) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> {
+            Logger.log(this.getClass().getName(), "Question not found with ID: " + questionId, LogLevel.ERROR);
+            return new RuntimeException("Question not found");
+        });
+        for (Answer answer : answers) {
+            answer.setQuestion(question);
+        }
+        Logger.log(this.getClass().getName(), "Saving multiple Answers", LogLevel.INFO);
+        return new HashSet<>(answerRepository.saveAll(answers));
     }
 
     public Answer add(Answer answer, Long questionId) {
@@ -41,6 +55,20 @@ public class AnswerService {
             Logger.log(this.getClass().getName(), "Answer not found with ID: " + id, LogLevel.WARN);
         }
         return answer;
+    }
+
+    public Answer getByAnswer(String answer) {
+        Answer result = answerRepository.findAnswerByAnswer(answer);
+        if (result != null) {
+            Logger.log(this.getClass().getName(), "Answer found with answer: " + answer, LogLevel.INFO);
+        } else {
+            Logger.log(this.getClass().getName(), "Answer not found with answer: " + answer, LogLevel.WARN);
+        }
+        return result;
+    }
+
+    public Long getMaxAnswerId() {
+        return answerRepository.getMaxAnswerId();
     }
 
     public List<Answer> getAll() {

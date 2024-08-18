@@ -8,12 +8,12 @@ import com.example.application.frontend.modals.*;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class ControllerFactory {
-    private AnswerService answerService;
-    private CategoryService categoryService;
+    private final AnswerService answerService;
+    private final CategoryService categoryService;
     private final CourseService courseService;
-    private ImageService imageService;
-    private KeywordService keywordService;
-    private QuestionService questionService;
+    private final ImageService imageService;
+    private final KeywordService keywordService;
+    private final QuestionService questionService;
     private final StudyProgramService studyProgramService;
 
     public ControllerFactory(ConfigurableApplicationContext springContext) {
@@ -38,7 +38,7 @@ public class ControllerFactory {
             case "Home_ScreenController" -> new Home_ScreenController(studyProgramService, courseService);
             case "PdfPreview_ScreenController" -> new PdfPreview_ScreenController();
             case "QuestionCreate_ScreenController" ->
-                    new QuestionCreate_ScreenController(keywordService, categoryService, questionService);
+                    new QuestionCreate_ScreenController(keywordService, categoryService, questionService, answerService, imageService);
             case "QuestionEdit_ScreenController" ->
                     new QuestionEdit_ScreenController(keywordService, categoryService, answerService, questionService, imageService);
             case "Settings_ScreenController" ->

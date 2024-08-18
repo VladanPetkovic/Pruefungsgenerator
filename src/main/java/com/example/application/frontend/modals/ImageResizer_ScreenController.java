@@ -7,9 +7,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Component
+@Scope("prototype")
 public class ImageResizer_ScreenController extends ModalController {
 
     @FXML

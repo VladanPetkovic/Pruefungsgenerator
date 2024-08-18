@@ -376,7 +376,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         originalAnswers.add(new Answer(answer));    // copying the old answer
 
         // add new answers to the selectedQuestion
-        if (answer.getId() == 0) {
+        if (answer.getId() == null) {
             selectedQuestion.getAnswers().add(answer);
         }
         // update the answer from the selectedQuestion
@@ -414,7 +414,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         Question question = createQuestionFromInputs();
 
         // Update the question in the database
-//        questionService.update(question); TODO
+        questionService.update(question);
 
         // Compare the keywords and add/remove connections accordingly
         compareKeywords(question);
@@ -572,21 +572,20 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return A Question object initialized with the values from the input fields.
      */
     private Question createQuestionFromInputs() {
-//        return new Question(
-//                selectedQuestion.getId(),
-//                selectedCategory,
-//                (int) chooseDifficulty.getValue(),
-//                choosePoints.getValue().floatValue(),
-//                chooseQuestion.getText(),
-//                selectedQuestion.getType(), // cannot be changed --> TODO: check, if the user cannot change it frontend
-//                chooseRemarks.getText(),
-//                null,                             // created_at cannot be changed
-//                LocalDateTime.now(),  // updated_at
-//                getAnswerArrayList(Type.OPEN, chooseAnswerTextArea, this.answers),
-//                selectedKeywords,
-//                picturePickerController.getImages()         // images
-//        );
-        return null;
+        return new Question(
+                selectedQuestion.getId(),
+                selectedCategory,
+                (int) chooseDifficulty.getValue(),
+                choosePoints.getValue().floatValue(),
+                chooseQuestion.getText(),
+                null,                                   // type cannot be changed
+                chooseRemarks.getText(),
+                null,                               // created_at cannot be changed
+                LocalDateTime.now(),  // updated_at
+                getAnswersSet(Type.valueOf(selectedQuestion.getType()), chooseAnswerTextArea, this.answers),
+                picturePickerController.getImages(),         // images
+                selectedKeywords
+        );
     }
 
     /**
@@ -598,13 +597,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         return chooseQuestion.getText().isEmpty();
     }
 
+    // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
     public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
-        // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
         if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
             // add to database, if not existing
-//            Keyword newKeyword = Keyword.createNewKeywordInDatabase(keywordTextField.getText()); TODO
-//            // add to our KeywordMenuButton
-//            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
+            Keyword newKeyword = keywordService.add(new Keyword(keywordTextField.getText()), SharedData.getSelectedCourse());
+            // add to our KeywordMenuButton
+            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
             // return a message
             SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
             addKeywordBtn.setDisable(true);
@@ -616,7 +615,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
-            if (SharedData.getSelectedEditQuestion().getId() == 0) {
+            if (SharedData.getSelectedEditQuestion().getId() == null) {
                 try {
                     SwitchScene.switchScene(SwitchScene.EDIT_QUESTION);
                 } catch (IOException e) {

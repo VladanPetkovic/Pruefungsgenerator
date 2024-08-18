@@ -1,6 +1,7 @@
 package com.example.application.frontend.controller;
 
 import com.example.application.backend.app.ExportCSV;
+import com.example.application.backend.app.ImportCSV;
 import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
@@ -99,21 +100,21 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     public void onImportBtnClicked() {
-//        if (Objects.equals(this.label_selectedFile.getText(), "\"\"")) {
-//            SharedData.setOperation(Message.ERROR_MESSAGE_FILE_NOT_SELECTED);
-//            return;
-//        }
-//        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText());
-//
-//        // Start the import process
-//        boolean isSuccess = importCSV.importData();
-//
-//        // Update SharedData with a success or error message
-//        if (isSuccess) {
-//            SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
-//        } else {
-//            SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
-//        }
+        if (Objects.equals(this.label_selectedFile.getText(), "\"\"")) {
+            SharedData.setOperation(Message.ERROR_MESSAGE_FILE_NOT_SELECTED);
+            return;
+        }
+        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText());
+
+        // Start the import process
+        boolean isSuccess = importCSV.importData();
+
+        // Update SharedData with a success or error message
+        if (isSuccess) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
+        } else {
+            SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
+        }
     }
 
     public void onChooseFileBtnClick(ActionEvent actionEvent) {
@@ -201,6 +202,7 @@ public class Settings_ScreenController extends ScreenController {
 
     /**
      * Function that checks, if everything was inputted properly.
+     *
      * @return True, when user submitted everything, and false otherwise.
      */
     private boolean allFieldsSetProperly() {

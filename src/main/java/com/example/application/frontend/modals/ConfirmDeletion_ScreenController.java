@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 @Scope("prototype")
@@ -49,21 +50,15 @@ public class ConfirmDeletion_ScreenController extends ModalController {
 
     private void deleteQuestion(ActionEvent actionEvent) throws IOException {
         // remove from other arrays
-//        int questionId = SharedData.getSelectedEditQuestion().getId();
-//        SharedData.getTestQuestions().removeIf(question -> question.getId() == questionId);
-//        SharedData.getFilteredQuestions().removeIf(question -> question.getId() == questionId);
-//
-//        // delete in database
-//        SQLiteDatabaseConnection.QUESTION_REPOSITORY.remove(SharedData.getSelectedEditQuestion());
-//
-//        // remove images, keywords and answers, that are not used
-//        SQLiteDatabaseConnection.KEYWORD_REPOSITORY.removeUnused();
-//        SQLiteDatabaseConnection.IMAGE_REPOSITORY.removeUnused();
-//        SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeUnused();
-//        SQLiteDatabaseConnection.CATEGORY_REPOSITORY.removeUnused();
-//
-//        SharedData.resetEditObjects();
-//        closeStage(actionEvent);
+        Long questionId = SharedData.getSelectedEditQuestion().getId();
+        SharedData.getTestQuestions().removeIf(question -> Objects.equals(question.getId(), questionId));
+        SharedData.getFilteredQuestions().removeIf(question -> Objects.equals(question.getId(), questionId));
+
+        // delete in database
+        questionService.remove(questionId);
+
+        SharedData.resetEditObjects();
+        closeStage(actionEvent);
     }
 
     private void deleteCourse(ActionEvent actionEvent) throws IOException {
