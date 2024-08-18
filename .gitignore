@@ -4,10 +4,13 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
+.idea
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/artifacts
+.idea/dataSources/
 *.iws
 *.iml
 *.ipr
@@ -37,10 +40,6 @@ build/
 ### Mac OS ###
 .DS_Store
 
-../src/main/java/com/example/backend/db/db_config.txt
-src/main/java/com/example/backend/db/db_config.txt
-.idea/dataSources.local.xml
-.idea/dataSources/
-src/main/java/com/example/backend/db/mydatabase.db
+src/main/java/com/example/application/backend/db/mydatabase.db
 src/main/java/com/example/backend/app/output_config.txt
 bin/

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.controller.PdfPreview_ScreenController">
+    <children>
+        <fx:include source="../components/title_banner.fxml" />
+        <HBox minWidth="500.0" VBox.vgrow="ALWAYS">
+            <children>
+                <GridPane minHeight="-Infinity" minWidth="-Infinity" styleClass="main_navigation">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#onGoBackBtnClick" styleClass="btn_add_icon">
+                                   <graphic>
+                                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../icons/go_back_white.png" />
+                                          </image>
+                                      </ImageView>
+                                   </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+                <VBox fx:id="preview_search_nav" prefWidth="390.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox">
+                    <children>
+                        <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" textFill="WHITE" />
+                        <Label styleClass="topic_label" text="%format_pdf" />
+                          <VBox prefHeight="504.0" prefWidth="379.0" style="-fx-background-color: #3A3A3A;" styleClass="scroll-box">
+                              <children>
+                                  <VBox prefHeight="78.0" prefWidth="378.0">
+                                      <children>
+                                          <Label styleClass="option_label" text="%input_title" />
+                                          <TextField fx:id="titleTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="298.0" promptText="%input_title_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                                      </children>
+                                  </VBox>
+                                  <VBox prefHeight="100.0" prefWidth="358.0">
+                                      <children>
+                                          <Label styleClass="option_label" text="%count_questions_on_page" />
+                                            <Slider fx:id="questionCountSlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="78.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0">
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
+                              </Slider>
+                                      </children>
+                                  </VBox>
+                        <GridPane prefHeight="40.0" prefWidth="358.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label styleClass="option_label" text="%apply_header" />
+                              <CheckBox fx:id="checkbox_applyHeader" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                           </children>
+                        </GridPane>
+                        <GridPane prefHeight="40.0" prefWidth="358.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label styleClass="option_label" text="%show_page_number" />
+                              <CheckBox fx:id="checkbox_showPageNumber" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                           </children>
+                        </GridPane>
+                                  <VBox prefHeight="170.0" prefWidth="358.0">
+                                      <children>
+                                          <Label prefHeight="3.0" prefWidth="134.0" styleClass="option_label" text="%destination_folder" />
+                              <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="320.0" styleClass="option_label" text="&quot;&quot;">
+                                 <VBox.margin>
+                                    <Insets left="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane prefHeight="57.0" prefWidth="358.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" GridPane.halignment="CENTER">
+                                       <cursor>
+                                          <Cursor fx:constant="DEFAULT" />
+                                       </cursor>
+                                    </Button>
+                                 </children>
+                              </GridPane>
+                                      </children>
+                                  </VBox>
+                        <GridPane prefHeight="37.0" prefWidth="358.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                               <Button mnemonicParsing="false" onAction="#applyFormattingBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_grey" text="%view_pdf" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                               <Button mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="%export_pdf" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                               <Button mnemonicParsing="false" onAction="#onExportDocxBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="%export_docx" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="30.0" />
+                           </VBox.margin>
+                        </GridPane>
+                              </children>
+                          </VBox>
+                    </children>
+                </VBox>
+                <VBox prefHeight="630.0" prefWidth="652.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox fx:id="vbox_previewPane" prefHeight="596.0" prefWidth="639.0" />
+                     </content></ScrollPane>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

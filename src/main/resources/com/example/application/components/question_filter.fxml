@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minWidth="390.0" prefHeight="407.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.QuestionFilter_ScreenController">
+    <children>
+        <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" textFill="WHITE" />
+        <Label styleClass="label_white_bold" text="%question_filter_set_filters" />
+        <ScrollPane fitToWidth="true" minHeight="300.0" prefHeight="300.0" prefWidth="388.0" style="-fx-background-color: #3A3A3A;">
+            <content>
+                <VBox prefHeight="522.0" styleClass="scroll-box">
+                    <children>
+                        <VBox prefHeight="78.0" prefWidth="378.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_select_category" />
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.7999267578125" minWidth="10.0" prefWidth="304.5999755859375" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.39996337890625" minWidth="10.0" prefWidth="48.60002441406249" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                                      <TextField fx:id="categoryTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                              <Button fx:id="add_category_btn" disable="true" mnemonicParsing="false" onAction="#on_add_category_btn_click" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                 <graphic>
+                                    <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/add.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </GridPane>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="78.0" prefWidth="378.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_select_question" />
+                                <TextField fx:id="questionTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="298.0" promptText="%question_filter_question_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_select_keyword" />
+                                <TextField fx:id="keywordTextField" maxWidth="310.0" prefHeight="32.0" prefWidth="310.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_set_difficulty" />
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.4000549316406" minWidth="10.0" prefWidth="303.4000549316406" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.20001220703125" minWidth="10.0" prefWidth="50.599945068359375" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                                        <Slider fx:id="difficultySlider" blockIncrement="1.0" disable="true" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
+                              <Button mnemonicParsing="false" onAction="#on_toggle_difficulty_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
+                                 <graphic>
+                                    <ImageView fx:id="difficulty_toggle_image_view" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/toggle_off.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </GridPane>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_set_points" />
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.8000244140625" minWidth="10.0" prefWidth="303.999951171875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.4000244140625" minWidth="10.0" prefWidth="50.40004882812502" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                                        <Slider fx:id="pointsSlider" blockIncrement="0.5" disable="true" majorTickUnit="0.5" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
+                              <Button mnemonicParsing="false" onAction="#on_toggle_points_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
+                                 <graphic>
+                                    <ImageView fx:id="points_toggle_image_view" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/toggle_off.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </GridPane>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Label styleClass="option_label" text="%question_filter_set_type" />
+                                <MenuButton fx:id="questionTypeMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%question_filter_select_type">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Action 1" />
+                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                    </items>
+                                    <VBox.margin>
+                                        <Insets bottom="20.0" />
+                                    </VBox.margin>
+                                </MenuButton>
+                            </children>
+                        </VBox>
+                        <Button mnemonicParsing="false" onAction="#applyFilterButtonClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%question_filter_filter" />
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <Label styleClass="label_white_bold" text="%question_filter_preview" />
+    </children>
+</VBox>

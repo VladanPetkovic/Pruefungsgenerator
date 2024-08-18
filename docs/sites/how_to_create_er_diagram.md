@@ -30,10 +30,12 @@ Table "images" {
   "name" TEXT
   "position" INTEGER [not null]
   "comment" TEXT
+  "fk_question_id" INTEGER [not null]
 }
 
 Table "keywords" {
   "id" INTEGER [pk]
+  "fk_course_id" INTEGER [not null]
   "keyword" TEXT [not null]
 }
 
@@ -43,32 +45,19 @@ Table "questions" {
   "difficulty" INTEGER [not null]
   "points" FLOAT [not null]
   "question" TEXT [not null]
-  "fk_question_type_id" INTEGER [not null]
+  "type" TEXT [not null]
   "remark" TEXT
   "created_at" TEXT
   "updated_at" TEXT
 }
 
-Table "question_types" {
-  "id" INTEGER [pk]
-  "name" TEXT [not null]
-}
-
 Table "answers" {
   "id" INTEGER [pk]
   "answer" TEXT [not null]
+  "fk_question_id" INTEGER [not null]
 }
 
-Table "has_aq" {
-  "fk_answer_id" INT
-  "fk_question_id" INT
-
-Indexes {
-  (fk_answer_id, fk_question_id) [pk]
-}
-}
-
-Table "has_sc" {
+Table "study_programs_courses" {
   "fk_program_id" INT
   "fk_course_id" INT
 
@@ -77,7 +66,7 @@ Indexes {
 }
 }
 
-Table "has_cc" {
+Table "categories_courses" {
   "fk_course_id" INT
   "fk_category_id" INT
 
@@ -86,16 +75,7 @@ Indexes {
 }
 }
 
-Table "has_iq" {
-  "fk_image_id" INT
-  "fk_question_id" INT
-
-Indexes {
-  (fk_image_id, fk_question_id) [pk]
-}
-}
-
-Table "has_kq" {
+Table "questions_keywords" {
   "fk_keyword_id" INT
   "fk_question_id" INT
 
@@ -106,25 +86,21 @@ Indexes {
 
 Ref:"categories"."id" < "questions"."fk_category_id"
 
-Ref:"question_types"."id" < "questions"."fk_question_type_id"
+Ref:"questions"."id" < "answers"."fk_question_id"
 
-Ref:"answers"."id" < "has_aq"."fk_answer_id"
+Ref:"study_programs"."id" < "study_programs_courses"."fk_program_id"
 
-Ref:"questions"."id" < "has_aq"."fk_question_id"
+Ref:"courses"."id" < "study_programs_courses"."fk_course_id"
 
-Ref:"study_programs"."id" < "has_sc"."fk_program_id"
+Ref:"courses"."id" < "keywords"."fk_course_id"
 
-Ref:"courses"."id" < "has_sc"."fk_course_id"
+Ref:"courses"."id" < "categories_courses"."fk_course_id"
 
-Ref:"courses"."id" < "has_cc"."fk_course_id"
+Ref:"categories"."id" < "categories_courses"."fk_category_id"
 
-Ref:"categories"."id" < "has_cc"."fk_category_id"
+Ref:"questions"."id" < "images"."fk_question_id"
 
-Ref:"images"."id" < "has_iq"."fk_image_id"
+Ref:"keywords"."id" < "questions_keywords"."fk_keyword_id"
 
-Ref:"questions"."id" < "has_iq"."fk_question_id"
-
-Ref:"keywords"."id" < "has_kq"."fk_keyword_id"
-
-Ref:"questions"."id" < "has_kq"."fk_question_id"
+Ref:"questions"."id" < "questions_keywords"."fk_question_id"
 ````
