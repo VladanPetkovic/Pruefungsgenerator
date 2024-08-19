@@ -2,6 +2,7 @@ package com.example.application.frontend.controller;
 
 import com.example.application.backend.app.Screen;
 import com.example.application.backend.app.SharedData;
+import com.example.application.backend.app.SortType;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.Category;
 import com.example.application.MainApp;
@@ -273,7 +274,8 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // perform the database query to retrieve questions based on the criteria
             int pointStatus = pointsSpinnersStatus.get(i);
             int diffStatus = difficultySlidersStatus.get(i);
-            List<Question> queryResult = questionService.getByFilters(queryQuestion, SharedData.getSelectedCourse().getId(), pointStatus, diffStatus);
+            // Although we have given a sortDirection, we are not sorting: sortDirection = 0
+            List<Question> queryResult = questionService.getByFilters(queryQuestion, SharedData.getSelectedCourse().getId(), pointStatus, diffStatus, SortType.POINTS, 0);
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {

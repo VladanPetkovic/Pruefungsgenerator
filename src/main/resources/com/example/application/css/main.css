@@ -265,6 +265,29 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+.menuButton_bright_small {
+    -fx-background-color: #2f2f2f;
+    -fx-pref-width: 100px;
+    -fx-min-width: 50px;
+    -fx-pref-height: 32px;
+    -fx-max-width: 150px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+.menuButton_bright_small:hover {
+    -fx-background-color: #646464;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.menuButton_bright_small:pressed {
+    -fx-background-color: #2f2f2f;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
 .searchbar_dark {
     -fx-background-color: #434343;
     -fx-text-fill: white;

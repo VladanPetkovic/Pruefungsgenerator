@@ -50,6 +50,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             @Param("categoryId") Long categoryId,
             @Param("type") String type,
             @Param("keywords") Set<String> keywords,
-            @Param("courseId") Long courseId
+            @Param("courseId") Long courseId,
+            Pageable pageable
     );
 }

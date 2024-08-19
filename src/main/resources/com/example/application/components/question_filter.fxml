@@ -138,6 +138,28 @@
                 </VBox>
             </content>
         </ScrollPane>
-        <Label styleClass="label_white_bold" text="%question_filter_preview" />
+      <GridPane minHeight="45.0" prefHeight="46.0" prefWidth="390.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.4000244140625" minWidth="10.0" prefWidth="178.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.59995117187503" minWidth="10.0" prefWidth="157.60002441406252" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="109.199951171875" minWidth="10.0" prefWidth="53.5999755859375" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+              <Label styleClass="label_white_bold" text="%question_filter_preview" />
+            <MenuButton fx:id="sortMenuButton" disable="true" minWidth="126.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="126.0" styleClass="menuButton_bright_small" text="%sort" GridPane.columnIndex="1" />
+            <Button mnemonicParsing="false" onAction="#onSortDirectionBtnClick" prefHeight="50.0" prefWidth="53.0" styleClass="btn_add_icon" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+               <graphic>
+                  <ImageView fx:id="sortDirectionImageView" fitHeight="35.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/arrows_up_down.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </GridPane>
     </children>
 </VBox>
