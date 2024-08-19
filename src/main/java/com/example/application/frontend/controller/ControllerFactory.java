@@ -42,7 +42,7 @@ public class ControllerFactory {
             case "QuestionEdit_ScreenController" ->
                     new QuestionEdit_ScreenController(keywordService, categoryService, answerService, questionService, imageService);
             case "Settings_ScreenController" ->
-                    new Settings_ScreenController(studyProgramService, courseService, questionService);
+                    new Settings_ScreenController(studyProgramService, courseService, questionService, categoryService);
             /* COMPONENTS */
             case "NavbarController" -> new NavbarController();
             case "QuestionFilter_ScreenController" ->

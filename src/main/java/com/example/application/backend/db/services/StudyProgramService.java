@@ -36,6 +36,21 @@ public class StudyProgramService {
         return newStudyProgram;
     }
 
+    /**
+     * This function is currently only used for import.
+     * @param name The studyProgram-name
+     * @return the studyProgram (either created or found)
+     */
+    public StudyProgram add(String name) {
+        if (studyProgramRepository.existsStudyProgramByName(name)) {
+            Logger.log(this.getClass().getName(), "StudyProgram already exists", LogLevel.INFO);
+            return studyProgramRepository.findStudyProgramByName(name);
+        }
+        StudyProgram newStudyProgram = studyProgramRepository.save(new StudyProgram(name, "IMPORT"));       // TODO: IMPORT so lassen?
+        Logger.log(this.getClass().getName(), "StudyProgram saved with ID: " + newStudyProgram.getId(), LogLevel.INFO);
+        return newStudyProgram;
+    }
+
     public StudyProgram getById(Long id) {
         StudyProgram studyProgram = studyProgramRepository.findById(id).orElse(null);
         if (studyProgram != null) {

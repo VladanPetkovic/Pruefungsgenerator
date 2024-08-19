@@ -32,7 +32,7 @@ public class ExportCSV {
     }
 
     public void initCourse(String course) {
-        this.selectedCourse = courseService.getByName(course);
+        this.selectedCourse = courseService.getByNameAndStudyProgramId(course, null);   // TODO: add StudyProgram
     }
 
     /**

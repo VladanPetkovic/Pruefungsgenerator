@@ -12,4 +12,6 @@ public interface StudyProgramRepository extends JpaRepository<StudyProgram, Long
     boolean hasCourses(@Param("studyProgramId") Long studyProgramId);
 
     boolean existsStudyProgramByNameOrAbbreviation(String name, String abbreviation);
+
+    boolean existsStudyProgramByName(String name);
 }

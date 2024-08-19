@@ -88,4 +88,17 @@ public class Keyword implements Serializable {
         }
         return keywordStrings;
     }
+
+    public static Set<Keyword> createKeywords(String[] keywords) {
+        Set<Keyword> newKeywords = new HashSet<>();
+
+        for (String keywordText : keywords) {
+            String trimmedKeyword = keywordText.trim();
+            if (!trimmedKeyword.isEmpty()) {
+                newKeywords.add(new Keyword(trimmedKeyword));
+            }
+        }
+
+        return newKeywords;
+    }
 }

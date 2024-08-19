@@ -7,6 +7,7 @@ import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
+import com.example.application.backend.db.services.CategoryService;
 import com.example.application.backend.db.services.CourseService;
 import com.example.application.backend.db.services.QuestionService;
 import com.example.application.backend.db.services.StudyProgramService;
@@ -32,6 +33,7 @@ public class Settings_ScreenController extends ScreenController {
     private final StudyProgramService studyProgramService;
     private final CourseService courseService;
     private final QuestionService questionService;
+    private final CategoryService categoryService;
     @FXML
     public MenuButton chooseQuestionsMenuButton;
     @FXML
@@ -54,11 +56,12 @@ public class Settings_ScreenController extends ScreenController {
     private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
     private String modeOfImport = "";
 
-    public Settings_ScreenController(StudyProgramService studyProgramService, CourseService courseService, QuestionService questionService) {
+    public Settings_ScreenController(StudyProgramService studyProgramService, CourseService courseService, QuestionService questionService, CategoryService categoryService) {
         super();
         this.studyProgramService = studyProgramService;
         this.courseService = courseService;
         this.questionService = questionService;
+        this.categoryService = categoryService;
     }
 
     @FXML
@@ -104,7 +107,7 @@ public class Settings_ScreenController extends ScreenController {
             SharedData.setOperation(Message.ERROR_MESSAGE_FILE_NOT_SELECTED);
             return;
         }
-        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText());
+        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText(), studyProgramService, courseService, questionService, categoryService);
 
         // Start the import process
         boolean isSuccess = importCSV.importData();

@@ -2,8 +2,10 @@ package com.example.application.backend.db.services;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
+import com.example.application.backend.db.models.Answer;
 import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.models.Question;
+import com.example.application.backend.db.repositories.AnswerRepository;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +13,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final CategoryRepository categoryRepository;
+    private final AnswerRepository answerRepository;
 
     @Autowired
     public QuestionService(QuestionRepository questionRepository,
-                           CategoryRepository categoryRepository) {
+                           CategoryRepository categoryRepository,
+                           AnswerRepository answerRepository) {
         this.questionRepository = questionRepository;
         this.categoryRepository = categoryRepository;
+        this.answerRepository = answerRepository;
     }
 
     public Question add(Question question) {
@@ -129,7 +136,10 @@ public class QuestionService {
             existingQuestion.setPoints(q.getPoints());
             existingQuestion.setQuestion(q.getQuestion());
             existingQuestion.setRemark(q.getRemark());
+            existingQuestion.setKeywords(q.getKeywords());
             existingQuestion.setUpdatedAt(q.getUpdatedAt());
+            existingQuestion.setImages(q.getImages());
+            existingQuestion.setAnswers(q.getAnswers());
 
             Question updatedQuestion = questionRepository.save(existingQuestion);
             Logger.log(this.getClass().getName(), "Question updated successfully for ID: " + q.getId(), LogLevel.INFO);

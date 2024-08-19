@@ -52,8 +52,8 @@ public class CategoryService {
         return category;
     }
 
-    public Category getByName(String name) {
-        Category category = categoryRepository.findCategoryByName(name);
+    public Category getByName(String name, Course course) {
+        Category category = categoryRepository.findCategoryByNameAndCourses(name, course.getId());
         if (category != null) {
             Logger.log(this.getClass().getName(), "Category found with name: " + name, LogLevel.INFO);
         } else {

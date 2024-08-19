@@ -255,7 +255,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             return;
         }
 
-        Category category = categoryService.getByName(categoryTextField.getText());
+        Category category = categoryService.getByName(categoryTextField.getText(), SharedData.getSelectedCourse());
 
         // Create a new Question object with the provided details
         Question q = new Question(

@@ -413,22 +413,15 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Create a Question object from the inputs
         Question question = createQuestionFromInputs();
 
+        // remove/add answers
+        answerService.removeAllByQuestionId(question.getId());
+        answerService.addAnswers(question.getId(), question.getAnswers());
+
         // Update the question in the database
         questionService.update(question);
 
-        // Compare the keywords and add/remove connections accordingly
-        compareKeywords(question);
-
-        //Compare Images
+        // Compare Images
         compareImages(question);
-
-        // compare answers and add/remove connections accordingly
-        if (Type.isMultipleChoice(selectedQuestion.getType())) {
-            compareAnswers();
-        } else {
-//            SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeConnection(selectedQuestion.getAnswers().get(0), selectedQuestion.getId());    // not MC --> we have only one answer
-//            SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(selectedQuestion.getAnswers(), selectedQuestion.getId()); TODO
-        }
 
         SwitchScene.switchScene(SwitchScene.EDIT_QUESTION);
     }
@@ -463,81 +456,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 //        question.setImages(images); TODO
 
 //        Image.createImages(question, question.getId()); TODO
-    }
-
-    /**
-     * Compares the keywords between the current state and the initial state,
-     * and adds or removes connections accordingly in the database.
-     *
-     * @param question The Question object representing the question being edited.
-     */
-    private void compareKeywords(Question question) {
-        // Remove connections for keywords that are not selected anymore
-        for (Keyword keyword1 : selectedQuestion.getKeywords()) {
-            boolean keywordFound = false;
-            for (Keyword keyword2 : selectedKeywords) {
-                if (keyword1.getKeyword().equals(keyword2.getKeyword())) {
-                    keywordFound = true;
-                }
-            }
-            if (!keywordFound) {
-//                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.removeConnection(keyword1, question); TODO
-            }
-        }
-
-        // Add connections for new keywords that are selected
-        for (Keyword keyword1 : selectedKeywords) {
-            boolean keywordNotFound = true;
-            for (Keyword keyword2 : selectedQuestion.getKeywords()) {
-                if (keyword1.getKeyword().equals(keyword2.getKeyword())) {
-                    keywordNotFound = false;
-                }
-            }
-            if (keywordNotFound) {
-//                SQLiteDatabaseConnection.KEYWORD_REPOSITORY.addConnection(keyword1, question.getId()); TODO
-            }
-        }
-    }
-
-    private void compareAnswers() {
-        boolean createAnswers = false;
-
-        // remove connections for answers, that are deleted
-        for (Answer originalAnswer : originalAnswers) {
-            boolean answerFound = false;
-            for (Answer updatedAnswer : selectedQuestion.getAnswers()) {
-                if (updatedAnswer.getId() == originalAnswer.getId()) {
-                    answerFound = true;
-                    // create new answer, when string has changed
-                    // --> we create updated answers, because one answer can have multiple questions
-                    if (!Objects.equals(updatedAnswer.getAnswer(), originalAnswer.getAnswer())) {
-                        createAnswers = true;
-//                        SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeConnection(originalAnswer, selectedQuestion.getId()); TODO
-                    }
-                }
-            }
-            if (!answerFound) {
-//                SQLiteDatabaseConnection.ANSWER_REPOSITORY.removeConnection(originalAnswer, selectedQuestion.getId()); TODO
-            }
-        }
-
-        // add connections for new answers
-        for (Answer updatedAnswer : selectedQuestion.getAnswers()) {
-            boolean answerNotFound = true;
-            for (Answer originalAnswer : originalAnswers) {
-                if (updatedAnswer.getId() == originalAnswer.getId()) {
-                    answerNotFound = false;
-                }
-            }
-            if (answerNotFound) {
-                createAnswers = true;
-            }
-        }
-
-        // create new and updated answers --> we do not insert existing answers (done with sql)
-        if (createAnswers) {
-//            SQLiteDatabaseConnection.ANSWER_REPOSITORY.add(selectedQuestion.getAnswers(), selectedQuestion.getId()); TODO
-        }
     }
 
     /**

@@ -258,7 +258,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // get the category
             if (!Objects.equals(categoriesMenuButtons.get(i).getText(), MainApp.resourceBundle.getString("question_filter_select_category"))) { // TODO: change to not compare text
                 selectedCategory = categoriesMenuButtons.get(i).getText();
-                queryQuestion.setCategory(categoryService.getByName(selectedCategory));
+                queryQuestion.setCategory(categoryService.getByName(selectedCategory, SharedData.getSelectedCourse()));
             }
             // get the points
             if (!pointsSpinners.get(i).isDisabled()) {
@@ -273,8 +273,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
             // perform the database query to retrieve questions based on the criteria
             int pointStatus = pointsSpinnersStatus.get(i);
             int diffStatus = difficultySlidersStatus.get(i);
-            ArrayList<Question> queryResult = new ArrayList<>();
-//                    SQLiteDatabaseConnection.QUESTION_REPOSITORY.getAll(queryQuestion, SharedData.getSelectedCourse().getName(), pointStatus, diffStatus); TODO
+            List<Question> queryResult = questionService.getByFilters(queryQuestion, SharedData.getSelectedCourse().getId(), pointStatus, diffStatus);
 
             // check if query result is not empty
             if (!queryResult.isEmpty()) {

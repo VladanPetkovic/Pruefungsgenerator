@@ -8,7 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    Course findCourseByName(String name);
+    @Query("SELECT c FROM Course c JOIN c.studyPrograms sp " +
+            "WHERE c.name = :name AND sp.id = :studyProgramId")
+    Course findCourseByNameAndStudyPrograms(String name, Long studyProgramId);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Category cat JOIN cat.courses c WHERE c.id = :courseId")
     boolean hasCategories(@Param("courseId") Long courseId);

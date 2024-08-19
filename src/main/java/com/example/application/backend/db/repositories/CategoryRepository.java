@@ -1,6 +1,7 @@
 package com.example.application.backend.db.repositories;
 
 import com.example.application.backend.db.models.Category;
+import com.example.application.backend.db.models.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT cat FROM Category cat JOIN cat.courses c WHERE c.id = :courseId")
     List<Category> findAllByCourseId(@Param("courseId") Long courseId);
 
-    Category findCategoryByName(String name);
+    @Query("SELECT cat FROM Category cat JOIN cat.courses c " +
+            "WHERE cat.name = :name AND c.id = :courseId")
+    Category findCategoryByNameAndCourses(String name, Long courseId);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END " +
             "FROM Category cat JOIN cat.courses c " +

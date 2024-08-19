@@ -101,7 +101,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // set category value if provided
         if (!categoryName.isEmpty()) {
-            Category category = categoryService.getByName(categoryName);
+            Category category = categoryService.getByName(categoryName, SharedData.getSelectedCourse());
             filterQuestion.setCategory(category);
         }
 

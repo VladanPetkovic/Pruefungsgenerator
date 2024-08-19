@@ -100,4 +100,9 @@ public class AnswerService {
             throw e;
         }
     }
+
+    public void removeAllByQuestionId(Long questionId) {
+        answerRepository.deleteByQuestionId(questionId);
+        Logger.log(this.getClass().getName(), "Deleting answers for question with id: " + questionId, LogLevel.INFO);
+    }
 }

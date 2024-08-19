@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,7 +25,7 @@ public class Answer implements Serializable {
     private String answer;
 
     @ManyToOne
-    @JoinColumn(name = "fk_question_id", nullable = false, updatable = false)
+    @JoinColumn(name = "fk_question_id", nullable = false)
     private Question question = new Question();
 
     public Answer(String answer) {
@@ -33,5 +35,18 @@ public class Answer implements Serializable {
     public Answer(Answer other) {
         setId(other.getId());
         setAnswer(other.getAnswer());
+    }
+
+    public static Set<Answer> createAnswers(String[] answers) {
+        Set<Answer> newAnswers = new HashSet<>();
+
+        for (String answerText : answers) {
+            String trimmedAnswer = answerText.trim();
+            if (!trimmedAnswer.isEmpty()) {
+                newAnswers.add(new Answer(trimmedAnswer));
+            }
+        }
+
+        return newAnswers;
     }
 }

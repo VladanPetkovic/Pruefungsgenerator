@@ -27,6 +27,7 @@ module com.example.demo {
     requires org.apache.logging.log4j;
     requires spring.data.jpa;
     requires spring.data.commons;
+    requires spring.tx;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

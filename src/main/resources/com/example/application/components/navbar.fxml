@@ -22,7 +22,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
-            <VBox alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.vgrow="NEVER">
+            <VBox fx:id="createTestAutVBox" alignment="CENTER" onMouseClicked="#onCreateAutTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.vgrow="NEVER">
                 <children>
                     <ImageView fx:id="createTestAutomaticNavImageView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -32,7 +32,7 @@
                     <Label fx:id="createTestAutomaticNavLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="92.0" styleClass="navigation_item_label_notSelected" text="%navigation_create_test_automatic" textAlignment="CENTER" textFill="WHITE" />
                 </children>
             </VBox>
-            <VBox alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+            <VBox fx:id="createTestManVBox" alignment="CENTER" onMouseClicked="#onCreateManTestNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                 <children>
                     <ImageView fx:id="createTestManualNavImageView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -42,7 +42,7 @@
                     <Label fx:id="createTestManualNavLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="42.0" prefWidth="110.0" styleClass="navigation_item_label_notSelected" text="%navigation_create_test_manual" textAlignment="CENTER" textFill="WHITE" />
                 </children>
             </VBox>
-            <VBox alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
+            <VBox fx:id="createQuestionVBox" alignment="CENTER" onMouseClicked="#onUploadQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
                 <children>
                     <ImageView fx:id="createQuestionNavImageView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -52,7 +52,7 @@
                     <Label fx:id="createQuestionNavLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="%navigation_create_question" textAlignment="CENTER" textFill="WHITE" />
                 </children>
             </VBox>
-            <VBox alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
+            <VBox fx:id="editQuestionVBox" alignment="CENTER" onMouseClicked="#onEditQuestionNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
                 <children>
                     <ImageView fx:id="editQuestionNavImageView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -62,7 +62,7 @@
                     <Label fx:id="editQuestionNavLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="122.0" styleClass="navigation_item_label_notSelected" text="%navigation_edit_question" textAlignment="CENTER" textFill="WHITE" />
                 </children>
             </VBox>
-         <VBox alignment="CENTER" onMouseClicked="#onSettingsNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
+         <VBox fx:id="settingsVBox" alignment="CENTER" onMouseClicked="#onSettingsNavBtnClick" prefHeight="200.0" prefWidth="100.0" styleClass="navigation_vbox" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
             <children>
                <ImageView fx:id="settingsNavImageView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                   <image>

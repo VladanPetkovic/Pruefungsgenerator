@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import com.example.application.backend.app.Screen;
+import javafx.scene.layout.VBox;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,11 @@ import static com.example.application.frontend.controller.SwitchScene.switchScen
 @Component
 @Scope("prototype")
 public class NavbarController {
-
+    public VBox createTestAutVBox;
+    public VBox createTestManVBox;
+    public VBox createQuestionVBox;
+    public VBox settingsVBox;
+    public VBox editQuestionVBox;
     @FXML
     ImageView createTestAutomaticNavImageView;
     @FXML
@@ -117,26 +122,31 @@ public class NavbarController {
     }
 
     private void createAutomaticSelected() {
+        createTestAutVBox.setDisable(true);
         createTestAutomaticNavLabel.getStyleClass().add("navigation_item_label_selected");
         createTestAutomaticNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/application/icons/file_add_blue.png")));
     }
 
     private void createManualSelected() {
+        createTestManVBox.setDisable(true);
         createTestManualNavLabel.getStyleClass().add("navigation_item_label_selected");
         createTestManualNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/application/icons/file_add_blue.png")));
     }
 
     private void createQuestionSelected() {
+        createQuestionVBox.setDisable(true);
         createQuestionNavLabel.getStyleClass().add("navigation_item_label_selected");
         createQuestionNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/application/icons/file_upload_blue.png")));
     }
 
     private void editQuestionSelected() {
+        editQuestionVBox.setDisable(true);
         editQuestionNavLabel.getStyleClass().add("navigation_item_label_selected");
         editQuestionNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/application/icons/file_edit_blue.png")));
     }
 
     private void settingsSelected() {
+        settingsVBox.setDisable(true);
         settingsNavLabel.getStyleClass().add("navigation_item_label_selected");
         settingsNavImageView.setImage(new Image(getClass().getResourceAsStream("/com/example/application/icons/settings_blue.png")));
     }

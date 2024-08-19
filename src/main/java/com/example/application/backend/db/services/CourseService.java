@@ -30,7 +30,7 @@ public class CourseService {
     public Course add(Course course, StudyProgram studyProgram) {
         if (courseExists(course.getNumber(), course.getName(), studyProgram.getId())) {
             Logger.log(this.getClass().getName(), "Course already exists", LogLevel.INFO);
-            return null;
+            return courseRepository.findCourseByNameAndStudyPrograms(course.getName(), studyProgram.getId());
         }
         course.getStudyPrograms().add(studyProgram);
         Course newCourse = courseRepository.save(course);
@@ -48,8 +48,8 @@ public class CourseService {
         return course;
     }
 
-    public Course getByName(String name) {
-        Course course = courseRepository.findCourseByName(name);
+    public Course getByNameAndStudyProgramId(String name, Long studyProgramId) {
+        Course course = courseRepository.findCourseByNameAndStudyPrograms(name, studyProgramId);
         if (course != null) {
             Logger.log(this.getClass().getName(), "Course found with name: " + name, LogLevel.INFO);
         } else {

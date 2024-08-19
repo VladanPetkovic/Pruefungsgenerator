@@ -83,7 +83,6 @@ public class AddCourse_ScreenController extends ModalController {
     private void createCourse(String enteredName, int enteredNumber, String enteredLecturer) {
         Course newCourse = new Course(enteredName, enteredNumber, enteredLecturer);
         courseService.add(newCourse, SharedData.getSelectedStudyProgram());
-        // TODO: the add() method returns a course -> check whether null and display an appropriate message
     }
 
     private void updateCourse(String enteredName, int enteredNumber, String enteredLecturer) {
