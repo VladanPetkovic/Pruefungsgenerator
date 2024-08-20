@@ -57,7 +57,7 @@ public class PicturePickerController {
         buttonAndImages = new ArrayList<>();
     }
 
-    public void addPreExistingImages(ArrayList<com.example.application.backend.db.models.Image> images) {
+    public void addPreExistingImages(Set<com.example.application.backend.db.models.Image> images) {
         if (images == null) {
             return;
         }
@@ -85,11 +85,6 @@ public class PicturePickerController {
             Image image = new Image(file.toURI().toString());
             buttonAndImages.add(new ButtonAndImage(fileName, image));
             SharedData.setResizeImage(image);
-//                // After the resizer stage is closed, check the output image
-////                Image resizedImage = imageResizerScreenController.outputImage;
-////                if (resizedImage != null) {
-////                    buttonAndImages.add(new ButtonAndImage(fileName, resizedImage));
-////                }
         }
     }
 

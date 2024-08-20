@@ -25,7 +25,6 @@ public class Image implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
     @Column(nullable = false)
     private byte[] image;
 
@@ -36,7 +35,7 @@ public class Image implements Serializable {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "fk_question_id", nullable = false, updatable = false)
+    @JoinColumn(name = "fk_question_id", nullable = false)
     private Question question = new Question();
 
     public Image(javafx.scene.image.Image image, String name) {

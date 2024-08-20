@@ -86,4 +86,9 @@ public class ImageService {
             throw e;
         }
     }
+
+    public void removeAllByQuestionId(Long questionId) {
+        imageRepository.deleteByQuestionId(questionId);
+        Logger.log(this.getClass().getName(), "Deleting images for question with id: " + questionId, LogLevel.INFO);
+    }
 }

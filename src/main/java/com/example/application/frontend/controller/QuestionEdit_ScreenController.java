@@ -285,7 +285,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 }
             }
 
-//            picturePickerController.addPreExistingImages(clickedQuestion.getImages()); TODO
+            picturePickerController.addPreExistingImages(clickedQuestion.getImages());
 
             initTimeStamps(clickedQuestion);
         });
@@ -417,45 +417,15 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         answerService.removeAllByQuestionId(question.getId());
         answerService.addAnswers(question.getId(), question.getAnswers());
 
+        // remove/add images --> not very performance-friendly...
+        imageService.removeAllByQuestionId(question.getId());
+        imageService.addImages(question.getId(), question.getImages());
+
         // Update the question in the database
         questionService.update(question);
 
-        // Compare Images
-        compareImages(question);
 
         SwitchScene.switchScene(SwitchScene.EDIT_QUESTION);
-    }
-
-    private void compareImages(Question question) {
-        for (Image image : selectedQuestion.getImages()) {
-            boolean imageFound = false;
-            for (Image image2 : picturePickerController.getImages()) {
-                if (image.getName().equals(image2.getName())) {
-                    imageFound = true;
-                }
-            }
-            if (!imageFound) {
-//                SQLiteDatabaseConnection.IMAGE_REPOSITORY.removeConnection(image, question); TODO
-            }
-        }
-
-        ArrayList<Image> images = new ArrayList<>();
-
-        for (Image image : picturePickerController.getImages()) {
-            boolean imageIsNew = true;
-            for (Image image2 : selectedQuestion.getImages()) {
-                if (image.getName().equals(image2.getName())) {
-                    imageIsNew = false;
-                }
-            }
-            if (imageIsNew) {
-                images.add(image);
-            }
-        }
-
-//        question.setImages(images); TODO
-
-//        Image.createImages(question, question.getId()); TODO
     }
 
     /**
