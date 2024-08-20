@@ -7,6 +7,7 @@ import com.example.application.backend.db.services.*;
 import com.example.application.frontend.components.CustomDoubleSpinner;
 
 import com.example.application.frontend.components.PicturePickerController;
+import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -315,12 +318,19 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         return null;
     }
 
-    public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
-        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
-            addCategoryBtnClick(newCategory, add_category_btn);
-            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-        }
+    public void onAddCategoryBtnClick(ActionEvent actionEvent) throws IOException {
+        // TODO: in progress
+        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+
+        addCategoryStage.setOnHidden((WindowEvent event) -> {
+
+        });
+
+//        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
+//            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
+//            addCategoryBtnClick(newCategory, add_category_btn);
+//            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
+//        }
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {

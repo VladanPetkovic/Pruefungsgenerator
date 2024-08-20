@@ -49,6 +49,7 @@ public class ControllerFactory {
                     new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();
             /* MODALS */
+            case "AddCategory_ScreenController" -> new AddCategory_ScreenController(categoryService);
             case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);
             case "AddStudyProgram_ScreenController" -> new AddStudyProgram_ScreenController(studyProgramService);
             case "ConfirmDeletion_ScreenController" ->

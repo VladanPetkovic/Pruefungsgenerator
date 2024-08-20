@@ -153,7 +153,7 @@ public abstract class ScreenController {
      * @param newCategory    the created category
      * @param addCategoryBtn the add-btn that is clicked for adding a new category
      */
-    protected void addCategoryBtnClick(Category newCategory, Button addCategoryBtn) throws IOException {
+    protected void addCategoryBtnClick(Category newCategory, Button addCategoryBtn) {
         if (newCategory.getId() != null) {
             SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
             SharedData.getSuggestedCategories().add(newCategory.getName());
