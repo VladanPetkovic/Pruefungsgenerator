@@ -3,6 +3,7 @@ package com.example.application.backend.db.services;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.Category;
+import com.example.application.backend.db.models.CategoryWrapper;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import com.example.application.backend.db.repositories.CourseRepository;
@@ -71,6 +72,12 @@ public class CategoryService {
     public List<Category> getAllByCourseId(Long courseId) {
         List<Category> categories = categoryRepository.findAllByCourseId(courseId);
         Logger.log(this.getClass().getName(), "Retrieved all categories for one course, count: " + categories.size(), LogLevel.INFO);
+        return categories;
+    }
+
+    public List<CategoryWrapper> getAllByCourseIdWithQuestionCount(Long courseId) {
+        List<CategoryWrapper> categories = categoryRepository.findCategoriesWithQuestionCountByCourseId(courseId);
+        Logger.log(this.getClass().getName(), "Retrieved " + categories.size() + " categories for one course with question-count.", LogLevel.INFO);
         return categories;
     }
 

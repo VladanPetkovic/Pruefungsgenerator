@@ -52,7 +52,7 @@ public class Category implements Serializable {
      * @param newCategory The provided category
      * @return String - the error-message, returns null if everything is fine.
      */
-    public static String checkNewCategory(String newCategory) throws IOException {
+    public static String checkNewCategory(String newCategory) {
         if (newCategory == null) {
             return "No category provided!";
         }

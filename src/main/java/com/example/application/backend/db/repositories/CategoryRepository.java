@@ -1,6 +1,7 @@
 package com.example.application.backend.db.repositories;
 
 import com.example.application.backend.db.models.Category;
+import com.example.application.backend.db.models.CategoryWrapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "AND c.id = :courseId")
     boolean existsCategoryByNameAndCourseId(@Param("name") String name,
                                             @Param("courseId") Long courseId);
+
+    @Query("SELECT new com.example.application.backend.db.models.CategoryWrapper(cat, COUNT(q)) " +
+            "FROM Category cat " +
+            "JOIN cat.courses c " +
+            "LEFT JOIN cat.questions q " +
+            "WHERE c.id = :courseId " +
+            "GROUP BY cat.id")
+    List<CategoryWrapper> findCategoriesWithQuestionCountByCourseId(@Param("courseId") Long courseId);
 }

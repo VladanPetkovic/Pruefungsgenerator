@@ -123,7 +123,7 @@ public abstract class ScreenController {
      * TODO: maybe rewrite: initializeKeywords and initializeCategories to one function with additional boolean value
      * And displays an add-btn, when the inputted text is changed AND not in the db
      */
-    protected void initializeCategories(TextField categoryTextField, List<Category> categories, Button add_category_btn) {
+    protected void initializeCategories(TextField categoryTextField, List<Category> categories) {
 //        if (categories.isEmpty()) {   // maybe when the application crashed this code is necessary - to be checked/tested
 //            return;
 //        }
@@ -137,29 +137,6 @@ public abstract class ScreenController {
             }
         }
         TextFields.bindAutoCompletion(categoryTextField, items);
-
-        categoryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!items.contains(categoryTextField.getText()) && !Objects.equals(categoryTextField.getText(), "")) {
-                add_category_btn.setDisable(false);
-            } else {
-                add_category_btn.setDisable(true);
-            }
-        });
-    }
-
-    /**
-     * Function used to add a new category to the suggested-categories when clicked on the plus-button.
-     *
-     * @param newCategory    the created category
-     * @param addCategoryBtn the add-btn that is clicked for adding a new category
-     */
-    protected void addCategoryBtnClick(Category newCategory, Button addCategoryBtn) {
-        if (newCategory.getId() != null) {
-            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-            SharedData.getSuggestedCategories().add(newCategory.getName());
-
-            addCategoryBtn.setDisable(true);
-        }
     }
 
     /**

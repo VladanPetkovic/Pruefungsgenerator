@@ -36,7 +36,7 @@
                           </rowConstraints>
                            <children>
                                       <TextField fx:id="categoryTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
-                              <Button fx:id="add_category_btn" disable="true" mnemonicParsing="false" onAction="#on_add_category_btn_click" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                              <Button mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
                                  <graphic>
                                     <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -80,7 +80,7 @@
                           </rowConstraints>
                            <children>
                                         <Slider fx:id="difficultySlider" blockIncrement="1.0" disable="true" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
-                              <Button mnemonicParsing="false" onAction="#on_toggle_difficulty_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
+                              <Button mnemonicParsing="false" onAction="#onToggleDifficultyBtnClick" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
                                  <graphic>
                                     <ImageView fx:id="difficulty_toggle_image_view" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -106,7 +106,7 @@
                           </rowConstraints>
                            <children>
                                         <Slider fx:id="pointsSlider" blockIncrement="0.5" disable="true" majorTickUnit="0.5" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
-                              <Button mnemonicParsing="false" onAction="#on_toggle_points_btn_click" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
+                              <Button mnemonicParsing="false" onAction="#onTogglePointsBtnClick" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
                                  <graphic>
                                     <ImageView fx:id="points_toggle_image_view" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

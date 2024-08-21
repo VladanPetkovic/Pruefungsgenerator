@@ -49,7 +49,7 @@
                                        </rowConstraints>
                                        <children>
                                           <TextField fx:id="categoryTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
-                                          <Button fx:id="add_category_btn" mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                          <Button mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
                                              <graphic>
                                                 <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

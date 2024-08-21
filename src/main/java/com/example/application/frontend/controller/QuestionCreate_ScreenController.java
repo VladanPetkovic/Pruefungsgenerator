@@ -41,8 +41,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     @FXML
     private TextField categoryTextField;
     @FXML
-    private Button add_category_btn;
-    @FXML
     private Slider difficulty;
     @FXML
     private VBox customDoubleSpinnerPlaceholder;
@@ -97,7 +95,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
+        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initializeKeywords(keywordTextField, keywords, addKeywordBtn);
 
@@ -318,19 +316,16 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         return null;
     }
 
-    public void onAddCategoryBtnClick(ActionEvent actionEvent) throws IOException {
-        // TODO: in progress
+    public void onAddCategoryBtnClick(ActionEvent actionEvent) {
         Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
 
         addCategoryStage.setOnHidden((WindowEvent event) -> {
-
+            try {
+                SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
-
-//        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-//            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
-//            addCategoryBtnClick(newCategory, add_category_btn);
-//            SharedData.setOperation(Message.CREATE_CATEGORY_SUCCESS_MESSAGE);
-//        }
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {

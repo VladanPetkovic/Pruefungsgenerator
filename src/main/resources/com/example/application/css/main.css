@@ -110,6 +110,34 @@ This rule restores the background color to red and applies a darker drop shadow 
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
+/* The color blue is often used for updating */
+.btn_blue {
+    -fx-background-color: blue;
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: HAND;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale 0.3s;
+}
+/*
+This rule changes the background color to a lighter shade of red and slightly scales up the button for visual feedback.
+*/
+.btn_blue:hover {
+    -fx-background-color: darkblue;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+/*
+This rule restores the background color to red and applies a darker drop shadow effect when the button is pressed.
+*/
+.btn_blue:pressed {
+    -fx-background-color: blue;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
+}
+
 /*
 This rule sets the background color to a shade of grey, text color to white, and applies rounded corners to the background and border.
 Additionally, it specifies padding, cursor as a hand symbol, a drop shadow effect, and a transition effect for smoother visual changes.

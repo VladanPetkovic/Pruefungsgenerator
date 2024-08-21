@@ -10,6 +10,7 @@ import com.example.application.backend.db.services.CategoryService;
 import com.example.application.backend.db.services.KeywordService;
 import com.example.application.backend.db.services.QuestionService;
 import com.example.application.frontend.controller.ScreenController;
+import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 @Component
@@ -43,8 +43,6 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     public Label label_selectedCourse;
     @FXML
-    public Button add_category_btn;
-    @FXML
     public ImageView difficulty_toggle_image_view;
     @FXML
     public ImageView points_toggle_image_view;
@@ -66,7 +64,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
     private void initialize() {
         // init auto-completion
         initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()), null);
-        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()), add_category_btn);
+        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
@@ -76,19 +74,16 @@ public class QuestionFilter_ScreenController extends ScreenController {
         label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
     }
 
-    public void on_add_category_btn_click(ActionEvent actionEvent) throws IOException {
-        if (Category.checkNewCategory(categoryTextField.getText()) == null) {
-            Category newCategory = categoryService.add(new Category(categoryTextField.getText()), SharedData.getSelectedCourse());
-            addCategoryBtnClick(newCategory, add_category_btn);
-        }
+    public void onAddCategoryBtnClick(ActionEvent actionEvent) {
+        ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
     }
 
-    public void on_toggle_difficulty_btn_click(ActionEvent actionEvent) {
+    public void onToggleDifficultyBtnClick(ActionEvent actionEvent) {
         on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view, difficultyFilterMethod);
         difficultyFilterMethod = (difficultyFilterMethod + 1) % 4;
     }
 
-    public void on_toggle_points_btn_click(ActionEvent actionEvent) {
+    public void onTogglePointsBtnClick(ActionEvent actionEvent) {
         on_toggle_btn_click(pointsSlider, points_toggle_image_view, pointsFilterMethod);
         pointsFilterMethod = (pointsFilterMethod + 1) % 4;
     }
