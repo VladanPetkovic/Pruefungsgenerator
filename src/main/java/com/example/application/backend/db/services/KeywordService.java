@@ -2,8 +2,10 @@ package com.example.application.backend.db.services;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
+import com.example.application.backend.db.models.CategoryWrapper;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Keyword;
+import com.example.application.backend.db.models.KeywordWrapper;
 import com.example.application.backend.db.repositories.KeywordRepository;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +49,8 @@ public class KeywordService {
         return keyword;
     }
 
-    public Keyword getByName(String name) {
-        Keyword keyword = keywordRepository.findKeywordByKeyword(name);
+    public Keyword getByName(String name, Course course) {
+        Keyword keyword = keywordRepository.findKeywordByNameAndCourses(name, course.getId());
         if (keyword != null) {
             Logger.log(this.getClass().getName(), "Keyword found with name: " + name, LogLevel.INFO);
         } else {
@@ -66,6 +68,12 @@ public class KeywordService {
     public List<Keyword> getAllByCourseId(Long courseId) {
         List<Keyword> keywords = keywordRepository.findAllByCourseId(courseId);
         Logger.log(this.getClass().getName(), "Retrieved all keywords for one course, count: " + keywords.size(), LogLevel.INFO);
+        return keywords;
+    }
+
+    public List<KeywordWrapper> getAllByCourseIdWithQuestionCount(Long courseId) {
+        List<KeywordWrapper> keywords = keywordRepository.findKeywordsWithQuestionCountByCourseId(courseId);
+        Logger.log(this.getClass().getName(), "Retrieved " + keywords.size() + " keywords for one course with question-count.", LogLevel.INFO);
         return keywords;
     }
 

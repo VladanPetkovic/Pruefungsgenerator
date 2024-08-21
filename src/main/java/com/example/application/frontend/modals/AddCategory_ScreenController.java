@@ -28,6 +28,10 @@ public class AddCategory_ScreenController extends ModalController {
     public TableColumn<CategoryWrapper, Long> questionCountTableColumn;
     public Label messageLabel;
 
+    public AddCategory_ScreenController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
     @FXML
     private void initialize() {
         // initialize the TableColumns with the appropriate properties from the CategoryWrapper
@@ -42,10 +46,6 @@ public class AddCategory_ScreenController extends ModalController {
         // convert the list to an ObservableList and set it to the TableView
         ObservableList<CategoryWrapper> observableCategoryWrappers = FXCollections.observableArrayList(categoryWrappers);
         categoryTable.setItems(observableCategoryWrappers);
-    }
-
-    public AddCategory_ScreenController(CategoryService categoryService) {
-        this.categoryService = categoryService;
     }
 
     public void onGoBackBtnClick(ActionEvent actionEvent) {

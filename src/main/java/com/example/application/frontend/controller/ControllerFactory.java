@@ -51,6 +51,7 @@ public class ControllerFactory {
             /* MODALS */
             case "AddCategory_ScreenController" -> new AddCategory_ScreenController(categoryService);
             case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);
+            case "AddKeyword_ScreenController" -> new AddKeyword_ScreenController(keywordService);
             case "AddStudyProgram_ScreenController" -> new AddStudyProgram_ScreenController(studyProgramService);
             case "ConfirmDeletion_ScreenController" ->
                     new ConfirmDeletion_ScreenController(studyProgramService, courseService, questionService);

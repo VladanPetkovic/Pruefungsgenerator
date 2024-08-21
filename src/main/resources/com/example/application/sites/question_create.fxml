@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -184,8 +185,6 @@
                               <VBox fx:id="keywordVBox" prefHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
                                     <HBox fx:id="keywordsHBox" prefHeight="100.0" prefWidth="200.0" />
-                                    <MenuButton fx:id="keywordMenuButton" mnemonicParsing="false" popupSide="TOP" styleClass="menuButton_dark" text="%question_filter_select_keyword">
-                                    </MenuButton>
                                     <GridPane>
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.7999267578125" minWidth="10.0" prefWidth="304.5999755859375" />
@@ -195,8 +194,7 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <TextField fx:id="keywordTextField" maxWidth="353.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="353.0" promptText="%prompt_text_create_keyword" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
-                                          <Button fx:id="addKeywordBtn" disable="true" mnemonicParsing="false" onAction="#onAddKeywordBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                          <Button mnemonicParsing="false" onAction="#onAddKeywordBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
                                              <graphic>
                                                 <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -205,6 +203,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
+                                          <ComboBox fx:id="keywordComboButton" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="menuButton_dark" />
                                        </children>
                                        <padding>
                                           <Insets bottom="10.0" top="10.0" />
@@ -219,7 +218,7 @@
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="150.0" prefWidth="1000.0">
                            <children>
-                              <Button fx:id="upload" maxWidth="270.0" mnemonicParsing="false" onAction="#onActionUpload" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="%create" textFill="WHITE">
+                              <Button maxWidth="270.0" mnemonicParsing="false" onAction="#onActionUpload" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" text="%create" textFill="WHITE">
                                  <font>
                                     <Font size="20.0" />
                                  </font>

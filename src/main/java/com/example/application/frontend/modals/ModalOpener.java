@@ -14,6 +14,7 @@ import java.util.Map;
 public class ModalOpener {
     public static String ADD_CATEGORY = "modals/addCategory.fxml";
     public static String ADD_COURSE = "modals/add_Course.fxml";
+    public static String ADD_KEYWORD = "modals/addKeyword.fxml";
     public static String ADD_STUDY_PROGRAM = "modals/add_StudyProgram.fxml";
     public static String CONFIRM_DELETION = "modals/confirm_deletion.fxml";
     public static String IMAGE_RESIZER = "modals/image_resizer.fxml";
@@ -29,6 +30,7 @@ public class ModalOpener {
         MODAL_TITLES.clear();
         MODAL_TITLES.put(ADD_CATEGORY, MainApp.resourceBundle.getString("category_modal_title"));
         MODAL_TITLES.put(ADD_COURSE, MainApp.resourceBundle.getString("course"));
+        MODAL_TITLES.put(ADD_KEYWORD, MainApp.resourceBundle.getString("keyword_modal_title"));
         MODAL_TITLES.put(ADD_STUDY_PROGRAM, MainApp.resourceBundle.getString("study_program"));
         MODAL_TITLES.put(CONFIRM_DELETION, MainApp.resourceBundle.getString("confirm_deletion"));
         MODAL_TITLES.put(IMAGE_RESIZER, MainApp.resourceBundle.getString("image_resize_modal_title"));

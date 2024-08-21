@@ -43,7 +43,7 @@ public class Keyword implements Serializable {
      * @param newKeyword The provided keyword
      * @return String - the error-message, returns null if everything is fine.
      */
-    public static String checkNewKeyword(String newKeyword) throws IOException {
+    public static String checkNewKeyword(String newKeyword) {
         if (newKeyword == null) {
             return "No keyword provided!";
         }

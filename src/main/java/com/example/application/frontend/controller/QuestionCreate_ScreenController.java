@@ -38,6 +38,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final ImageService imageService;
+    public ComboBox<String> keywordComboButton;
     @FXML
     private TextField categoryTextField;
     @FXML
@@ -61,12 +62,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private TextArea remarks;
     @FXML
     private TextArea answerTextArea;
-    @FXML
-    private MenuButton keywordMenuButton;
-    @FXML
-    private Button addKeywordBtn;
-    @FXML
-    private TextField keywordTextField;
     @FXML
     private HBox keywordsHBox;
     private Set<Keyword> selectedKeywords = new HashSet<>();
@@ -97,7 +92,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public void initialize(URL location, ResourceBundle resources) {
         initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
-        initializeKeywords(keywordTextField, keywords, addKeywordBtn);
+        initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
 
         difficulty.setValue(5);
 
@@ -111,10 +106,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             previewQuestion.setVisible(previewQuestionShouldBeVisible());
         });
         remarks.setText("");
-
-        for (Keyword keyword : keywords) {
-            fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
-        }
 
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(questionTypeMenuButton, false, questionTypes);
@@ -328,15 +319,13 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         });
     }
 
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
-        if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
-            // add to database, if not existing
-            Keyword newKeyword = keywordService.add(new Keyword(keywordTextField.getText()), SharedData.getSelectedCourse());
-            // add to our KeywordMenuButton
-            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
-            // return a message
-            SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
-            addKeywordBtn.setDisable(true);
-        }
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+
+        // initialize keywords-comboBox when the modal closes
+        addKeywordStage.setOnHidden((WindowEvent event) -> {
+            List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
+            initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
+        });
     }
 }

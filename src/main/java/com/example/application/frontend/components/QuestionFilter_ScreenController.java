@@ -16,6 +16,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +65,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     private void initialize() {
         // init auto-completion
-        initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()), null);
+        initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Type> questionTypes = Arrays.asList(Type.values());
@@ -76,6 +78,16 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
     public void onAddCategoryBtnClick(ActionEvent actionEvent) {
         ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+    }
+
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+
+        // initialize keywords-auto-completion
+        addKeywordStage.setOnHidden((WindowEvent event) -> {
+            initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        });
+        // TODO: remove old listener
     }
 
     public void onToggleDifficultyBtnClick(ActionEvent actionEvent) {
@@ -123,7 +135,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
             // split by commas or spaces
             String[] keywordsArray = keywordText.split("[,\\s]+");
             for (String keyword : keywordsArray) {
-                Keyword keywordObj = keywordService.getByName(keyword.trim());
+                Keyword keywordObj = keywordService.getByName(keyword.trim(), SharedData.getSelectedCourse());
                 if (keywordObj != null) {
                     keywordHashSet.add(keywordObj);
                 }

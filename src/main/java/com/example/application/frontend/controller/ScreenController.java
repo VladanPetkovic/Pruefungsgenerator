@@ -89,12 +89,10 @@ public abstract class ScreenController {
     }
 
     /**
-     * Initializes the auto-completion of the keywords in the search-area of edit-question
-     * And displays an add-btn, when the inputted text is changed AND not in the db
-     *
-     * @param addKeywordBtn When passed null, then we cannot add keywords
+     * Initializes the auto-completion of the keywords in the search-area
      */
-    protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords, Button addKeywordBtn) {
+    protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords) {
+        // TODO: when initializing more than once, the old changeListener needs to be removed
 //        if (keywords.isEmpty()) {     // maybe when the application crashed this code is necessary - to be checked/tested
 //            return;
 //        }
@@ -106,22 +104,10 @@ public abstract class ScreenController {
             }
         }
         TextFields.bindAutoCompletion(keywordTextField, items);
-
-        if (addKeywordBtn != null) {
-            keywordTextField.textProperty().addListener((obsrevable, oldValue, newValue) -> {
-                if (!items.contains(keywordTextField.getText()) && !Objects.equals(keywordTextField.getText(), "")) {
-                    addKeywordBtn.setDisable(false);
-                } else {
-                    addKeywordBtn.setDisable(true);
-                }
-            });
-        }
     }
 
     /**
-     * Initializes the auto-completion of the categories in the search-area of edit-question.
-     * TODO: maybe rewrite: initializeKeywords and initializeCategories to one function with additional boolean value
-     * And displays an add-btn, when the inputted text is changed AND not in the db
+     * Initializes the auto-completion of the categories in the search-area
      */
     protected void initializeCategories(TextField categoryTextField, List<Category> categories) {
 //        if (categories.isEmpty()) {   // maybe when the application crashed this code is necessary - to be checked/tested
@@ -285,17 +271,31 @@ public abstract class ScreenController {
     }
 
     /**
-     * This function fills the MenuButton with a keyword.
+     * This function fills the ComboBox with a keyword.
      * It sets an ActionEvent, when clicked --> the keyword is displayed.
      * The displayed keyword can be removed via button click.
      */
-    protected void fillKeywordMenuButtonWithKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox, MenuButton keywordMenuButton) {
-        // Create keyword MenuItem
-        MenuItem menuItem = new MenuItem(newKeyword.getKeyword());
-        // Add action event for keyword MenuItem
-        menuItem.setOnAction(event -> addSelectedKeyword(newKeyword, selectedKeywords, keywordsHBox));
-        // Add MenuItem to keywordMenuButton
-        keywordMenuButton.getItems().add(menuItem);
+    protected void initKeywordComboBox(List<Keyword> newKeywords, Set<Keyword> selectedKeywords, HBox keywordsHBox, ComboBox<String> keywordComboBox) {
+        // TODO: when initializing more than once, the old changeListener needs to be removed
+        keywordComboBox.getItems().clear();
+
+        // init combobox
+        for (Keyword keyword : newKeywords) {
+            keywordComboBox.getItems().add(keyword.getKeyword());
+        }
+
+        // add a listener that triggers when an item is selected
+        keywordComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // find the Keyword object corresponding to the selected name
+            Keyword selectedKeyword = newKeywords.stream()
+                    .filter(keyword -> keyword.getKeyword().equals(newValue))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedKeyword != null) {
+                addSelectedKeyword(selectedKeyword, selectedKeywords, keywordsHBox);
+            }
+        });
     }
 
     protected void addSelectedKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox) {

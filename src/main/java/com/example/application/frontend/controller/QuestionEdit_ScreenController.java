@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -41,6 +40,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private final CategoryService categoryService;
     private final AnswerService answerService;
     private final ImageService imageService;
+    public ComboBox<String> keywordComboButton;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
     @FXML
@@ -70,12 +70,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private ScrollPane chooseScrollPane;
     @FXML
     private HBox keywordsHBox;
-    @FXML
-    private MenuButton keywordMenuButton;
-    @FXML
-    private TextField keywordTextField;
-    @FXML
-    private Button addKeywordBtn;
 
     private ArrayList<TextArea> answers = new ArrayList<>();
     private ArrayList<Answer> originalAnswers = new ArrayList<>();
@@ -121,7 +115,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         // Retrieves all categories for the selected course from the database.
         List<Category> categories = categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
-        initializeKeywords(keywordTextField, keywords, addKeywordBtn);
+        initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
 
         // Displays an error alert if no categories are found for the selected course.
         if (categories.isEmpty()) {
@@ -130,10 +124,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
         // Fills the category menu with the retrieved categories.
         fillCategoryWithCategories(categories);
-
-        for (Keyword keyword : keywords) {
-            fillKeywordMenuButtonWithKeyword(keyword, selectedKeywords, keywordsHBox, keywordMenuButton);
-        }
 
         choosePoints = new CustomDoubleSpinner();
         choosePoints.getStyleClass().add("automatic_create_spinner");
@@ -485,17 +475,14 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         return chooseQuestion.getText().isEmpty();
     }
 
-    // TODO: maybe extract this duplicate method to ScreenController base class --> duplicate in questionCreate
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) throws IOException {
-        if (Keyword.checkNewKeyword(keywordTextField.getText()) == null) {
-            // add to database, if not existing
-            Keyword newKeyword = keywordService.add(new Keyword(keywordTextField.getText()), SharedData.getSelectedCourse());
-            // add to our KeywordMenuButton
-            fillKeywordMenuButtonWithKeyword(newKeyword, selectedKeywords, keywordsHBox, keywordMenuButton);
-            // return a message
-            SharedData.setOperation(Message.CREATE_KEYWORD_SUCCESS_MESSAGE);
-            addKeywordBtn.setDisable(true);
-        }
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+
+        // initialize keywords-comboBox when the modal closes
+        addKeywordStage.setOnHidden((WindowEvent event) -> {
+            List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
+            initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton); // reminder: remove old listener in this function
+        });
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {

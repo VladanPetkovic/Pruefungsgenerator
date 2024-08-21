@@ -64,7 +64,30 @@
                         <VBox prefHeight="200.0" prefWidth="100.0">
                             <children>
                                 <Label styleClass="option_label" text="%question_filter_select_keyword" />
-                                <TextField fx:id="keywordTextField" maxWidth="310.0" prefHeight="32.0" prefWidth="310.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="311.7999267578125" minWidth="10.0" prefWidth="304.5999755859375" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.39996337890625" minWidth="10.0" prefWidth="48.60002441406249" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onAddKeywordBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                 <graphic>
+                                    <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/add.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                      <TextField fx:id="keywordTextField" maxWidth="310.0" prefHeight="32.0" prefWidth="310.0" promptText="%question_filter_prompt_text" style="-fx-background-color: #2f2f2f;" styleClass="searchbar_dark" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </GridPane>
                             </children>
                         </VBox>
                         <VBox prefHeight="200.0" prefWidth="100.0">
