@@ -32,7 +32,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Label styleClass="modal_topic_label" text="%create_update_keyword" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label styleClass="modal_topic_label" text="%manage_keywords" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
         </children>
     </GridPane>
     <GridPane maxHeight="1.7976931348623157E308" prefHeight="44.0" prefWidth="414.0">
