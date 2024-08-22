@@ -41,14 +41,13 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private final AnswerService answerService;
     private final ImageService imageService;
     public ComboBox<String> keywordComboButton;
+    public ComboBox<String> categoryComboBox;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
     @FXML
     public Label updated_at_label;
     @FXML
     public Label created_at_label;
-    @FXML
-    private MenuButton chooseCategory;
     @FXML
     private VBox customDoubleSpinnerPlaceholder;
     private CustomDoubleSpinner choosePoints;
@@ -72,10 +71,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private HBox keywordsHBox;
 
     private ArrayList<TextArea> answers = new ArrayList<>();
-    private ArrayList<Answer> originalAnswers = new ArrayList<>();
     private Question selectedQuestion = new Question();
     private Set<Keyword> selectedKeywords = new HashSet<>();
-    private Category selectedCategory = null;
 
     @FXML
     private VBox picturePickerPlaceholder;
@@ -123,7 +120,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         }
 
         // Fills the category menu with the retrieved categories.
-        fillCategoryWithCategories(categories);
+        initCategoryComboBox(categoryComboBox, categories);
 
         choosePoints = new CustomDoubleSpinner();
         choosePoints.getStyleClass().add("automatic_create_spinner");
@@ -248,8 +245,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             chooseScrollPane.setMouseTransparent(false);
 
             // Set category, difficulty, and points to the values of the selected question.
-            chooseCategory.setText(clickedQuestion.getCategory().getName());
-            selectedCategory = clickedQuestion.getCategory();
+            categoryComboBox.getSelectionModel().select(clickedQuestion.getCategory().getName());
             chooseDifficulty.setValue(clickedQuestion.getDifficulty());
             choosePoints.getValueFactory().setValue((double) clickedQuestion.getPoints());
 
@@ -279,23 +275,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
             initTimeStamps(clickedQuestion);
         });
-    }
-
-    /**
-     * Fills the category menu with available categories.
-     * Iterates through the list of categories and creates a menu item for each category.
-     * Associates an event handler with each menu item to handle category selection.
-     */
-    private void fillCategoryWithCategories(List<Category> categories) {
-        for (Category category : categories) {
-            MenuItem menuItem = new MenuItem(category.getName());
-            menuItem.setOnAction(event -> {
-                selectedCategory = category;
-                // setting the category of the clickedQuestion
-                chooseCategory.setText(category.getName());
-            });
-            chooseCategory.getItems().add(menuItem);
-        }
     }
 
     /**
@@ -363,7 +342,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         HBox hBoxAnswerRemove = new HBox();
         TextArea textAreaAnswer = new TextArea(answer.getAnswer());
         answers.add(textAreaAnswer);
-        originalAnswers.add(new Answer(answer));    // copying the old answer
 
         // add new answers to the selectedQuestion
         if (answer.getId() == null) {
@@ -426,7 +404,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return A string containing an error message if validation fails, or null if validation passes.
      */
     private String validateInput() {
-        if (selectedCategory == null) {
+        if (categoryComboBox.getSelectionModel().getSelectedItem() == null) {
             return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (checkIfEmptyAnswers(questionTypeMenuButtonEdit, answers)) {
@@ -450,6 +428,8 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      * @return A Question object initialized with the values from the input fields.
      */
     private Question createQuestionFromInputs() {
+        Category selectedCategory = categoryService.getByName(categoryComboBox.getSelectionModel().getSelectedItem(), SharedData.getSelectedCourse());
+
         return new Question(
                 selectedQuestion.getId(),
                 selectedCategory,
@@ -473,16 +453,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
      */
     private boolean checkIfQuestionIsEmpty() {
         return chooseQuestion.getText().isEmpty();
-    }
-
-    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
-        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
-
-        // initialize keywords-comboBox when the modal closes
-        addKeywordStage.setOnHidden((WindowEvent event) -> {
-            List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
-            initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton); // reminder: remove old listener in this function
-        });
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {

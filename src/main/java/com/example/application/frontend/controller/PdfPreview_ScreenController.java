@@ -1,5 +1,6 @@
 package com.example.application.frontend.controller;
 
+import com.example.application.MainApp;
 import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -49,8 +51,10 @@ public class PdfPreview_ScreenController extends ScreenController {
         exportPdf = new ExportPdf();
         exportDocx = new ExportDocx();
 
-        // displays the selected course above the filter window
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
+        label_selectedCourse.setText(MessageFormat.format(
+                MainApp.resourceBundle.getString("question_filter_selected_course"),
+                SharedData.getSelectedCourse().getName())
+        );
     }
 
     public void applyExportBtnClicked(ActionEvent actionEvent) throws IOException {

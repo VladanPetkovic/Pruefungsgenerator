@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.*;
 
 @Component
@@ -41,8 +42,6 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     public TextField questionTextField;
     @FXML
-    public TextField categoryTextField;
-    @FXML
     public Label label_selectedCourse;
     @FXML
     public ImageView difficulty_toggle_image_view;
@@ -50,6 +49,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public ImageView points_toggle_image_view;
     public MenuButton sortMenuButton;
     public ImageView sortDirectionImageView;
+    public ComboBox<String> categoryComboBox;
 
     private int pointsFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
     private int difficultyFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
@@ -66,18 +66,25 @@ public class QuestionFilter_ScreenController extends ScreenController {
     private void initialize() {
         // init auto-completion
         initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
-        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
         initializeMenuButton(this.sortMenuButton);
 
         // displays the selected course above the filter window
-        label_selectedCourse.setText(SharedData.getSelectedCourse().getName());
+        label_selectedCourse.setText(MessageFormat.format(
+                MainApp.resourceBundle.getString("question_filter_selected_course"),
+                SharedData.getSelectedCourse().getName())
+        );
     }
 
     public void onAddCategoryBtnClick(ActionEvent actionEvent) {
-        ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+
+        addCategoryStage.setOnHidden((WindowEvent event) -> {
+            initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        });
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
@@ -117,13 +124,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
         Question filterQuestion = new Question();
 
         // get filter values from text fields and checkboxes
-        String categoryName = categoryTextField.getText().trim();
+        String categoryName = categoryComboBox.getSelectionModel().getSelectedItem();   // this returns null, if nothing was selected
         String keywordText = keywordTextField.getText().trim();
         String questionText = questionTextField.getText();
         String questionTypeString = questionTypeMenuButton.getText();
 
         // set category value if provided
-        if (!categoryName.isEmpty()) {
+        if (categoryName != null) {
             Category category = categoryService.getByName(categoryName, SharedData.getSelectedCourse());
             filterQuestion.setCategory(category);
         }

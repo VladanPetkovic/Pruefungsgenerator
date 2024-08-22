@@ -107,22 +107,15 @@ public abstract class ScreenController {
     }
 
     /**
-     * Initializes the auto-completion of the categories in the search-area
+     * Initializes the category-combobox
      */
-    protected void initializeCategories(TextField categoryTextField, List<Category> categories) {
-//        if (categories.isEmpty()) {   // maybe when the application crashed this code is necessary - to be checked/tested
-//            return;
-//        }
+    protected void initCategoryComboBox(ComboBox<String> categoryComboBox, List<Category> categories) {
+        categoryComboBox.getItems().clear();
 
-        // in java everything is passed by reference, so changes in items make changes in SharedData
-        ObservableList<String> items = SharedData.getSuggestedCategories();
-        for (Category c : categories) {
-            // don't add existing categories --> good for, when switching scenes
-            if (!items.contains(c.getName())) {
-                items.add(c.getName());
-            }
+        // add categories
+        for (Category category : categories) {
+            categoryComboBox.getItems().add(category.getName());
         }
-        TextFields.bindAutoCompletion(categoryTextField, items);
     }
 
     /**
@@ -299,8 +292,11 @@ public abstract class ScreenController {
     }
 
     protected void addSelectedKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox) {
-        if (selectedKeywords.contains(newKeyword)) {
-            return;
+        // don't add, if already added
+        for (Keyword keyword : selectedKeywords) {
+            if (keyword.getKeyword().equals(newKeyword.getKeyword())) {
+                return;
+            }
         }
 
         selectedKeywords.add(newKeyword);

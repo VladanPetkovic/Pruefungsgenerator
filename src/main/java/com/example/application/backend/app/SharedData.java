@@ -4,7 +4,6 @@ import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.StudyProgram;
-import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -66,9 +65,6 @@ public class SharedData {
     @Getter
     @Setter
     private static ObservableList<Question> filteredQuestions = FXCollections.observableArrayList();
-    @Getter
-    @Setter
-    private static ObservableList<String> suggestedCategories = FXCollections.observableArrayList();
 
     @Getter
     @Setter
@@ -108,15 +104,6 @@ public class SharedData {
                 throw new RuntimeException(e);
             }
         });
-
-        suggestedCategories.addListener((InvalidationListener) c -> {
-            try {
-                onAttributeChange();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
     }
 
     private static void onAttributeChange() throws IOException {
@@ -134,7 +121,6 @@ public class SharedData {
         selectedEditCourse = new Course();
         testQuestions = FXCollections.observableArrayList();
         filteredQuestions = FXCollections.observableArrayList();
-        suggestedCategories = FXCollections.observableArrayList();
         saveToFile();
     }
 
@@ -270,10 +256,9 @@ public class SharedData {
             oos.writeObject(new ArrayList<>(testQuestions));
 
             //oos.writeObject(new ArrayList<>(filteredQuestions));
-            //oos.writeObject(new ArrayList<>(suggestedCategories));
-
         }
     }
+
     public static void loadFromFile() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filepath))) {
             pageTitle.set((String) ois.readObject());
@@ -290,8 +275,6 @@ public class SharedData {
 
             testQuestions.setAll((ArrayList<Question>) ois.readObject());
             //filteredQuestions.setAll((ArrayList<Question>) ois.readObject());
-            //suggestedCategories.setAll((ArrayList<String>) ois.readObject());
-
         }
     }
 }

@@ -39,8 +39,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private final AnswerService answerService;
     private final ImageService imageService;
     public ComboBox<String> keywordComboButton;
-    @FXML
-    private TextField categoryTextField;
+    public ComboBox<String> categoryComboBox;
     @FXML
     private Slider difficulty;
     @FXML
@@ -90,7 +89,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initializeCategories(this.categoryTextField, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
 
@@ -247,7 +246,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
             return;
         }
 
-        Category category = categoryService.getByName(categoryTextField.getText(), SharedData.getSelectedCourse());
+        Category category = categoryService.getByName(categoryComboBox.getSelectionModel().getSelectedItem(), SharedData.getSelectedCourse());
 
         // Create a new Question object with the provided details
         Question q = new Question(
@@ -286,7 +285,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * @return An error message if any required field is not filled out, otherwise null.
      */
     private String checkIfFilled() {
-        if (!SharedData.getSuggestedCategories().contains(categoryTextField.getText())) {
+        if (categoryComboBox.getSelectionModel().getSelectedItem() == null) {
             return MainApp.resourceBundle.getString("error_message_no_category");
         }
         if (!Type.checkType(questionTypeMenuButton.getText())) {
@@ -311,11 +310,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
 
         addCategoryStage.setOnHidden((WindowEvent event) -> {
-            try {
-                SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         });
     }
 

@@ -73,7 +73,6 @@ public class AddCategory_ScreenController extends ModalController {
         categoryService.remove(selectedCategory.getCategory().getId());
         messageLabel.setTextFill(Color.GREEN);
         messageLabel.setText(MainApp.resourceBundle.getString("delete_category_success_message"));
-        SharedData.getSuggestedCategories().remove(selectedCategory.getCategory().getName());
     }
 
     public void onUpdateBtnClick(ActionEvent actionEvent) {
@@ -91,10 +90,8 @@ public class AddCategory_ScreenController extends ModalController {
         }
 
         // otherwise: update
-        SharedData.getSuggestedCategories().remove(selectedCategory.getCategory().getName());
         selectedCategory.getCategory().setName(newCategory);
         categoryTable.refresh();
-        SharedData.getSuggestedCategories().add(newCategory);
         categoryService.update(selectedCategory.getCategory());
         messageLabel.setTextFill(Color.GREEN);
         messageLabel.setText(MainApp.resourceBundle.getString("update_category_success_message"));
@@ -111,7 +108,6 @@ public class AddCategory_ScreenController extends ModalController {
         Category createdCategory = categoryService.add(new Category(newCategory), SharedData.getSelectedCourse());
         categoryTable.getItems().add(new CategoryWrapper(createdCategory, 0L));
         categoryTable.refresh();
-        SharedData.getSuggestedCategories().add(newCategory);
         messageLabel.setTextFill(Color.GREEN);
         messageLabel.setText(MainApp.resourceBundle.getString("create_category_success_message"));
     }
