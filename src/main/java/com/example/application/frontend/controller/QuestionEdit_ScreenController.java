@@ -455,6 +455,24 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         return chooseQuestion.getText().isEmpty();
     }
 
+    public void onAddKeywordBtnClick(ActionEvent actionEvent) {
+        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+
+        // initialize keywords-comboBox when the modal closes
+        addKeywordStage.setOnHidden((WindowEvent event) -> {
+            List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
+            initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
+        });
+    }
+
+    public void onAddCategoryBtnClick(ActionEvent actionEvent) {
+        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+
+        addCategoryStage.setOnHidden((WindowEvent event) -> {
+            initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        });
+    }
+
     public void onDeleteBtnClick(ActionEvent actionEvent) {
         Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 

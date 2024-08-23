@@ -269,7 +269,9 @@ public abstract class ScreenController {
      * The displayed keyword can be removed via button click.
      */
     protected void initKeywordComboBox(List<Keyword> newKeywords, Set<Keyword> selectedKeywords, HBox keywordsHBox, ComboBox<String> keywordComboBox) {
-        // TODO: when initializing more than once, the old changeListener needs to be removed
+        // removing old listener
+        keywordComboBox.getSelectionModel().selectedItemProperty().removeListener((observable, oldValue, newValue) -> {});
+
         keywordComboBox.getItems().clear();
 
         // init combobox

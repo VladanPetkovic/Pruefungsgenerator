@@ -94,7 +94,6 @@ public class QuestionFilter_ScreenController extends ScreenController {
         addKeywordStage.setOnHidden((WindowEvent event) -> {
             initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         });
-        // TODO: remove old listener
     }
 
     public void onToggleDifficultyBtnClick(ActionEvent actionEvent) {
