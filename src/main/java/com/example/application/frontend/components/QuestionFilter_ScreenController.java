@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.Scope;
@@ -38,8 +39,6 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     public Slider difficultySlider;
     @FXML
-    public TextField keywordTextField;
-    @FXML
     public TextField questionTextField;
     @FXML
     public Label label_selectedCourse;
@@ -50,10 +49,13 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public MenuButton sortMenuButton;
     public ImageView sortDirectionImageView;
     public ComboBox<String> categoryComboBox;
+    public ComboBox<String> keywordComboButton;
+    public HBox keywordsHBox;
 
+    private Set<Keyword> selectedKeywords = new HashSet<>();    // used to keep track of the selected keywords for filtering
     private int pointsFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
     private int difficultyFilterMethod = 0;     // 0 = disabled; 1 = enabled; 2 = min; 3 = max
-    private int sortDirectionStatus = 0;       // 0 = disabled; 1 = ASC; 2 = DESC
+    private int sortDirectionStatus = 0;       // 0 = ASC; 1 = DESC
 
     public QuestionFilter_ScreenController(QuestionService questionService, KeywordService keywordService, CategoryService categoryService) {
         super();
@@ -65,9 +67,10 @@ public class QuestionFilter_ScreenController extends ScreenController {
     @FXML
     private void initialize() {
         // init auto-completion
-        initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
-        initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+        List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
+        initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
         initializeMenuButton(this.sortMenuButton);
@@ -90,9 +93,10 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
         Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
 
-        // initialize keywords-auto-completion
+        // initialize keywords-comboBox when the modal closes
         addKeywordStage.setOnHidden((WindowEvent event) -> {
-            initializeKeywords(this.keywordTextField, keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
+            List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
+            initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
         });
     }
 
@@ -116,7 +120,7 @@ public class QuestionFilter_ScreenController extends ScreenController {
         if (SortType.checkType(sortMenuButton.getText())) {
             sortType = SortType.valueOf(sortMenuButton.getText());
         } else {
-            sortType = SortType.POINTS;
+            sortType = SortType.CREATED_AT;
         }
 
         // create a new Question object to hold filter values
@@ -124,7 +128,6 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
         // get filter values from text fields and checkboxes
         String categoryName = categoryComboBox.getSelectionModel().getSelectedItem();   // this returns null, if nothing was selected
-        String keywordText = keywordTextField.getText().trim();
         String questionText = questionTextField.getText();
         String questionTypeString = questionTypeMenuButton.getText();
 
@@ -134,21 +137,9 @@ public class QuestionFilter_ScreenController extends ScreenController {
             filterQuestion.setCategory(category);
         }
 
-        // set keyword value if provided
-        // handle multiple keywords as ArrayList<Keyword>
-        Set<Keyword> keywordHashSet = new HashSet<>();
-        if (!keywordText.isEmpty()) {
-            // split by commas or spaces
-            String[] keywordsArray = keywordText.split("[,\\s]+");
-            for (String keyword : keywordsArray) {
-                Keyword keywordObj = keywordService.getByName(keyword.trim(), SharedData.getSelectedCourse());
-                if (keywordObj != null) {
-                    keywordHashSet.add(keywordObj);
-                }
-            }
-        }
-        if (!keywordHashSet.isEmpty()) {
-            filterQuestion.setKeywords(keywordHashSet);
+        // set keywords (zero, one or multiple)
+        if (!selectedKeywords.isEmpty()) {
+            filterQuestion.setKeywords(selectedKeywords);
         }
 
         // set the question text
@@ -186,26 +177,18 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void onSortDirectionBtnClick(ActionEvent actionEvent) {
+        sortDirectionStatus = (sortDirectionStatus + 1) % 2;
         changeSortArrows(sortDirectionImageView, sortDirectionStatus);
-        sortDirectionStatus = (sortDirectionStatus + 1) % 3;
         searchQuestions();
     }
 
     public void changeSortArrows(ImageView arrowImageView, int status) {
         String imagePath = "src/main/resources/com/example/application/icons/";
 
-        switch (status) {
-            case 0: // currently disabled --> ASCENDING
-                imagePath += "arrow_up.png";
-                sortMenuButton.setDisable(false);
-                break;
-            case 1: // currently ASCENDING --> DESCENDING
-                imagePath += "arrow_down.png";
-                break;
-            default: // current DESCENDING --> disable
-                imagePath += "arrows_up_down.png";
-                sortMenuButton.setDisable(true);
-                break;
+        if (status == 0) {      // ASCENDING
+            imagePath += "arrow_up.png";
+        } else {                // DESCENDING
+            imagePath += "arrow_down.png";
         }
 
         File file = new File(imagePath);
@@ -225,5 +208,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
             });
             menuButton.getItems().add(menuItem);
         }
+
+        // setting createdAt as default value (when switching screen)
+        menuButton.setText(SortType.CREATED_AT.toString());
     }
 }

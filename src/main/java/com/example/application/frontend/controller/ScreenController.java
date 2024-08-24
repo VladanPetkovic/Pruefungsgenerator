@@ -89,24 +89,6 @@ public abstract class ScreenController {
     }
 
     /**
-     * Initializes the auto-completion of the keywords in the search-area
-     */
-    protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords) {
-        // TODO: change this to use a comboBox for selecting more than one keyword
-//        if (keywords.isEmpty()) {     // maybe when the application crashed this code is necessary - to be checked/tested
-//            return;
-//        }
-
-        ArrayList<String> items = new ArrayList<>();
-        for (Keyword k : keywords) {
-            if (!items.contains(k.getKeyword())) {
-                items.add(k.getKeyword());
-            }
-        }
-        TextFields.bindAutoCompletion(keywordTextField, items);
-    }
-
-    /**
      * Initializes the category-combobox
      */
     protected void initCategoryComboBox(ComboBox<String> categoryComboBox, List<Category> categories) {

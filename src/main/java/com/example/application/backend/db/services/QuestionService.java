@@ -3,10 +3,7 @@ package com.example.application.backend.db.services;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.SortType;
-import com.example.application.backend.db.models.Answer;
-import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.models.Question;
-import com.example.application.backend.db.repositories.AnswerRepository;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import com.example.application.backend.db.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,23 +12,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final CategoryRepository categoryRepository;
-    private final AnswerRepository answerRepository;
 
     @Autowired
     public QuestionService(QuestionRepository questionRepository,
-                           CategoryRepository categoryRepository,
-                           AnswerRepository answerRepository) {
+                           CategoryRepository categoryRepository) {
         this.questionRepository = questionRepository;
         this.categoryRepository = categoryRepository;
-        this.answerRepository = answerRepository;
     }
 
     public Question add(Question question) {
@@ -71,18 +63,16 @@ public class QuestionService {
      * @param pointsFilterMethod     0 = disabled; 1 = enabled; 2 = min; 3 = max
      * @param difficultyFilterMethod 0 = disabled; 1 = enabled; 2 = min; 3 = max
      * @param sortType               The type we are sorting by (points, difficulty, createdAt, updatedAt)
-     * @param sortDirection          The sort-direction (0 = disabled sorting; 1 = ASC; 2 = DESC)
+     * @param sortDirection          The sort-direction (0 = ASC; 1 = DESC)
      * @return List of questions
      */
     public List<Question> getByFilters(Question filterQuestion, Long courseId, int pointsFilterMethod, int difficultyFilterMethod, SortType sortType, int sortDirection) {
         Long categoryId = filterQuestion.getCategory() != null ? filterQuestion.getCategory().getId() : null;
 
         // sort via points, difficulty,...
-        Sort.Direction direction = sortDirection == 1 ? Sort.Direction.ASC : Sort.Direction.DESC;
-        String sortProperty = SortType.getSortTypeLowercase(sortType);
-        Sort sort = Sort.by(direction, sortProperty);
-        // sortDirection = 0 --> don't sort at all
-        Pageable pageable = sortDirection == 0 ? PageRequest.of(0, 100) : PageRequest.of(0, 100, sort);
+        Sort.Direction direction = sortDirection == 0 ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, SortType.getSortTypeLowercase(sortType));
+        Pageable pageable = PageRequest.of(0, 100, sort);
 
         // set filter values for difficulty and points
         Integer difficulty = difficultyFilterMethod == 1 ? filterQuestion.getDifficulty() : null;
@@ -102,7 +92,8 @@ public class QuestionService {
                 maxPoints,
                 categoryId,
                 filterQuestion.getType(),
-                Keyword.getKeywordsAsString(filterQuestion.getKeywords()),
+                filterQuestion.getKeywords(),
+                (long) filterQuestion.getKeywords().size(),
                 courseId,
                 pageable);
         Logger.log(this.getClass().getName(), "Retrieved all filtered questions, count: " + questions.size(), LogLevel.INFO);

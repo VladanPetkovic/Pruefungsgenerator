@@ -1,5 +1,6 @@
 package com.example.application.backend.db.repositories;
 
+import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.models.Question;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT MAX(q.id) FROM Question q")
     Long getMaxQuestionId();
 
+    // reminder: this query only returns questions, that have at least all keywords, that are given for filtering
     @Query("SELECT q FROM Question q " +
             "JOIN q.category cat JOIN cat.courses c " +
             "LEFT JOIN q.keywords k " +
@@ -37,7 +39,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             "AND (:maxPoints IS NULL OR q.points <= :maxPoints) " +
             "AND (:categoryId IS NULL OR q.category.id = :categoryId) " +
             "AND (:type IS NULL OR q.type = :type) " +
-            "AND (:keywords IS NULL OR k.keyword IN :keywords) " +
+            "AND (:keywords IS NULL OR (SELECT COUNT(k) FROM Keyword k WHERE k IN :keywords AND k MEMBER OF q.keywords) = :keywordCount) " +
             "AND c.id = :courseId")
     List<Question> findByFilters(
             @Param("question") String question,
@@ -49,7 +51,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             @Param("maxPoints") Float maxPoints,
             @Param("categoryId") Long categoryId,
             @Param("type") String type,
-            @Param("keywords") Set<String> keywords,
+            @Param("keywords") Set<Keyword> keywords,
+            @Param("keywordCount") Long keywordCount,
             @Param("courseId") Long courseId,
             Pageable pageable
     );

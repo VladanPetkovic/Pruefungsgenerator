@@ -181,7 +181,7 @@
                         <VBox prefHeight="200.0" prefWidth="1000.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%keywords" />
-                              <VBox fx:id="keywordVBox" prefHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
+                              <VBox prefHeight="200.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
                                     <HBox fx:id="keywordsHBox" prefHeight="100.0" prefWidth="200.0" />
                                     <GridPane>
