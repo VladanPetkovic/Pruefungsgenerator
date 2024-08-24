@@ -35,7 +35,7 @@ public class CategoryService {
     public Category add(Category category, Course course) {
         if (categoryExists(category.getName(), course.getId())) {
             Logger.log(this.getClass().getName(), "Category already exists for this course", LogLevel.INFO);
-            return null;
+            return categoryRepository.findCategoryByNameAndCourses(category.getName(), course.getId());
         }
         category.getCourses().add(course);
         Category newCategory = categoryRepository.save(category);

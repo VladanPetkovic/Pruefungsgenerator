@@ -32,7 +32,7 @@ public class ExportCSV {
     }
 
     public void initCourse(String course) {
-        this.selectedCourse = courseService.getByNameAndStudyProgramId(course, null);   // TODO: add StudyProgram
+        this.selectedCourse = courseService.getByNameAndStudyProgramId(course, SharedData.getSelectedStudyProgram().getId());
     }
 
     /**
@@ -46,9 +46,9 @@ public class ExportCSV {
         // open and write a csv file
         try (FileWriter writer = new FileWriter(this.directoryName + "\\" + createFileName())) {
             // Write CSV header
-            //TODO: question ID should be exported as well, because we will need it for later import
-            // also the question is: do we need the course name and the study program name?
-            writer.append("question_id;question_string;categoryName_string;difficulty_int;points_float;questionType_string;remark_string;answers_string;keywords_string;courseName_string;studyProgramName_string\n");
+
+            // question_id, question_text, category_name, difficulty, points, question_type, remarks, answers, keywords, course_name, course_number, studyprogram_name
+            writer.append("question_id;question_string;categoryName_string;difficulty_int;points_float;questionType_string;remark_string;answers_string;keywords_string;courseName_string;course_number_int;studyProgramName_string\n");
 
             if (exportType == 0) {          // export all questions
                 List<StudyProgram> studyPrograms = studyProgramService.getAll();
@@ -74,11 +74,9 @@ public class ExportCSV {
         return true;
     }
 
-    // TODO: add later the possibility to add the question_id or not (for updating questions)
-    // correction: the question_id is needed in every case, so it should be exported as well
     private void writeQuestionsToFile(FileWriter writer, Course course, StudyProgram studyProgram) throws IOException {
         List<Question> questions = new ArrayList<>();
-        lastQuestionId = 0L;     // TODO: this would be an edge-case (questions equal for different studyPrograms)
+        lastQuestionId = 0L;
         do {
             // this function returns all question, that have a larger id than the specified minQuestionID
             questions = questionService.getAllByCourseAndIdGreaterThan(course.getId(), lastQuestionId);
@@ -86,17 +84,18 @@ public class ExportCSV {
             // Write question data
             for (Question question : questions) {
                 lastQuestionId = question.getId();
-                writer.append(String.valueOf(question.getId())).append(";");
-                writer.append("\"").append(question.getQuestion()).append("\"").append(";");
-                writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");
-                writer.append(String.valueOf(question.getDifficulty())).append(";");
-                writer.append(String.valueOf(question.getPoints())).append(";");
-                writer.append("\"").append(question.getType()).append("\"").append(";");
-                writer.append("\"").append(question.getRemark()).append("\"").append(";");
-                writeAnswers(question, writer);
-                writeKeywords(question, writer);
-                writer.append("\"").append(course.getName()).append("\"").append(";");
-                writer.append("\"").append(studyProgram.getName()).append("\"").append("\n");
+                writer.append(String.valueOf(question.getId())).append(";");                                // question_id
+                writer.append("\"").append(question.getQuestion()).append("\"").append(";");                // question_text
+                writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");      // category_name
+                writer.append(String.valueOf(question.getDifficulty())).append(";");                        // difficulty
+                writer.append(String.valueOf(question.getPoints())).append(";");                            // points
+                writer.append("\"").append(question.getType()).append("\"").append(";");                    // question_type
+                writer.append("\"").append(question.getRemark()).append("\"").append(";");                  // remarks
+                writeAnswers(question, writer);                                                             // answers
+                writeKeywords(question, writer);                                                            // keywords
+                writer.append("\"").append(course.getName()).append("\"").append(";");                      // course_name
+                writer.append(String.valueOf(course.getNumber())).append(";");                              // course_number
+                writer.append("\"").append(studyProgram.getName()).append("\"").append("\n");               // studyProgram_name
             }
         } while (!questions.isEmpty());
     }

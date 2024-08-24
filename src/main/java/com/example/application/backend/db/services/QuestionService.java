@@ -72,7 +72,7 @@ public class QuestionService {
         // sort via points, difficulty,...
         Sort.Direction direction = sortDirection == 0 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, SortType.getSortTypeLowercase(sortType));
-        Pageable pageable = PageRequest.of(0, 100, sort);
+        Pageable pageable = PageRequest.of(0, 50, sort);
 
         // set filter values for difficulty and points
         Integer difficulty = difficultyFilterMethod == 1 ? filterQuestion.getDifficulty() : null;
@@ -108,7 +108,7 @@ public class QuestionService {
      * @return List of questions.
      */
     public List<Question> getAllByCourseAndIdGreaterThan(Long courseId, Long minQuestionId) {
-        Pageable pageable = PageRequest.of(0, 250);
+        Pageable pageable = PageRequest.of(0, 100);
         List<Question> questions = questionRepository.findByCourseIdAndIdGreaterThan(courseId, minQuestionId, pageable);
         Logger.log(this.getClass().getName(), "Retrieved all questions for a category, count: " + questions.size(), LogLevel.INFO);
         return questions;

@@ -2,15 +2,13 @@ package com.example.application.backend.app;
 
 import com.example.application.backend.db.models.*;
 import com.example.application.MainApp;
-import com.example.application.backend.db.services.CategoryService;
-import com.example.application.backend.db.services.CourseService;
-import com.example.application.backend.db.services.QuestionService;
-import com.example.application.backend.db.services.StudyProgramService;
+import com.example.application.backend.db.services.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ImportCSV {
@@ -18,17 +16,27 @@ public class ImportCSV {
     private final CourseService courseService;
     private final QuestionService questionService;
     private final CategoryService categoryService;
+    private final AnswerService answerService;
+    private final KeywordService keywordService;
     private String filePath;
     private String modeOfImport;
     private String importTargetStudyProgram;
     private String importTargetCourse;
 
-    public ImportCSV(String filePath, StudyProgramService studyProgramService, CourseService courseService, QuestionService questionService, CategoryService categoryService) {
+    public ImportCSV(String filePath,
+                     StudyProgramService studyProgramService,
+                     CourseService courseService,
+                     QuestionService questionService,
+                     CategoryService categoryService,
+                     AnswerService answerService,
+                     KeywordService keywordService) {
         this.filePath = filePath;
         this.studyProgramService = studyProgramService;
         this.courseService = courseService;
         this.questionService = questionService;
         this.categoryService = categoryService;
+        this.answerService = answerService;
+        this.keywordService = keywordService;
         this.modeOfImport = SharedData.getModeOfImport();
         this.importTargetStudyProgram = SharedData.getImportTargetStudyProgram();
         this.importTargetCourse = SharedData.getImportTargetCourse();
@@ -126,19 +134,27 @@ public class ImportCSV {
         // mode of import: insert the questions from the file into a different studyprogram and course
         StudyProgram studyProgram = studyProgramService.add(parsedRow.getStudyProgramName());
         Course course = courseService.add(new Course(parsedRow.getCourseName(), parsedRow.getCourseNumber(), "Lector"), studyProgram);
-        Category category = categoryService.getByName(parsedRow.getCategoryName(), course);
+        Category category = categoryService.add(new Category(parsedRow.getCategoryName()), course);
 
-        Set<Answer> answers = Answer.createAnswers(parsedRow.getAnswersText().split(","));
-        Set<Keyword> keywords = Keyword.createKeywords(parsedRow.getKeywordsText().split(","));
+        Set<Answer> answers = Answer.getAnswersAsSet(parsedRow.getAnswersText().split(","));    // TODO: ',' ist in Antworten erlaubt
+        Set<Keyword> keywords = Keyword.getKeywordsAsSet(parsedRow.getKeywordsText().split(","));
+        Set<Keyword> savedKeywords = new HashSet<>();
+        // TODO: refactor to avoid n+1 select
+        for (Keyword k : keywords) {
+            savedKeywords.add(keywordService.add(k, course));
+        }
 
         if (isNew) {
-            insertQuestion(category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), answers, keywords);
+            Question newQuestion = insertQuestion(category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), savedKeywords);
+            if (newQuestion != null) {
+                answerService.addAnswers(newQuestion.getId(), answers);
+            }
         } else {
-            updateQuestion(parsedRow.getQuestionId(), category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), answers, keywords);
+            updateQuestion(parsedRow.getQuestionId(), category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), answers, savedKeywords);
         }
     }
 
-    private void insertQuestion(Category category, Integer difficulty, Float points, String questionText, String type, String remark, Set<Answer> answers, Set<Keyword> keywords) {
+    private Question insertQuestion(Category category, Integer difficulty, Float points, String questionText, String type, String remark, Set<Keyword> keywords) {
         Question question = new Question();
         question.setCategory(category);
         question.setDifficulty(difficulty);
@@ -148,10 +164,9 @@ public class ImportCSV {
         question.setRemark(remark);
         question.setCreatedAt(LocalDateTime.now());
         question.setUpdatedAt(LocalDateTime.now());
-        question.setAnswers(answers);
         question.setKeywords(keywords);
 
-        questionService.add(question);
+        return questionService.add(question);
     }
 
     private void updateQuestion(Long questionId, Category category, Integer difficulty, Float points, String questionText, String type, String remark, Set<Answer> answers, Set<Keyword> keywords) {

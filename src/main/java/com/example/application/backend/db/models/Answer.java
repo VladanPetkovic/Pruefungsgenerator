@@ -37,7 +37,7 @@ public class Answer implements Serializable {
         setAnswer(other.getAnswer());
     }
 
-    public static Set<Answer> createAnswers(String[] answers) {
+    public static Set<Answer> getAnswersAsSet(String[] answers) {
         Set<Answer> newAnswers = new HashSet<>();
 
         for (String answerText : answers) {

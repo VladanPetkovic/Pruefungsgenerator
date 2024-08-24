@@ -2,26 +2,30 @@ package com.example.application.backend.db.services;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
-import com.example.application.backend.db.models.CategoryWrapper;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Keyword;
 import com.example.application.backend.db.models.KeywordWrapper;
+import com.example.application.backend.db.repositories.CourseRepository;
 import com.example.application.backend.db.repositories.KeywordRepository;
 import com.example.application.backend.db.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class KeywordService {
     private final KeywordRepository keywordRepository;
     private final QuestionRepository questionRepository;
+    private final CourseRepository courseRepository;
 
     @Autowired
-    public KeywordService(KeywordRepository keywordRepository, QuestionRepository questionRepository) {
+    public KeywordService(KeywordRepository keywordRepository, QuestionRepository questionRepository, CourseRepository courseRepository) {
         this.keywordRepository = keywordRepository;
         this.questionRepository = questionRepository;
+        this.courseRepository = courseRepository;
     }
 
     public boolean keywordExists(String name, Long courseId) {
@@ -31,7 +35,7 @@ public class KeywordService {
     public Keyword add(Keyword keyword, Course course) {
         if (keywordExists(keyword.getKeyword(), course.getId())) {
             Logger.log(this.getClass().getName(), "Keyword already exists for this course", LogLevel.INFO);
-            return null;
+            return keywordRepository.findByNameAndCourseId(keyword.getKeyword(), course.getId());
         }
         keyword.setCourse(course);
         Keyword newKeyword = keywordRepository.save(keyword);
@@ -50,7 +54,7 @@ public class KeywordService {
     }
 
     public Keyword getByName(String name, Course course) {
-        Keyword keyword = keywordRepository.findKeywordByNameAndCourses(name, course.getId());
+        Keyword keyword = keywordRepository.findByNameAndCourseId(name, course.getId());
         if (keyword != null) {
             Logger.log(this.getClass().getName(), "Keyword found with name: " + name, LogLevel.INFO);
         } else {

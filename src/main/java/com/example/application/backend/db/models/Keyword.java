@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -89,7 +88,7 @@ public class Keyword implements Serializable {
         return keywordStrings;
     }
 
-    public static Set<Keyword> createKeywords(String[] keywords) {
+    public static Set<Keyword> getKeywordsAsSet(String[] keywords) {
         Set<Keyword> newKeywords = new HashSet<>();
 
         for (String keywordText : keywords) {
