@@ -35,7 +35,7 @@ public class QuestionService {
     }
 
     public Question add(Question question) {
-        checkCategory(question, question.getCategory().getId()); // TODO: maybe redundant check
+        checkCategory(question, question.getCategory().getId());
         Question newQuestion = questionRepository.save(question);
         Logger.log(this.getClass().getName(), "Question saved with ID: " + newQuestion.getId(), LogLevel.INFO);
         return newQuestion;

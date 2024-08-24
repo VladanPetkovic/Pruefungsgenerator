@@ -113,7 +113,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         // add custom styling to the label
         label.getStyleClass().add("automatic_create_label");
 
-        // set preferred height and width for the label // TODO: don't use inline css - make css-class
+        // set preferred height and width for the label
         label.setPrefHeight(150.0);
         label.setPrefWidth(1000.0);
         //set maxwidth to MAX_VALUE (1.7976931348623157E308 == MAX_VALUE in SceneBuilder)

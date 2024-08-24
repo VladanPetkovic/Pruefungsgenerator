@@ -114,11 +114,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
 
-        // Displays an error alert if no categories are found for the selected course.
-        if (categories.isEmpty()) {
-            SharedData.setOperation(Message.NO_CATEGORIES_FOR_SELECTED_COURSE);
-        }
-
         // Fills the category menu with the retrieved categories.
         initCategoryComboBox(categoryComboBox, categories);
 

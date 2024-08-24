@@ -25,7 +25,6 @@ public class ImageService {
     }
 
     public HashSet<Image> addImages(Long questionId, Set<Image> images) {
-        // TODO: https://stackoverflow.com/questions/50363639/how-spring-boot-jpahibernate-saves-images
         Question question = questionRepository.findById(questionId).orElseThrow(() -> {
             Logger.log(this.getClass().getName(), "Question not found with ID: " + questionId, LogLevel.ERROR);
             return new RuntimeException("Question not found");
@@ -38,7 +37,6 @@ public class ImageService {
     }
 
     public Image add(Image image) {
-        // TODO: https://stackoverflow.com/questions/50363639/how-spring-boot-jpahibernate-saves-images
         Image newImage = imageRepository.save(image);
         Logger.log(this.getClass().getName(), "Image saved with ID: " + newImage.getId(), LogLevel.INFO);
         return newImage;

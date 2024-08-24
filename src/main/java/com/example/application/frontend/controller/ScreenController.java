@@ -92,7 +92,7 @@ public abstract class ScreenController {
      * Initializes the auto-completion of the keywords in the search-area
      */
     protected void initializeKeywords(TextField keywordTextField, List<Keyword> keywords) {
-        // TODO: when initializing more than once, the old changeListener needs to be removed
+        // TODO: change this to use a comboBox for selecting more than one keyword
 //        if (keywords.isEmpty()) {     // maybe when the application crashed this code is necessary - to be checked/tested
 //            return;
 //        }

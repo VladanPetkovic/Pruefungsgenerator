@@ -16,11 +16,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minWidth="390.0" prefHeight="407.0" style="-fx-background-color: #2f2f2f;" styleClass="optionAreaBox" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.QuestionFilter_ScreenController">
+<VBox minWidth="390.0" prefHeight="407.0" styleClass="question_filter_background" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.QuestionFilter_ScreenController">
     <children>
-        <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" textFill="WHITE" />
-        <Label styleClass="label_white_bold" text="%question_filter_set_filters" />
-        <ScrollPane fitToWidth="true" minHeight="300.0" prefHeight="300.0" prefWidth="388.0" style="-fx-background-color: #3A3A3A;">
+        <Label fx:id="label_selectedCourse" prefHeight="18.0" prefWidth="270.0" textFill="WHITE" VBox.vgrow="NEVER" />
+        <Label styleClass="label_white_bold" text="%question_filter_set_filters" VBox.vgrow="NEVER" />
+        <ScrollPane fitToWidth="true" minHeight="200.0" prefHeight="300.0" prefWidth="388.0" style="-fx-background-color: #3A3A3A;" VBox.vgrow="ALWAYS">
             <content>
                 <VBox prefHeight="522.0" styleClass="scroll-box">
                     <children>
@@ -162,7 +162,7 @@
                 </VBox>
             </content>
         </ScrollPane>
-      <GridPane minHeight="45.0" prefHeight="46.0" prefWidth="390.0">
+      <GridPane maxHeight="45.0" maxWidth="390.0" minHeight="45.0" prefHeight="46.0" prefWidth="390.0" VBox.vgrow="NEVER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.4000244140625" minWidth="10.0" prefWidth="178.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.59995117187503" minWidth="10.0" prefWidth="157.60002441406252" />

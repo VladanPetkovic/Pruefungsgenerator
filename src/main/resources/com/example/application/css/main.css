@@ -519,6 +519,14 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .filter_question_preview_vbox:pressed {
     -fx-background-color: #2f2f2f;
 }
+.question_filter_background {
+    -fx-background-color: #2f2f2f;
+}
+
+/* making the split-pane-divider black */
+.split-pane > .split-pane-divider {
+    -fx-background-color: #1e1e1e;
+}
 
 .remove-button{
 

@@ -38,8 +38,6 @@ public enum Message implements Serializable {
     DELETE_CATEGORY_ERROR_MESSAGE(MainApp.resourceBundle.getString("delete_category_error_message"), true),
     DELETE_CATEGORY_SUCCESS_MESSAGE(MainApp.resourceBundle.getString("delete_category_success_message"), false),
     CATEGORY_INVALID_CHARACTERS_ERROR_MESSAGE(MainApp.resourceBundle.getString("category_invalid_characters_error_message"), true),
-    NO_CATEGORIES_FOR_SELECTED_COURSE(MainApp.resourceBundle.getString("no_categories_for_selected_course"), true),
-
 
     // error messages for the course DAO:
     CREATE_COURSE_ERROR_MESSAGE(MainApp.resourceBundle.getString("create_course_error_message"), true),
