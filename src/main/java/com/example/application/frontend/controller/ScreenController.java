@@ -52,10 +52,13 @@ public abstract class ScreenController {
         String imagePath = "src/main/resources/com/example/application/icons/";
         Slider slider = null;
         CustomDoubleSpinner spinner = null;
+        Spinner<?> normalSpinner = null;
         if (sliderOrSpinner instanceof Slider) {
             slider = (Slider) sliderOrSpinner;
         } else if (sliderOrSpinner instanceof CustomDoubleSpinner) {
             spinner = (CustomDoubleSpinner) sliderOrSpinner;
+        } else if (sliderOrSpinner instanceof Spinner) {
+            normalSpinner = (Spinner<?>) sliderOrSpinner;
         }
 
         switch (status) {
@@ -64,6 +67,8 @@ public abstract class ScreenController {
                     slider.setDisable(false);
                 } else if (spinner != null) {
                     spinner.setDisable(false);
+                } else if (normalSpinner != null) {
+                    normalSpinner.setDisable(false);
                 }
                 imagePath += "toggle_on.png";
                 break;
@@ -78,6 +83,8 @@ public abstract class ScreenController {
                     slider.setDisable(true);
                 } else if (spinner != null) {
                     spinner.setDisable(true);
+                } else if (normalSpinner != null) {
+                    normalSpinner.setDisable(true);
                 }
                 imagePath += "toggle_off.png";
                 break;

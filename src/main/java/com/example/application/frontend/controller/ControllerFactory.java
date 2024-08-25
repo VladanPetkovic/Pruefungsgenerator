@@ -1,6 +1,7 @@
 package com.example.application.frontend.controller;
 
 import com.example.application.backend.db.services.*;
+import com.example.application.frontend.components.CreateTestOptions_ScreenController;
 import com.example.application.frontend.components.NavbarController;
 import com.example.application.frontend.components.QuestionFilter_ScreenController;
 import com.example.application.frontend.components.TitleBanner_ScreenController;
@@ -48,6 +49,7 @@ public class ControllerFactory {
             case "QuestionFilter_ScreenController" ->
                     new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();
+            case "CreateTestOptions_ScreenController" -> new CreateTestOptions_ScreenController(categoryService);
             /* MODALS */
             case "AddCategory_ScreenController" -> new AddCategory_ScreenController(categoryService);
             case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);

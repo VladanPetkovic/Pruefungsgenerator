@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="690.0" minWidth="390.0" prefHeight="407.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.CreateTestOptions_ScreenController">
+    <children>
+      <Label fx:id="questionNumberLabel" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" />
+        <Label maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" text="%category" VBox.vgrow="NEVER" />
+      <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox">
+         <children>
+            <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
+         </children>
+      </VBox>
+
+        <Label maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" text="%points" VBox.vgrow="NEVER" />
+      <HBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox">
+         <children>
+            <Spinner fx:id="pointsSpinner" disable="true" styleClass="automatic_create_spinner" />
+            <Button mnemonicParsing="false" onAction="#onTogglePointsSpinnerClick" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon">
+               <graphic>
+                  <ImageView fx:id="pointsToggleImageView" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/toggle_off.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+
+        <Label maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" text="%difficulty" VBox.vgrow="NEVER" />
+      <HBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox">
+         <children>
+            <Slider fx:id="difficultySlider" disable="true" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0" />
+            <Button mnemonicParsing="false" onAction="#onToggleDifficultyClick" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon">
+               <graphic>
+                  <ImageView fx:id="difficultyToggleImageView" fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/toggle_off.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+    </children>
+</VBox>
