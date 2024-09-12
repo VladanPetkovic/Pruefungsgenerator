@@ -4,8 +4,8 @@ import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
-import com.example.application.frontend.components.CustomDoubleSpinner;
 
+import com.example.application.frontend.components.ControlsInitializer;
 import com.example.application.frontend.components.PicturePickerController;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
@@ -42,9 +42,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     public ComboBox<String> categoryComboBox;
     @FXML
     private Slider difficulty;
-    @FXML
-    private VBox customDoubleSpinnerPlaceholder;
-    private CustomDoubleSpinner points;
+    public Spinner<Double> pointsSpinner;
     @FXML
     public MenuButton questionTypeMenuButton;
     @FXML
@@ -92,13 +90,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
+        initDoubleSpinner(pointsSpinner, 1, 10, 1, 0.5);
 
         difficulty.setValue(5);
-
-        points = new CustomDoubleSpinner();
-        points.getStyleClass().add("automatic_create_spinner");
-
-        customDoubleSpinnerPlaceholder.getChildren().add(points);
 
         question.setText("");
         question.textProperty().addListener((observableValue, s, t1) -> {
@@ -252,7 +246,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         Question q = new Question(
                 category,
                 (int) difficulty.getValue(),
-                points.getValue().floatValue(),
+                pointsSpinner.getValue().floatValue(),
                 question.getText(),
                 questionTypeMenuButton.getText(),
                 remarks.getText(),

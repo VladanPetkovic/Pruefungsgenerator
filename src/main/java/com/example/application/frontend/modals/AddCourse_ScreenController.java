@@ -33,9 +33,7 @@ public class AddCourse_ScreenController extends ModalController {
 
     @FXML
     private void initialize() {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, Integer.MAX_VALUE, 0);
-        numericSpinner.setValueFactory(valueFactory);
+        initIntegerSpinner(numericSpinner, 1, Integer.MAX_VALUE, 1, 1);
 
         // check, if a course was selected for editing
         Course toEdit = SharedData.getSelectedEditCourse();

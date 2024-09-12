@@ -4,7 +4,6 @@ import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
-import com.example.application.frontend.components.CustomDoubleSpinner;
 
 import com.example.application.frontend.components.PicturePickerController;
 import com.example.application.frontend.modals.ModalOpener;
@@ -49,9 +48,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     @FXML
     public Label created_at_label;
     @FXML
-    private VBox customDoubleSpinnerPlaceholder;
-    private CustomDoubleSpinner choosePoints;
-    @FXML
     public VBox multipleChoiceAnswerVBox;
     @FXML
     public VBox multipleChoiceVBox;
@@ -61,6 +57,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     public TextArea chooseAnswerTextArea;
     @FXML
     private Slider chooseDifficulty;
+    public Spinner<Double> pointsSpinner;
     @FXML
     private TextArea chooseQuestion;
     @FXML
@@ -113,14 +110,10 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         List<Category> categories = categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
+        initDoubleSpinner(pointsSpinner, 1, 10, 1, 0.5);
 
         // Fills the category menu with the retrieved categories.
         initCategoryComboBox(categoryComboBox, categories);
-
-        choosePoints = new CustomDoubleSpinner();
-        choosePoints.getStyleClass().add("automatic_create_spinner");
-
-        customDoubleSpinnerPlaceholder.getChildren().add(choosePoints);
 
         try {
             FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
@@ -242,7 +235,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
             // Set category, difficulty, and points to the values of the selected question.
             categoryComboBox.getSelectionModel().select(clickedQuestion.getCategory().getName());
             chooseDifficulty.setValue(clickedQuestion.getDifficulty());
-            choosePoints.getValueFactory().setValue((double) clickedQuestion.getPoints());
+            pointsSpinner.getValueFactory().setValue((double) clickedQuestion.getPoints());
 
             initSelectedQuestionType(clickedQuestion);
 
@@ -429,7 +422,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
                 selectedQuestion.getId(),
                 selectedCategory,
                 (int) chooseDifficulty.getValue(),
-                choosePoints.getValue().floatValue(),
+                pointsSpinner.getValue().floatValue(),
                 chooseQuestion.getText(),
                 null,                                   // type cannot be changed
                 chooseRemarks.getText(),

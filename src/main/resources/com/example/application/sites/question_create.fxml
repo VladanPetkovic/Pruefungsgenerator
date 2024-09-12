@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -88,9 +89,9 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <VBox fx:id="customDoubleSpinnerPlaceholder" prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
+                              <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="question_vbox">
                                  <children>
-
+                                    <Spinner fx:id="pointsSpinner" styleClass="automatic_create_spinner" />
                                  </children>
                               </VBox>
                            </children>

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
@@ -71,7 +72,7 @@
                                        <children>
                                           <GridPane prefHeight="107.0" prefWidth="514.0">
                                             <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="250.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                             </columnConstraints>
                                             <rowConstraints>
@@ -79,7 +80,7 @@
                                             </rowConstraints>
                                              <children>
                                                 <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
-                                                <Button mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1">
+                                                <Button mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                                                    <graphic>
                                                       <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -118,9 +119,9 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <VBox fx:id="customDoubleSpinnerPlaceholder" prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
+                                    <VBox prefHeight="33.0" styleClass="question_vbox" VBox.vgrow="ALWAYS">
                                        <children>
-
+                                          <Spinner fx:id="pointsSpinner" styleClass="automatic_create_spinner" />
                                        </children>
                                     </VBox>
                                  </children>

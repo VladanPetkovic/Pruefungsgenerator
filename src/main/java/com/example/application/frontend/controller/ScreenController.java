@@ -3,33 +3,23 @@ package com.example.application.frontend.controller;
 import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
-import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
-import com.example.application.frontend.components.CustomDoubleSpinner;
+import com.example.application.frontend.components.ControlsInitializer;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
-import org.controlsfx.control.textfield.TextFields;
 
-import java.io.IOException;
 import java.util.*;
 
 import java.io.File;
@@ -39,112 +29,7 @@ import java.io.File;
  * provides functionality to handle common UI events
  */
 
-public abstract class ScreenController {
-
-    /**
-     * This function activates/deactivates/sets to min/sets to max a slider/spinner and changes the image accordingly.
-     *
-     * @param sliderOrSpinner Either a difficulty or points slider (or some other)
-     * @param toggleImage     The image, we want to change (toggle off or toggle on)
-     * @param status          The status of the sliderOrSpinner object.
-     */
-    public void on_toggle_btn_click(Object sliderOrSpinner, ImageView toggleImage, int status) {
-        String imagePath = "src/main/resources/com/example/application/icons/";
-        Slider slider = null;
-        CustomDoubleSpinner spinner = null;
-        Spinner<?> normalSpinner = null;
-        if (sliderOrSpinner instanceof Slider) {
-            slider = (Slider) sliderOrSpinner;
-        } else if (sliderOrSpinner instanceof CustomDoubleSpinner) {
-            spinner = (CustomDoubleSpinner) sliderOrSpinner;
-        } else if (sliderOrSpinner instanceof Spinner) {
-            normalSpinner = (Spinner<?>) sliderOrSpinner;
-        }
-
-        switch (status) {
-            case 0: // currently disabled --> enable
-                if (slider != null) {
-                    slider.setDisable(false);
-                } else if (spinner != null) {
-                    spinner.setDisable(false);
-                } else if (normalSpinner != null) {
-                    normalSpinner.setDisable(false);
-                }
-                imagePath += "toggle_on.png";
-                break;
-            case 1: // currently enabled --> min
-                imagePath += "toggle_on_min.png";
-                break;
-            case 2: // currently min --> max
-                imagePath += "toggle_on_max.png";
-                break;
-            default: // current max --> disable
-                if (slider != null) {
-                    slider.setDisable(true);
-                } else if (spinner != null) {
-                    spinner.setDisable(true);
-                } else if (normalSpinner != null) {
-                    normalSpinner.setDisable(true);
-                }
-                imagePath += "toggle_off.png";
-                break;
-        }
-
-        File file = new File(imagePath);
-        Image toggleImageFile = new Image(file.toURI().toString());
-        toggleImage.setImage(toggleImageFile);
-    }
-
-    /**
-     * Initializes the category-combobox
-     */
-    protected void initCategoryComboBox(ComboBox<String> categoryComboBox, List<Category> categories) {
-        categoryComboBox.getItems().clear();
-
-        // add categories
-        for (Category category : categories) {
-            categoryComboBox.getItems().add(category.getName());
-        }
-    }
-
-    /**
-     * Initializes the auto-completion of the questions in the search-area of edit-question.
-     * Shows only 10 questions max
-     */
-    protected void initializeQuestions(TextField questionTextField, List<Question> questions) {
-        ObservableList<String> items = FXCollections.observableArrayList();
-        for (int i = 0; i < 10 && i < questions.size(); i++) {
-            items.add(questions.get(i).getQuestion());
-        }
-        TextFields.bindAutoCompletion(questionTextField, items);
-    }
-
-    /**
-     * This function initializes the MenuButton with the QuestionTypes.
-     *
-     * @param menuButton - the menuButton used in the scene
-     */
-    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<Type> types) {
-        menuButton.getItems().clear();
-
-        for (Type type : types) {
-            MenuItem menuItem = new MenuItem(type.toString());
-            menuItem.setOnAction(e -> {
-                menuButton.setText(type.toString());
-            });
-            menuButton.getItems().add(menuItem);
-        }
-
-        if (allowAllTypes) {
-            // add "showAll" to showAll QuestionTypes
-            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
-            menuItem.setOnAction(e -> {
-                menuButton.setText(MainApp.resourceBundle.getString("all_types"));
-            });
-            menuButton.getItems().add(menuItem);
-        }
-    }
-
+public abstract class ScreenController extends ControlsInitializer {
     /**
      * Creates a label with the specified text and text fill color.
      *
@@ -217,10 +102,6 @@ public abstract class ScreenController {
         return false;
     }
 
-    //
-    // START REGION QUESTION-CREATE AND QUESTION-EDIT
-    //
-
     /**
      * Converts the answers provided either in mc-TextAreas or in the one simple-answer-Textarea to
      * an ArrayList of Answer/s.
@@ -238,76 +119,6 @@ public abstract class ScreenController {
             answerHashSet.add(new Answer(simple_answer.getText()));
         }
         return answerHashSet;
-    }
-
-    /**
-     * Creates a JavaFX Button with the given text and disables focus traversal.
-     *
-     * @param text The text to display on the button.
-     * @return The created Button
-     */
-    protected Button createButton(String text) {
-        Button button = new Button(text);
-        button.setFocusTraversable(false);
-        return button;
-    }
-
-    /**
-     * This function fills the ComboBox with a keyword.
-     * It sets an ActionEvent, when clicked --> the keyword is displayed.
-     * The displayed keyword can be removed via button click.
-     */
-    protected void initKeywordComboBox(List<Keyword> newKeywords, Set<Keyword> selectedKeywords, HBox keywordsHBox, ComboBox<String> keywordComboBox) {
-        // removing old listener
-        keywordComboBox.getSelectionModel().selectedItemProperty().removeListener((observable, oldValue, newValue) -> {});
-
-        keywordComboBox.getItems().clear();
-
-        // init combobox
-        for (Keyword keyword : newKeywords) {
-            keywordComboBox.getItems().add(keyword.getKeyword());
-        }
-
-        // add a listener that triggers when an item is selected
-        keywordComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            // find the Keyword object corresponding to the selected name
-            Keyword selectedKeyword = newKeywords.stream()
-                    .filter(keyword -> keyword.getKeyword().equals(newValue))
-                    .findFirst()
-                    .orElse(null);
-
-            if (selectedKeyword != null) {
-                addSelectedKeyword(selectedKeyword, selectedKeywords, keywordsHBox);
-            }
-        });
-    }
-
-    protected void addSelectedKeyword(Keyword newKeyword, Set<Keyword> selectedKeywords, HBox keywordsHBox) {
-        // don't add, if already added
-        for (Keyword keyword : selectedKeywords) {
-            if (keyword.getKeyword().equals(newKeyword.getKeyword())) {
-                return;
-            }
-        }
-
-        selectedKeywords.add(newKeyword);
-        Button removalButton = createRemovalButton(newKeyword, keywordsHBox, selectedKeywords);
-        keywordsHBox.getChildren().add(removalButton);
-    }
-
-    protected Button createRemovalButton(Keyword newKeyword, HBox keywordsHBox, Set<Keyword> selectedKeywords) {
-        Button button = createButton(newKeyword.getKeyword() + " X");
-
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                // When the removal button is clicked, remove the keyword from the list of selected keywords
-                keywordsHBox.getChildren().remove(button);
-                selectedKeywords.remove(newKeyword);
-            }
-        });
-
-        return button;
     }
 
     /**
@@ -334,11 +145,6 @@ public abstract class ScreenController {
         // Return false if no empty answers are found or if multiple choice is not selected
         return false;
     }
-
-    //
-    // END REGION QUESTION-CREATE AND QUESTION-EDIT
-    //
-
 
     //
     // START REGION EXPORT FILE
