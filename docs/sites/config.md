@@ -11,6 +11,7 @@
 - In the "Run/Debug Configurations" dialog that appears, find your Java application configuration on the left side under "Application."
 
 - Under the "Configuration" tab, locate the "VM options" field.
+  - if there is nothing, click on "Modify options" - there should "Add VM options" appear
 
 - Enter the VM option provided by ControlsFX into the "VM options" field. In your case, it would be:
 ```
