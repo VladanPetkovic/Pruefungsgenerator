@@ -42,6 +42,10 @@ public class ImportCSV {
         this.importTargetCourse = SharedData.getImportTargetCourse();
     }
 
+    /**
+     * This function imports questions.
+     * @return True, when the import was successful and False, when the check or import went wrong.
+     */
     public boolean importData() {
         // Checks if the filePath is null, which means no file was selected
         if (filePath == null) {
@@ -60,7 +64,7 @@ public class ImportCSV {
             Logger.log(getClass().getName(), "Failed to import data from file: " + filePath, LogLevel.ERROR);
             return false;
         }
-        // Returns true if the data import is successful
+
         return true;
     }
 
@@ -81,7 +85,7 @@ public class ImportCSV {
             }
             // Loop through each subsequent line in the CSV file
             while ((line = reader.readLine()) != null) {
-                // Split the line into an array of strings using ";" as the delimiter
+                // Split the line into an array of strings using ";" as the delimiter   // TODO: check, if ';' is between '" "'
                 String[] values = line.split(";");
                 // process each row
                 importRow(values);
@@ -95,7 +99,7 @@ public class ImportCSV {
     }
 
     private void importRow(String[] values) {
-        // question_id, question_text, category_name, difficulty, points, question_type, remarks, answers, keywords, course_name, course_number, studyprogram_name
+        // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
         if (values.length != 12) {
             Logger.log(getClass().getName(), "Invalid CSV format.", LogLevel.INFO);
             return;
@@ -114,17 +118,17 @@ public class ImportCSV {
 
     private ParsedCSVRow parseCSVRow(String[] values) {
         Long question_id = Long.parseLong(values[0]);
-        String questionText = values[1].replace("\"", "");
-        String categoryName = values[2].replace("\"", "");
+        String questionText = values[1];
+        String categoryName = values[2];
         int difficulty = Integer.parseInt(values[3]);
-        float points = Float.parseFloat(values[4]);
-        String questionTypeName = values[5].replace("\"", "");
-        String remark = values[6].replace("\"", "");
-        String answersText = values[7].replace("\"", "");
-        String keywordsText = values[8].replace("\"", "");
-        String courseName = values[9].replace("\"", "");
+        float points = Float.parseFloat(values[4].replace(",", "."));
+        String questionTypeName = values[5];
+        String remark = values[6];
+        String answersText = values[7];
+        String keywordsText = values[8];
+        String courseName = values[9];
         Integer courseNumber = Integer.parseInt(values[10]);
-        String studyProgramName = values[11].replace("\"", "");
+        String studyProgramName = values[11];
 
         return new ParsedCSVRow(question_id, questionText, categoryName, difficulty, points, questionTypeName, remark, answersText, keywordsText, courseName, courseNumber, studyProgramName);
     }
@@ -136,8 +140,8 @@ public class ImportCSV {
         Course course = courseService.add(new Course(parsedRow.getCourseName(), parsedRow.getCourseNumber(), "Lector"), studyProgram);
         Category category = categoryService.add(new Category(parsedRow.getCategoryName()), course);
 
-        Set<Answer> answers = Answer.getAnswersAsSet(parsedRow.getAnswersText().split(","));    // TODO: ',' ist in Antworten erlaubt
-        Set<Keyword> keywords = Keyword.getKeywordsAsSet(parsedRow.getKeywordsText().split(","));
+        Set<Answer> answers = Answer.getAnswersAsSet(parsedRow.getAnswersText().split("\\|"));
+        Set<Keyword> keywords = Keyword.getKeywordsAsSet(parsedRow.getKeywordsText().split("\\|"));
         Set<Keyword> savedKeywords = new HashSet<>();
         // TODO: refactor to avoid n+1 select
         for (Keyword k : keywords) {
