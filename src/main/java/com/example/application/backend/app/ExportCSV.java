@@ -7,6 +7,7 @@ import com.example.application.backend.db.services.StudyProgramService;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,49 +85,47 @@ public class ExportCSV {
             // Write question data
             for (Question question : questions) {
                 lastQuestionId = question.getId();
-                writer.append(String.valueOf(question.getId())).append(";");                                // question_id
-                writer.append("\"").append(question.getQuestion()).append("\"").append(";");                // question_text
-                writer.append("\"").append(question.getCategory().getName()).append("\"").append(";");      // category_name
-                writer.append(String.valueOf(question.getDifficulty())).append(";");                        // difficulty
-                writer.append(String.valueOf(question.getPoints())).append(";");                            // points
-                writer.append("\"").append(question.getType()).append("\"").append(";");                    // question_type
-                writer.append("\"").append(question.getRemark()).append("\"").append(";");                  // remarks
-                writeAnswers(question, writer);                                                             // answers
-                writeKeywords(question, writer);                                                            // keywords
-                writer.append("\"").append(course.getName()).append("\"").append(";");                      // course_name
-                writer.append(String.valueOf(course.getNumber())).append(";");                              // course_number
-                writer.append("\"").append(studyProgram.getName()).append("\"").append("\n");               // studyProgram_name
+                writer.append(String.valueOf(question.getId())).append(";");                                    // question_id
+                writer.append(question.getQuestion()).append(";");                                              // question_text
+                writer.append(question.getCategory().getName()).append(";");                                    // category_name
+                writer.append(String.valueOf(question.getDifficulty())).append(";");                            // difficulty
+                writer.append(new DecimalFormat("#,##0.0").format(question.getPoints())).append(";");   // points
+                writer.append(question.getType()).append(";");                                                  // question_type
+                writer.append(question.getRemark()).append(";");                                                // remarks
+                writeAnswers(question, writer);                                                                 // answers
+                writeKeywords(question, writer);                                                                // keywords
+                writer.append(course.getName()).append(";");                                                    // course_name
+                writer.append(String.valueOf(course.getNumber())).append(";");                                  // course_number
+                writer.append(studyProgram.getName()).append(";\n");                                            // studyProgram_name
             }
         } while (!questions.isEmpty());
     }
 
     private void writeAnswers(Question question, FileWriter writer) throws IOException {
         int answerSize = question.getAnswers().size();
-        writer.append("\"");
         for (Answer answer : question.getAnswers()) {
             answerSize--;
             writer.append(answer.getAnswer());
             if (answerSize > 0) {
-                writer.append(",");
+                writer.append("|");
             }
         }
         if (answerSize == 0) {
-            writer.append("\"").append(";");
+            writer.append(";");
         }
     }
 
     private void writeKeywords(Question question, FileWriter writer) throws IOException {
         int keywordsSize = question.getKeywords().size();
-        writer.append("\"");
         for (Keyword keyword : question.getKeywords()) {
             keywordsSize--;
             writer.append(keyword.getKeyword());
             if (keywordsSize > 0) {
-                writer.append(",");
+                writer.append("|");
             }
         }
         if (keywordsSize == 0) {
-            writer.append("\"").append(";");
+            writer.append(";");
         }
     }
 
