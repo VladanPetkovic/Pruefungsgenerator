@@ -12,12 +12,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,6 +62,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws IOException, ClassNotFoundException {
         this.stage = stage;
+        setStageIcon(stage);
         Locale locale = new Locale("en", "US");
         resourceBundle = ResourceBundle.getBundle("common.en", locale);
 
@@ -157,5 +160,11 @@ public class MainApp extends Application {
             case SETTINGS -> FXMLDependencyInjection.getLoader("sites/settings.fxml", resourceBundle);
             default -> FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
         };
+    }
+
+    private void setStageIcon(Stage stage) {
+        File file = new File("src/main/resources/com/example/application/icons/taskbar_icon.png");
+        Image languageImage = new Image(file.toURI().toString());
+        stage.getIcons().add(languageImage);
     }
 }
