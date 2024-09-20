@@ -23,6 +23,7 @@ public class SwitchScene {
 
     // Define a hashmap for the title banner for the different pages
     private static final Map<String, String> SCREEN_TITLES = new HashMap<>();
+    private static final Map<String, String> SCREEN_TOOLTIPS = new HashMap<>();
 
     static {
         loadTitles();
@@ -39,6 +40,17 @@ public class SwitchScene {
         SCREEN_TITLES.put(SETTINGS, MainApp.resourceBundle.getString("settings"));
     }
 
+    private static void loadTooltips() {
+        SCREEN_TOOLTIPS.clear();
+        SCREEN_TOOLTIPS.put(CREATE_TEST_AUTOMATIC, MainApp.resourceBundle.getString("help_tooltip_create_test_automatic"));
+        SCREEN_TOOLTIPS.put(CREATE_TEST_MANUAL, MainApp.resourceBundle.getString("help_tooltip_create_test_manual"));
+        SCREEN_TOOLTIPS.put(CREATE_QUESTION, MainApp.resourceBundle.getString("help_tooltip_create_question"));
+        SCREEN_TOOLTIPS.put(EDIT_QUESTION, MainApp.resourceBundle.getString("help_tooltip_edit_question"));
+        SCREEN_TOOLTIPS.put(HOME, MainApp.resourceBundle.getString("help_tooltip_home"));
+        SCREEN_TOOLTIPS.put(PDF_PREVIEW, MainApp.resourceBundle.getString("help_tooltip_pdf_preview"));
+        SCREEN_TOOLTIPS.put(SETTINGS, MainApp.resourceBundle.getString("help_tooltip_settings"));
+    }
+
     /**
      * switches to the specified screen and optionally refreshes its components
      *
@@ -48,11 +60,16 @@ public class SwitchScene {
         // resetting filterquestion
         SharedData.setFilterQuestion(new Question());
 
-        // Update pageTitle in SharedData
+        // Update pageTitle and helpTooltip in SharedData
         loadTitles();
         String pageTitle = SCREEN_TITLES.get(path);
         if (pageTitle != null) {
             SharedData.setPageTitle(pageTitle);
+        }
+        loadTooltips();
+        String tooltipText = SCREEN_TOOLTIPS.get(path);
+        if (tooltipText != null) {
+            SharedData.setHelpTooltip(tooltipText);
         }
 
         Parent newParent = null;

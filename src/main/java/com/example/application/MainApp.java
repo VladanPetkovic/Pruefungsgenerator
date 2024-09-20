@@ -76,6 +76,7 @@ public class MainApp extends Application {
         } else {
             Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
             SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
+            SharedData.setHelpTooltip(MainApp.resourceBundle.getString("help_tooltip_home"));
         }
 
         FXMLLoader fxmlLoader = selectScreen();

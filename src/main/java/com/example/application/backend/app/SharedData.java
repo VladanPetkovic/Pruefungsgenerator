@@ -30,6 +30,7 @@ public class SharedData {
 
     // Default value for pageTitle
     private static StringProperty pageTitle = new SimpleStringProperty("");
+    private static StringProperty helpTooltip = new SimpleStringProperty("");
     private static StringProperty operationStatus = new SimpleStringProperty("");
     private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
 
@@ -157,6 +158,14 @@ public class SharedData {
         return pageTitle;
     }
 
+    public static void setHelpTooltip(String tooltipText) throws IOException {
+        SharedData.helpTooltip.set(tooltipText);
+        saveToFile();
+    }
+    public static StringProperty helpTooltipProperty() {
+        return helpTooltip;
+    }
+
     // Getter and setter for operationStatus
     public static String getOperationStatus() {
         return operationStatus.get();
@@ -242,6 +251,7 @@ public class SharedData {
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filepath))) {
             oos.writeObject(pageTitle.get());
+            oos.writeObject(helpTooltip.get());
             oos.writeObject(operationStatus.get());
             oos.writeBoolean(operationIsErrorType.get());
             oos.writeInt(currentLanguage);
@@ -262,6 +272,7 @@ public class SharedData {
     public static void loadFromFile() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filepath))) {
             pageTitle.set((String) ois.readObject());
+            helpTooltip.set((String) ois.readObject());
             operationStatus.set((String) ois.readObject());
             operationIsErrorType.set(ois.readBoolean());
             currentLanguage = ois.readInt();

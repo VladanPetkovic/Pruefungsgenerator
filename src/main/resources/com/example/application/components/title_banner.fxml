@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -37,6 +40,24 @@
 
         <!-- Status label in the second row -->
         <Label fx:id="statusLabel" alignment="CENTER" prefHeight="15.0" prefWidth="921.0" styleClass="titleBanner_label" textFill="red" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Button fx:id="helpBtn" mnemonicParsing="false" onMouseClicked="#onMouseEntered" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="33.0" prefWidth="41.0" styleClass="btn_image_icon" GridPane.halignment="RIGHT">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/help_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <GridPane.margin>
+                  <Insets right="50.0" />
+               </GridPane.margin>
+               <tooltip>
+                  <Tooltip fx:id="helpTooltip" anchorLocation="WINDOW_TOP_RIGHT">
+                     <font>
+                        <Font size="15.0" />
+                     </font></Tooltip>
+               </tooltip>
+            </Button>
         </children>
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
