@@ -1,13 +1,14 @@
 package com.example.application;
 
+import com.example.application.backend.app.Language;
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.SharedData;
+import com.example.application.backend.db.models.Setting;
+import com.example.application.backend.db.services.SettingService;
 import com.example.application.frontend.controller.ControllerFactory;
-import com.example.application.frontend.controller.FXMLDependencyInjection;
+import com.example.application.frontend.controller.SwitchScene;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -63,8 +64,7 @@ public class MainApp extends Application {
     public void start(Stage stage) throws IOException, ClassNotFoundException {
         this.stage = stage;
         setStageIcon(stage);
-        Locale locale = new Locale("en", "US");
-        resourceBundle = ResourceBundle.getBundle("common.en", locale);
+        resourceBundle = getResourceBundle();
 
         Path path = Paths.get(SharedData.getFilepath());
         // checking if the application has crashed last time
@@ -75,19 +75,30 @@ public class MainApp extends Application {
             Files.delete(path);
         } else {
             Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
-            SharedData.setPageTitle(MainApp.resourceBundle.getString("home"));
-            SharedData.setHelpTooltip(MainApp.resourceBundle.getString("help_tooltip_home"));
         }
 
-        FXMLLoader fxmlLoader = selectScreen();
-        fxmlLoader.setControllerFactory(springContext::getBean);
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
-        setWindowsSize(stage);
+        SwitchScene.switchScene(selectScreen());
+        setWindowSize();
 
         // set onCloseRequest eventhandler
         stage.setOnCloseRequest(this::handleWindowCloseRequest);
         stage.show();
+    }
+
+    private void setWindowSize() {
+        // this can be refactored to only one db-call
+        Double width = springContext.getBean(SettingService.class).getWidth();
+        Double height = springContext.getBean(SettingService.class).getHeight();
+
+        MainApp.stage.setWidth(width);
+        MainApp.stage.setHeight(height);
+    }
+
+    private void saveWindowSize() {
+        Double width = MainApp.stage.getWidth();
+        Double height = MainApp.stage.getHeight();
+
+        springContext.getBean(SettingService.class).updateWindowSize(width, height);
     }
 
     private void handleWindowCloseRequest(WindowEvent event) {
@@ -109,6 +120,7 @@ public class MainApp extends Application {
             event.consume();
         } else {
             // user clicks OK
+            saveWindowSize();
 
             try {
                 Path path = Paths.get(SharedData.getFilepath());
@@ -123,44 +135,33 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Sets the minimum size for the application window.
-     *
-     * @param stage The primary stage for the application.
-     */
-    public void setWindowsSize(Stage stage) {
-        // setting window sizes
-        // min. window
-        stage.setMinWidth(720);
-        stage.setMinHeight(550);
-    }
-
-    private FXMLLoader selectScreen() {
-        Locale locale = new Locale("en", "US");
-        int lang = SharedData.getCurrentLanguage();
-
-        switch (lang) {
-            case 0:                         // ENGLISH
-                MainApp.resourceBundle = ResourceBundle.getBundle("common.en", locale);
-                break;
-            case 1:                         // GERMAN
-                locale = new Locale("de", "AUT");
-                MainApp.resourceBundle = ResourceBundle.getBundle("common.de", locale);
-                break;
-        }
-
+    private String selectScreen() {
         if (SharedData.getCurrentScreen() == null) {
-            return FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
+            return SwitchScene.HOME;
         }
 
         return switch (SharedData.getCurrentScreen()) {
-            case CREATE_AUTOMATIC -> FXMLDependencyInjection.getLoader("sites/create_automatic.fxml", resourceBundle);
-            case CREATE_MANUAL -> FXMLDependencyInjection.getLoader("sites/create_manual.fxml", resourceBundle);
-            case QUESTION_CREATE -> FXMLDependencyInjection.getLoader("sites/question_create.fxml", resourceBundle);
-            case QUESTION_EDIT -> FXMLDependencyInjection.getLoader("sites/question_edit.fxml", resourceBundle);
-            case SETTINGS -> FXMLDependencyInjection.getLoader("sites/settings.fxml", resourceBundle);
-            default -> FXMLDependencyInjection.getLoader("sites/home.fxml", resourceBundle);
+            case CREATE_AUTOMATIC -> SwitchScene.CREATE_TEST_AUTOMATIC;
+            case CREATE_MANUAL -> SwitchScene.CREATE_TEST_MANUAL;
+            case QUESTION_CREATE -> SwitchScene.CREATE_QUESTION;
+            case QUESTION_EDIT -> SwitchScene.EDIT_QUESTION;
+            case SETTINGS -> SwitchScene.SETTINGS;
+            default -> SwitchScene.HOME;
         };
+    }
+
+    public ResourceBundle getResourceBundle() {
+        Setting settings = springContext.getBean(SettingService.class).addIfNotExisting(new Setting());
+        Locale locale = new Locale("en", "US");
+
+        if (settings == null) {
+            int lang = springContext.getBean(SettingService.class).getLanguage();
+            String langAbbreviation = Language.getAbbreviation(lang);
+            return ResourceBundle.getBundle("common." + langAbbreviation, locale);
+        } else {
+            String langAbbreviation = Language.getAbbreviation(settings.getLanguage());  // default: english
+            return ResourceBundle.getBundle("common." + langAbbreviation, locale);
+        }
     }
 
     private void setStageIcon(Stage stage) {

@@ -113,7 +113,7 @@
                               </ScrollPane>
                               <HBox>
                                  <children>
-                                    <VBox fx:id="picturePickerPlaceholder">
+                                    <VBox fx:id="picturePickerPlaceholder" minHeight="150.0">
                                        <children>
 
                                        </children>

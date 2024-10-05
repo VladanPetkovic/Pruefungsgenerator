@@ -90,6 +90,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JLatex-Math -->
+        <dependency>
+            <groupId>org.scilab.forge</groupId>
+            <artifactId>jlatexmath</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+
         <!-- pdf/docx generation -->
         <dependency>
             <groupId>com.itextpdf</groupId>

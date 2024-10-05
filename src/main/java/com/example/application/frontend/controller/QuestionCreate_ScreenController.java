@@ -5,13 +5,11 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 
-import com.example.application.frontend.components.ControlsInitializer;
 import com.example.application.frontend.components.PicturePickerController;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -24,7 +22,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -32,7 +29,7 @@ import java.util.regex.Pattern;
 
 @Component
 @Scope("prototype")
-public class QuestionCreate_ScreenController extends ScreenController implements Initializable {
+public class QuestionCreate_ScreenController extends ScreenController {
     private final CategoryService categoryService;
     private final KeywordService keywordService;
     private final QuestionService questionService;
@@ -69,7 +66,6 @@ public class QuestionCreate_ScreenController extends ScreenController implements
     private PicturePickerController picturePickerController;
 
     public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, AnswerService answerService, ImageService imageService) {
-        super();
         this.categoryService = categoryService;
         this.keywordService = keywordService;
         this.questionService = questionService;
@@ -81,12 +77,9 @@ public class QuestionCreate_ScreenController extends ScreenController implements
      * Initializes the controller after its root element has been completely processed.
      * This method is called once all FXML elements have been processed, but before the elements have been
      * rendered on the screen. It initializes the UI elements and retrieves necessary data from the database.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if the root object was not localized.
      */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    public void initialize() {
         initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
@@ -105,7 +98,7 @@ public class QuestionCreate_ScreenController extends ScreenController implements
         initQuestionTypeListener();
 
         try {
-            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
+            FXMLLoader loader = FXMLDependencyInjection.getLoader("components/picture_picker.fxml", MainApp.resourceBundle);
             VBox picturePicker = loader.load();
             picturePickerController = loader.getController();
             picturePickerPlaceholder.getChildren().add(picturePicker);

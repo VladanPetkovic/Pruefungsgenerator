@@ -10,8 +10,6 @@ import javafx.scene.image.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
 @Scope("prototype")
 public class ImageResizer_ScreenController extends ModalController {
@@ -28,12 +26,12 @@ public class ImageResizer_ScreenController extends ModalController {
 
     @FXML
     public void initialize() {
-        if (SharedData.getResizeImage() == null) {
+        if (SharedData.getImageEditing() == null) {
             Logger.log(getClass().getName(), "The image is null", LogLevel.ERROR);
             return;
         }
 
-        initImage(SharedData.getResizeImage());
+        initImage(SharedData.getImageEditing());
 
         sliderWidth.valueProperty().addListener((observableValue, number, t1) -> {
             double scaleFactor = t1.doubleValue() / originalImage.getWidth();
@@ -49,13 +47,13 @@ public class ImageResizer_ScreenController extends ModalController {
     }
 
     @FXML
-    private void onSaveBtnClick(ActionEvent actionEvent) throws IOException {
+    private void onSaveBtnClick(ActionEvent actionEvent) {
         if (originalImage != null) {
             double scaleFactor = sliderWidth.getValue() / originalImage.getWidth();
             int newWidth = (int) sliderWidth.getValue();
             int newHeight = (int) (originalImage.getHeight() * scaleFactor);
             outputImage = rescaleImage(originalImage, newWidth, newHeight);
-            SharedData.setResizeImage(outputImage);
+            SharedData.setImageEditing(outputImage);
             closeStage(actionEvent);
         }
     }

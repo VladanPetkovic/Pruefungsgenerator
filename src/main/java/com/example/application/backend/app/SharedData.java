@@ -35,9 +35,6 @@ public class SharedData {
     private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
 
     @Getter
-    private static int currentLanguage = 0; // 0 for english; 1 for german
-
-    @Getter
     //stores the users course selection from the Home Modal
     private static Course selectedCourse;
 
@@ -58,7 +55,7 @@ public class SharedData {
     private static Course selectedEditCourse = new Course();
 
     @Getter
-    private static Image resizeImage = null;
+    private static Image imageEditing = null;
 
     @Getter
     @Setter
@@ -199,11 +196,6 @@ public class SharedData {
     // ------------------------------------------------------------------
     // setter for non observables
 
-    public static void setCurrentLanguage(int currentLanguage) throws IOException {
-        SharedData.currentLanguage = currentLanguage;
-        saveToFile();
-    }
-
     public static void setSelectedCourse(Course selectedCourse) throws IOException {
         SharedData.selectedCourse = selectedCourse;
         saveToFile();
@@ -234,8 +226,8 @@ public class SharedData {
         saveToFile();
     }
 
-    public static void setResizeImage(Image resizeImage) throws IOException {
-        SharedData.resizeImage = resizeImage;
+    public static void setImageEditing(Image imageEditing) {
+        SharedData.imageEditing = imageEditing;
         //saveToFile();
     }
 
@@ -254,7 +246,6 @@ public class SharedData {
             oos.writeObject(helpTooltip.get());
             oos.writeObject(operationStatus.get());
             oos.writeBoolean(operationIsErrorType.get());
-            oos.writeInt(currentLanguage);
             oos.writeObject(selectedCourse);
             oos.writeObject(selectedStudyProgram);
             oos.writeObject(filterQuestion);
@@ -275,7 +266,6 @@ public class SharedData {
             helpTooltip.set((String) ois.readObject());
             operationStatus.set((String) ois.readObject());
             operationIsErrorType.set(ois.readBoolean());
-            currentLanguage = ois.readInt();
             selectedCourse = (Course) ois.readObject();
             selectedStudyProgram = (StudyProgram) ois.readObject();
             filterQuestion = (Question) ois.readObject();

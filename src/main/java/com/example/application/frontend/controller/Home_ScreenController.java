@@ -1,14 +1,12 @@
 package com.example.application.frontend.controller;
 
 
-import com.example.application.backend.app.LogLevel;
-import com.example.application.backend.app.Logger;
-import com.example.application.backend.app.Screen;
+import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.StudyProgram;
-import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.services.CourseService;
+import com.example.application.backend.db.services.SettingService;
 import com.example.application.backend.db.services.StudyProgramService;
 import com.example.application.MainApp;
 import com.example.application.frontend.modals.ModalOpener;
@@ -41,6 +39,7 @@ import static com.example.application.frontend.modals.ModalOpener.openModal;
 public class Home_ScreenController extends ScreenController {
     private final StudyProgramService studyProgramService;
     private final CourseService courseService;
+    private final SettingService settingService;
     @FXML
     public ImageView langImageView;
     @FXML
@@ -49,10 +48,11 @@ public class Home_ScreenController extends ScreenController {
     private MenuButton coursesMenuButton;
     private final int LANGUAGE_COUNT = 2;
 
-    public Home_ScreenController(StudyProgramService studyProgramService, CourseService courseService) {
+    public Home_ScreenController(StudyProgramService studyProgramService, CourseService courseService, SettingService settingService) {
         super();
         this.studyProgramService = studyProgramService;
         this.courseService = courseService;
+        this.settingService = settingService;
     }
 
     /**
@@ -290,20 +290,15 @@ public class Home_ScreenController extends ScreenController {
     public void onLanguageBtnClick(ActionEvent actionEvent) throws IOException {
         String imagePath = "src/main/resources/com/example/application/icons/";
         Locale locale = new Locale("en", "US");
-        int temp = (SharedData.getCurrentLanguage() + 1) % LANGUAGE_COUNT;
-        SharedData.setCurrentLanguage(temp);
+        int currentLanguage = settingService.getLanguage();
+        int newLang = (currentLanguage + 1) % LANGUAGE_COUNT;
+        String langAbbreviation = Language.getAbbreviation(newLang);
 
-        switch (temp) {
-            case 0:                         // ENGLISH
-                imagePath += "en.png";
-                MainApp.resourceBundle = ResourceBundle.getBundle("common.en", locale);
-                break;
-            case 1:                         // GERMAN
-                imagePath += "de.png";
-                locale = new Locale("de", "AUT");
-                MainApp.resourceBundle = ResourceBundle.getBundle("common.de", locale);
-                break;
-        }
+        // changing language
+        MainApp.resourceBundle = ResourceBundle.getBundle("common." + langAbbreviation, locale);
+        imagePath += langAbbreviation + ".png";
+        // persisting to database
+        settingService.updateLanguage(newLang);
 
         // setting the image
         File file = new File(imagePath);
@@ -315,15 +310,9 @@ public class Home_ScreenController extends ScreenController {
 
     private void initLanguage() {
         String imagePath = "src/main/resources/com/example/application/icons/";
-
-        switch (SharedData.getCurrentLanguage()) {
-            case 0:                         // ENGLISH
-                imagePath += "en.png";
-                break;
-            case 1:                         // GERMAN
-                imagePath += "de.png";
-                break;
-        }
+        int currentLanguage = settingService.getLanguage();
+        String langAbbreviation = Language.getAbbreviation(currentLanguage);
+        imagePath += langAbbreviation + ".png";
 
         // setting the image
         File file = new File(imagePath);
