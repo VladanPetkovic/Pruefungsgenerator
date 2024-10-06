@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.boot.SpringApplication;
@@ -89,6 +91,17 @@ public class MainApp extends Application {
         // this can be refactored to only one db-call
         Double width = springContext.getBean(SettingService.class).getWidth();
         Double height = springContext.getBean(SettingService.class).getHeight();
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        if (width >= screenBounds.getWidth() || height >= screenBounds.getHeight()) {
+            stage.setMaximized(true);
+            return;
+        }
+
+        // position of stage is in the top left corner
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
 
         MainApp.stage.setWidth(width);
         MainApp.stage.setHeight(height);
