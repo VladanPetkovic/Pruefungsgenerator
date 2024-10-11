@@ -64,9 +64,24 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException, ClassNotFoundException {
-        this.stage = stage;
+        MainApp.stage = stage;
         setStageIcon(stage);
         resourceBundle = getResourceBundle();
+
+        processCrashFile();
+
+        SwitchScene.switchScene(selectScreen());
+        setWindowSize();
+
+        // set onCloseRequest eventhandler
+        stage.setOnCloseRequest(this::handleWindowCloseRequest);
+        stage.show();
+    }
+
+    private void processCrashFile() throws IOException, ClassNotFoundException {
+        if (new File("bin").mkdirs()) {
+            Logger.log(getClass().getName(), "Creating bin-folder", LogLevel.INFO);
+        }
 
         Path path = Paths.get(SharedData.getFilepath());
         // checking if the application has crashed last time
@@ -78,13 +93,6 @@ public class MainApp extends Application {
         } else {
             Logger.log(getClass().getName(), "CrashFile does not exist", LogLevel.INFO);
         }
-
-        SwitchScene.switchScene(selectScreen());
-        setWindowSize();
-
-        // set onCloseRequest eventhandler
-        stage.setOnCloseRequest(this::handleWindowCloseRequest);
-        stage.show();
     }
 
     private void setWindowSize() {

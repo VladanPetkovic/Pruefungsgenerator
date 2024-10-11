@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\vlada\Documents\FH_Vladan_Petkovic\3.Semester\Innovation_project\Pruefungsgenerator\target\Pruefungsgenerator-1.0-SNAPSHOT-spring-boot.jar</jar>
+  <outfile>C:\Users\vlada\Documents\FH_Vladan_Petkovic\3.Semester\Innovation_project\Pruefungsgenerator\exam_generator.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>true</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <classPath>
+    <mainClass>org.springframework.boot.loader.launch.JarLauncher</mainClass>
+  </classPath>
+  <jre>
+    <path>C:\Program Files\Java\jdk-21</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+    <opt>--module-path &quot;C:\Program Files\Java\javafx-sdk-23\lib;C:\Users\vlada\Documents\FH_Vladan_Petkovic\5.Semester\INNO3\controlsfx-11.2.1.jar&quot;</opt>
+    <opt>--add-modules javafx.controls,javafx.fxml,org.controlsfx.controls</opt>
+    <opt>--add-exports javafx.base/com.sun.javafx.event=org.controlsfx.controls</opt>
+  </jre>
+</launch4jConfig>
