@@ -32,6 +32,10 @@ public class SettingService {
         return newSetting;
     }
 
+    public Setting getFirstSetting() {
+        return settingRepository.getFirstSetting();
+    }
+
     public Integer getLanguage() {
         return settingRepository.getFirstLanguage();
     }
@@ -48,6 +52,34 @@ public class SettingService {
         Setting existingSetting = settingRepository.getFirstSetting();
         if (existingSetting != null) {
             existingSetting.setLanguage(newLang);
+
+            Setting updatedSetting = settingRepository.save(existingSetting);
+            Logger.log(this.getClass().getName(), "Setting updated successfully for ID: " + existingSetting.getId(), LogLevel.INFO);
+            return updatedSetting;
+        } else {
+            Logger.log(this.getClass().getName(), "Failed to find first setting.", LogLevel.ERROR);
+            throw new RuntimeException("Setting not found");
+        }
+    }
+
+    public Setting updateStudyProgram(Long studyProgramId) {
+        Setting existingSetting = settingRepository.getFirstSetting();
+        if (existingSetting != null) {
+            existingSetting.setStudyProgramId(studyProgramId);
+
+            Setting updatedSetting = settingRepository.save(existingSetting);
+            Logger.log(this.getClass().getName(), "Setting updated successfully for ID: " + existingSetting.getId(), LogLevel.INFO);
+            return updatedSetting;
+        } else {
+            Logger.log(this.getClass().getName(), "Failed to find first setting.", LogLevel.ERROR);
+            throw new RuntimeException("Setting not found");
+        }
+    }
+
+    public Setting updateCourse(Long courseId) {
+        Setting existingSetting = settingRepository.getFirstSetting();
+        if (existingSetting != null) {
+            existingSetting.setCourseId(courseId);
 
             Setting updatedSetting = settingRepository.save(existingSetting);
             Logger.log(this.getClass().getName(), "Setting updated successfully for ID: " + existingSetting.getId(), LogLevel.INFO);

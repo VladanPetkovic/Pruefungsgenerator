@@ -30,7 +30,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q " +
             "JOIN q.category cat JOIN cat.courses c " +
             "LEFT JOIN q.keywords k " +
-            "WHERE (:question IS NULL OR q.question = :question) " +
+            "WHERE (:question IS NULL OR LOWER(q.question) LIKE LOWER(CONCAT('%', :question, '%'))) " +
             "AND (:difficulty IS NULL OR q.difficulty = :difficulty) " +
             "AND (:minDifficulty IS NULL OR q.difficulty >= :minDifficulty) " +
             "AND (:maxDifficulty IS NULL OR q.difficulty <= :maxDifficulty) " +

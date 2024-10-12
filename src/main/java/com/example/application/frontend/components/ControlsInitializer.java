@@ -3,21 +3,18 @@ package com.example.application.frontend.components;
 import com.example.application.MainApp;
 import com.example.application.backend.db.models.Category;
 import com.example.application.backend.db.models.Keyword;
-import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.Type;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import org.controlsfx.control.textfield.TextFields;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * This class has all methods, where controls (Slider, Spinner, MenuButton,...) are initialized.
@@ -174,29 +171,21 @@ public abstract class ControlsInitializer {
     }
 
     /**
-     * Initializes the auto-completion of the questions in the search-area of edit-question.
-     * Shows only 10 questions max
-     */
-    protected void initializeQuestions(TextField questionTextField, List<Question> questions) {
-        ObservableList<String> items = FXCollections.observableArrayList();
-        for (int i = 0; i < 10 && i < questions.size(); i++) {
-            items.add(questions.get(i).getQuestion());
-        }
-        TextFields.bindAutoCompletion(questionTextField, items);
-    }
-
-    /**
      * This function initializes the MenuButton with the QuestionTypes.
      *
      * @param menuButton - the menuButton used in the scene
+     * @param onActionFunction - the onActionFunction that is going to be used, when an item is selected
      */
-    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<Type> types) {
+    protected void initializeMenuButton(MenuButton menuButton, boolean allowAllTypes, List<Type> types, Runnable onActionFunction) {
         menuButton.getItems().clear();
 
         for (Type type : types) {
             MenuItem menuItem = new MenuItem(type.toString());
             menuItem.setOnAction(e -> {
                 menuButton.setText(type.toString());
+                if (onActionFunction != null) {
+                    onActionFunction.run();
+                }
             });
             menuButton.getItems().add(menuItem);
         }
@@ -206,6 +195,9 @@ public abstract class ControlsInitializer {
             MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("all_types"));
             menuItem.setOnAction(e -> {
                 menuButton.setText(MainApp.resourceBundle.getString("all_types"));
+                if (onActionFunction != null) {
+                    onActionFunction.run();
+                }
             });
             menuButton.getItems().add(menuItem);
         }

@@ -4,6 +4,7 @@ package com.example.application.frontend.controller;
 import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Course;
 import com.example.application.backend.db.models.Message;
+import com.example.application.backend.db.models.Setting;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.backend.db.services.CourseService;
 import com.example.application.backend.db.services.SettingService;
@@ -46,7 +47,6 @@ public class Home_ScreenController extends ScreenController {
     private MenuButton studyProgramMenuButton;
     @FXML
     private MenuButton coursesMenuButton;
-    private final int LANGUAGE_COUNT = 2;
 
     public Home_ScreenController(StudyProgramService studyProgramService, CourseService courseService, SettingService settingService) {
         super();
@@ -61,13 +61,9 @@ public class Home_ScreenController extends ScreenController {
      */
     @FXML
     private void initialize() throws IOException {
-        resetStudyProgramMenuButton();
-        loadStudyPrograms();
-        initLanguage();
-
-        resetCourseMenuButton();
-        MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("menuitem_choose_study_program"));
-        coursesMenuButton.getItems().add(menuItem);
+        Setting setting = settingService.getFirstSetting();
+        initLanguage(setting);
+        initSelectedStudyProgramAndCourse(setting);
     }
 
     // event handler for study program button click
@@ -137,12 +133,7 @@ public class Home_ScreenController extends ScreenController {
         CustomMenuItem customMenuItem = new CustomMenuItem(content);
 
         textBtn.setOnAction(e -> {
-            studyProgramMenuButton.setText(studyProgram.getName());
-            try {
-                SharedData.setSelectedStudyProgram(studyProgram);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            setStudyProgram(studyProgram);
             // if the study program menu item is selected then the course menu and the course selection (variable)
             // is cleared/reset and the associated courses will get loaded in the course menu
             try {
@@ -182,8 +173,8 @@ public class Home_ScreenController extends ScreenController {
         customButton.setOnAction(e -> {
             coursesMenuButton.setText(MainApp.resourceBundle.getString("add_course"));
             try {
-                SharedData.resetEditObjects();
                 addCourse();
+                SharedData.resetEditObjects();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -202,14 +193,7 @@ public class Home_ScreenController extends ScreenController {
         content.setSpacing(5);
         CustomMenuItem customMenuItem = new CustomMenuItem(content);
 
-        textBtn.setOnAction(e -> {
-            coursesMenuButton.setText(course.getName());
-            try {
-                SharedData.setSelectedCourse(course);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        textBtn.setOnAction(e -> setCourse(course));
 
         editBtn.setOnAction(e -> {
             try {
@@ -243,6 +227,7 @@ public class Home_ScreenController extends ScreenController {
         // listener for when the stage is closed
         newStage.setOnHidden(event -> {
             try {
+                resetCourseMenuButton();
                 resetStudyProgramMenuButton();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -277,6 +262,7 @@ public class Home_ScreenController extends ScreenController {
         studyProgramMenuButton.setText(MainApp.resourceBundle.getString("study_programs"));
         SharedData.setSelectedStudyProgram(null);
         SharedData.resetEditObjects();
+        settingService.updateStudyProgram(null);
     }
 
     // helper function to reset course menu button
@@ -285,12 +271,14 @@ public class Home_ScreenController extends ScreenController {
         coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
         SharedData.resetEditObjects();
+        settingService.updateCourse(null);
     }
 
     public void onLanguageBtnClick(ActionEvent actionEvent) throws IOException {
         String imagePath = "src/main/resources/com/example/application/icons/";
         Locale locale = new Locale("en", "US");
         int currentLanguage = settingService.getLanguage();
+        int LANGUAGE_COUNT = 2;
         int newLang = (currentLanguage + 1) % LANGUAGE_COUNT;
         String langAbbreviation = Language.getAbbreviation(newLang);
 
@@ -308,15 +296,60 @@ public class Home_ScreenController extends ScreenController {
         switchScene(HOME);
     }
 
-    private void initLanguage() {
+    private void initLanguage(Setting setting) {
+        int savedLanguage = 0;  // english as default
+        if (setting != null) {
+            savedLanguage = setting.getLanguage();
+        }
+
         String imagePath = "src/main/resources/com/example/application/icons/";
-        int currentLanguage = settingService.getLanguage();
-        String langAbbreviation = Language.getAbbreviation(currentLanguage);
+        String langAbbreviation = Language.getAbbreviation(savedLanguage);
         imagePath += langAbbreviation + ".png";
 
         // setting the image
         File file = new File(imagePath);
         Image languageImage = new Image(file.toURI().toString());
         langImageView.setImage(languageImage);
+    }
+
+    private void initSelectedStudyProgramAndCourse(Setting setting) throws IOException {
+        // resetting studyProgram and course
+        resetStudyProgramMenuButton();
+        loadStudyPrograms();
+        resetCourseMenuButton();
+
+        // nothing saved
+        if (setting == null || setting.getCourseId() == null || setting.getStudyProgramId() == null) {
+            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("menuitem_choose_study_program"));
+            coursesMenuButton.getItems().add(menuItem);
+            return;
+        }
+
+        // set last used studyProgram and course
+        StudyProgram studyProgram = studyProgramService.getById(setting.getStudyProgramId());
+        setStudyProgram(studyProgram);
+        loadCourses();
+        Course course = courseService.getById(setting.getCourseId());
+        setCourse(course);
+    }
+
+    private void setStudyProgram(StudyProgram studyProgram) {
+        studyProgramMenuButton.setText(studyProgram.getName());
+        settingService.updateStudyProgram(studyProgram.getId());
+        try {
+            SharedData.setSelectedStudyProgram(studyProgram);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void setCourse(Course course) {
+        coursesMenuButton.setText(course.getName());
+        settingService.updateCourse(course.getId());
+        try {
+            SharedData.setSelectedCourse(course);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

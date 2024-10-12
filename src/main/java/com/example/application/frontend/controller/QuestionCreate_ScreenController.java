@@ -94,7 +94,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
         remarks.setText("");
 
         List<Type> questionTypes = Arrays.asList(Type.values());
-        initializeMenuButton(questionTypeMenuButton, false, questionTypes);
+        initializeMenuButton(questionTypeMenuButton, false, questionTypes, null);
         initQuestionTypeListener();
 
         try {
