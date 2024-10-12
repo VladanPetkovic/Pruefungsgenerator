@@ -123,7 +123,7 @@ public class Home_ScreenController extends ScreenController {
 
     private void addStudyProgramToMenuButton(StudyProgram studyProgram) {
         // the studyProgram-text
-        Button textBtn = new Button(studyProgram.getName());
+        Button textBtn = new Button(studyProgram.getAbbreviation());
         textBtn.setStyle("-fx-background-color: none;-fx-text-fill: white");
         // the edit-btn
         Button editBtn = createEditBtn();
