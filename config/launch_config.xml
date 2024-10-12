@@ -2,18 +2,22 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\vlada\Documents\FH_Vladan_Petkovic\3.Semester\Innovation_project\Pruefungsgenerator\Pruefungsgenerator-1.0-SNAPSHOT-spring-boot.jar</jar>
-  <outfile>C:\Users\vlada\Documents\FH_Vladan_Petkovic\3.Semester\Innovation_project\Pruefungsgenerator\exam_generator.exe</outfile>
+  <jar>C:\Users\vlada\Documents\FH_Vladan_Petkovic\5.Semester\INNO3\exam_generator\Pruefungsgenerator-1.0-SNAPSHOT-spring-boot.jar</jar>
+  <outfile>C:\Users\vlada\Documents\FH_Vladan_Petkovic\5.Semester\INNO3\exam_generator\exam_generator.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl></downloadUrl>
   <supportUrl></supportUrl>
-  <stayAlive>true</stayAlive>
-  <restartOnCrash>true</restartOnCrash>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon></icon>
+  <icon>C:\Users\vlada\Documents\FH_Vladan_Petkovic\5.Semester\INNO3\exam_generator\src\main\resources\com\example\application\icons\fh_icon.ico</icon>
+  <singleInstance>
+    <mutexName>someRandomMutexName</mutexName>
+    <windowTitle></windowTitle>
+  </singleInstance>
   <classPath>
     <mainClass>org.springframework.boot.loader.launch.JarLauncher</mainClass>
   </classPath>
@@ -24,4 +28,10 @@
     <minVersion></minVersion>
     <maxVersion></maxVersion>
   </jre>
+  <splash>
+    <file>C:\Users\vlada\Documents\FH_Vladan_Petkovic\5.Semester\INNO3\exam_generator\src\main\resources\com\example\application\icons\fh_icon.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>30</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
 </launch4jConfig>
