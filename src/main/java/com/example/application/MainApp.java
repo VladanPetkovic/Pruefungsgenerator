@@ -46,7 +46,7 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void init() throws IOException {
+    public void init() {
         springContext = SpringApplication.run(MainApp.class);
         controllerFactory = new ControllerFactory(springContext);
     }
@@ -108,8 +108,8 @@ public class MainApp extends Application {
         }
 
         // position of stage is in the top left corner
-        stage.setX(screenBounds.getMinX());
-        stage.setY(screenBounds.getMinY());
+        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() - width) / 2);
+        stage.setY(screenBounds.getMinY() + (screenBounds.getHeight() - height) / 2);
 
         MainApp.stage.setWidth(width);
         MainApp.stage.setHeight(height);
