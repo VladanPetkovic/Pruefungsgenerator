@@ -16,6 +16,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -66,13 +69,11 @@ public class QuestionFilter_ScreenController extends ScreenController {
 
     @FXML
     private void initialize() {
-        // init auto-completion
-        initializeQuestions(this.questionTextField, questionService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
         List<Type> questionTypes = Arrays.asList(Type.values());
-        initializeMenuButton(this.questionTypeMenuButton, true, questionTypes);
+        initializeMenuButton(this.questionTypeMenuButton, true, questionTypes, this::searchQuestions);
         initializeMenuButton(this.sortMenuButton);
 
         // displays the selected course above the filter window
@@ -103,14 +104,24 @@ public class QuestionFilter_ScreenController extends ScreenController {
     public void onToggleDifficultyBtnClick(ActionEvent actionEvent) {
         on_toggle_btn_click(difficultySlider, difficulty_toggle_image_view, difficultyFilterMethod);
         difficultyFilterMethod = (difficultyFilterMethod + 1) % 4;
+        searchQuestions();
     }
 
     public void onTogglePointsBtnClick(ActionEvent actionEvent) {
         on_toggle_btn_click(pointsSlider, points_toggle_image_view, pointsFilterMethod);
         pointsFilterMethod = (pointsFilterMethod + 1) % 4;
+        searchQuestions();
     }
 
-    public void applyFilterButtonClicked(ActionEvent actionEvent) {
+    public void applyFilter(ActionEvent actionEvent) {
+        searchQuestions();
+    }
+
+    public void onKeyTyped(KeyEvent keyEvent) {
+        searchQuestions();
+    }
+
+    public void onMouseReleased(MouseEvent mouseEvent) {
         searchQuestions();
     }
 

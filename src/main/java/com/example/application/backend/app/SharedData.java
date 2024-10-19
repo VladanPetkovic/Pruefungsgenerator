@@ -30,11 +30,9 @@ public class SharedData {
 
     // Default value for pageTitle
     private static StringProperty pageTitle = new SimpleStringProperty("");
+    private static StringProperty helpTooltip = new SimpleStringProperty("");
     private static StringProperty operationStatus = new SimpleStringProperty("");
     private static BooleanProperty operationIsErrorType = new SimpleBooleanProperty(false);
-
-    @Getter
-    private static int currentLanguage = 0; // 0 for english; 1 for german
 
     @Getter
     //stores the users course selection from the Home Modal
@@ -57,7 +55,7 @@ public class SharedData {
     private static Course selectedEditCourse = new Course();
 
     @Getter
-    private static Image resizeImage = null;
+    private static Image imageEditing = null;
 
     @Getter
     @Setter
@@ -157,6 +155,14 @@ public class SharedData {
         return pageTitle;
     }
 
+    public static void setHelpTooltip(String tooltipText) throws IOException {
+        SharedData.helpTooltip.set(tooltipText);
+        saveToFile();
+    }
+    public static StringProperty helpTooltipProperty() {
+        return helpTooltip;
+    }
+
     // Getter and setter for operationStatus
     public static String getOperationStatus() {
         return operationStatus.get();
@@ -190,11 +196,6 @@ public class SharedData {
     // ------------------------------------------------------------------
     // setter for non observables
 
-    public static void setCurrentLanguage(int currentLanguage) throws IOException {
-        SharedData.currentLanguage = currentLanguage;
-        saveToFile();
-    }
-
     public static void setSelectedCourse(Course selectedCourse) throws IOException {
         SharedData.selectedCourse = selectedCourse;
         saveToFile();
@@ -225,8 +226,8 @@ public class SharedData {
         saveToFile();
     }
 
-    public static void setResizeImage(Image resizeImage) throws IOException {
-        SharedData.resizeImage = resizeImage;
+    public static void setImageEditing(Image imageEditing) {
+        SharedData.imageEditing = imageEditing;
         //saveToFile();
     }
 
@@ -242,9 +243,9 @@ public class SharedData {
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filepath))) {
             oos.writeObject(pageTitle.get());
+            oos.writeObject(helpTooltip.get());
             oos.writeObject(operationStatus.get());
             oos.writeBoolean(operationIsErrorType.get());
-            oos.writeInt(currentLanguage);
             oos.writeObject(selectedCourse);
             oos.writeObject(selectedStudyProgram);
             oos.writeObject(filterQuestion);
@@ -262,9 +263,9 @@ public class SharedData {
     public static void loadFromFile() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filepath))) {
             pageTitle.set((String) ois.readObject());
+            helpTooltip.set((String) ois.readObject());
             operationStatus.set((String) ois.readObject());
             operationIsErrorType.set(ois.readBoolean());
-            currentLanguage = ois.readInt();
             selectedCourse = (Course) ois.readObject();
             selectedStudyProgram = (StudyProgram) ois.readObject();
             filterQuestion = (Question) ois.readObject();

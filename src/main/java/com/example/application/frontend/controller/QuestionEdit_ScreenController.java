@@ -12,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,7 +31,7 @@ import java.util.regex.Pattern;
 
 @Component
 @Scope("prototype")
-public class QuestionEdit_ScreenController extends ScreenController implements Initializable {
+public class QuestionEdit_ScreenController extends ScreenController {
     private final QuestionService questionService;
     private final KeywordService keywordService;
     private final CategoryService categoryService;
@@ -82,7 +80,6 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
     private Button previewQuestion;
 
     public QuestionEdit_ScreenController(KeywordService keywordService, CategoryService categoryService, AnswerService answerService, QuestionService questionService, ImageService imageService) {
-        super();
         this.questionService = questionService;
         this.keywordService = keywordService;
         this.categoryService = categoryService;
@@ -92,12 +89,9 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
 
     /**
      * Initializes the Question Edit screen.
-     *
-     * @param url            The location used to resolve relative paths for the root object, or null if the location is not known.
-     * @param resourceBundle The resources used to localize the root object, or null if the root object was not localized.
      */
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         // you can't scroll when no question has been selected
         chooseScrollPane.setMouseTransparent(true);
 
@@ -116,7 +110,7 @@ public class QuestionEdit_ScreenController extends ScreenController implements I
         initCategoryComboBox(categoryComboBox, categories);
 
         try {
-            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("components/picture_picker.fxml"));
+            FXMLLoader loader = FXMLDependencyInjection.getLoader("components/picture_picker.fxml", MainApp.resourceBundle);
             VBox picturePicker = loader.load();
             picturePickerController = loader.getController();
             picturePickerPlaceholder.getChildren().add(picturePicker);

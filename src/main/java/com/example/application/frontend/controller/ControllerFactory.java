@@ -1,10 +1,7 @@
 package com.example.application.frontend.controller;
 
 import com.example.application.backend.db.services.*;
-import com.example.application.frontend.components.CreateTestOptions_ScreenController;
-import com.example.application.frontend.components.NavbarController;
-import com.example.application.frontend.components.QuestionFilter_ScreenController;
-import com.example.application.frontend.components.TitleBanner_ScreenController;
+import com.example.application.frontend.components.*;
 import com.example.application.frontend.modals.*;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -15,6 +12,7 @@ public class ControllerFactory {
     private final ImageService imageService;
     private final KeywordService keywordService;
     private final QuestionService questionService;
+    private final SettingService settingService;
     private final StudyProgramService studyProgramService;
 
     public ControllerFactory(ConfigurableApplicationContext springContext) {
@@ -24,6 +22,7 @@ public class ControllerFactory {
         imageService = springContext.getBean(ImageService.class);
         keywordService = springContext.getBean(KeywordService.class);
         questionService = springContext.getBean(QuestionService.class);
+        settingService = springContext.getBean(SettingService.class);
         studyProgramService = springContext.getBean(StudyProgramService.class);
     }
 
@@ -36,7 +35,7 @@ public class ControllerFactory {
             case "CreateAutomatic_ScreenController" ->
                     new CreateAutomatic_ScreenController(questionService, categoryService);
             case "CreateManual_ScreenController" -> new CreateManual_ScreenController();
-            case "Home_ScreenController" -> new Home_ScreenController(studyProgramService, courseService);
+            case "Home_ScreenController" -> new Home_ScreenController(studyProgramService, courseService, settingService);
             case "PdfPreview_ScreenController" -> new PdfPreview_ScreenController();
             case "QuestionCreate_ScreenController" ->
                     new QuestionCreate_ScreenController(keywordService, categoryService, questionService, answerService, imageService);
@@ -45,11 +44,12 @@ public class ControllerFactory {
             case "Settings_ScreenController" ->
                     new Settings_ScreenController(studyProgramService, courseService, questionService, categoryService, answerService, keywordService);
             /* COMPONENTS */
+            case "CreateTestOptions_ScreenController" -> new CreateTestOptions_ScreenController(categoryService);
             case "NavbarController" -> new NavbarController();
+            case "PicturePickerController" -> new PicturePickerController();
             case "QuestionFilter_ScreenController" ->
                     new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();
-            case "CreateTestOptions_ScreenController" -> new CreateTestOptions_ScreenController(categoryService);
             /* MODALS */
             case "AddCategory_ScreenController" -> new AddCategory_ScreenController(categoryService);
             case "AddCourse_ScreenController" -> new AddCourse_ScreenController(courseService);
@@ -58,6 +58,7 @@ public class ControllerFactory {
             case "ConfirmDeletion_ScreenController" ->
                     new ConfirmDeletion_ScreenController(studyProgramService, courseService, questionService);
             case "ImageResizer_ScreenController" -> new ImageResizer_ScreenController();
+            case "Latex_ScreenController" -> new Latex_ScreenController(imageService);
             case "TargetSelectionController" -> new TargetSelectionController(studyProgramService, courseService);
             default -> throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
         };

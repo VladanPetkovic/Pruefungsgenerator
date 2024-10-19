@@ -2,7 +2,6 @@ module com.example.demo {
     requires javafx.controls;
     requires javafx.fxml;
 
-    requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
     requires lombok;
     requires java.sql;
@@ -28,6 +27,7 @@ module com.example.demo {
     requires spring.data.jpa;
     requires spring.data.commons;
     requires spring.tx;
+    requires jlatexmath;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

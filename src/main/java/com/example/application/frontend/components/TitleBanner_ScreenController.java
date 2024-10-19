@@ -5,9 +5,12 @@ import com.example.application.frontend.controller.SwitchScene;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import com.example.application.backend.app.SharedData;
 import javafx.beans.binding.Bindings;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.springframework.context.annotation.Scope;
@@ -20,6 +23,8 @@ import static com.example.application.frontend.controller.SwitchScene.switchScen
 @Component
 @Scope("prototype")
 public class TitleBanner_ScreenController extends ScreenController {
+    public Button helpBtn;
+    public Tooltip helpTooltip;
     @FXML
     private Label titleLabel;
     @FXML
@@ -32,6 +37,7 @@ public class TitleBanner_ScreenController extends ScreenController {
         titleLabel.textProperty().bind(SharedData.pageTitleProperty());
         // bind the text property of statusLabel to the operationStatusProperty in SharedData
         statusLabel.textProperty().bind(SharedData.operationStatusProperty());
+        helpTooltip.textProperty().bind(SharedData.helpTooltipProperty());
 
         // bind the textFill property of statusLabel to the error type in SharedData
         statusLabel.textFillProperty().bind(
@@ -59,9 +65,21 @@ public class TitleBanner_ScreenController extends ScreenController {
 
         // create a new timeline with a keyframe that sets the operationStatus to an empty string after 5 seconds
         statusResetTimer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-                SharedData.setOperation("", false);
+            SharedData.setOperation("", false);
         }));
         statusResetTimer.play();
+    }
+
+    public void onMouseEntered(MouseEvent mouseEvent) {
+        if (helpTooltip.isShowing()) {
+            helpTooltip.hide();
+        } else {
+            helpTooltip.show(helpBtn, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        }
+    }
+
+    public void onMouseExited(MouseEvent mouseEvent) {
+        helpTooltip.hide();
     }
 }
 

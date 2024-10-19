@@ -3,6 +3,7 @@ package com.example.application.frontend.components;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.frontend.modals.ModalOpener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -19,7 +20,6 @@ import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,7 +71,7 @@ public class PicturePickerController {
     }
 
     @FXML
-    private void onActionUploadPicture() throws IOException {
+    private void onActionUploadPicture() {
         if (buttonAndImages.size() == 10) {
             SharedData.setOperation("Can't upload more than 10 pictures.", true);
             return;
@@ -84,11 +84,20 @@ public class PicturePickerController {
             }
             Image image = new Image(file.toURI().toString());
             buttonAndImages.add(new ButtonAndImage(fileName, image));
-            SharedData.setResizeImage(image);
+            SharedData.setImageEditing(image);
         }
     }
 
-    private boolean isFileAlreadyUploaded(String fileName) throws IOException {
+    public void onAddLatexBtnClick(ActionEvent actionEvent) {
+        Stage newStage = ModalOpener.openModal(ModalOpener.LATEX);
+
+        // listener for when the stage is closed
+        newStage.setOnHidden(event -> {
+            // TODO
+        });
+    }
+
+    private boolean isFileAlreadyUploaded(String fileName) {
         for (ButtonAndImage bai : buttonAndImages) {
             if (bai.imageName.equals(fileName)) {
                 SharedData.setOperation("Can't upload picture with same name twice.", true);
@@ -191,7 +200,7 @@ public class PicturePickerController {
 
             //listener for when the stage is closed
             newStage.setOnHidden(event -> {
-                buttonAndImages.add(new ButtonAndImage(this.imageName, SharedData.getResizeImage()));
+                buttonAndImages.add(new ButtonAndImage(this.imageName, SharedData.getImageEditing()));
                 displayImages.getChildren().remove(stackPane);
                 buttonAndImages.remove(this);
                 removeTagFromTextArea(getTag());
