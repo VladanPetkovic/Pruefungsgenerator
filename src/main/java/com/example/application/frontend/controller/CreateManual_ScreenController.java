@@ -1,5 +1,6 @@
 package com.example.application.frontend.controller;
 
+import com.example.application.backend.app.Screen;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.models.Message;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+
+import static com.example.application.frontend.controller.SwitchScene.switchScene;
 
 @Component
 @Scope("prototype")
@@ -89,10 +92,11 @@ public class CreateManual_ScreenController extends ScreenController {
                     }
                 });
 
-                //create remove button
+                //create buttons
                 Button removeButton = getRemoveButton(questionVbox, question);
                 Button upButton = getUpButton(i - 1);
                 Button downButton = getDownButton(i - 1);
+                Button editButton = getEditButton(i - 1);
 
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
@@ -101,7 +105,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
 
-                newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, removeButton);
+                newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton,editButton, removeButton);
                 newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
 
                 // add labels to the VBox
@@ -152,6 +156,8 @@ public class CreateManual_ScreenController extends ScreenController {
         }
     }
 
+
+    //when question in filteredArea is clicked
     @FXML
     private void displayClickedQuestion(VBox questionVbox, Question question) {
         questionVbox.setOnMouseClicked(event -> {
@@ -184,6 +190,7 @@ public class CreateManual_ScreenController extends ScreenController {
             Button upButton = getUpButton(numberOfQuestions);
             Button downButton = getDownButton(numberOfQuestions);
             Button removeButton = getRemoveButton(questionVbox, question);
+            Button editButton = getEditButton(numberOfQuestions);
 
             //create HBox that contains the label and buttons
             HBox newQuestionHbox = new HBox();
@@ -191,7 +198,7 @@ public class CreateManual_ScreenController extends ScreenController {
             HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
             questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
-            newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, removeButton);
+            newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, editButton, removeButton);
             newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
             // add labels, buttons and textarea to the questionVBox
             newQuestionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
@@ -289,5 +296,28 @@ public class CreateManual_ScreenController extends ScreenController {
             showFilteredQuestions(SharedData.getFilteredQuestions());
         });
         return downButton;
+    }
+
+    Button getEditButton(int index) {
+        Button editButton = new Button();
+        editButton.getStyleClass().add("edit-button");
+        //set image Icon
+        ImageView imageView = new ImageView();
+        imageView.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/application/icons/edit.png")));
+        imageView.setFitWidth(16);
+        imageView.setFitHeight(16);
+        editButton.setGraphic(imageView);
+        editButton.setOnAction(event -> {
+            if (index >=     0) {
+                try {
+                    SharedData.setQuestionToEdit(SharedData.getTestQuestions().get(index));
+                    SharedData.setCurrentScreen(Screen.QUESTION_EDIT);
+                    switchScene(SwitchScene.EDIT_QUESTION);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        return editButton;
     }
 }

@@ -16,7 +16,7 @@
         <Label maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" text="%category" VBox.vgrow="NEVER" />
       <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox">
          <children>
-            <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
+            <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxDark" />
          </children>
       </VBox>
 

@@ -45,7 +45,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <ComboBox fx:id="categoryComboBox" onAction="#applyFilter" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
+                              <ComboBox fx:id="categoryComboBox" onAction="#applyFilter" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxDark" />
                            </children>
                            <VBox.margin>
                               <Insets />
@@ -87,7 +87,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                               <ComboBox fx:id="keywordComboButton" onAction="#applyFilter" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxBright" />
+                               <ComboBox fx:id="keywordComboButton" onAction="#applyFilter" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxDark" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" top="10.0" />

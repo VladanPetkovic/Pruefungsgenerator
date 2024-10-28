@@ -283,8 +283,8 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+
 .menuButton_dark:hover {
-    -fx-background-color: #646464;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -293,8 +293,8 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
-.comboBoxBright {
-    -fx-background-color: white;
+.comboBoxDark {
+    -fx-background-color: #2f2f2f;
     -fx-pref-width: 300px;
     -fx-min-width: 200px;
     -fx-pref-height: 32px;
@@ -306,13 +306,26 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
-.comboBoxBright:hover {
-    -fx-background-color: #c5c5c5;
+
+.comboBoxDark .list-view {
+    -fx-background-color: #2f2f2f;
+}
+
+.comboBoxDark .list-cell {
+    -fx-background-color: #2f2f2f;
+}
+.comboBoxDark .text {
+    -fx-fill: white;
+}
+
+.comboBoxDark:hover {
+
+    -fx-background-color: #2f2f2f;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
-.comboBoxBright:pressed {
-    -fx-background-color: white;
+.comboBoxDark:pressed {
+    -fx-background-color: #2f2f2f;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 

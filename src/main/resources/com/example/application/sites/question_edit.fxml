@@ -79,7 +79,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
+                                                <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxDark" />
                                                 <Button mnemonicParsing="false" onAction="#onAddCategoryBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="35.0" prefWidth="34.0" styleClass="btn_add_icon" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                                                    <graphic>
                                                       <ImageView fitHeight="36.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
@@ -238,7 +238,7 @@
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <ComboBox fx:id="keywordComboButton" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxBright" />
+                                                <ComboBox fx:id="keywordComboButton" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxDark" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="10.0" top="10.0" />
