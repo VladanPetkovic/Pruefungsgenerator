@@ -27,12 +27,28 @@ import java.util.stream.Collectors;
 @Component
 @Scope("prototype")
 public class Settings_ScreenController extends ScreenController {
+    // services
     private final StudyProgramService studyProgramService;
     private final CourseService courseService;
     private final QuestionService questionService;
     private final CategoryService categoryService;
     private final AnswerService answerService;
     private final KeywordService keywordService;
+    private String modeOfImport = "";
+
+    // import related fxml items
+    @FXML
+    private MenuButton importModeMenuButton;
+    @FXML
+    private Button chooseImportTargetBtn;
+    @FXML
+    private Button selectCsvFileBtn;
+    @FXML
+    public Label label_selectedFile;
+    @FXML
+    Button settingsImportBtn;
+
+    // export related fxml items
     @FXML
     public MenuButton chooseQuestionsMenuButton;
     @FXML
@@ -44,16 +60,9 @@ public class Settings_ScreenController extends ScreenController {
     @FXML
     public Label label_selectedDirectory;
     @FXML
-    public Label label_selectedFile;
+    private Button chooseDirectoryBtn;
     @FXML
-    Button settingsImportBtn;
-    @FXML
-    private MenuButton importModeMenuButton;
-    @FXML
-    private Button chooseTargetBtn;
-    // Property to manage the enable/disable state of the chooseTargetBtn
-    private BooleanProperty chooseTargetDisabled = new SimpleBooleanProperty(true);
-    private String modeOfImport = "";
+    private Button settingsExportBtn;
 
     public Settings_ScreenController(StudyProgramService studyProgramService,
                                      CourseService courseService,
@@ -82,8 +91,16 @@ public class Settings_ScreenController extends ScreenController {
         initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
         initializeMenuButton(chooseCourseMenuButton, courses);
 
-        // Bind the disabled state of chooseTargetBtn to chooseTargetDisabled property
-        chooseTargetBtn.disableProperty().bind(chooseTargetDisabled);
+        // Import related buttons
+        chooseImportTargetBtn.setVisible(false);
+        selectCsvFileBtn.setVisible(false);
+        settingsImportBtn.setVisible(false);
+
+        // Export related buttons
+        chooseCourseMenuButton.setVisible(false);
+        chooseStudyProgramMenuBtn.setVisible(false);
+        chooseDirectoryBtn.setVisible(false);
+        settingsExportBtn.setVisible(false);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems) {
@@ -98,13 +115,49 @@ public class Settings_ScreenController extends ScreenController {
         }
     }
 
+    // import related functions
     @FXML
-    private void onChooseTargetBtnClick(ActionEvent event) {
-        Stage newStage = ModalOpener.openModal(ModalOpener.TARGET_SELECTION);
-        //listener for when the stage is closed
-        newStage.setOnHidden(e -> {
+    private void onUpdateExistingQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("update_existing_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        selectCsvFileBtn.setVisible(true);
+    }
 
+    @FXML
+    private void onInsertNewQuestionsSelected(ActionEvent event) {
+        modeOfImport = MainApp.resourceBundle.getString("insert_new_questions");
+        SharedData.setModeOfImport(modeOfImport);
+        importModeMenuButton.setText(modeOfImport);
+        chooseImportTargetBtn.setVisible(true);
+    }
+
+    @FXML
+    private void onChooseImportTargetBtnClick(ActionEvent event) {
+        Stage newStage = ModalOpener.openModal(ModalOpener.TARGET_SELECTION);
+        // listener for when the stage is closed
+        newStage.setOnHidden(e -> {
+            // check if ImportTargetStudyProgram and ImportTargetCourse were selected
+            if (SharedData.getImportTargetStudyProgram() != null && SharedData.getImportTargetCourse() != null) {
+                selectCsvFileBtn.setVisible(true);
+            }
         });
+    }
+
+    public void onSelectCsvFileBtnClick(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(MainApp.resourceBundle.getString("select_csv_file"));
+
+        // Set extension filter to only allow CSV files
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(MainApp.resourceBundle.getString("csv_files"), "*.csv")
+        );
+
+        File file = fileChooser.showOpenDialog(MainApp.stage);
+        if (file != null) {
+            label_selectedFile.setText(file.toString());
+            settingsImportBtn.setVisible(true); // Show the import button when a file is selected
+        }
     }
 
     @FXML
@@ -126,30 +179,14 @@ public class Settings_ScreenController extends ScreenController {
         }
     }
 
-    public void onChooseFileBtnClick(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(MainApp.resourceBundle.getString("select_csv_file"));
 
-        // Set extension filter to only allow CSV files
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(MainApp.resourceBundle.getString("csv_files"), "*.csv")
-        );
-
-        File file = fileChooser.showOpenDialog(MainApp.stage);
-        if (file != null) {
-            label_selectedFile.setText(file.toString());
-        }
-    }
-
-    public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
-        chooseDirectory(this.label_selectedDirectory);
-    }
-
+    // export related functions
     public void allQuestionsSelectedForExport(ActionEvent actionEvent) {
         this.chooseQuestionsMenuButton.setText(MainApp.resourceBundle.getString("all_questions"));
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setVisible(false);
+        chooseDirectoryBtn.setVisible(true);
     }
 
     /**
@@ -161,6 +198,14 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
         this.chooseQuestionsLabel.setVisible(true);
+
+        chooseDirectoryBtn.setVisible(true);
+        /*
+        if (!Objects.equals(chooseStudyProgramMenuBtn.getText(), "")) {
+            chooseDirectoryBtn.setVisible(true);
+        }
+
+         */
     }
 
     public void questionsOfCourseSelected(ActionEvent actionEvent) {
@@ -169,6 +214,21 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
         this.chooseQuestionsLabel.setVisible(true);
+
+        chooseDirectoryBtn.setVisible(true);
+        /*
+        if (!Objects.equals(chooseCourseMenuButton.getText(), "")) {
+            chooseDirectoryBtn.setVisible(true);
+        }
+
+         */
+    }
+
+    public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
+        chooseDirectory(this.label_selectedDirectory);
+        if (!Objects.equals(this.label_selectedDirectory.getText(), "\"\"")) {
+            settingsExportBtn.setVisible(true); // Show the export button when a directory is selected
+        }
     }
 
     public void applyExportBtnClicked(ActionEvent actionEvent) {
@@ -191,22 +251,6 @@ public class Settings_ScreenController extends ScreenController {
         } else {
             SharedData.setOperation(Message.ERROR_MESSAGE_ERROR_OCCURRED);
         }
-    }
-
-    @FXML
-    private void onUpdateExistingQuestionsSelected(ActionEvent event) {
-        modeOfImport = MainApp.resourceBundle.getString("update_existing_questions");
-        SharedData.setModeOfImport(modeOfImport);
-        importModeMenuButton.setText(modeOfImport);
-        chooseTargetDisabled.set(true); // Disable chooseTargetBtn
-    }
-
-    @FXML
-    private void onInsertNewQuestionsSelected(ActionEvent event) {
-        modeOfImport = MainApp.resourceBundle.getString("insert_new_questions");
-        SharedData.setModeOfImport(modeOfImport);
-        importModeMenuButton.setText(modeOfImport);
-        chooseTargetDisabled.set(false); // Enable chooseTargetBtn
     }
 
     /**
