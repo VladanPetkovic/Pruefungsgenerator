@@ -122,6 +122,13 @@ public class QuestionEdit_ScreenController extends ScreenController {
         chooseQuestion.textProperty().addListener((observableValue, s, t1) -> {
             previewQuestion.setVisible(previewQuestionShouldBeVisible());
         });
+
+        //if user clicked on the edit button in manualCreate Screen
+        if (SharedData.getQuestionToEdit() != null) {
+            System.out.println("QUESTION IS HERE");
+            System.out.println("Question questiontext: "+SharedData.getQuestionToEdit().getQuestion());
+            displaySelectedQuestion();
+        }
     }
 
     private boolean questionPreviewVisible = false;
@@ -468,5 +475,48 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 }
             }
         });
+    }
+
+    //used to display the Question when the editButton in the ManualCreateScreen is clicked
+    private void displaySelectedQuestion() {
+        selectedQuestion = SharedData.getQuestionToEdit();
+        try {
+            SharedData.setSelectedEditQuestion(selectedQuestion);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // Make the scroll pane transparent to allow interaction with underlying elements.
+        chooseScrollPane.setMouseTransparent(false);
+
+        // Set category, difficulty, and points to the values of the selected question.
+        categoryComboBox.getSelectionModel().select(selectedQuestion.getCategory().getName());
+        chooseDifficulty.setValue(selectedQuestion.getDifficulty());
+        pointsSpinner.getValueFactory().setValue((double) selectedQuestion.getPoints());
+
+        initSelectedQuestionType(selectedQuestion);
+
+        // Set the question text and remarks to the values of the selected question.
+        chooseQuestion.setText(selectedQuestion.getQuestion());
+        chooseRemarks.setText(selectedQuestion.getRemark());
+
+        // Clear and set up the keyword UI elements based on the selected question.
+        selectedKeywords.clear();
+        keywordsHBox.getChildren().clear();
+
+        for (Keyword k : selectedQuestion.getKeywords()) {
+            if (k.getKeyword() != null && !selectedKeywords.contains(k)) {
+                selectedKeywords.add(k);
+                Button b = createButton(k.getKeyword() + " X");
+                b.setOnAction(e -> {
+                    keywordsHBox.getChildren().remove(b);
+                    selectedKeywords.remove(k);
+                });
+                keywordsHBox.getChildren().add(b);
+            }
+        }
+
+        picturePickerController.addPreExistingImages(selectedQuestion.getImages());
+        initTimeStamps(selectedQuestion);
+        SharedData.setQuestionToEdit(null);
     }
 }

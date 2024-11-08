@@ -283,8 +283,8 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
+
 .menuButton_dark:hover {
-    -fx-background-color: #646464;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -293,8 +293,8 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
-.comboBoxBright {
-    -fx-background-color: white;
+.comboBoxDark {
+    -fx-background-color: #2f2f2f;
     -fx-pref-width: 300px;
     -fx-min-width: 200px;
     -fx-pref-height: 32px;
@@ -306,13 +306,26 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
     -fx-transition: background-color 0.3s, scale 0.3s;
 }
-.comboBoxBright:hover {
-    -fx-background-color: #c5c5c5;
+
+.comboBoxDark .list-view {
+    -fx-background-color: #2f2f2f;
+}
+
+.comboBoxDark .list-cell {
+    -fx-background-color: #2f2f2f;
+}
+.comboBoxDark .text {
+    -fx-fill: white;
+}
+
+.comboBoxDark:hover {
+
+    -fx-background-color: #2f2f2f;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
-.comboBoxBright:pressed {
-    -fx-background-color: white;
+.comboBoxDark:pressed {
+    -fx-background-color: #2f2f2f;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 0);
 }
 
@@ -433,6 +446,22 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .homeScreen_gridPane {
     -fx-background-color: #3A3A3A;
 }
+
+.settings_gridPane {
+    -fx-background-color: linear-gradient(to bottom, #3A3A3A, #2C2C2C); /* Slightly darker gradient for contrast */
+    -fx-border-radius: 6; /* Slightly rounder corners for a polished look */
+    -fx-background-radius: 6;
+    -fx-border-color: #4A4A4A; /* Darker border to accentuate edges */
+    -fx-border-width: 2; /* Thicker border for a defined separation */
+
+    /* Drop shadow for the 3D lifted effect */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 20, 0.3, 0, 10),
+    dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.15, 0, 5),
+    innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0, 1, 1);
+
+    -fx-padding: 20; /* Additional padding for better spacing */
+}
+
 
 .homeScreen_label {
     -fx-font-family: "Inter";

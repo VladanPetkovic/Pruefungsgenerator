@@ -58,7 +58,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxBright" />
+                                          <ComboBox fx:id="categoryComboBox" prefWidth="150.0" promptText="%question_filter_select_category" styleClass="comboBoxDark" />
                                        </children>
                                        <padding>
                                           <Insets bottom="10.0" top="10.0" />
@@ -203,7 +203,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <ComboBox fx:id="keywordComboButton" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxBright" />
+                                          <ComboBox fx:id="keywordComboButton" prefWidth="150.0" promptText="%question_filter_select_keyword" styleClass="comboBoxDark" />
                                        </children>
                                        <padding>
                                           <Insets bottom="10.0" top="10.0" />

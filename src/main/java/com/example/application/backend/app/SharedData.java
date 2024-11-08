@@ -48,6 +48,15 @@ public class SharedData {
     @Getter
     private static Question selectedEditQuestion = new Question();
 
+
+
+    @Getter
+    @Setter
+
+    //holds selected question from manually create to be edited in the questionEdit Screen
+    private static Question questionToEdit = null;
+
+
     @Getter
     private static StudyProgram selectedEditStudyProgram = new StudyProgram();
 

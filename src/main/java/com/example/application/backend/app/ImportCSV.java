@@ -68,27 +68,87 @@ public class ImportCSV {
         return true;
     }
 
+
+    // TODO: FIRST: CHECK THE FILE - SO WE CAN PROCEED WITHOUT ESTABLISHING A DB-CONNECTION
+    // OR: we create a new method in one service and use the @Transactional keyword
     private boolean checkingDataFromFile(String filePath) {
-        // TODO: FIRST: CHECK THE FILE - SO WE CAN PROCEED WITHOUT ESTABLISHING A DB-CONNECTION
-        // OR: we create a new method in one service and use the @Transactional keyword
-        return true;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String header = reader.readLine();
+            if (header == null || !header.contains("question_id")) {
+                Logger.log(getClass().getName(), "Invalid or missing header in CSV.", LogLevel.WARN);
+                return false;
+            }
+
+            String line;
+            int lineNumber = 1;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                String[] fields = line.split(";");
+
+                // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
+                if (fields.length != 12) {
+                    Logger.log(getClass().getName(), "Invalid format - expected 12 fields per line at line " + lineNumber, LogLevel.WARN);
+                    return false;
+                }
+
+                try {
+                    // Check data types and values for each field
+                    Long.parseLong(fields[0]); // question_id
+                    if (fields[1].trim().isEmpty()) throw new IllegalArgumentException("Question text cannot be empty");
+                    if (fields[2].trim().isEmpty()) throw new IllegalArgumentException("Category name cannot be empty");
+
+                    // Ensure difficulty is non-null and within range
+                    int difficulty = Integer.parseInt(fields[3].trim());
+                    if (difficulty < 1 || difficulty > 10) throw new IllegalArgumentException("Difficulty must be between 1 and 10");
+
+                    // Ensure points is non-null and parseable
+                    float points = Float.parseFloat(fields[4].trim().replace(",", "."));
+                    if (points < 0) throw new IllegalArgumentException("Points cannot be negative");
+
+                    if (fields[5].trim().isEmpty()) throw new IllegalArgumentException("Question type cannot be empty");
+                    
+                    /*
+                    if (!fields[7].contains("|")) throw new IllegalArgumentException("Answers should be separated by '|'");
+                    if (!fields[8].contains("|")) throw new IllegalArgumentException("Keywords should be separated by '|'");
+                     */
+
+                    if (fields[9].trim().isEmpty()) throw new IllegalArgumentException("Course name cannot be empty");
+                    Integer.parseInt(fields[10]); // course_number
+
+                    if (fields[11].trim().isEmpty()) throw new IllegalArgumentException("Study program name cannot be empty");
+
+                } catch (IllegalArgumentException e) {
+                    Logger.log(getClass().getName(), "Data validation error at line " + lineNumber + ": " + e.getMessage(), LogLevel.WARN);
+                    return false;
+                }
+            }
+
+            return true; // All checks passed
+        } catch (IOException e) {
+            Logger.log(getClass().getName(), "Error reading file for data check: " + e.getMessage(), LogLevel.ERROR);
+            return false;
+        }
     }
+
 
     private boolean importDataFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
             // Read the first line, which is expected to be the header, and skip it
-            if ((line = reader.readLine()) == null) {
-                Logger.log(getClass().getName(), "CSV file is empty.", LogLevel.INFO);
-                // Return false because there is no data to import
-                return false;
-            }
+            reader.readLine();
+            String line;
             // Loop through each subsequent line in the CSV file
             while ((line = reader.readLine()) != null) {
-                // Split the line into an array of strings using ";" as the delimiter   // TODO: check, if ';' is between '" "'
-                String[] values = line.split(";");
-                // process each row
-                importRow(values);
+                // TODO: check, if ';' is between '" "'
+                if (line.contains(";")) { // Basic delimiter check
+                    // Split the line into an array of strings using ";" as the delimiter
+                    String[] values = line.split(";");
+                    // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
+                    if (values.length == 12) {
+                        importRow(values);
+                    } else {
+                        Logger.log(getClass().getName(), "Row has incorrect number of fields, skipping line.", LogLevel.WARN);
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,11 +159,6 @@ public class ImportCSV {
     }
 
     private void importRow(String[] values) {
-        // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
-        if (values.length != 12) {
-            Logger.log(getClass().getName(), "Invalid CSV format.", LogLevel.INFO);
-            return;
-        }
 
         ParsedCSVRow parsedRow = parseCSVRow(values);
 
@@ -142,11 +197,7 @@ public class ImportCSV {
 
         Set<Answer> answers = Answer.getAnswersAsSet(parsedRow.getAnswersText().split("\\|"));
         Set<Keyword> keywords = Keyword.getKeywordsAsSet(parsedRow.getKeywordsText().split("\\|"));
-        Set<Keyword> savedKeywords = new HashSet<>();
-        // TODO: refactor to avoid n+1 select
-        for (Keyword k : keywords) {
-            savedKeywords.add(keywordService.add(k, course));
-        }
+        Set<Keyword> savedKeywords = saveKeywords(keywords, course);
 
         if (isNew) {
             Question newQuestion = insertQuestion(category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), savedKeywords);
@@ -156,6 +207,15 @@ public class ImportCSV {
         } else {
             updateQuestion(parsedRow.getQuestionId(), category, parsedRow.getDifficulty(), parsedRow.getPoints(), parsedRow.getQuestionText(), parsedRow.getType(), parsedRow.getRemark(), answers, savedKeywords);
         }
+    }
+
+    // TODO: refactor to avoid n+1 select
+    private Set<Keyword> saveKeywords(Set<Keyword> keywords, Course course) {
+        Set<Keyword> savedKeywords = new HashSet<>();
+        for (Keyword keyword : keywords) {
+            savedKeywords.add(keywordService.add(keyword, course));
+        }
+        return savedKeywords;
     }
 
     private Question insertQuestion(Category category, Integer difficulty, Float points, String questionText, String type, String remark, Set<Keyword> keywords) {
