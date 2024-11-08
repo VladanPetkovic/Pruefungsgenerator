@@ -175,6 +175,8 @@ public class Settings_ScreenController extends ScreenController {
         if (isSuccess) {
             SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
         } else {
+            System.out.println(importCSV.errorMessage);
+            // write directly onto settings.fxml
             SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
         }
     }

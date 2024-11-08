@@ -22,6 +22,7 @@ public class ImportCSV {
     private String modeOfImport;
     private String importTargetStudyProgram;
     private String importTargetCourse;
+    public String errorMessage;
 
     public ImportCSV(String filePath,
                      StudyProgramService studyProgramService,
@@ -56,6 +57,7 @@ public class ImportCSV {
         Logger.log(getClass().getName(), "Checking data from file: " + filePath, LogLevel.INFO);
         if (!checkingDataFromFile(filePath)) {
             Logger.log(getClass().getName(), "File-check failed!", LogLevel.WARN);
+            System.out.println(errorMessage); // TODO: write the errorMessage for every use-case
             return false;
         }
 
