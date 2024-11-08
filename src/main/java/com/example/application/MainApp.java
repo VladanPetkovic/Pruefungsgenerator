@@ -95,24 +95,41 @@ public class MainApp extends Application {
         }
     }
 
-    private void setWindowSize() {
-        // this can be refactored to only one db-call
-        Double width = springContext.getBean(SettingService.class).getWidth();
-        Double height = springContext.getBean(SettingService.class).getHeight();
+    void setWindowSize() {
+        double MIN_HEIGHT = 600.0;
+        double MIN_WIDTH = 900.0;
+
+        Double savedWidth = springContext.getBean(SettingService.class).getWidth();
+        Double savedHeight = springContext.getBean(SettingService.class).getHeight();
+
+        // set Minimum-Window-Size
+        MainApp.stage.setMinHeight(MIN_HEIGHT);
+        MainApp.stage.setMinWidth(MIN_WIDTH);
+        MainApp.stage.setMaxWidth(10000.0);
+        MainApp.stage.setMaxHeight(10000.0);
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-        if (width >= screenBounds.getWidth() || height >= screenBounds.getHeight()) {
+        if (savedWidth >= screenBounds.getWidth() || savedHeight >= screenBounds.getHeight()) {
+            stage.setWidth(screenBounds.getWidth());
+            stage.setHeight(screenBounds.getHeight());
             stage.setMaximized(true);
             return;
         }
 
-        // position of stage is in the top left corner
-        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() - width) / 2);
-        stage.setY(screenBounds.getMinY() + (screenBounds.getHeight() - height) / 2);
+        // enlarging screen-size
+        if (savedWidth <= MIN_WIDTH || savedHeight <= MIN_HEIGHT) {
+            stage.setWidth(MIN_WIDTH);
+            stage.setHeight(MIN_HEIGHT);
+            return;
+        }
 
-        MainApp.stage.setWidth(width);
-        MainApp.stage.setHeight(height);
+        // position of stage is in the top left corner
+        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() - savedWidth) / 2);
+        stage.setY(screenBounds.getMinY() + (screenBounds.getHeight() - savedHeight) / 2);
+
+        MainApp.stage.setWidth(savedWidth);
+        MainApp.stage.setHeight(savedHeight);
     }
 
     private void saveWindowSize() {
