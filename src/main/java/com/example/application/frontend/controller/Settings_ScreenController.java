@@ -9,8 +9,6 @@ import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 import com.example.application.frontend.modals.ModalOpener;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -110,6 +108,7 @@ public class Settings_ScreenController extends ScreenController {
             MenuItem menuItem = new MenuItem(string);
             menuItem.setOnAction(e -> {
                 menuButton.setText(string);
+                chooseDirectoryBtn.setVisible(true);
             });
             menuButton.getItems().add(menuItem);
         }
@@ -200,14 +199,6 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
         this.chooseQuestionsLabel.setVisible(true);
-
-        chooseDirectoryBtn.setVisible(true);
-        /*
-        if (!Objects.equals(chooseStudyProgramMenuBtn.getText(), "")) {
-            chooseDirectoryBtn.setVisible(true);
-        }
-
-         */
     }
 
     public void questionsOfCourseSelected(ActionEvent actionEvent) {
@@ -216,14 +207,6 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
         this.chooseQuestionsLabel.setVisible(true);
-
-        chooseDirectoryBtn.setVisible(true);
-        /*
-        if (!Objects.equals(chooseCourseMenuButton.getText(), "")) {
-            chooseDirectoryBtn.setVisible(true);
-        }
-
-         */
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
