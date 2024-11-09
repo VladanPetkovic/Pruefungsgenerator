@@ -326,11 +326,13 @@ public class Home_ScreenController extends ScreenController {
         }
 
         // set last used studyProgram and course
+        /*
         StudyProgram studyProgram = studyProgramService.getById(setting.getStudyProgramId());
         setStudyProgram(studyProgram);
         loadCourses();
         Course course = courseService.getById(setting.getCourseId());
         setCourse(course);
+         */
     }
 
     private void setStudyProgram(StudyProgram studyProgram) {
