@@ -47,6 +47,8 @@ public class Home_ScreenController extends ScreenController {
     private MenuButton studyProgramMenuButton;
     @FXML
     private MenuButton coursesMenuButton;
+    @FXML
+    private Button continueButton;
 
     public Home_ScreenController(StudyProgramService studyProgramService, CourseService courseService, SettingService settingService) {
         super();
@@ -64,6 +66,8 @@ public class Home_ScreenController extends ScreenController {
         Setting setting = settingService.getFirstSetting();
         initLanguage(setting);
         initSelectedStudyProgramAndCourse(setting);
+        coursesMenuButton.setDisable(true);
+        continueButton.setDisable(true);
     }
 
     // event handler for study program button click
@@ -90,7 +94,8 @@ public class Home_ScreenController extends ScreenController {
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
             switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         } else {
-            SharedData.setOperation(Message.ERROR_COURSE_AND_SP_NOT_SELECTED);
+            SharedData.setOperation(MainApp.resourceBundle.getString("error_message_course_and_sp_not_selected"),true);
+            //SharedData.setOperation(Message.ERROR_COURSE_AND_SP_NOT_SELECTED);
         }
     }
 
@@ -340,6 +345,8 @@ public class Home_ScreenController extends ScreenController {
         settingService.updateStudyProgram(studyProgram.getId());
         try {
             SharedData.setSelectedStudyProgram(studyProgram);
+            coursesMenuButton.setDisable(false);
+            continueButton.setDisable(true);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -348,6 +355,7 @@ public class Home_ScreenController extends ScreenController {
     private void setCourse(Course course) {
         coursesMenuButton.setText(course.getName());
         settingService.updateCourse(course.getId());
+        continueButton.setDisable(false);
         try {
             SharedData.setSelectedCourse(course);
         } catch (IOException ex) {

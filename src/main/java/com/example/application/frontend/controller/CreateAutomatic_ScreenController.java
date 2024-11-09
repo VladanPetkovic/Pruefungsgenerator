@@ -128,7 +128,7 @@ public class CreateAutomatic_ScreenController extends ScreenController {
         if (!SharedData.getTestQuestions().isEmpty()) {
             SwitchScene.switchScene(SwitchScene.CREATE_TEST_MANUAL);
         } else {
-            SharedData.setOperation(MainApp.resourceBundle.getString("error_automaticTestCreation_noQuestions"), true);
+            SharedData.setOperation(MainApp.resourceBundle.getString("error_message_automaticTestCreation_noQuestions"), true);
         }
     }
 }
