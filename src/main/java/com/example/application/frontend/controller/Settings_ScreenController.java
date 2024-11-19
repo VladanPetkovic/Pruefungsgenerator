@@ -39,6 +39,16 @@ public class Settings_ScreenController extends ScreenController {
     private MenuButton importModeMenuButton;
     @FXML
     private Button chooseImportTargetBtn;
+
+    @FXML
+    public Label title_selectedStudyProgram;
+    @FXML
+    public Label label_selectedStudyProgram;
+    @FXML
+    public Label title_selectedCourse;
+    @FXML
+    public Label label_selectedCourse;
+
     @FXML
     private Button selectCsvFileBtn;
     @FXML
@@ -91,6 +101,10 @@ public class Settings_ScreenController extends ScreenController {
 
         // Import related buttons
         chooseImportTargetBtn.setVisible(false);
+        title_selectedStudyProgram.setVisible(false);
+        label_selectedStudyProgram.setVisible(false);
+        title_selectedCourse.setVisible(false);
+        label_selectedCourse.setVisible(false);
         selectCsvFileBtn.setVisible(false);
         settingsImportBtn.setVisible(false);
 
@@ -138,6 +152,12 @@ public class Settings_ScreenController extends ScreenController {
         newStage.setOnHidden(e -> {
             // check if ImportTargetStudyProgram and ImportTargetCourse were selected
             if (SharedData.getImportTargetStudyProgram() != null && SharedData.getImportTargetCourse() != null) {
+                title_selectedStudyProgram.setVisible(true);
+                label_selectedStudyProgram.setVisible(true);
+                label_selectedStudyProgram.setText(SharedData.getImportTargetStudyProgram());
+                title_selectedCourse.setVisible(true);
+                label_selectedCourse.setVisible(true);
+                label_selectedCourse.setText(SharedData.getImportTargetCourse());
                 selectCsvFileBtn.setVisible(true);
             }
         });
