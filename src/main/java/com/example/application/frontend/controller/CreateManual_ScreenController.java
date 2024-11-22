@@ -5,6 +5,7 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
+import com.example.application.frontend.components.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -28,6 +29,7 @@ import static com.example.application.frontend.controller.SwitchScene.switchScen
 @Component
 @Scope("prototype")
 public class CreateManual_ScreenController extends ScreenController {
+
     @FXML
     private VBox vbox_testQuestionsPreview;
     @FXML
@@ -78,17 +80,15 @@ public class CreateManual_ScreenController extends ScreenController {
                 String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), i, question.getPoints());
                 Label questionNumberLabel = new Label(previewLabel);
 
-                // create textarea (= editable) for question text
-                TextArea questionTextArea = new TextArea(question.getQuestion());
-                questionTextArea.setWrapText(true);
-                questionTextArea.setPrefRowCount(3);
-
                 //final var for listener
                 final int qi = i - 1;
-                questionTextArea.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        SharedData.getTestQuestions().get(qi).setQuestion(newValue);
+                Editor editor = new Editor();
+                editor.getRichTextArea().setAutoSave(true);
+                editor.setText(question.getQuestion());
+
+                editor.getRichTextArea().documentProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue!= null) {
+                        SharedData.getTestQuestions().get(qi).setQuestion(newValue.getText());
                     }
                 });
 
@@ -104,12 +104,12 @@ public class CreateManual_ScreenController extends ScreenController {
                 HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
                 questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
-
                 newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton,editButton, removeButton);
                 newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
 
                 // add labels to the VBox
-                questionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
+                questionVbox.getChildren().addAll(newQuestionHbox, editor.getRichTextArea());
+                //questionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
 
 
                 // add the question VBox to the test preview area (VBox)
@@ -172,21 +172,31 @@ public class CreateManual_ScreenController extends ScreenController {
             String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), numberOfQuestions + 1, question.getPoints());
             Label questionNumberLabel = new Label(previewLabel);
 
-            // create textarea (= editable) for question text
-            TextArea questionTextArea = new TextArea(question.getQuestion());
-            questionTextArea.setWrapText(true);
-            questionTextArea.setPrefRowCount(3);
-            questionTextArea.getStyleClass().add("text-area-context-menu");
+            Editor editor = new Editor();
+            editor.getRichTextArea().setAutoSave(true);
+            editor.setText(question.getQuestion());
 
-            //listener that saves the changes from user input for the question text in the sharedData.testquestions array (used for pdf export)
-            questionTextArea.textProperty().addListener(new ChangeListener<String>() {
+
+            editor.getRichTextArea().documentProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue.getText());
+                }
+            });
+
+
+            /*
+            editor.getText().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue);
                 }
             });
 
+             */
+
+
             //create the buttons
+
             Button upButton = getUpButton(numberOfQuestions);
             Button downButton = getDownButton(numberOfQuestions);
             Button removeButton = getRemoveButton(questionVbox, question);
@@ -201,7 +211,8 @@ public class CreateManual_ScreenController extends ScreenController {
             newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, editButton, removeButton);
             newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
             // add labels, buttons and textarea to the questionVBox
-            newQuestionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
+            //newQuestionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
+            newQuestionVbox.getChildren().addAll(newQuestionHbox, editor.getRichTextArea());
 
             if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
@@ -210,6 +221,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 SharedData.getTestQuestions().add(question);
             }
         });
+
     }
 
     private Button getRemoveButton(VBox questionVbox, Question question) {
@@ -243,6 +255,7 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     Button getUpButton(int index) {
+
         Button upButton = new Button();
         //set icon
         ImageView imageView = new ImageView();
@@ -284,6 +297,7 @@ public class CreateManual_ScreenController extends ScreenController {
         downButton.setOnAction(event -> {
             //if a question after exists switch this question with question after
             if (index + 1 < this.vbox_testQuestionsPreview.getChildren().size()) {
+                System.out.println("CURRENT QUESTION" +SharedData.getTestQuestions().get(index).getQuestion() );
                 Question questionAfter = SharedData.getTestQuestions().get(index + 1);
                 Question questiontmp = SharedData.getTestQuestions().get(index);
                 SharedData.getTestQuestions().set(index + 1, questiontmp);

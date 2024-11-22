@@ -2,25 +2,7 @@
 
 [<kbd>&larr; Go Back</kbd>](../../README.md)
 
-### Adding controlsfx to the project
-
-- Navigate to the "Run" menu at the top of IntelliJ IDEA.
-
-- Select "Edit Configurations..."
-
-- In the "Run/Debug Configurations" dialog that appears, find your Java application configuration on the left side
-  under "Application."
-
-- Under the "Configuration" tab, locate the "VM options" field.
-    - if there is nothing, click on "Modify options" - there should "Add VM options" appear
-
-- Enter the VM option provided by ControlsFX into the "VM options" field. In your case, it would be:
-
-```
---add-exports javafx.base/com.sun.javafx.event=org.controlsfx.controls
-```
-
-### Creating an .exe-file
+### Follow this guide
 
 - create a .jar-file with:
 
@@ -28,20 +10,25 @@
 mvn clean package
 ```
 
+- download jre 21 from oracle:
+
+https://www.oracle.com/java/technologies/downloads/#jdk21-windows
+
+- create a new folder ``exam_generator``
+  - add here the folder ``jre/jdk-21/...``
+  - add the .jar-file ``Pruefungsgenerator-1.0-SNAPSHOT-spring-boot``
+  - create a ``bin``-folder
+  - create the correct folder-structure for the main.css and all pictures
+    - something like: ``src/main/resources/com/example/application/``
+      - and then ``css`` and ``icons``
+
+### Creating an .exe for windows
 - download Launch4j: https://launch4j.sourceforge.net
     - under downloads (windows, linux,...)
 - start Launch4j and open this file: [<kbd>configuration</kbd>](../../config/launch_config.xml)
 - Specify:
-    - appropriate jar-file (from target folder)
-    - output file (don't forget .exe)
-    - an icon (not png or jpg format)
-    - under JRE:
-        - the path to JRE
-        - JVM options:
+  [<kbd>View exact documentation &rarr;</kbd>](../../README.md)
+- zip the ``exam_generator`` and publish to github-releases
 
-```
---module-path "C:\Program Files\Java\javafx-sdk-23\lib"
---add-modules javafx.controls,javafx.base
-```
-
-- and set a splash-file (picture that is shown, while the application starts)
+### Creating a script for linux
+...

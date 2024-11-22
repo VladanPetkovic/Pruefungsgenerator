@@ -28,7 +28,10 @@
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for import label -->
                                 <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Spacer -->
                                 <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" /> <!-- Row for choose target button -->
-                                <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Spacer -->
+                                <RowConstraints minHeight="34.0" prefHeight="34.0" vgrow="SOMETIMES" /> <!-- title_selectedStudyProgram -->
+                                <RowConstraints minHeight="38.0" prefHeight="38.0" vgrow="SOMETIMES" /> <!-- label_selectedStudyProgram -->
+                                <RowConstraints minHeight="34.0" prefHeight="34.0" vgrow="SOMETIMES" /> <!-- title_selectedCourse -->
+                                <RowConstraints minHeight="38.0" prefHeight="38.0" vgrow="SOMETIMES" /> <!-- label_selectedCourse -->
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for select CSV button -->
                                 <RowConstraints minHeight="34.0" prefHeight="34.0" vgrow="NEVER" /> <!-- Row for selected file label -->
                                 <RowConstraints minHeight="38.0" prefHeight="38.0" vgrow="SOMETIMES" /> <!-- Row for selected file display -->
@@ -44,14 +47,18 @@
                                     </items>
                                 </MenuButton>
                                 <Button fx:id="chooseImportTargetBtn" onAction="#onChooseImportTargetBtnClick" styleClass="btn_dark" text="%choose_targets" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                <Button fx:id="selectCsvFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSelectCsvFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="5">
+                                <Label fx:id="title_selectedStudyProgram" styleClass="option_label" text="%selected_study_program" GridPane.rowIndex="4" />
+                                <Label fx:id="label_selectedStudyProgram" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="5" />
+                                <Label fx:id="title_selectedCourse" styleClass="option_label" text="%selected_course" GridPane.rowIndex="6" />
+                                <Label fx:id="label_selectedCourse" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="7" />
+                                <Button fx:id="selectCsvFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSelectCsvFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="8">
                                     <cursor>
                                         <Cursor fx:constant="DEFAULT" />
                                     </cursor>
                                 </Button>
-                                <Label styleClass="option_label" text="%selected_file" GridPane.rowIndex="6" />
-                                <Label fx:id="label_selectedFile" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="7" />
-                                <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="9" />
+                                <Label styleClass="option_label" text="%selected_file" GridPane.rowIndex="9" />
+                                <Label fx:id="label_selectedFile" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="10" />
+                                <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="11" />
                             </children>
                         </GridPane>
 

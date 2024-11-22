@@ -9,8 +9,6 @@ import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 import com.example.application.frontend.modals.ModalOpener;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -41,6 +39,16 @@ public class Settings_ScreenController extends ScreenController {
     private MenuButton importModeMenuButton;
     @FXML
     private Button chooseImportTargetBtn;
+
+    @FXML
+    public Label title_selectedStudyProgram;
+    @FXML
+    public Label label_selectedStudyProgram;
+    @FXML
+    public Label title_selectedCourse;
+    @FXML
+    public Label label_selectedCourse;
+
     @FXML
     private Button selectCsvFileBtn;
     @FXML
@@ -93,6 +101,10 @@ public class Settings_ScreenController extends ScreenController {
 
         // Import related buttons
         chooseImportTargetBtn.setVisible(false);
+        title_selectedStudyProgram.setVisible(false);
+        label_selectedStudyProgram.setVisible(false);
+        title_selectedCourse.setVisible(false);
+        label_selectedCourse.setVisible(false);
         selectCsvFileBtn.setVisible(false);
         settingsImportBtn.setVisible(false);
 
@@ -110,6 +122,7 @@ public class Settings_ScreenController extends ScreenController {
             MenuItem menuItem = new MenuItem(string);
             menuItem.setOnAction(e -> {
                 menuButton.setText(string);
+                chooseDirectoryBtn.setVisible(true);
             });
             menuButton.getItems().add(menuItem);
         }
@@ -139,6 +152,12 @@ public class Settings_ScreenController extends ScreenController {
         newStage.setOnHidden(e -> {
             // check if ImportTargetStudyProgram and ImportTargetCourse were selected
             if (SharedData.getImportTargetStudyProgram() != null && SharedData.getImportTargetCourse() != null) {
+                title_selectedStudyProgram.setVisible(true);
+                label_selectedStudyProgram.setVisible(true);
+                label_selectedStudyProgram.setText(SharedData.getImportTargetStudyProgram());
+                title_selectedCourse.setVisible(true);
+                label_selectedCourse.setVisible(true);
+                label_selectedCourse.setText(SharedData.getImportTargetCourse());
                 selectCsvFileBtn.setVisible(true);
             }
         });
@@ -175,6 +194,8 @@ public class Settings_ScreenController extends ScreenController {
         if (isSuccess) {
             SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
         } else {
+            System.out.println(importCSV.errorMessage);
+            // write directly onto settings.fxml
             SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
         }
     }
@@ -198,14 +219,6 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseCourseMenuButton.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_study_program"));
         this.chooseQuestionsLabel.setVisible(true);
-
-        chooseDirectoryBtn.setVisible(true);
-        /*
-        if (!Objects.equals(chooseStudyProgramMenuBtn.getText(), "")) {
-            chooseDirectoryBtn.setVisible(true);
-        }
-
-         */
     }
 
     public void questionsOfCourseSelected(ActionEvent actionEvent) {
@@ -214,14 +227,6 @@ public class Settings_ScreenController extends ScreenController {
         this.chooseStudyProgramMenuBtn.setVisible(false);
         this.chooseQuestionsLabel.setText(MainApp.resourceBundle.getString("select_course"));
         this.chooseQuestionsLabel.setVisible(true);
-
-        chooseDirectoryBtn.setVisible(true);
-        /*
-        if (!Objects.equals(chooseCourseMenuButton.getText(), "")) {
-            chooseDirectoryBtn.setVisible(true);
-        }
-
-         */
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {

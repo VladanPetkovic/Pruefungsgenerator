@@ -519,6 +519,15 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
     -fx-padding: 20px 0 20px 50px;
 }
 
+.automatic_create_label_questionNr{
+    -fx-background-color: black;
+    -fx-font-family: "Inter";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 20px 0 20px 50px;
+}
+
 .automatic_create_scrollPane {
     -fx-background-color: #3A3A3A;
 }

@@ -28,6 +28,7 @@ module com.example.demo {
     requires spring.data.commons;
     requires spring.tx;
     requires jlatexmath;
+    requires com.gluonhq.richtextarea;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

@@ -44,6 +44,7 @@ public class ModalOpener {
         loadTitles();
 
         Stage newStage = new Stage();
+        setWindowSize(newStage);
         Modal<?> new_modal = new Modal<>(path);
         newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle(MODAL_TITLES.get(path));
@@ -51,5 +52,14 @@ public class ModalOpener {
         newStage.show();
 
         return newStage;
+    }
+
+    private static void setWindowSize(Stage stage) {
+        Stage mainStage = MainApp.stage;
+        stage.setMinWidth(400);
+        stage.setMinHeight(200);
+        // modal on center of mainStage
+        stage.setX(mainStage.getX() + (mainStage.getWidth() - stage.getMinWidth()) / 2);
+        stage.setY(mainStage.getY() + (mainStage.getHeight() - stage.getMinHeight()) / 2);
     }
 }

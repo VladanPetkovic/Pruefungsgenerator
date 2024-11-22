@@ -56,7 +56,7 @@
       </HBox>
       <HBox alignment="CENTER" minHeight="100.0" prefHeight="100.0" styleClass="homeScreen_hbox_ContinueButton" stylesheets="@../css/main.css">
          <children>
-            <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onContinueBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="%continue" textFill="WHITE">
+            <Button fx:id="continueButton" alignment="CENTER" contentDisplay="CENTER" maxWidth="270.0" mnemonicParsing="false" onAction="#onContinueBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" prefHeight="40.0" prefWidth="270.0" styleClass="btn_dark" stylesheets="@../css/main.css" text="%continue" textFill="WHITE">
                <font>
                   <Font size="20.0" />
                </font>

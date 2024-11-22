@@ -12,7 +12,7 @@
 
 <VBox maxHeight="690.0" minWidth="390.0" prefHeight="407.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.CreateTestOptions_ScreenController">
     <children>
-      <Label fx:id="questionNumberLabel" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" />
+      <Label fx:id="questionNumberLabel" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label_questionNr" />
         <Label maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="1000.0" style="-fx-text-fill: #e8e4e4;" styleClass="automatic_create_label" text="%category" VBox.vgrow="NEVER" />
       <VBox prefHeight="33.0" prefWidth="1000.0" styleClass="automatic_create_vbox">
          <children>
