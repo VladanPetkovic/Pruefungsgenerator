@@ -83,12 +83,15 @@ public class CreateManual_ScreenController extends ScreenController {
                 //final var for listener
                 final int qi = i - 1;
                 Editor editor = new Editor();
-                editor.getRichTextArea().setAutoSave(true);
                 editor.setText(question.getQuestion());
+                if (question.getDocument() != null){
+                    editor.setRichTextArea(editor.updateDocument(SharedData.getTestQuestions().get(qi).getDocument()));
+                }
 
                 editor.getRichTextArea().documentProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue!= null) {
                         SharedData.getTestQuestions().get(qi).setQuestion(newValue.getText());
+                        SharedData.getTestQuestions().get(qi).setDocument(newValue);
                     }
                 });
 
@@ -173,13 +176,15 @@ public class CreateManual_ScreenController extends ScreenController {
             Label questionNumberLabel = new Label(previewLabel);
 
             Editor editor = new Editor();
-            editor.getRichTextArea().setAutoSave(true);
             editor.setText(question.getQuestion());
-
+            if (question.getDocument() != null){
+                editor.setRichTextArea(editor.updateDocument(SharedData.getTestQuestions().get(numberOfQuestions+1).getDocument()));
+            }
 
             editor.getRichTextArea().documentProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue.getText());
+                    SharedData.getTestQuestions().get(numberOfQuestions).setDocument(newValue);
                 }
             });
 
