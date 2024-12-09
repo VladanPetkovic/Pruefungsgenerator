@@ -7,6 +7,7 @@ import com.example.application.backend.db.services.*;
 
 import com.example.application.frontend.components.PicturePickerController;
 import com.example.application.frontend.modals.ModalOpener;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -432,6 +433,7 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 getAnswersSet(Type.valueOf(selectedQuestion.getType()), chooseAnswerTextArea, this.answers),
                 picturePickerController.getImages(),         // images
                 selectedKeywords
+
         );
     }
 
