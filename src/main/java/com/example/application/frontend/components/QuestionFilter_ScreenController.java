@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -84,7 +83,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void onAddCategoryBtnClick(ActionEvent actionEvent) {
-        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addCategoryStage = modalOpener.openModal(ModalOpener.ADD_CATEGORY);
 
         addCategoryStage.setOnHidden((WindowEvent event) -> {
             initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
@@ -92,7 +92,8 @@ public class QuestionFilter_ScreenController extends ScreenController {
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
-        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addKeywordStage = modalOpener.openModal(ModalOpener.ADD_KEYWORD);
 
         // initialize keywords-comboBox when the modal closes
         addKeywordStage.setOnHidden((WindowEvent event) -> {

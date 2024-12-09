@@ -126,10 +126,6 @@ public class QuestionService {
         return questionRepository.getCountByCourseId(courseId);
     }
 
-    public Long getMaxQuestionId() {
-        return questionRepository.getMaxQuestionId();
-    }
-
     public Question update(Question q) {
         Question existingQuestion = questionRepository.findById(q.getId()).orElse(null);
         if (existingQuestion != null) {

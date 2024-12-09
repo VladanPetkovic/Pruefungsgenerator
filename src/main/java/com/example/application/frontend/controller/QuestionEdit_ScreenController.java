@@ -7,6 +7,7 @@ import com.example.application.backend.db.services.*;
 
 import com.example.application.frontend.components.PicturePickerController;
 import com.example.application.frontend.modals.ModalOpener;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -126,7 +127,7 @@ public class QuestionEdit_ScreenController extends ScreenController {
         //if user clicked on the edit button in manualCreate Screen
         if (SharedData.getQuestionToEdit() != null) {
             System.out.println("QUESTION IS HERE");
-            System.out.println("Question questiontext: "+SharedData.getQuestionToEdit().getQuestion());
+            System.out.println("Question questiontext: " + SharedData.getQuestionToEdit().getQuestion());
             displaySelectedQuestion();
         }
     }
@@ -432,6 +433,7 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 getAnswersSet(Type.valueOf(selectedQuestion.getType()), chooseAnswerTextArea, this.answers),
                 picturePickerController.getImages(),         // images
                 selectedKeywords
+
         );
     }
 
@@ -445,7 +447,8 @@ public class QuestionEdit_ScreenController extends ScreenController {
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
-        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addKeywordStage = modalOpener.openModal(ModalOpener.ADD_KEYWORD);
 
         // initialize keywords-comboBox when the modal closes
         addKeywordStage.setOnHidden((WindowEvent event) -> {
@@ -455,7 +458,8 @@ public class QuestionEdit_ScreenController extends ScreenController {
     }
 
     public void onAddCategoryBtnClick(ActionEvent actionEvent) {
-        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addCategoryStage = modalOpener.openModal(ModalOpener.ADD_CATEGORY);
 
         addCategoryStage.setOnHidden((WindowEvent event) -> {
             initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
@@ -463,7 +467,8 @@ public class QuestionEdit_ScreenController extends ScreenController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage confirmStage = modalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted

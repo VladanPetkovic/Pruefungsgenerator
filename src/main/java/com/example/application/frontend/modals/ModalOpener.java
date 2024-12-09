@@ -3,6 +3,7 @@ package com.example.application.frontend.modals;
 import com.example.application.MainApp;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,15 +20,17 @@ public class ModalOpener {
     public static String CONFIRM_DELETION = "modals/confirm_deletion.fxml";
     public static String IMAGE_RESIZER = "modals/image_resizer.fxml";
     public static String LATEX = "modals/latex.fxml";
-    public static String TARGET_SELECTION = "modals/import_target_selection.fxml";
+    public static String IMPORT_ERROR = "modals/import_error.fxml";
 
-    private static final Map<String, String> MODAL_TITLES = new HashMap<>();
+    private final Map<String, String> MODAL_TITLES = new HashMap<>();
+    @Getter
+    private Modal<?> modal;
 
-    static {
+    public ModalOpener() {
         loadTitles();
     }
 
-    private static void loadTitles() {
+    private void loadTitles() {
         MODAL_TITLES.clear();
         MODAL_TITLES.put(ADD_CATEGORY, MainApp.resourceBundle.getString("category_modal_title"));
         MODAL_TITLES.put(ADD_COURSE, MainApp.resourceBundle.getString("course"));
@@ -36,16 +39,17 @@ public class ModalOpener {
         MODAL_TITLES.put(CONFIRM_DELETION, MainApp.resourceBundle.getString("confirm_deletion"));
         MODAL_TITLES.put(IMAGE_RESIZER, MainApp.resourceBundle.getString("image_resize_modal_title"));
         MODAL_TITLES.put(LATEX, MainApp.resourceBundle.getString("latex_modal_title"));
-        MODAL_TITLES.put(TARGET_SELECTION, MainApp.resourceBundle.getString("import_target_selection"));
+        MODAL_TITLES.put(IMPORT_ERROR, MainApp.resourceBundle.getString("import_error"));
     }
 
-    public static Stage openModal(String path) {
+    public Stage openModal(String path) {
         // update titles - it is possible, that the language was changed, so we need to update the titles
         loadTitles();
 
         Stage newStage = new Stage();
         setWindowSize(newStage);
         Modal<?> new_modal = new Modal<>(path);
+        this.modal = new_modal;
         newStage.initModality(Modality.APPLICATION_MODAL);
         newStage.setTitle(MODAL_TITLES.get(path));
         newStage.setScene(new_modal.scene);
@@ -54,7 +58,7 @@ public class ModalOpener {
         return newStage;
     }
 
-    private static void setWindowSize(Stage stage) {
+    private void setWindowSize(Stage stage) {
         Stage mainStage = MainApp.stage;
         stage.setMinWidth(400);
         stage.setMinHeight(200);

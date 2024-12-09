@@ -8,6 +8,7 @@ import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
+import com.example.application.frontend.modals.ImportErrorScreenController;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,22 +34,15 @@ public class Settings_ScreenController extends ScreenController {
     private final CategoryService categoryService;
     private final AnswerService answerService;
     private final KeywordService keywordService;
-    private String modeOfImport = "";
-
+    public MenuButton chooseStudyProgramMenuBtnImport;
+    public MenuButton chooseCourseMenuButtonImport;
     // import related fxml items
     @FXML
     private MenuButton importModeMenuButton;
     @FXML
-    private Button chooseImportTargetBtn;
-
-    @FXML
     public Label title_selectedStudyProgram;
     @FXML
-    public Label label_selectedStudyProgram;
-    @FXML
     public Label title_selectedCourse;
-    @FXML
-    public Label label_selectedCourse;
 
     @FXML
     private Button selectCsvFileBtn;
@@ -96,26 +91,12 @@ public class Settings_ScreenController extends ScreenController {
                 .stream()
                 .map(Course::getName)
                 .collect(Collectors.toCollection(ArrayList::new));
-        initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms);
-        initializeMenuButton(chooseCourseMenuButton, courses);
-
-        // Import related buttons
-        chooseImportTargetBtn.setVisible(false);
-        title_selectedStudyProgram.setVisible(false);
-        label_selectedStudyProgram.setVisible(false);
-        title_selectedCourse.setVisible(false);
-        label_selectedCourse.setVisible(false);
-        selectCsvFileBtn.setVisible(false);
-        settingsImportBtn.setVisible(false);
-
-        // Export related buttons
-        chooseCourseMenuButton.setVisible(false);
-        chooseStudyProgramMenuBtn.setVisible(false);
-        chooseDirectoryBtn.setVisible(false);
-        settingsExportBtn.setVisible(false);
+        initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms, null);
+        initializeMenuButton(chooseStudyProgramMenuBtnImport, studyPrograms, this::populateCourseMenuBtn);
+        initializeMenuButton(chooseCourseMenuButton, courses, null);
     }
 
-    private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems) {
+    private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems, Runnable onActionFunction) {
         menuButton.getItems().clear();
 
         for (String string : menuItems) {
@@ -123,44 +104,37 @@ public class Settings_ScreenController extends ScreenController {
             menuItem.setOnAction(e -> {
                 menuButton.setText(string);
                 chooseDirectoryBtn.setVisible(true);
+                if (onActionFunction != null) {
+                    onActionFunction.run();
+                }
             });
             menuButton.getItems().add(menuItem);
         }
     }
 
-    // import related functions
+    /* IMPORT RELATED FUNCTIONS - START */
+    public void populateCourseMenuBtn() {
+        StudyProgram studyProgram = studyProgramService.getByName(chooseStudyProgramMenuBtnImport.getText());
+        List<Course> courses = courseService.getAllByStudyProgram(studyProgram.getId());
+        chooseCourseMenuButtonImport.getItems().clear();
+        chooseCourseMenuButtonImport.setText("");
+        for (Course course : courses) {
+            MenuItem menuItem = new MenuItem(course.getName());
+            menuItem.setOnAction(e -> {
+                chooseCourseMenuButtonImport.setText(course.getName());
+            });
+            chooseCourseMenuButtonImport.getItems().add(menuItem);
+        }
+    }
+
     @FXML
     private void onUpdateExistingQuestionsSelected(ActionEvent event) {
-        modeOfImport = MainApp.resourceBundle.getString("update_existing_questions");
-        SharedData.setModeOfImport(modeOfImport);
-        importModeMenuButton.setText(modeOfImport);
         selectCsvFileBtn.setVisible(true);
     }
 
     @FXML
     private void onInsertNewQuestionsSelected(ActionEvent event) {
-        modeOfImport = MainApp.resourceBundle.getString("insert_new_questions");
-        SharedData.setModeOfImport(modeOfImport);
-        importModeMenuButton.setText(modeOfImport);
-        chooseImportTargetBtn.setVisible(true);
-    }
-
-    @FXML
-    private void onChooseImportTargetBtnClick(ActionEvent event) {
-        Stage newStage = ModalOpener.openModal(ModalOpener.TARGET_SELECTION);
-        // listener for when the stage is closed
-        newStage.setOnHidden(e -> {
-            // check if ImportTargetStudyProgram and ImportTargetCourse were selected
-            if (SharedData.getImportTargetStudyProgram() != null && SharedData.getImportTargetCourse() != null) {
-                title_selectedStudyProgram.setVisible(true);
-                label_selectedStudyProgram.setVisible(true);
-                label_selectedStudyProgram.setText(SharedData.getImportTargetStudyProgram());
-                title_selectedCourse.setVisible(true);
-                label_selectedCourse.setVisible(true);
-                label_selectedCourse.setText(SharedData.getImportTargetCourse());
-                selectCsvFileBtn.setVisible(true);
-            }
-        });
+        // TODO: add here logic to make everything visible
     }
 
     public void onSelectCsvFileBtnClick(ActionEvent actionEvent) {
@@ -185,21 +159,35 @@ public class Settings_ScreenController extends ScreenController {
             SharedData.setOperation(Message.ERROR_MESSAGE_FILE_NOT_SELECTED);
             return;
         }
-        ImportCSV importCSV = new ImportCSV(this.label_selectedFile.getText(), studyProgramService, courseService, questionService, categoryService, answerService, keywordService);
+        boolean isCreateMode = Objects.equals(importModeMenuButton.getText(), MainApp.resourceBundle.getString("insert_new_questions"));
+        ImportCSV importCSV = new ImportCSV(
+                this.label_selectedFile.getText(),
+                studyProgramService, courseService,
+                questionService, categoryService,
+                answerService, keywordService,
+                isCreateMode, chooseStudyProgramMenuBtnImport.getText(),
+                chooseCourseMenuButtonImport.getText());
 
-        // Start the import process
-        boolean isSuccess = importCSV.importData();
-
-        // Update SharedData with a success or error message
-        if (isSuccess) {
+        // start the import process
+        if (importCSV.importData()) {
             SharedData.setOperation(Message.SUCCESS_MESSAGE_DATA_IMPORTED);
         } else {
-            System.out.println(importCSV.errorMessage);
-            // write directly onto settings.fxml
-            SharedData.setOperation(Message.ERROR_MESSAGE_IMPORT_FAILED);
+            openErrorModal(importCSV.getErrorMessage());
         }
     }
 
+    private void openErrorModal(String errorString) {
+        ModalOpener modalOpener = new ModalOpener();
+        Stage errorModalStage = modalOpener.openModal(ModalOpener.IMPORT_ERROR);
+        ImportErrorScreenController controller = (ImportErrorScreenController) modalOpener.getModal().controller;
+        controller.errorLabel.setText(errorString);
+
+        errorModalStage.setOnHidden(e -> {
+            // TODO peter: add logic if necessary (maybe reset view, when the error-modal closes...)
+            System.out.println("something happens when this modal closes");
+        });
+    }
+    /* IMPORT RELATED FUNCTIONS - END */
 
     // export related functions
     public void allQuestionsSelectedForExport(ActionEvent actionEvent) {

@@ -1,5 +1,6 @@
 package com.example.application.backend.db.models;
 
+import com.gluonhq.richtextarea.model.Document;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,9 @@ public class Question implements Serializable {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
+    private Document document;
+
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -71,6 +75,9 @@ public class Question implements Serializable {
         setCreatedAt(created_at);
         setUpdatedAt(updated_at);
         setKeywords(keywords);
+    }
+
+    public Question(Long id, Category selectedCategory, int value, float v, String text, Object o, String text1, Object o1, LocalDateTime now, Set<Answer> answersSet, Set<Image> images, Set<Keyword> selectedKeywords) {
     }
 
     public String getAnswersAsString() {
