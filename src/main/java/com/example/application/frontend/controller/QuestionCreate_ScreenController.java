@@ -294,7 +294,8 @@ public class QuestionCreate_ScreenController extends ScreenController {
     }
 
     public void onAddCategoryBtnClick(ActionEvent actionEvent) {
-        Stage addCategoryStage = ModalOpener.openModal(ModalOpener.ADD_CATEGORY);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addCategoryStage = modalOpener.openModal(ModalOpener.ADD_CATEGORY);
 
         addCategoryStage.setOnHidden((WindowEvent event) -> {
             initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
@@ -302,7 +303,8 @@ public class QuestionCreate_ScreenController extends ScreenController {
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
-        Stage addKeywordStage = ModalOpener.openModal(ModalOpener.ADD_KEYWORD);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage addKeywordStage = modalOpener.openModal(ModalOpener.ADD_KEYWORD);
 
         // initialize keywords-comboBox when the modal closes
         addKeywordStage.setOnHidden((WindowEvent event) -> {

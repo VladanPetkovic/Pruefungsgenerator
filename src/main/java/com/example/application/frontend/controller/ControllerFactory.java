@@ -35,7 +35,8 @@ public class ControllerFactory {
             case "CreateAutomatic_ScreenController" ->
                     new CreateAutomatic_ScreenController(questionService, categoryService);
             case "CreateManual_ScreenController" -> new CreateManual_ScreenController();
-            case "Home_ScreenController" -> new Home_ScreenController(studyProgramService, courseService, settingService);
+            case "Home_ScreenController" ->
+                    new Home_ScreenController(studyProgramService, courseService, settingService);
             case "PdfPreview_ScreenController" -> new PdfPreview_ScreenController();
             case "QuestionCreate_ScreenController" ->
                     new QuestionCreate_ScreenController(keywordService, categoryService, questionService, answerService, imageService);
@@ -58,8 +59,8 @@ public class ControllerFactory {
             case "ConfirmDeletion_ScreenController" ->
                     new ConfirmDeletion_ScreenController(studyProgramService, courseService, questionService);
             case "ImageResizer_ScreenController" -> new ImageResizer_ScreenController();
+            case "ImportErrorScreenController" -> new ImportErrorScreenController();
             case "Latex_ScreenController" -> new Latex_ScreenController(imageService);
-            case "TargetSelectionController" -> new TargetSelectionController(studyProgramService, courseService);
             default -> throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
         };
     }

@@ -1,8 +1,8 @@
 package com.example.application.backend.app;
 
 import com.example.application.backend.db.models.*;
-import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
+import lombok.Getter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,11 +18,12 @@ public class ImportCSV {
     private final CategoryService categoryService;
     private final AnswerService answerService;
     private final KeywordService keywordService;
-    private String filePath;
-    private String modeOfImport;
-    private String importTargetStudyProgram;
-    private String importTargetCourse;
-    public String errorMessage;
+    private final String filePath;
+    private final boolean isCreateMode;
+    private final String importTargetStudyProgram;
+    private final String importTargetCourse;
+    @Getter
+    private String errorMessage;
 
     public ImportCSV(String filePath,
                      StudyProgramService studyProgramService,
@@ -30,7 +31,11 @@ public class ImportCSV {
                      QuestionService questionService,
                      CategoryService categoryService,
                      AnswerService answerService,
-                     KeywordService keywordService) {
+                     KeywordService keywordService,
+                     boolean isCreateMode,
+                     String importTargetStudyProgram,
+                     String importTargetCourse
+                     ) {
         this.filePath = filePath;
         this.studyProgramService = studyProgramService;
         this.courseService = courseService;
@@ -38,13 +43,18 @@ public class ImportCSV {
         this.categoryService = categoryService;
         this.answerService = answerService;
         this.keywordService = keywordService;
-        this.modeOfImport = SharedData.getModeOfImport();
-        this.importTargetStudyProgram = SharedData.getImportTargetStudyProgram();
-        this.importTargetCourse = SharedData.getImportTargetCourse();
+        this.isCreateMode = isCreateMode;
+        this.importTargetStudyProgram = importTargetStudyProgram;
+        this.importTargetCourse = importTargetCourse;
+    }
+
+    public void setOptions() {
+
     }
 
     /**
      * This function imports questions.
+     *
      * @return True, when the import was successful and False, when the check or import went wrong.
      */
     public boolean importData() {
@@ -78,6 +88,7 @@ public class ImportCSV {
             String header = reader.readLine();
             if (header == null || !header.contains("question_id")) {
                 Logger.log(getClass().getName(), "Invalid or missing header in CSV.", LogLevel.WARN);
+                errorMessage = "Invalid or missing header in CSV."; // TODO: continue with assignments like this
                 return false;
             }
 
@@ -101,7 +112,8 @@ public class ImportCSV {
 
                     // Ensure difficulty is non-null and within range
                     int difficulty = Integer.parseInt(fields[3].trim());
-                    if (difficulty < 1 || difficulty > 10) throw new IllegalArgumentException("Difficulty must be between 1 and 10");
+                    if (difficulty < 1 || difficulty > 10)
+                        throw new IllegalArgumentException("Difficulty must be between 1 and 10");
 
                     // Ensure points is non-null and parseable
                     float points = Float.parseFloat(fields[4].trim().replace(",", "."));
@@ -117,7 +129,8 @@ public class ImportCSV {
                     if (fields[9].trim().isEmpty()) throw new IllegalArgumentException("Course name cannot be empty");
                     Integer.parseInt(fields[10]); // course_number
 
-                    if (fields[11].trim().isEmpty()) throw new IllegalArgumentException("Study program name cannot be empty");
+                    if (fields[11].trim().isEmpty())
+                        throw new IllegalArgumentException("Study program name cannot be empty");
 
                 } catch (IllegalArgumentException e) {
                     Logger.log(getClass().getName(), "Data validation error at line " + lineNumber + ": " + e.getMessage(), LogLevel.WARN);
@@ -164,7 +177,7 @@ public class ImportCSV {
 
         ParsedCSVRow parsedRow = parseCSVRow(values);
 
-        if (modeOfImport.equals(MainApp.resourceBundle.getString("insert_new_questions"))) {
+        if (isCreateMode) {
             parsedRow.setCourseName(importTargetCourse);
             parsedRow.setStudyProgramName(importTargetStudyProgram);
             handleQuestions(parsedRow, true);

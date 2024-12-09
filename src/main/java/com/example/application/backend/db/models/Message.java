@@ -96,8 +96,7 @@ public enum Message implements Serializable {
     NO_QUESTIONS_FOUND(MainApp.resourceBundle.getString("no_questions_found"), true),
 
     // import functionality:
-    SUCCESS_MESSAGE_DATA_IMPORTED(MainApp.resourceBundle.getString("success_message_data_imported"), false),
-    ERROR_MESSAGE_IMPORT_FAILED(MainApp.resourceBundle.getString("error_message_import_failed"), true);
+    SUCCESS_MESSAGE_DATA_IMPORTED(MainApp.resourceBundle.getString("success_message_data_imported"), false);
 
 
     private String message;

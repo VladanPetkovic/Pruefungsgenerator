@@ -48,8 +48,6 @@ public class SharedData {
     @Getter
     private static Question selectedEditQuestion = new Question();
 
-
-
     @Getter
     @Setter
 
@@ -72,18 +70,6 @@ public class SharedData {
     @Getter
     @Setter
     private static ObservableList<Question> filteredQuestions = FXCollections.observableArrayList();
-
-    @Getter
-    @Setter
-    private static String importTargetStudyProgram;
-
-    @Getter
-    @Setter
-    private static String importTargetCourse;
-
-    @Setter
-    @Getter
-    private static String modeOfImport;
 
     @Getter
     private static Screen currentScreen;
@@ -149,11 +135,6 @@ public class SharedData {
         saveToFile();
     }
 
-    // Getter and setter for pageTitle
-    public static String getPageTitle() {
-        return pageTitle.get();
-    }
-
     public static void setPageTitle(String pageTitle) throws IOException {
         SharedData.pageTitle.set(pageTitle);
         saveToFile();
@@ -168,13 +149,9 @@ public class SharedData {
         SharedData.helpTooltip.set(tooltipText);
         saveToFile();
     }
+
     public static StringProperty helpTooltipProperty() {
         return helpTooltip;
-    }
-
-    // Getter and setter for operationStatus
-    public static String getOperationStatus() {
-        return operationStatus.get();
     }
 
     public static void setOperation(String messageString, boolean isErrorType) {

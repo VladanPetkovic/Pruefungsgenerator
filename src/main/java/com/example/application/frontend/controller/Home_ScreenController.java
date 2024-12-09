@@ -3,7 +3,6 @@ package com.example.application.frontend.controller;
 
 import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Course;
-import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Setting;
 import com.example.application.backend.db.models.StudyProgram;
 import com.example.application.backend.db.services.CourseService;
@@ -29,7 +28,6 @@ import java.util.ResourceBundle;
 
 import static com.example.application.frontend.controller.SwitchScene.HOME;
 import static com.example.application.frontend.controller.SwitchScene.switchScene;
-import static com.example.application.frontend.modals.ModalOpener.openModal;
 
 /**
  * controller class for the home screen
@@ -94,7 +92,7 @@ public class Home_ScreenController extends ScreenController {
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
             switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         } else {
-            SharedData.setOperation(MainApp.resourceBundle.getString("error_message_course_and_sp_not_selected"),true);
+            SharedData.setOperation(MainApp.resourceBundle.getString("error_message_course_and_sp_not_selected"), true);
             //SharedData.setOperation(Message.ERROR_COURSE_AND_SP_NOT_SELECTED);
         }
     }
@@ -227,7 +225,8 @@ public class Home_ScreenController extends ScreenController {
 
     // method to add a new study program
     private void addStudyProgram() throws IOException {
-        Stage newStage = openModal(ModalOpener.ADD_STUDY_PROGRAM);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage newStage = modalOpener.openModal(ModalOpener.ADD_STUDY_PROGRAM);
 
         // listener for when the stage is closed
         newStage.setOnHidden(event -> {
@@ -246,8 +245,8 @@ public class Home_ScreenController extends ScreenController {
         if (SharedData.getSelectedStudyProgram() == null) {
             return;
         }
-
-        Stage newStage = openModal(ModalOpener.ADD_COURSE);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage newStage = modalOpener.openModal(ModalOpener.ADD_COURSE);
 
         // listener for when the stage is closed
         newStage.setOnHidden(event -> {

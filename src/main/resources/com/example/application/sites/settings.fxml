@@ -20,9 +20,11 @@
                 <HBox HBox.hgrow="ALWAYS">
                     <children>
                         <!-- Import Section -->
-                        <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" HBox.hgrow="ALWAYS" styleClass="settings_gridPane" stylesheets="@../css/main.css">
+                        <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" styleClass="settings_gridPane" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                             <columnConstraints>
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="508.8" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="79.40001220703124" />
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="409.0000122070313" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="81.19998779296873" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for import label -->
@@ -39,31 +41,30 @@
                                 <RowConstraints /> <!-- Row for import button -->
                             </rowConstraints>
                             <children>
-                                <Label styleClass="topic_label" text="%import_questions_from_csv" GridPane.rowIndex="0" />
-                                <MenuButton fx:id="importModeMenuButton" styleClass="menuButton_dark" text="%choose_import_mode" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                <Label styleClass="topic_label" text="%import_questions_from_csv" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <MenuButton fx:id="importModeMenuButton" styleClass="menuButton_dark" text="%choose_import_mode" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                     <items>
                                         <MenuItem onAction="#onUpdateExistingQuestionsSelected" text="%update_existing_questions" />
                                         <MenuItem onAction="#onInsertNewQuestionsSelected" text="%insert_new_questions" />
                                     </items>
                                 </MenuButton>
-                                <Button fx:id="chooseImportTargetBtn" onAction="#onChooseImportTargetBtnClick" styleClass="btn_dark" text="%choose_targets" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                <Label fx:id="title_selectedStudyProgram" styleClass="option_label" text="%selected_study_program" GridPane.rowIndex="4" />
-                                <Label fx:id="label_selectedStudyProgram" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="5" />
-                                <Label fx:id="title_selectedCourse" styleClass="option_label" text="%selected_course" GridPane.rowIndex="6" />
-                                <Label fx:id="label_selectedCourse" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="7" />
-                                <Button fx:id="selectCsvFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSelectCsvFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.rowIndex="8">
+                                <Label fx:id="title_selectedStudyProgram" styleClass="option_label" text="%selected_study_program" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <MenuButton fx:id="chooseStudyProgramMenuBtnImport" mnemonicParsing="false" styleClass="menuButton_dark" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <Label fx:id="title_selectedCourse" styleClass="option_label" text="%selected_course" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <MenuButton fx:id="chooseCourseMenuButtonImport" mnemonicParsing="false" styleClass="menuButton_dark" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <Button fx:id="selectCsvFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSelectCsvFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                     <cursor>
                                         <Cursor fx:constant="DEFAULT" />
                                     </cursor>
                                 </Button>
-                                <Label styleClass="option_label" text="%selected_file" GridPane.rowIndex="9" />
-                                <Label fx:id="label_selectedFile" styleClass="option_label" text="&quot;&quot;" GridPane.rowIndex="10" />
-                                <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" GridPane.rowIndex="11" />
+                                <Label styleClass="option_label" text="%selected_file" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                <Label fx:id="label_selectedFile" styleClass="option_label" text="&quot;&quot;" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                <Button fx:id="settingsImportBtn" mnemonicParsing="false" onMouseClicked="#onImportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%import" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                             </children>
                         </GridPane>
 
                         <!-- Export Section -->
-                        <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" HBox.hgrow="ALWAYS" styleClass="settings_gridPane" stylesheets="@../css/main.css">
+                        <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" styleClass="settings_gridPane" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                             <columnConstraints>
                                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="669.0" minWidth="0.0" prefWidth="511.2" />
                             </columnConstraints>
@@ -93,12 +94,12 @@
                                 <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.rowIndex="4" />
                                 <Label styleClass="option_label" text="%destination_folder" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                                 <Label fx:id="label_selectedDirectory" styleClass="option_label" text="&quot;&quot;" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-                                <Button fx:id="chooseDirectoryBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                                <Button fx:id="chooseDirectoryBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" visible="false" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                     <cursor>
                                         <Cursor fx:constant="DEFAULT" />
                                     </cursor>
                                 </Button>
-                                <Button fx:id="settingsExportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" GridPane.rowIndex="8" />
+                                <Button fx:id="settingsExportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" visible="false" GridPane.rowIndex="8" />
                             </children>
                         </GridPane>
                     </children>

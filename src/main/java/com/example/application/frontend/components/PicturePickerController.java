@@ -89,7 +89,8 @@ public class PicturePickerController {
     }
 
     public void onAddLatexBtnClick(ActionEvent actionEvent) {
-        Stage newStage = ModalOpener.openModal(ModalOpener.LATEX);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage newStage = modalOpener.openModal(ModalOpener.LATEX);
 
         // listener for when the stage is closed
         newStage.setOnHidden(event -> {
@@ -196,7 +197,8 @@ public class PicturePickerController {
         }
 
         private void resizeImage(StackPane stackPane) {
-            Stage newStage = ModalOpener.openModal(ModalOpener.IMAGE_RESIZER);
+            ModalOpener modalOpener = new ModalOpener();
+            Stage newStage = modalOpener.openModal(ModalOpener.IMAGE_RESIZER);
 
             //listener for when the stage is closed
             newStage.setOnHidden(event -> {

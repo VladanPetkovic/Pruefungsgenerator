@@ -23,9 +23,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q JOIN q.category cat JOIN cat.courses c WHERE c.id = :courseId AND q.id > :minQuestionId")
     List<Question> findByCourseIdAndIdGreaterThan(@Param("courseId") Long courseId, @Param("minQuestionId") Long minQuestionId, Pageable pageable);
 
-    @Query("SELECT MAX(q.id) FROM Question q")
-    Long getMaxQuestionId();
-
     // reminder: this query only returns questions, that have at least all keywords, that are given for filtering
     @Query("SELECT q FROM Question q " +
             "JOIN q.category cat JOIN cat.courses c " +

@@ -94,7 +94,8 @@ public class AddCourse_ScreenController extends ModalController {
     }
 
     public void onDeleteBtnClick(ActionEvent actionEvent) {
-        Stage confirmStage = ModalOpener.openModal(ModalOpener.CONFIRM_DELETION);
+        ModalOpener modalOpener = new ModalOpener();
+        Stage confirmStage = modalOpener.openModal(ModalOpener.CONFIRM_DELETION);
 
         confirmStage.setOnHidden((WindowEvent event) -> {
             // question was deleted
