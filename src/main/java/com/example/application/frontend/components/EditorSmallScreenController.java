@@ -35,6 +35,13 @@ public class EditorSmallScreenController {
                 event.consume();
             }
         });
+
+        smallHtmlEditor.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.SPACE) {
+                // Consume the event to prevent scrolling
+                event.consume();
+            }
+        });
     }
 
     /**

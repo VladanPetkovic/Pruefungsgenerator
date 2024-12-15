@@ -16,42 +16,42 @@
 }
 
 .tabPane {
-    -fx-background-color: #F0F0F0; /* Light grey for the pane background */
-    -fx-background-radius: 5px;
+    -fx-background-color: #3A3A3A;
     -fx-padding: 10px;
 }
 
 .tabPane .tab-header-area {
-    -fx-background-color: #E0E0E0; /* Slightly darker grey for the tab header area */
+    -fx-background-color: #E0E0E0;
     -fx-border-color: #CCCCCC;
     -fx-border-width: 0 0 1px 0;
 }
 
 .tabPane .tab {
-    -fx-background-color: #F8F8F8; /* Very light grey for inactive tabs */
+    -fx-background-color: #F8F8F8;
     -fx-border-color: transparent;
-    -fx-text-fill: #333333; /* Dark grey text */
+    -fx-text-fill: #333333;
     -fx-padding: 5px 15px;
     -fx-font-size: 14px;
 }
 
 .tabPane .tab:hover {
-    -fx-background-color: #D6D6D6; /* Medium grey for hover effect */
+    -fx-background-color: #D6D6D6;
 }
 
 .tabPane .tab-header-area .tab-header-background {
-    -fx-background-color: #F0F0F0; /* Matches the pane background */
+    -fx-background-color: #3A3A3A;
 }
 
 .tabPane .tab:selected {
-    -fx-background-color: #B0B0B0; /* Medium grey for the selected tab */
-    -fx-text-fill: #FFFFFF; /* White text for contrast */
+    -fx-background-color: #B0B0B0;
+    -fx-text-fill: #FFFFFF;
     -fx-border-color: transparent;
     -fx-font-weight: bold;
 }
 
 .tabPane .tab-content-area {
-    -fx-background-color: #EAEAEA; /* Soft grey for the content area */
+    -fx-background-color: #EAEAEA;
     -fx-padding: 10px;
     -fx-border-radius: 0 0 5px 5px;
+    -fx-background-radius: 5px;
 }

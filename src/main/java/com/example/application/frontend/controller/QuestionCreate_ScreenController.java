@@ -5,17 +5,14 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 
-import com.example.application.frontend.components.PicturePickerController;
+import com.example.application.frontend.components.EditorScreenController;
 import com.example.application.frontend.modals.ModalOpener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.Scope;
@@ -24,8 +21,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 @Scope("prototype")
@@ -38,6 +33,8 @@ public class QuestionCreate_ScreenController extends ScreenController {
     public ComboBox<String> keywordComboButton;
     public ComboBox<String> categoryComboBox;
     @FXML
+    public VBox editorParentVbox;
+    @FXML
     private Slider difficulty;
     public Spinner<Double> pointsSpinner;
     @FXML
@@ -47,12 +44,6 @@ public class QuestionCreate_ScreenController extends ScreenController {
     @FXML
     private VBox multipleChoiceVBox;
     @FXML
-    private TextArea question;
-    @FXML
-    private TextFlow questionPreview;
-    @FXML
-    private Button previewQuestion;
-    @FXML
     private TextArea remarks;
     @FXML
     private TextArea answerTextArea;
@@ -60,10 +51,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
     private HBox keywordsHBox;
     private Set<Keyword> selectedKeywords = new HashSet<>();
     private ArrayList<TextArea> answers = new ArrayList<>();
-
-    @FXML
-    private VBox picturePickerPlaceholder;
-    private PicturePickerController picturePickerController;
+    private EditorScreenController editorScreenController;
 
     public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, AnswerService answerService, ImageService imageService) {
         this.categoryService = categoryService;
@@ -79,84 +67,28 @@ public class QuestionCreate_ScreenController extends ScreenController {
      * rendered on the screen. It initializes the UI elements and retrieves necessary data from the database.
      */
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         initCategoryComboBox(categoryComboBox, categoryService.getAllByCourseId(SharedData.getSelectedCourse().getId()));
         List<Keyword> keywords = keywordService.getAllByCourseId(SharedData.getSelectedCourse().getId());
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
         initDoubleSpinner(pointsSpinner, 1, 10, 1, 0.5);
 
-        difficulty.setValue(5);
+//        difficulty.setValue(5);
 
-        question.setText("");
-        question.textProperty().addListener((observableValue, s, t1) -> {
-            previewQuestion.setVisible(previewQuestionShouldBeVisible());
-        });
+        initEditor();
         remarks.setText("");
 
         List<Type> questionTypes = Arrays.asList(Type.values());
         initializeMenuButton(questionTypeMenuButton, false, questionTypes, null);
         initQuestionTypeListener();
-
-        try {
-            FXMLLoader loader = FXMLDependencyInjection.getLoader("components/picture_picker.fxml", MainApp.resourceBundle);
-            VBox picturePicker = loader.load();
-            picturePickerController = loader.getController();
-            picturePickerPlaceholder.getChildren().add(picturePicker);
-            picturePickerController.setTextArea(question);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
-    private boolean questionPreviewVisible = false;
+    private void initEditor() throws IOException {
+        FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor.fxml", MainApp.resourceBundle);
+        loader.load();
 
-    @FXML
-    private void onActionPreviewQuestion() {
-        if (!questionPreviewVisible) {
-            question.setVisible(false);
-            questionPreview.setVisible(true);
-            questionPreview.getChildren().clear();
-            parseAndDisplayContent();
-            questionPreviewVisible = true;
-            return;
-        }
-        question.setVisible(true);
-        questionPreview.setVisible(false);
-        questionPreviewVisible = false;
-    }
-
-    public void parseAndDisplayContent() {
-        Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
-        Matcher matcher = pattern.matcher(question.getText());
-        int lastIndex = 0;
-        while (matcher.find()) {
-            String textBeforeImage = question.getText().substring(lastIndex, matcher.start());
-            if (!textBeforeImage.isEmpty()) {
-                questionPreview.getChildren().add(new Text(textBeforeImage));
-            }
-            String imageName = matcher.group(1);
-            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
-                if (image.imageName.equals(imageName)) {
-                    ImageView imageView = new ImageView(image.image);
-                    questionPreview.getChildren().add(imageView);
-                }
-            }
-            lastIndex = matcher.end();
-        }
-        String textAfterLastImage = question.getText().substring(lastIndex);
-        if (!textAfterLastImage.isEmpty()) {
-            questionPreview.getChildren().add(new Text(textAfterLastImage));
-        }
-    }
-
-    private boolean previewQuestionShouldBeVisible() {
-        if (picturePickerController.invalidSyntax()) {
-            return false;
-        }
-        if (picturePickerController.buttonAndImages.isEmpty()) {
-            return false;
-        }
-        return true;
+        // get the controller for the loaded component
+        editorScreenController = loader.getController();
     }
 
     /**
@@ -240,7 +172,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
                 category,
                 (int) difficulty.getValue(),
                 pointsSpinner.getValue().floatValue(),
-                question.getText(),
+                editorScreenController.editor.getHtmlText(),
                 questionTypeMenuButton.getText(),
                 remarks.getText(),
                 LocalDateTime.now(),    // createdAt
@@ -251,7 +183,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
         Question newQuestion = questionService.add(q);
         if (newQuestion.getId() != null) {
             answerService.addAnswers(newQuestion.getId(), getAnswersSet(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers));
-            imageService.addImages(newQuestion.getId(), picturePickerController.getImages());
+            imageService.addImages(newQuestion.getId(), editorScreenController.picturePickerController.getImages());
             SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
             SharedData.setOperation(Message.CREATE_QUESTION_SUCCESS_MESSAGE);
         }
@@ -263,7 +195,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
      * @return true if the question text area is empty, false otherwise.
      */
     private boolean checkIfQuestionIsEmpty() {
-        return question.getText().isEmpty();
+        return editorScreenController.editor.getHtmlText().isEmpty();
     }
 
     /**
@@ -287,7 +219,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
         if (checkIfQuestionIsEmpty()) {
             return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
-        if (picturePickerController.invalidSyntax()) {
+        if (editorScreenController.picturePickerController.invalidSyntax()) {
             return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
