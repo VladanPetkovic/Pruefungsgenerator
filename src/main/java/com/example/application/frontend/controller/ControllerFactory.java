@@ -49,7 +49,6 @@ public class ControllerFactory {
             case "EditorScreenController" -> new EditorScreenController();
             case "EditorSmallScreenController" -> new EditorSmallScreenController();
             case "NavbarController" -> new NavbarController();
-            case "PicturePickerController" -> new PicturePickerController();
             case "QuestionFilter_ScreenController" ->
                     new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();

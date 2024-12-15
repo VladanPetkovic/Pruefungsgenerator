@@ -53,7 +53,7 @@
                   </GridPane>
                </content>
             </Tab>
-            <Tab text="%editor_preview">
+            <Tab onSelectionChanged="#onPreviewTabClick" text="%editor_preview">
                <content>
                   <TextFlow fx:id="questionPreview" prefHeight="200.0" prefWidth="200.0" />
                </content>
@@ -64,10 +64,7 @@
             <URL value="@../css/main.css" />
          </stylesheets>
       </TabPane>
-      <HBox>
-         <children>
-            <VBox fx:id="picturePickerPlaceholder" minHeight="150.0" />
-         </children>
+      <HBox fx:id="displayImagesHbox" minHeight="150.0">
       </HBox>
    </children>
 </VBox>

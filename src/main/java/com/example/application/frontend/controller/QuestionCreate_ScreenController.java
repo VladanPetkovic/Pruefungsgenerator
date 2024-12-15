@@ -32,8 +32,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
     private final ImageService imageService;
     public ComboBox<String> keywordComboButton;
     public ComboBox<String> categoryComboBox;
-    @FXML
-    public VBox editorParentVbox;
+    public VBox editorParentVBox;
     @FXML
     private Slider difficulty;
     public Spinner<Double> pointsSpinner;
@@ -51,6 +50,7 @@ public class QuestionCreate_ScreenController extends ScreenController {
     private HBox keywordsHBox;
     private Set<Keyword> selectedKeywords = new HashSet<>();
     private ArrayList<TextArea> answers = new ArrayList<>();
+    @FXML
     private EditorScreenController editorScreenController;
 
     public QuestionCreate_ScreenController(KeywordService keywordService, CategoryService categoryService, QuestionService questionService, AnswerService answerService, ImageService imageService) {
@@ -73,8 +73,6 @@ public class QuestionCreate_ScreenController extends ScreenController {
         initKeywordComboBox(keywords, selectedKeywords, keywordsHBox, keywordComboButton);
         initDoubleSpinner(pointsSpinner, 1, 10, 1, 0.5);
 
-//        difficulty.setValue(5);
-
         initEditor();
         remarks.setText("");
 
@@ -83,12 +81,17 @@ public class QuestionCreate_ScreenController extends ScreenController {
         initQuestionTypeListener();
     }
 
+    /**
+     * Currenlty we need to add the editor dynamically - even if it is not needed.
+     * The reason for this: We can't access the controller, if we include the fxml in the parent.
+     */
     private void initEditor() throws IOException {
         FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor.fxml", MainApp.resourceBundle);
-        loader.load();
+        VBox editor = loader.load();
 
         // get the controller for the loaded component
         editorScreenController = loader.getController();
+        editorParentVBox.getChildren().add(editor);
     }
 
     /**
@@ -183,19 +186,10 @@ public class QuestionCreate_ScreenController extends ScreenController {
         Question newQuestion = questionService.add(q);
         if (newQuestion.getId() != null) {
             answerService.addAnswers(newQuestion.getId(), getAnswersSet(Type.valueOf(questionTypeMenuButton.getText()), answerTextArea, this.answers));
-            imageService.addImages(newQuestion.getId(), editorScreenController.picturePickerController.getImages());
+            imageService.addImages(newQuestion.getId(), editorScreenController.getImages());
             SwitchScene.switchScene(SwitchScene.CREATE_QUESTION);
             SharedData.setOperation(Message.CREATE_QUESTION_SUCCESS_MESSAGE);
         }
-    }
-
-    /**
-     * Checks if the question text area is empty.
-     *
-     * @return true if the question text area is empty, false otherwise.
-     */
-    private boolean checkIfQuestionIsEmpty() {
-        return editorScreenController.editor.getHtmlText().isEmpty();
     }
 
     /**
@@ -216,10 +210,10 @@ public class QuestionCreate_ScreenController extends ScreenController {
         if (answers.size() < 2 && Type.isMultipleChoice(questionTypeMenuButton.getText())) {
             return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
-        if (checkIfQuestionIsEmpty()) {
+        if (editorScreenController.editor.getHtmlText().isEmpty()) {
             return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
-        if (editorScreenController.picturePickerController.invalidSyntax()) {
+        if (editorScreenController.invalidSyntax()) {
             return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;

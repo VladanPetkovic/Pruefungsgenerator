@@ -94,14 +94,13 @@
                               </VBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
+                        <VBox fx:id="editorParentVBox" prefHeight="150.0" prefWidth="1000.0">
                            <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0"
                                   styleClass="automatic_create_label" text="%question_text" textFill="#e8e4e4">
                               <font>
                                  <Font size="20.0"/>
                               </font>
                            </Label>
-                           <fx:include source="../components/editor.fxml"/>
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">
                            <children>
