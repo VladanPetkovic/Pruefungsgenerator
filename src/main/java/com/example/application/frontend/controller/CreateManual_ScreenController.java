@@ -5,12 +5,12 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.example.application.frontend.components.EditorSmallScreenController;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.application.frontend.controller.SwitchScene.switchScene;
 
@@ -32,6 +34,7 @@ public class CreateManual_ScreenController extends ScreenController {
     private VBox vbox_testQuestionsPreview;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
+    private final List<EditorSmallScreenController> questionTextController = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -65,9 +68,7 @@ public class CreateManual_ScreenController extends ScreenController {
     private void showTestQuestionsInPreview() {
         //spacing between each spacing (serves as an area for the answers)
         double spacing = 100.0;
-
-        //counter for question number
-        int i = 1;
+        int questionCounter = 1;
 
         // check if there are test questions available
         if (!SharedData.getTestQuestions().isEmpty()) {
@@ -75,28 +76,22 @@ public class CreateManual_ScreenController extends ScreenController {
             for (Question question : SharedData.getTestQuestions()) {
                 // create the VBox and labels for the question
                 VBox questionVbox = new VBox();
-                String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), i, question.getPoints());
+                String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), questionCounter, question.getPoints());
                 Label questionNumberLabel = new Label(previewLabel);
 
-                // create textarea (= editable) for question text
-                TextArea questionTextArea = new TextArea(question.getQuestion());
-                questionTextArea.setWrapText(true);
-                questionTextArea.setPrefRowCount(3);
 
-                //final var for listener
-                final int qi = i - 1;
-                questionTextArea.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        SharedData.getTestQuestions().get(qi).setQuestion(newValue);
-                    }
-                });
+                VBox questionHtmlEditor = null;
+                try {
+                    questionHtmlEditor = createHtmlEditor(question, questionCounter - 1);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
                 //create buttons
                 Button removeButton = getRemoveButton(questionVbox, question);
-                Button upButton = getUpButton(i - 1);
-                Button downButton = getDownButton(i - 1);
-                Button editButton = getEditButton(i - 1);
+                Button upButton = getUpButton(questionCounter - 1);
+                Button downButton = getDownButton(questionCounter - 1);
+                Button editButton = getEditButton(questionCounter - 1);
 
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
@@ -108,15 +103,14 @@ public class CreateManual_ScreenController extends ScreenController {
                 newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
 
                 // add labels to the VBox
-                questionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
-
+                questionVbox.getChildren().addAll(newQuestionHbox, questionHtmlEditor);
 
                 // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
 
                 // set spacing between questions (serves as answer area)
                 vbox_testQuestionsPreview.setSpacing(spacing);
-                i++;
+                questionCounter++;
             }
         }
     }
@@ -165,31 +159,24 @@ public class CreateManual_ScreenController extends ScreenController {
             // remove the question from the filterBox
             SharedData.getFilteredQuestions().remove(question);
 
-            int numberOfQuestions = this.vbox_testQuestionsPreview.getChildren().size();
+            int numberOfQuestion = this.vbox_testQuestionsPreview.getChildren().size();
             // Create a VBox to hold the question details.
             VBox newQuestionVbox = new VBox();
-            String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), numberOfQuestions + 1, question.getPoints());
+            String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), numberOfQuestion + 1, question.getPoints());
             Label questionNumberLabel = new Label(previewLabel);
 
-            // create textarea (= editable) for question text
-            TextArea questionTextArea = new TextArea(question.getQuestion());
-            questionTextArea.setWrapText(true);
-            questionTextArea.setPrefRowCount(3);
-            questionTextArea.getStyleClass().add("text-area-context-menu");
-
-            //listener that saves the changes from user input for the question text in the sharedData.testquestions array (used for pdf export)
-            questionTextArea.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    SharedData.getTestQuestions().get(numberOfQuestions).setQuestion(newValue);
-                }
-            });
+            VBox questionHtmlEditor = null;
+            try {
+                questionHtmlEditor = createHtmlEditor(question, numberOfQuestion);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             //create the buttons
-            Button upButton = getUpButton(numberOfQuestions);
-            Button downButton = getDownButton(numberOfQuestions);
+            Button upButton = getUpButton(numberOfQuestion);
+            Button downButton = getDownButton(numberOfQuestion);
             Button removeButton = getRemoveButton(questionVbox, question);
-            Button editButton = getEditButton(numberOfQuestions);
+            Button editButton = getEditButton(numberOfQuestion);
 
             //create HBox that contains the label and buttons
             HBox newQuestionHbox = new HBox();
@@ -200,7 +187,7 @@ public class CreateManual_ScreenController extends ScreenController {
             newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, editButton, removeButton);
             newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
             // add labels, buttons and textarea to the questionVBox
-            newQuestionVbox.getChildren().addAll(newQuestionHbox, questionTextArea);
+            newQuestionVbox.getChildren().addAll(newQuestionHbox, questionHtmlEditor);
 
             if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
@@ -209,6 +196,23 @@ public class CreateManual_ScreenController extends ScreenController {
                 SharedData.getTestQuestions().add(question);
             }
         });
+    }
+
+    private VBox createHtmlEditor(Question question, int numberOfQuestion) throws IOException {
+        FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor_small.fxml", MainApp.resourceBundle);
+        VBox previewQuestionVbox = loader.load();
+
+        // get the controller for the loaded component
+        EditorSmallScreenController controller = loader.getController();
+        questionTextController.add(controller);
+
+        // set question-text
+        controller.setHtmlText(question.getQuestion());
+        controller.setNumberOfQuestion(numberOfQuestion);
+        controller.setParentVbox(vbox_testQuestionsPreview);
+        controller.initialize();
+
+        return previewQuestionVbox;
     }
 
     private Button getRemoveButton(VBox questionVbox, Question question) {
