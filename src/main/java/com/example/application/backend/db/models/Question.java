@@ -1,6 +1,5 @@
 package com.example.application.backend.db.models;
 
-import com.gluonhq.richtextarea.model.Document;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -45,9 +44,6 @@ public class Question implements Serializable {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
-    private Document document;
 
     private LocalDateTime updatedAt;
 

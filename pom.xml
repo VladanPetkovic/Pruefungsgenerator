@@ -139,13 +139,6 @@
             <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://github.com/gluonhq/rich-text-area/?tab=readme-ov-file -->
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>rich-text-area</artifactId>
-            <version>1.2.0</version>
-        </dependency>
     </dependencies>
 
     <build>
