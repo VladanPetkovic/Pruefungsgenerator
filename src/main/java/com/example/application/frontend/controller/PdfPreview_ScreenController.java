@@ -40,61 +40,58 @@ public class PdfPreview_ScreenController extends ScreenController {
     private CheckBox checkbox_applyHeader;
     @FXML
     private CheckBox checkbox_showPageNumber;
-
-    private ExportPdf exportPdf;
-    private ExportDocx exportDocx;
     public Label label_selectedDirectory;
 
     @FXML
     private void initialize() {
-        // create an Export object with
-        exportPdf = new ExportPdf();
-        exportDocx = new ExportDocx();
-
         label_selectedCourse.setText(MessageFormat.format(
                 MainApp.resourceBundle.getString("question_filter_selected_course"),
                 SharedData.getSelectedCourse().getName())
         );
     }
 
-    public void applyExportBtnClicked(ActionEvent actionEvent) throws IOException {
-        exportFile(this.exportPdf);
-    }
-
-    public void onExportDocxBtnClick(ActionEvent actionEvent) throws IOException {
-        exportFile(this.exportDocx);
-    }
-
-    /**
-     * This functions only exports to pdf or docx, if a folder was selected to save the file.
-     *
-     * @param export the base class - we are passing either exportDocx or exportPdf.
-     */
-    private void exportFile(Export export) throws IOException {
-        if (!this.label_selectedDirectory.getText().equals("\"\"")) {
-            // set the latest options
-            export.setOptions(getTestHeader(),
-                    getQuestionCount(),
-                    this.label_selectedDirectory.getText(),
-                    this.checkbox_applyHeader.isSelected(),
-                    this.checkbox_showPageNumber.isSelected());
-            // export the test questions to PDF/Docx
-            ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
-            ArrayList<Question> questionsList = new ArrayList<>(observableQuestions);
-            export.exportDocument(questionsList);
-            //export.exportDocument((ArrayList<Question>) SharedData.getTestQuestions());
-
-//            // reset the stored test questions
-//            SharedData.resetQuestions();
-            SharedData.setOperation(Message.SUCCESS_MESSAGE_FILE_SAVED);
-        } else {
+    public void applyExportBtnClicked(ActionEvent actionEvent) {
+        if (this.label_selectedDirectory.getText().equals("\"\"")) {
             SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
+            return;
+        }
+
+        ExportPdf exportPdf = new ExportPdf(getTestHeader(),
+                getQuestionCount(),
+                this.label_selectedDirectory.getText(),
+                this.checkbox_applyHeader.isSelected(),
+                this.checkbox_showPageNumber.isSelected());
+        ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
+        ArrayList<Question> questionsList = new ArrayList<>(observableQuestions);
+
+        if (exportPdf.exportDocument(questionsList)) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_FILE_SAVED);
+        }
+    }
+
+    public void onExportDocxBtnClick(ActionEvent actionEvent) {
+        if (this.label_selectedDirectory.getText().equals("\"\"")) {
+            SharedData.setOperation(Message.ERROR_MESSAGE_SELECT_A_FOLDER_SAVE_FILE);
+            return;
+        }
+
+        ExportDocx exportDocx = new ExportDocx(getTestHeader(),
+                getQuestionCount(),
+                this.label_selectedDirectory.getText(),
+                this.checkbox_applyHeader.isSelected(),
+                this.checkbox_showPageNumber.isSelected());
+
+        ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
+        ArrayList<Question> questionsList = new ArrayList<>(observableQuestions);
+
+        if (exportDocx.exportDocument(questionsList)) {
+            SharedData.setOperation(Message.SUCCESS_MESSAGE_FILE_SAVED);
         }
     }
 
     public void applyFormattingBtnClicked(ActionEvent actionEvent) {
         // set the latest options
-        this.exportPdf.setOptions(getTestHeader(),
+        ExportPdf exportPdf = new ExportPdf(getTestHeader(),
                 getQuestionCount(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
@@ -103,10 +100,9 @@ public class PdfPreview_ScreenController extends ScreenController {
 
         ObservableList<Question> questions = SharedData.getTestQuestions();
         ArrayList<Question> questionList = new ArrayList<>(questions);
-        this.exportPdf.getPreviewImages(questionList);
+        exportPdf.getPreviewImages(questionList);
 
-        showPreview(this.exportPdf.getPreviewImages(questionList));
-
+        showPreview(exportPdf.getPreviewImages(questionList));
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {

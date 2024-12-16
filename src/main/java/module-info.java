@@ -16,7 +16,6 @@ module com.example.demo {
     requires layout;
     requires kernel;
     requires io;
-    requires itextpdf;
     requires spring.boot.autoconfigure;
     requires spring.context;
     requires spring.boot;
@@ -29,6 +28,7 @@ module com.example.demo {
     requires spring.tx;
     requires jlatexmath;
     requires javafx.web;
+    requires html2pdf;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

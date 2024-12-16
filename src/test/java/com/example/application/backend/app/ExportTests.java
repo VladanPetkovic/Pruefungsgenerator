@@ -1,24 +1,20 @@
 package com.example.application.backend.app;
 
-import com.example.application.backend.app.Export;
-import com.example.application.backend.app.ExportDocx;
-import com.example.application.backend.app.ExportPdf;
 import com.example.application.backend.db.models.Question;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExportTests {
-    Export export = new ExportPdf();
-    Export exportDocx = new ExportDocx();
-
     @BeforeAll
     void beforeAll() {
         System.out.println("Starting with Export-tests");
     }
+
     @BeforeEach
     void beforeEach() {
         System.out.println("----------------------------------------------------------------------------");
@@ -43,7 +39,11 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = new ArrayList<>();
-        export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
+        ExportPdf export = new ExportPdf(testHeader,
+                2,
+                "C:\\Users\\vlada\\Downloads",
+                true,
+                true);
         boolean pdfWasCreated = export.exportDocument(questions);
 
         // assert
@@ -58,7 +58,11 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = new ArrayList<>();
-        export.setOptions(testHeader, 2, "C:\\Users\\vlada\\Downloads", true, true);
+        ExportPdf export = new ExportPdf(testHeader,
+                2,
+                "C:\\Users\\vlada\\Downloads",
+                true,
+                true);
         boolean pdfWasCreated = export.exportDocument(questions);
 
         // assert
@@ -73,7 +77,11 @@ public class ExportTests {
 
         // act
         ArrayList<Question> questions = new ArrayList<>();
-        exportDocx.setOptions(testHeader, 6, "C:\\Users\\vlada\\Downloads", true, true);
+        ExportDocx exportDocx = new ExportDocx(testHeader,
+                6,
+                "C:\\Users\\vlada\\Downloads",
+                true,
+                true);
         boolean docxWasCreated = exportDocx.exportDocument(questions);
 
         // assert
@@ -84,6 +92,7 @@ public class ExportTests {
     void createFileName_checkFileName() {
         System.out.println("Check: valid file-name");
 
+        Export export = new Export();
         System.out.println(export.createFileName(true));
         System.out.println(export.createFileName(false));
 

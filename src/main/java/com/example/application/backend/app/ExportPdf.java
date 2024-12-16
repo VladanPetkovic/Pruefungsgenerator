@@ -3,272 +3,153 @@ package com.example.application.backend.app;
 import com.example.application.backend.db.models.Answer;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.Type;
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.properties.AreaBreakType;
-import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.html2pdf.HtmlConverter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-public class ExportPdf extends Export<Document> {
-    private final float margin = 50;
-    private PdfDocument pdfDocument;
-    private int questionNumber = 0;
+public class ExportPdf extends Export {
+    protected int questionsPerSite;
+    protected String title;
+    protected String destinationFolder;
+    protected boolean setHeader;
+    protected boolean setPageNumber;
 
-    public ExportPdf() {
-        super();
+    public ExportPdf(String testHeader,
+                     int questionsPerSite,
+                     String destFolder,
+                     boolean setHeader,
+                     boolean setPageNumber) {
+        this.title = testHeader;
+        this.questionsPerSite = questionsPerSite;
+        this.destinationFolder = destFolder;
+        this.setHeader = setHeader;
+        this.setPageNumber = setPageNumber;
     }
 
-    @Override
     public boolean exportDocument(ArrayList<Question> testQuestions) {
-        // Create a new PDF document
-        File file = new File(this.destinationFolder + "\\" + createFileName(true));
-        FileOutputStream fos = null;
+        String htmlContent = buildHtmlContent(testQuestions);
+
+        String filePath = this.destinationFolder + "/" + createFileName(true);
+
         try {
-            fos = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        PdfWriter writer = new PdfWriter(fos);
-        pdfDocument = new PdfDocument(writer);
-        Document document = buildDocument(testQuestions);
-
-        if (document == null) {
+            toPdf(htmlContent, filePath);
+            Logger.log(getClass().getName(), "Pdf-file created successfully", LogLevel.INFO);
+            return true;
+        } catch (IOException e) {
+            Logger.log(getClass().getName(), "Error creating PDF: " + e.getMessage(), LogLevel.ERROR);
             return false;
         }
-
-        document.close();
-        Logger.log(getClass().getName(), "Pdf-file created successfully", LogLevel.INFO);
-
-        return true;    // needed later for confirming user the creation of the pdf document
     }
 
-    @Override
-    protected Document buildDocument(ArrayList<Question> testQuestions) {
-        setNumberOfPages(testQuestions.size());
+    public ArrayList<Image> getPreviewImages(ArrayList<Question> testQuestions) {
+        ArrayList<Image> previewImages = new ArrayList<>();
+
+        String htmlContent = buildHtmlContent(testQuestions);
+        String filePath = "bin/temp.pdf";
 
         try {
-            // create the document
-            Document newDocument = new Document(pdfDocument);
-            this.questionNumber = 0;
-
-            for (int i = 1; i <= this.numberOfPages; i++) {
-                // TITLE and HEADER (only on the first page)
-                if (i == 1) {
-                    setTitle(newDocument, this.title);
-                    if (this.setHeader) {
-                        setContentHeader(newDocument);
-                    }
-                }
-
-                // CONTENT with questions
-                setContent(newDocument, testQuestions);
-                // PAGE-NUMBER
-                if (this.setPageNumber) {
-                    setContentPageNumber(newDocument, i);
-                }
-
-                // add another page, if no new page was created
-                if (pdfDocument.getNumberOfPages() == i && i != this.numberOfPages) {
-                    newDocument.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-                }
+            toPdf(htmlContent, filePath);
+            File pdfFile = new File(filePath);
+            previewImages = convertPdfToImages(pdfFile);
+            if (pdfFile.delete()) {
+                Logger.log(getClass().getName(), "Temp-pdf-file deleted successfully.", LogLevel.INFO);
             }
-
-            return newDocument;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return previewImages;
     }
 
-    @Override
-    public ArrayList<javafx.scene.image.Image> getPreviewImages(ArrayList<Question> testQuestions) {
-        ArrayList<javafx.scene.image.Image> images = new ArrayList<>();
+    private ArrayList<Image> convertPdfToImages(File pdfFile) {
+        ArrayList<Image> images = new ArrayList<>();
 
-        createBinDirectory();
-        // Create a temporary pdf document
-        PdfWriter writer = null;
         try {
-            writer = new PdfWriter("bin/temp.pdf");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        pdfDocument = new PdfDocument(writer);
-        Document document = buildDocument(testQuestions);
-        // Close the PDF document
-        document.close();
-        pdfDocument.close();
-
-        // converting pdf to images
-        File file = new File("bin/temp.pdf");
-        try {
-            PDDocument pdDocument = Loader.loadPDF(file);
+            PDDocument pdDocument = Loader.loadPDF(pdfFile);
             PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
 
             for (int i = 0; i < pdDocument.getNumberOfPages(); i++) {
                 BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(i, 300);
-
                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                 images.add(image);
             }
 
             pdDocument.close();
-            if (file.delete()) {
-                Logger.log(getClass().getName(), "Temp-pdf-file deleted successfully.", LogLevel.INFO);
-            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return images;
     }
 
-    private void setTitle(Document document, String title) throws IOException {
-        Paragraph titleHeader = new Paragraph(title)
-                .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
-                .setFontSize(14)
-                .setBold()
-                .setTextAlignment(TextAlignment.CENTER);
-        document.add(titleHeader);
-    }
+    private String buildHtmlContent(ArrayList<Question> testQuestions) {
+        StringBuilder htmlBuilder = new StringBuilder();
 
-    private void setContentHeader(Document document) throws IOException {
-        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Rectangle pageSize = getPageSize(document);
-        float fontSize = 11;
+        htmlBuilder.append("<html><head>")
+                .append("<style>")
+                .append("body { font-family: Arial, sans-serif; margin: 20px; }")
+                .append("h1 { text-align: center; font-size: 20px; }")
+                .append(".question { margin: 15px 0; }")
+                .append(".answers { margin-left: 20px; }")
+                .append("</style>")
+                .append("</head><body>");
 
-        Paragraph dateParagraph = new Paragraph("Date:")
-                .setFont(font)
-                .setFontSize(fontSize)
-                .setFixedLeading(fontSize)
-                .setTextAlignment(TextAlignment.LEFT);
-        Paragraph nameParagraph = new Paragraph("Name:")
-                .setFont(font)
-                .setFontSize(fontSize)
-                .setFixedLeading(fontSize)
-                .setTextAlignment(TextAlignment.CENTER);
-        Paragraph uidParagraph = new Paragraph("UID:")
-                .setFont(font)
-                .setFontSize(fontSize)
-                .setFixedLeading(fontSize)
-                .setTextAlignment(TextAlignment.RIGHT);
-        document.showTextAligned(dateParagraph, margin, pageSize.getHeight() - margin + 10, TextAlignment.LEFT);
-        document.showTextAligned(nameParagraph, pageSize.getWidth() / 2, pageSize.getHeight() - margin + 10, TextAlignment.CENTER);
-        document.showTextAligned(uidParagraph, pageSize.getWidth() - 2 * margin, pageSize.getHeight() - margin + 10, TextAlignment.RIGHT);
-    }
+        // title
+        htmlBuilder.append("<h1>").append(this.title).append("</h1>");
 
-    private void setContentPageNumber(Document document, int pageNumber) throws IOException {
-        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Rectangle pageSize = getPageSize(document);
+        // questions
+        int questionNumber = 1;
+        for (Question question : testQuestions) {
+            htmlBuilder.append("<div class='question'>").append(questionNumber).append(". ")
+                    .append(extractHtmlContent(question.getQuestion())).append("</div>");
 
-        Paragraph pageNumParagraph = new Paragraph(String.format("%d", pageNumber));
-        pageNumParagraph
-                .setFont(font)
-                .setFontSize(11);
-        pageNumParagraph
-                .setTextAlignment(TextAlignment.RIGHT);
-        document.showTextAligned(pageNumParagraph, pageSize.getWidth() - margin, margin, TextAlignment.RIGHT);
-    }
-
-    private void setContent(Document document, ArrayList<Question> testQuestions) throws IOException {
-        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        PdfFont fontBold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
-
-        for (int i = questionsPerSite; i > 0; i--) {
-            if (testQuestions.size() == this.questionNumber) {
-                break;
-            }
-            Question question = testQuestions.get(this.questionNumber);
-
-            // setting font to be bold for the questionString
-            Paragraph questionParagraph = new Paragraph(questionNumber + 1 + ". " + question.getQuestion())
-                    .setFont(fontBold)
-                    .setFontSize(12)
-                    .setTextAlignment(TextAlignment.LEFT);
-            document.add(questionParagraph);
-
-            // using normal font instead of bold
+            htmlBuilder.append("<div class='answers'>");
             if (Type.isOpen(question.getType())) {
-                Paragraph answerParagraph = new Paragraph("A: ")
-                        .setFont(font)
-                        .setFontSize(12)
-                        .setTextAlignment(TextAlignment.LEFT);
-                document.add(answerParagraph);
+                htmlBuilder.append("<p>A: ___________</p>");
             } else if (Type.isMultipleChoice(question.getType())) {
                 for (Answer answer : question.getAnswers()) {
-                    document.add(setMcAnswer(" " + answer.getAnswer(), font));
+                    htmlBuilder.append("<p>□ ").append(answer.getAnswer()).append("</p>");
                 }
             } else if (Type.isTrueFalse(question.getType())) {
-                document.add(setMcAnswer(" True", font));
-                document.add(setMcAnswer(" False", font));
+                htmlBuilder.append("<p>□ True</p>").append("<p>□ False</p>");
             }
-            this.questionNumber++;
+            htmlBuilder.append("</div>");
 
-            for (int j = 0; j < getParagraphCount(questionNumber) && questionNumber != testQuestions.size(); j++) {
-                document.add(new Paragraph());
-            }
-        }
-    }
-
-    private Paragraph setMcAnswer(String answerText, PdfFont font) {
-        try {
-            Paragraph p = new Paragraph();
-            PdfFont zapfdingbats = PdfFontFactory.createFont(StandardFonts.ZAPFDINGBATS);
-            Text chunk = new Text("r").setFont(zapfdingbats).setFontSize(12);
-            Text answerChunk = new Text(answerText).setFont(font).setFontSize(12);
-            p.add(chunk);
-            p.add(answerChunk);
-            return p;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private int getParagraphCount(int questionNumber) {
-        int paragraphsOnOnePage = 60 - this.questionsPerSite;
-
-        // first page
-        if (questionNumber < this.questionsPerSite) {
-            // mind the title
-            return (int) (paragraphsOnOnePage - 2) / this.questionsPerSite;
+            questionNumber++;
         }
 
-        // following pages
-        return (int) paragraphsOnOnePage / this.questionsPerSite;
-    }
+        htmlBuilder.append("</body></html>");
 
-    private Rectangle getPageSize(Document document) {
-        PdfDocument pdf = document.getPdfDocument();
-        return pdf.getDefaultPageSize();
+        return htmlBuilder.toString();
     }
 
     /**
-     * Creates a bin-directory, if not already existing.
+     * TODO:
+     * - set content header
+     * - set content page number
+     * - set questionsPerSite
+     * - set images
      */
-    private void createBinDirectory() {
-        File binDirectory = new File("bin");
-        if (!binDirectory.exists()) {
-            binDirectory.mkdir();
-            Logger.log(getClass().getName(), "bin-directory created successfully!", LogLevel.INFO);
+
+    private String extractHtmlContent(String questionHtml) {
+        if (questionHtml.contains("<body")) {
+            int bodyStart = questionHtml.indexOf("<body");
+            int bodyEnd = questionHtml.indexOf("</body>") + 7;
+            return questionHtml.substring(bodyStart, bodyEnd);
+        }
+        return questionHtml;
+    }
+
+    private void toPdf(String htmlContent, String filePath) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+            HtmlConverter.convertToPdf(htmlContent, outputStream);
         }
     }
 }
