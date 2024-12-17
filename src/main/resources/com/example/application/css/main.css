@@ -448,16 +448,22 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 }
 
 .settings_gridPane {
-    -fx-background-color: linear-gradient(to bottom, #3A3A3A, #2C2C2C); /* Slightly darker gradient for contrast */
-    -fx-border-radius: 6; /* Slightly rounder corners for a polished look */
-    -fx-background-radius: 6;
+    -fx-background-color: #333333; /* Uniform slightly lighter background color */
+    -fx-border-radius: 0; /* Removed rounded edges */
+    -fx-background-radius: 0;
     -fx-border-color: #4A4A4A; /* Darker border to accentuate edges */
     -fx-border-width: 2; /* Thicker border for a defined separation */
 
-    /* Drop shadow for the 3D lifted effect */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 20, 0.3, 0, 10),
-    dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.15, 0, 5),
-    innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0, 1, 1);
+    /* Emboss effect */
+    /*-fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0, -1, -1),
+    innershadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 1, 1);*/
+
+    /* Enhanced Emboss effect */
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 8, 0, -2, -2),
+    innershadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0, 2, 2);
+
+    /* Glowing border effect */
+    /*-fx-effect: innershadow(gaussian, rgba(0, 255, 255, 0.7), 20, 0.3, 0, 0);*/
 
     -fx-padding: 20; /* Additional padding for better spacing */
 }
