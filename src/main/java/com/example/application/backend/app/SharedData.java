@@ -64,6 +64,11 @@ public class SharedData {
     @Getter
     private static Image imageEditing = null;
 
+    @Setter
+    @Getter
+    //holds the latex code added via the latex modal
+    private static String latexCode;
+
     @Getter
     @Setter
     private static ObservableList<Question> testQuestions = FXCollections.observableArrayList();

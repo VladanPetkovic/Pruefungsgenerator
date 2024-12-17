@@ -29,6 +29,7 @@ module com.example.demo {
     requires jlatexmath;
     requires javafx.web;
     requires html2pdf;
+    requires org.jsoup;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

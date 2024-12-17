@@ -10,8 +10,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.web.HTMLEditor?>
+<?import javafx.scene.web.WebView?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.EditorScreenController">
    <children>
@@ -55,7 +55,7 @@
             </Tab>
             <Tab onSelectionChanged="#onPreviewTabClick" text="%editor_preview">
                <content>
-                  <TextFlow fx:id="questionPreview" prefHeight="200.0" prefWidth="200.0" />
+                  <WebView fx:id="questionPreview" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
          </tabs>
