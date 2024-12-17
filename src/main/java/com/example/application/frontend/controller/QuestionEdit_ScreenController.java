@@ -329,7 +329,6 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 getAnswersSet(Type.valueOf(selectedQuestion.getType()), chooseAnswerTextArea, this.answers),
                 editorScreenController.getImages(),         // images
                 selectedKeywords
-
         );
     }
 
