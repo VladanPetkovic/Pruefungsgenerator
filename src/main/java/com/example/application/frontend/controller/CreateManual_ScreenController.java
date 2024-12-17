@@ -5,6 +5,7 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
+import com.example.application.frontend.components.EditorScreenController;
 import com.example.application.frontend.components.EditorSmallScreenController;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -34,7 +35,7 @@ public class CreateManual_ScreenController extends ScreenController {
     private VBox vbox_testQuestionsPreview;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
-    private final List<EditorSmallScreenController> questionTextController = new ArrayList<>();
+    private final List<EditorScreenController> questionTextController = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -199,11 +200,11 @@ public class CreateManual_ScreenController extends ScreenController {
     }
 
     private VBox createHtmlEditor(Question question, int numberOfQuestion) throws IOException {
-        FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor_small.fxml", MainApp.resourceBundle);
+        FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor.fxml", MainApp.resourceBundle);
         VBox previewQuestionVbox = loader.load();
 
         // get the controller for the loaded component
-        EditorSmallScreenController controller = loader.getController();
+        EditorScreenController controller = loader.getController();
         questionTextController.add(controller);
 
         // set question-text

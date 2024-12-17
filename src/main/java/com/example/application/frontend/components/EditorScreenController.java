@@ -10,13 +10,18 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.springframework.context.annotation.Scope;
@@ -41,6 +46,15 @@ import org.jsoup.nodes.Element;
 @Component
 @Scope("prototype")
 public class EditorScreenController {
+
+    @Getter
+    @Setter
+    private String htmlText;
+    @Setter
+    private int numberOfQuestion;
+    @Setter
+    private VBox parentVbox;
+    @Getter
     public HTMLEditor editor;
     //public TextFlow questionPreview;
     @FXML
@@ -49,7 +63,7 @@ public class EditorScreenController {
     public final ArrayList<ImageWithButtons> imageList = new ArrayList<>();
 
     public void initialize() {
-        editor.setHtmlText("");
+        editor.setHtmlText(getHtmlText());
         setScrollingBehaviour();
     }
 
@@ -103,8 +117,8 @@ public class EditorScreenController {
     public void onAddLatexBtnClick(ActionEvent actionEvent) {
         ModalOpener modalOpener = new ModalOpener();
         Stage newStage = modalOpener.openModal(ModalOpener.LATEX);
-        // listener for when the stage is closed
 
+        // listener for when the latex modal is closed
         newStage.setOnHidden(event -> {
             String latexCode = SharedData.getLatexCode();
 
@@ -114,6 +128,13 @@ public class EditorScreenController {
                 insertTextWithJsoup(latexTag);
                 System.out.println("Updated HTML Content: " + editor.getHtmlText());
             }
+            // simulate user presses space (otherwise the binding listener does recognize a change and the up/down buttons dont work as intended)
+            editor.fireEvent(new KeyEvent(
+                    KeyEvent.KEY_PRESSED, " ", " ", KeyCode.SPACE, false, false, false, false
+            ));
+            editor.fireEvent(new KeyEvent(
+                    KeyEvent.KEY_RELEASED, " ", " ", KeyCode.SPACE, false, false, false, false
+            ));
         });
     }
 
@@ -242,9 +263,16 @@ public class EditorScreenController {
         body.appendElement("p").text(newText);
 
         //add new body to html
+        //setHtmlText(doc.body().html());
         editor.setHtmlText(doc.body().html());
     }
-
-
+    /**
+     * listener that saves the changes from user input for the question text in the sharedData.testquestions array
+     * (used for pdf export)
+     */
+    public void onKeyReleased(KeyEvent keyEvent) {
+        String newValue = editor.getHtmlText();
+        SharedData.getTestQuestions().get(numberOfQuestion).setQuestion(newValue);
+    }
 
 }

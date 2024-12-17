@@ -28,7 +28,7 @@
                         <RowConstraints maxHeight="338.8000518798828" minHeight="10.0" prefHeight="306.0000244140625" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <HTMLEditor fx:id="editor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="83.0" prefWidth="600.0" styleClass="htmlEditor" GridPane.rowIndex="1">
+                        <HTMLEditor fx:id="editor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" onKeyReleased="#onKeyReleased" prefHeight="83.0" prefWidth="600.0" styleClass="htmlEditor" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </GridPane.margin>
