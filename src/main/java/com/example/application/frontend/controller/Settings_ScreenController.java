@@ -39,18 +39,26 @@ public class Settings_ScreenController extends ScreenController {
     @FXML
     private MenuButton importModeMenuButton;
     @FXML
+    public Label importModeHintLabel;
+    @FXML
     public Label title_selectedStudyProgram;
     @FXML
     public MenuButton chooseStudyProgramMenuBtnImport;
     @FXML
+    public Label studyProgramHintLabel;
+    @FXML
     public Label title_selectedCourse;
     @FXML
     public MenuButton chooseCourseMenuButtonImport;
+    @FXML
+    public Label courseHintLabel;
 
     @FXML
     private Button selectCsvFileBtn;
     @FXML
     public Label label_selectedFile;
+    @FXML
+    public Label csvFileHintLabel;
     @FXML
     Button settingsImportBtn;
 
@@ -101,9 +109,12 @@ public class Settings_ScreenController extends ScreenController {
         // Import related buttons
         title_selectedStudyProgram.setVisible(false);
         chooseStudyProgramMenuBtnImport.setVisible(false);
+        studyProgramHintLabel.setVisible(false);
         title_selectedCourse.setVisible(false);
         chooseCourseMenuButtonImport.setVisible(false);
+        courseHintLabel.setVisible(false);
         selectCsvFileBtn.setVisible(false);
+        csvFileHintLabel.setVisible(false);
         settingsImportBtn.setVisible(false);
 
         // listeners to monitor changes in the menu button text
@@ -130,6 +141,7 @@ public class Settings_ScreenController extends ScreenController {
         boolean courseSelected = isMenuButtonTextSet(chooseCourseMenuButtonImport, "select_course");
 
         selectCsvFileBtn.setVisible(studyProgramSelected && courseSelected);
+        csvFileHintLabel.setVisible(studyProgramSelected && courseSelected);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems, Runnable onActionFunction) {
@@ -167,8 +179,10 @@ public class Settings_ScreenController extends ScreenController {
         importModeMenuButton.setText(MainApp.resourceBundle.getString("update_existing_questions"));
         title_selectedStudyProgram.setVisible(false);
         chooseStudyProgramMenuBtnImport.setVisible(false);
+        studyProgramHintLabel.setVisible(true);
         title_selectedCourse.setVisible(false);
         chooseCourseMenuButtonImport.setVisible(false);
+        courseHintLabel.setVisible(false);
         selectCsvFileBtn.setVisible(true);
         settingsImportBtn.setVisible(false);
         label_selectedFile.setText("");
@@ -180,10 +194,13 @@ public class Settings_ScreenController extends ScreenController {
         title_selectedStudyProgram.setVisible(true);
         chooseStudyProgramMenuBtnImport.setText(MainApp.resourceBundle.getString("select_study_program"));
         chooseStudyProgramMenuBtnImport.setVisible(true);
+        studyProgramHintLabel.setVisible(true);
         title_selectedCourse.setVisible(true);
         chooseCourseMenuButtonImport.setText(MainApp.resourceBundle.getString("select_course"));
         chooseCourseMenuButtonImport.setVisible(true);
+        courseHintLabel.setVisible(true);
         selectCsvFileBtn.setVisible(false);
+        csvFileHintLabel.setVisible(false);
         settingsImportBtn.setVisible(false);
         label_selectedFile.setText("");
     }
