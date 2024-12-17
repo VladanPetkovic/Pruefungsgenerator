@@ -72,7 +72,6 @@ public class Latex_ScreenController extends ModalController {
     }
 
     public void onCreateBtnClick(ActionEvent actionEvent) {
-        //todo @simon remove/change
         SharedData.setLatexCode("");
         String latexInput = inputTextArea.getText();
         //Image latexImage = getImageFromLatex(latexInput);
