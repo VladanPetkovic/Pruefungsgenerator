@@ -34,20 +34,31 @@ public class Settings_ScreenController extends ScreenController {
     private final CategoryService categoryService;
     private final AnswerService answerService;
     private final KeywordService keywordService;
-    public MenuButton chooseStudyProgramMenuBtnImport;
-    public MenuButton chooseCourseMenuButtonImport;
+
     // import related fxml items
     @FXML
     private MenuButton importModeMenuButton;
     @FXML
+    public Label importModeHintLabel;
+    @FXML
     public Label title_selectedStudyProgram;
     @FXML
+    public MenuButton chooseStudyProgramMenuBtnImport;
+    @FXML
+    public Label studyProgramHintLabel;
+    @FXML
     public Label title_selectedCourse;
+    @FXML
+    public MenuButton chooseCourseMenuButtonImport;
+    @FXML
+    public Label courseHintLabel;
 
     @FXML
     private Button selectCsvFileBtn;
     @FXML
     public Label label_selectedFile;
+    @FXML
+    public Label csvFileHintLabel;
     @FXML
     Button settingsImportBtn;
 
@@ -94,6 +105,43 @@ public class Settings_ScreenController extends ScreenController {
         initializeMenuButton(chooseStudyProgramMenuBtn, studyPrograms, null);
         initializeMenuButton(chooseStudyProgramMenuBtnImport, studyPrograms, this::populateCourseMenuBtn);
         initializeMenuButton(chooseCourseMenuButton, courses, null);
+
+        // Import related buttons
+        title_selectedStudyProgram.setVisible(false);
+        chooseStudyProgramMenuBtnImport.setVisible(false);
+        studyProgramHintLabel.setVisible(false);
+        title_selectedCourse.setVisible(false);
+        chooseCourseMenuButtonImport.setVisible(false);
+        courseHintLabel.setVisible(false);
+        selectCsvFileBtn.setVisible(false);
+        csvFileHintLabel.setVisible(false);
+        settingsImportBtn.setVisible(false);
+
+        // listeners to monitor changes in the menu button text
+        chooseStudyProgramMenuBtnImport.textProperty().addListener((observable, oldValue, newValue) -> checkMenuButtonText());
+        chooseCourseMenuButtonImport.textProperty().addListener((observable, oldValue, newValue) -> checkMenuButtonText());
+
+        // Export related buttons
+        /*
+        chooseCourseMenuButton.setVisible(false);
+        chooseStudyProgramMenuBtn.setVisible(false);
+        chooseDirectoryBtn.setVisible(false);
+        settingsExportBtn.setVisible(false);
+         */
+    }
+
+    private boolean isMenuButtonTextSet(MenuButton button, String defaultTextKey) {
+        String defaultText = MainApp.resourceBundle.getString(defaultTextKey);
+        String buttonText = button.getText();
+        return !buttonText.equals(defaultText) && !buttonText.isEmpty();
+    }
+
+    private void checkMenuButtonText() {
+        boolean studyProgramSelected = isMenuButtonTextSet(chooseStudyProgramMenuBtnImport, "select_study_program");
+        boolean courseSelected = isMenuButtonTextSet(chooseCourseMenuButtonImport, "select_course");
+
+        selectCsvFileBtn.setVisible(studyProgramSelected && courseSelected);
+        csvFileHintLabel.setVisible(studyProgramSelected && courseSelected);
     }
 
     private void initializeMenuButton(MenuButton menuButton, ArrayList<String> menuItems, Runnable onActionFunction) {
@@ -103,7 +151,6 @@ public class Settings_ScreenController extends ScreenController {
             MenuItem menuItem = new MenuItem(string);
             menuItem.setOnAction(e -> {
                 menuButton.setText(string);
-                chooseDirectoryBtn.setVisible(true);
                 if (onActionFunction != null) {
                     onActionFunction.run();
                 }
@@ -129,12 +176,33 @@ public class Settings_ScreenController extends ScreenController {
 
     @FXML
     private void onUpdateExistingQuestionsSelected(ActionEvent event) {
+        importModeMenuButton.setText(MainApp.resourceBundle.getString("update_existing_questions"));
+        title_selectedStudyProgram.setVisible(false);
+        chooseStudyProgramMenuBtnImport.setVisible(false);
+        studyProgramHintLabel.setVisible(true);
+        title_selectedCourse.setVisible(false);
+        chooseCourseMenuButtonImport.setVisible(false);
+        courseHintLabel.setVisible(false);
         selectCsvFileBtn.setVisible(true);
+        settingsImportBtn.setVisible(false);
+        label_selectedFile.setText("");
     }
 
     @FXML
     private void onInsertNewQuestionsSelected(ActionEvent event) {
-        // TODO: add here logic to make everything visible
+        importModeMenuButton.setText(MainApp.resourceBundle.getString("insert_new_questions"));
+        title_selectedStudyProgram.setVisible(true);
+        chooseStudyProgramMenuBtnImport.setText(MainApp.resourceBundle.getString("select_study_program"));
+        chooseStudyProgramMenuBtnImport.setVisible(true);
+        studyProgramHintLabel.setVisible(true);
+        title_selectedCourse.setVisible(true);
+        chooseCourseMenuButtonImport.setText(MainApp.resourceBundle.getString("select_course"));
+        chooseCourseMenuButtonImport.setVisible(true);
+        courseHintLabel.setVisible(true);
+        selectCsvFileBtn.setVisible(false);
+        csvFileHintLabel.setVisible(false);
+        settingsImportBtn.setVisible(false);
+        label_selectedFile.setText("");
     }
 
     public void onSelectCsvFileBtnClick(ActionEvent actionEvent) {

@@ -46,8 +46,9 @@ public class ControllerFactory {
                     new Settings_ScreenController(studyProgramService, courseService, questionService, categoryService, answerService, keywordService);
             /* COMPONENTS */
             case "CreateTestOptions_ScreenController" -> new CreateTestOptions_ScreenController(categoryService);
+            case "EditorScreenController" -> new EditorScreenController();
+            case "EditorSmallScreenController" -> new EditorSmallScreenController();
             case "NavbarController" -> new NavbarController();
-            case "PicturePickerController" -> new PicturePickerController();
             case "QuestionFilter_ScreenController" ->
                     new QuestionFilter_ScreenController(questionService, keywordService, categoryService);
             case "TitleBanner_ScreenController" -> new TitleBanner_ScreenController();

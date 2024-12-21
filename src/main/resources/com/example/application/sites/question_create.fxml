@@ -16,10 +16,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.TextFlow?>
 
 <VBox minHeight="698.0" minWidth="1120.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.controller.QuestionCreate_ScreenController">
    <children>
@@ -96,34 +94,13 @@
                               </VBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="150.0" prefWidth="1000.0">
-                           <children>
-                              <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0" styleClass="automatic_create_label" text="%question_text" textFill="#e8e4e4">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="300.0" minHeight="200.0" VBox.vgrow="ALWAYS">
-                                 <content>
-                                    <StackPane prefWidth="500.0" VBox.vgrow="ALWAYS">
-                                       <TextArea fx:id="question" prefWidth="500.0" promptText="%prompt_text_default" VBox.vgrow="ALWAYS" />
-                                       <TextFlow fx:id="questionPreview" visible="false" VBox.vgrow="ALWAYS" />
-                                    </StackPane>
-                                 </content>
-                              </ScrollPane>
-                              <HBox>
-                                 <children>
-                                    <VBox fx:id="picturePickerPlaceholder" minHeight="150.0">
-                                       <children>
-
-                                       </children>
-                                    </VBox>
-                                    <VBox styleClass="question_vbox">
-                                       <Button fx:id="previewQuestion" onAction="#onActionPreviewQuestion" styleClass="btn_grey" visible="false">Preview Question</Button>
-                                    </VBox>
-                                 </children>
-                              </HBox>
-                           </children>
+                        <VBox fx:id="editorParentVBox" prefHeight="150.0" prefWidth="1000.0">
+                           <Label maxWidth="1.7976931348623157E308" prefWidth="1000.0"
+                                  styleClass="automatic_create_label" text="%question_text" textFill="#e8e4e4">
+                              <font>
+                                 <Font size="20.0"/>
+                              </font>
+                           </Label>
                         </VBox>
                         <VBox prefHeight="150.0" prefWidth="1000.0">
                            <children>

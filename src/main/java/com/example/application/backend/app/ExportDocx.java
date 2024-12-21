@@ -10,19 +10,32 @@ import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-public class ExportDocx extends Export<XWPFDocument> {
-    public ExportDocx() {
-        super();
+public class ExportDocx extends Export {
+    protected int questionsPerSite;
+    protected int numberOfPages;
+    protected String title;
+    protected String destinationFolder;
+    protected boolean setHeader;
+    protected boolean setPageNumber;
+
+    public ExportDocx(String testHeader,
+                      int questionsPerSite,
+                      String destFolder,
+                      boolean setHeader,
+                      boolean setPageNumber) {
+        this.title = testHeader;
+        this.questionsPerSite = questionsPerSite;
+        this.destinationFolder = destFolder;
+        this.setHeader = setHeader;
+        this.setPageNumber = setPageNumber;
     }
 
-    @Override
     public boolean exportDocument(ArrayList<Question> testQuestions) {
         try {
             // Create a new Word document
@@ -32,7 +45,7 @@ public class ExportDocx extends Export<XWPFDocument> {
             }
 
             // Save the document to a file
-            FileOutputStream out = new FileOutputStream(new File(this.destinationFolder + "/" + createFileName(false)));
+            FileOutputStream out = new FileOutputStream(this.destinationFolder + "/" + createFileName(false));
             document.write(out);
             out.close();
             Logger.log(getClass().getName(), "Docx-file created successfully", LogLevel.INFO);
@@ -44,9 +57,8 @@ public class ExportDocx extends Export<XWPFDocument> {
         return true;
     }
 
-    @Override
     protected XWPFDocument buildDocument(ArrayList<Question> testQuestions) {
-        setNumberOfPages(testQuestions.size());
+        numberOfPages = getNumberOfPages(testQuestions.size(), questionsPerSite);
 
         try {
             XWPFDocument document = new XWPFDocument();
@@ -73,7 +85,6 @@ public class ExportDocx extends Export<XWPFDocument> {
         return null;
     }
 
-    @Override
     public ArrayList<Image> getPreviewImages(ArrayList<Question> testQuestions) {
         return null;
     }
@@ -126,6 +137,7 @@ public class ExportDocx extends Export<XWPFDocument> {
     /**
      * visit stackoverflow to view more:
      * <a href="https://stackoverflow.com/questions/72343953/add-dynamic-footer-in-ms-word-using-apache-poi-java">stackoverflow</a>
+     *
      * @param paragraph
      * @param type
      * @param posInches
@@ -140,10 +152,10 @@ public class ExportDocx extends Export<XWPFDocument> {
         org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabs cTTabs = cTPPr.getTabs();
         if (cTTabs == null) cTTabs = cTPPr.addNewTabs();
 
-        org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabStop  cTTabStop = cTTabs.addNewTab();
+        org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabStop cTTabStop = cTTabs.addNewTab();
         cTTabStop.setPos(BigInteger.valueOf(pos));
 
-        switch(type) {
+        switch (type) {
             case "LEFT":
                 cTTabStop.setVal(org.openxmlformats.schemas.wordprocessingml.x2006.main.STTabJc.LEFT);
                 break;
@@ -216,6 +228,7 @@ public class ExportDocx extends Export<XWPFDocument> {
     /**
      * Calculation the number of paragraphs between questions.
      * So that setting of 4, 5,... questions per site looks ok.
+     *
      * @return the number of paragraphs between questions (the answer-block)
      */
     private int getParagraphCount(int questionNumber) {
@@ -224,10 +237,10 @@ public class ExportDocx extends Export<XWPFDocument> {
         // first page
         if (questionNumber < this.questionsPerSite) {
             // mind the title
-            return (int) (paragraphsOnOnePage - 2)/this.questionsPerSite;
+            return (int) (paragraphsOnOnePage - 2) / this.questionsPerSite;
         }
 
         // following pages
-        return (int) paragraphsOnOnePage/this.questionsPerSite;
+        return (int) paragraphsOnOnePage / this.questionsPerSite;
     }
 }

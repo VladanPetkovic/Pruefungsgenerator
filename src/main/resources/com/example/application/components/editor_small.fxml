@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.HTMLEditor?>
+
+<VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="220.0" minWidth="600.0" prefHeight="220.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.EditorSmallScreenController">
+    <children>
+        <HTMLEditor fx:id="smallHtmlEditor" htmlText="" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="580.0" onKeyReleased="#onKeyReleased" prefHeight="200.0">
+            <VBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </VBox.margin>
+        </HTMLEditor>
+    </children>
+</VBox>

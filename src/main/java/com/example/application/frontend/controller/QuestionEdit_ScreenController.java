@@ -5,20 +5,16 @@ import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
 import com.example.application.backend.db.services.*;
 
-import com.example.application.frontend.components.PicturePickerController;
+import com.example.application.frontend.components.EditorScreenController;
 import com.example.application.frontend.modals.ModalOpener;
-import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.Scope;
@@ -27,8 +23,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 @Scope("prototype")
@@ -40,6 +34,7 @@ public class QuestionEdit_ScreenController extends ScreenController {
     private final ImageService imageService;
     public ComboBox<String> keywordComboButton;
     public ComboBox<String> categoryComboBox;
+    public VBox editorParentVBox;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
     @FXML
@@ -58,8 +53,6 @@ public class QuestionEdit_ScreenController extends ScreenController {
     private Slider chooseDifficulty;
     public Spinner<Double> pointsSpinner;
     @FXML
-    private TextArea chooseQuestion;
-    @FXML
     private TextArea chooseRemarks;
     @FXML
     private ScrollPane chooseScrollPane;
@@ -69,16 +62,7 @@ public class QuestionEdit_ScreenController extends ScreenController {
     private ArrayList<TextArea> answers = new ArrayList<>();
     private Question selectedQuestion = new Question();
     private Set<Keyword> selectedKeywords = new HashSet<>();
-
-    @FXML
-    private VBox picturePickerPlaceholder;
-    private PicturePickerController picturePickerController;
-
-    @FXML
-    private TextFlow questionPreview;
-
-    @FXML
-    private Button previewQuestion;
+    private EditorScreenController editorScreenController;
 
     public QuestionEdit_ScreenController(KeywordService keywordService, CategoryService categoryService, AnswerService answerService, QuestionService questionService, ImageService imageService) {
         this.questionService = questionService;
@@ -92,9 +76,12 @@ public class QuestionEdit_ScreenController extends ScreenController {
      * Initializes the Question Edit screen.
      */
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         // you can't scroll when no question has been selected
         chooseScrollPane.setMouseTransparent(true);
+
+        // initialize the editor
+        initEditor();
 
         // display filtered questions
         SharedData.getFilteredQuestions().addListener((ListChangeListener<Question>) change -> {
@@ -110,77 +97,12 @@ public class QuestionEdit_ScreenController extends ScreenController {
         // Fills the category menu with the retrieved categories.
         initCategoryComboBox(categoryComboBox, categories);
 
-        try {
-            FXMLLoader loader = FXMLDependencyInjection.getLoader("components/picture_picker.fxml", MainApp.resourceBundle);
-            VBox picturePicker = loader.load();
-            picturePickerController = loader.getController();
-            picturePickerPlaceholder.getChildren().add(picturePicker);
-            picturePickerController.setTextArea(chooseQuestion);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        chooseQuestion.textProperty().addListener((observableValue, s, t1) -> {
-            previewQuestion.setVisible(previewQuestionShouldBeVisible());
-        });
-
         //if user clicked on the edit button in manualCreate Screen
         if (SharedData.getQuestionToEdit() != null) {
             System.out.println("QUESTION IS HERE");
             System.out.println("Question questiontext: " + SharedData.getQuestionToEdit().getQuestion());
-            displaySelectedQuestion();
+            displayQuestionFromTestCreation();
         }
-    }
-
-    private boolean questionPreviewVisible = false;
-
-    @FXML
-    private void onActionPreviewQuestion() {
-        if (!questionPreviewVisible) {
-            chooseQuestion.setVisible(false);
-            questionPreview.setVisible(true);
-            questionPreview.getChildren().clear();
-            parseAndDisplayContent();
-            questionPreviewVisible = true;
-            return;
-        }
-        chooseQuestion.setVisible(true);
-        questionPreview.setVisible(false);
-        questionPreviewVisible = false;
-    }
-
-    public void parseAndDisplayContent() {
-        Pattern pattern = Pattern.compile("<img name=\"(.*?)\"/>");
-        Matcher matcher = pattern.matcher(chooseQuestion.getText());
-        int lastIndex = 0;
-        while (matcher.find()) {
-            String textBeforeImage = chooseQuestion.getText().substring(lastIndex, matcher.start());
-            if (!textBeforeImage.isEmpty()) {
-                questionPreview.getChildren().add(new Text(textBeforeImage));
-            }
-            String imageName = matcher.group(1);
-            for (PicturePickerController.ButtonAndImage image : picturePickerController.buttonAndImages) {
-                if (image.imageName.equals(imageName)) {
-                    ImageView imageView = new ImageView(image.image);
-                    questionPreview.getChildren().add(imageView);
-                }
-            }
-            lastIndex = matcher.end();
-        }
-        String textAfterLastImage = chooseQuestion.getText().substring(lastIndex);
-        if (!textAfterLastImage.isEmpty()) {
-            questionPreview.getChildren().add(new Text(textAfterLastImage));
-        }
-    }
-
-    private boolean previewQuestionShouldBeVisible() {
-        if (picturePickerController.invalidSyntax()) {
-            return false;
-        }
-        if (picturePickerController.buttonAndImages.isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -225,46 +147,22 @@ public class QuestionEdit_ScreenController extends ScreenController {
         questionVbox.setOnMouseClicked(event -> {
             // save the value of the clicked question
             selectedQuestion = clickedQuestion;
-            try {
-                SharedData.setSelectedEditQuestion(selectedQuestion);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            // Make the scroll pane transparent to allow interaction with underlying elements.
-            chooseScrollPane.setMouseTransparent(false);
-
-            // Set category, difficulty, and points to the values of the selected question.
-            categoryComboBox.getSelectionModel().select(clickedQuestion.getCategory().getName());
-            chooseDifficulty.setValue(clickedQuestion.getDifficulty());
-            pointsSpinner.getValueFactory().setValue((double) clickedQuestion.getPoints());
-
-            initSelectedQuestionType(clickedQuestion);
-
-            // Set the question text and remarks to the values of the selected question.
-            chooseQuestion.setText(clickedQuestion.getQuestion());
-            chooseRemarks.setText(clickedQuestion.getRemark());
-
-            // Clear and set up the keyword UI elements based on the selected question.
-            selectedKeywords.clear();
-            keywordsHBox.getChildren().clear();
-
-            for (Keyword k : clickedQuestion.getKeywords()) {
-                if (k.getKeyword() != null && !selectedKeywords.contains(k)) {
-                    selectedKeywords.add(k);
-                    Button b = createButton(k.getKeyword() + " X");
-                    b.setOnAction(e -> {
-                        keywordsHBox.getChildren().remove(b);
-                        selectedKeywords.remove(k);
-                    });
-                    keywordsHBox.getChildren().add(b);
-                }
-            }
-
-            picturePickerController.addPreExistingImages(clickedQuestion.getImages());
-
-            initTimeStamps(clickedQuestion);
+            displayQuestion(selectedQuestion);
+            editorScreenController.addPreExistingImages(clickedQuestion.getImages());
         });
+    }
+
+    /**
+     * Currenlty we need to add the editor dynamically - even if it is not needed.
+     * The reason for this: We can't access the controller, if we include the fxml in the parent.
+     */
+    private void initEditor() throws IOException {
+        FXMLLoader loader = FXMLDependencyInjection.getLoader("components/editor.fxml", MainApp.resourceBundle);
+        VBox editor = loader.load();
+
+        // get the controller for the loaded component
+        editorScreenController = loader.getController();
+        editorParentVBox.getChildren().add(editor);
     }
 
     /**
@@ -381,8 +279,6 @@ public class QuestionEdit_ScreenController extends ScreenController {
 
         // Update the question in the database
         questionService.update(question);
-
-
         SwitchScene.switchScene(SwitchScene.EDIT_QUESTION);
     }
 
@@ -403,10 +299,10 @@ public class QuestionEdit_ScreenController extends ScreenController {
         if (answers.size() < 2 && Type.isMultipleChoice(questionTypeMenuButtonEdit.getText())) {
             return MainApp.resourceBundle.getString("error_message_mc_min_two_answers");
         }
-        if (checkIfQuestionIsEmpty()) {
+        if (editorScreenController.editor.getHtmlText().isEmpty()) {
             return MainApp.resourceBundle.getString("error_message_question_not_set");
         }
-        if (picturePickerController.invalidSyntax()) {
+        if (editorScreenController.invalidSyntax()) {
             return MainApp.resourceBundle.getString("error_message_image_not_included");
         }
         return null;
@@ -425,25 +321,15 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 selectedCategory,
                 (int) chooseDifficulty.getValue(),
                 pointsSpinner.getValue().floatValue(),
-                chooseQuestion.getText(),
+                editorScreenController.editor.getHtmlText(),
                 null,                                   // type cannot be changed
                 chooseRemarks.getText(),
                 null,                               // created_at cannot be changed
                 LocalDateTime.now(),  // updated_at
                 getAnswersSet(Type.valueOf(selectedQuestion.getType()), chooseAnswerTextArea, this.answers),
-                picturePickerController.getImages(),         // images
+                editorScreenController.getImages(),         // images
                 selectedKeywords
-
         );
-    }
-
-    /**
-     * Checks if the question field is empty.
-     *
-     * @return {@code true} if the question field is empty, {@code false} otherwise.
-     */
-    private boolean checkIfQuestionIsEmpty() {
-        return chooseQuestion.getText().isEmpty();
     }
 
     public void onAddKeywordBtnClick(ActionEvent actionEvent) {
@@ -482,33 +368,40 @@ public class QuestionEdit_ScreenController extends ScreenController {
         });
     }
 
-    //used to display the Question when the editButton in the ManualCreateScreen is clicked
-    private void displaySelectedQuestion() {
+    /**
+     * used to display the Question when the editButton in the ManualCreateScreen is clicked
+     */
+    private void displayQuestionFromTestCreation() {
         selectedQuestion = SharedData.getQuestionToEdit();
+        displayQuestion(selectedQuestion);
+
+        editorScreenController.addPreExistingImages(selectedQuestion.getImages());
+        initTimeStamps(selectedQuestion);
+        SharedData.setQuestionToEdit(null);
+    }
+
+    private void displayQuestion(Question questionToShow) {
         try {
-            SharedData.setSelectedEditQuestion(selectedQuestion);
+            SharedData.setSelectedEditQuestion(questionToShow);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         // Make the scroll pane transparent to allow interaction with underlying elements.
         chooseScrollPane.setMouseTransparent(false);
 
-        // Set category, difficulty, and points to the values of the selected question.
-        categoryComboBox.getSelectionModel().select(selectedQuestion.getCategory().getName());
-        chooseDifficulty.setValue(selectedQuestion.getDifficulty());
-        pointsSpinner.getValueFactory().setValue((double) selectedQuestion.getPoints());
+        // set all fields
+        categoryComboBox.getSelectionModel().select(questionToShow.getCategory().getName());
+        chooseDifficulty.setValue(questionToShow.getDifficulty());
+        pointsSpinner.getValueFactory().setValue((double) questionToShow.getPoints());
+        initSelectedQuestionType(questionToShow);
+        editorScreenController.editor.setHtmlText(questionToShow.getQuestion());
+        chooseRemarks.setText(questionToShow.getRemark());
 
-        initSelectedQuestionType(selectedQuestion);
-
-        // Set the question text and remarks to the values of the selected question.
-        chooseQuestion.setText(selectedQuestion.getQuestion());
-        chooseRemarks.setText(selectedQuestion.getRemark());
-
-        // Clear and set up the keyword UI elements based on the selected question.
+        // and keywords
         selectedKeywords.clear();
         keywordsHBox.getChildren().clear();
 
-        for (Keyword k : selectedQuestion.getKeywords()) {
+        for (Keyword k : questionToShow.getKeywords()) {
             if (k.getKeyword() != null && !selectedKeywords.contains(k)) {
                 selectedKeywords.add(k);
                 Button b = createButton(k.getKeyword() + " X");
@@ -519,9 +412,6 @@ public class QuestionEdit_ScreenController extends ScreenController {
                 keywordsHBox.getChildren().add(b);
             }
         }
-
-        picturePickerController.addPreExistingImages(selectedQuestion.getImages());
-        initTimeStamps(selectedQuestion);
-        SharedData.setQuestionToEdit(null);
+        initTimeStamps(questionToShow);
     }
 }

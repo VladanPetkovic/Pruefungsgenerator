@@ -2,6 +2,7 @@ package com.example.application.frontend.modals;
 
 import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
+import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.services.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -71,12 +72,21 @@ public class Latex_ScreenController extends ModalController {
     }
 
     public void onCreateBtnClick(ActionEvent actionEvent) {
+        SharedData.setLatexCode("");
+        String latexInput = inputTextArea.getText();
+        //Image latexImage = getImageFromLatex(latexInput);
+
+        SharedData.setLatexCode(latexInput);
+        closeStage(actionEvent);
     }
 
     public void onUpdateBtnClick(ActionEvent actionEvent) {
     }
 
     public void onResetBtnClick(ActionEvent actionEvent) {
+        inputTextArea.setText("");
+        SharedData.setLatexCode("");
+
     }
 
     private Image getImageFromLatex(String latexInput) {

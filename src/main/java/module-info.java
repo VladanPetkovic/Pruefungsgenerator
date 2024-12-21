@@ -10,13 +10,12 @@ module com.example.demo {
     requires org.hibernate.orm.core;
     requires org.apache.pdfbox;
     requires javafx.swing;
-    requires poi.ooxml;
-    requires poi;
-    requires poi.ooxml.schemas;
+    requires org.apache.poi.ooxml;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml.schemas;
     requires layout;
     requires kernel;
     requires io;
-    requires itextpdf;
     requires spring.boot.autoconfigure;
     requires spring.context;
     requires spring.boot;
@@ -28,7 +27,9 @@ module com.example.demo {
     requires spring.data.commons;
     requires spring.tx;
     requires jlatexmath;
-    requires com.gluonhq.richtextarea;
+    requires javafx.web;
+    requires html2pdf;
+    requires org.jsoup;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;
