@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class ExportPdf extends Export {
+    private final LaTeXLogic laTeXLogic = new LaTeXLogic();
     protected int questionsPerSite;
     protected String title;
     protected String destinationFolder;
@@ -126,8 +127,7 @@ public class ExportPdf extends Export {
         }
 
         htmlBuilder.append("</body></html>");
-
-        return htmlBuilder.toString();
+        return laTeXLogic.transformLatexTags(htmlBuilder.toString(), false);
     }
 
     /**
