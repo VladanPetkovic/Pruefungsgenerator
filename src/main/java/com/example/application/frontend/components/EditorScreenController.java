@@ -11,12 +11,14 @@ import com.example.application.frontend.modals.ModalOpener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
@@ -55,6 +57,9 @@ public class EditorScreenController {
     public void initialize() {
         setScrollingBehaviour();
         initTabPaneListener();
+        // make the webView not editable
+        questionPreview.addEventFilter(KeyEvent.ANY, Event::consume);
+        questionPreview.addEventFilter(MouseEvent.ANY, Event::consume);
     }
 
     private void initTabPaneListener() {

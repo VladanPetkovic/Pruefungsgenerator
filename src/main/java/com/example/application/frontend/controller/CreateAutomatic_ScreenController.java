@@ -124,8 +124,8 @@ public class CreateAutomatic_ScreenController extends ScreenController {
 
         // reset the question count to zero
         this.questionCount = 0;
-        SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
         if (!SharedData.getTestQuestions().isEmpty()) {
+            SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
             SwitchScene.switchScene(SwitchScene.CREATE_TEST_MANUAL);
         } else {
             SharedData.setOperation(MainApp.resourceBundle.getString("error_message_automaticTestCreation_noQuestions"), true);

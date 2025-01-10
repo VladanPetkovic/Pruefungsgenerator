@@ -63,9 +63,7 @@ public class Home_ScreenController extends ScreenController {
     private void initialize() throws IOException {
         Setting setting = settingService.getFirstSetting();
         initLanguage(setting);
-        initSelectedStudyProgramAndCourse(setting);
-        coursesMenuButton.setDisable(true);
-        continueButton.setDisable(true);
+        initStudyProgramAndCourse(setting);
     }
 
     // event handler for study program button click
@@ -84,16 +82,15 @@ public class Home_ScreenController extends ScreenController {
     // event handler for continue button click
     @FXML
     public void onContinueBtnClick(ActionEvent event) throws IOException {
-        SharedData.setCurrentScreen(Screen.CREATE_AUTOMATIC);
         if (SharedData.getSelectedCourse() != null && SharedData.getSelectedStudyProgram() != null) {
             Logger.log(getClass().getName(), "Selected Study Program: " + SharedData.getSelectedStudyProgram().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Study ProgramID: " + SharedData.getSelectedStudyProgram().getId(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected Course: " + SharedData.getSelectedCourse().getName(), LogLevel.INFO);
             Logger.log(getClass().getName(), "Selected CourseID: " + SharedData.getSelectedCourse().getId(), LogLevel.INFO);
+            SharedData.setCurrentScreen(Screen.CREATE_AUTOMATIC);
             switchScene(SwitchScene.CREATE_TEST_AUTOMATIC);
         } else {
             SharedData.setOperation(MainApp.resourceBundle.getString("error_message_course_and_sp_not_selected"), true);
-            //SharedData.setOperation(Message.ERROR_COURSE_AND_SP_NOT_SELECTED);
         }
     }
 
@@ -266,7 +263,6 @@ public class Home_ScreenController extends ScreenController {
         studyProgramMenuButton.setText(MainApp.resourceBundle.getString("study_programs"));
         SharedData.setSelectedStudyProgram(null);
         SharedData.resetEditObjects();
-        settingService.updateStudyProgram(null);
     }
 
     // helper function to reset course menu button
@@ -275,7 +271,6 @@ public class Home_ScreenController extends ScreenController {
         coursesMenuButton.setText(MainApp.resourceBundle.getString("courses"));
         SharedData.setSelectedCourse(null);
         SharedData.resetEditObjects();
-        settingService.updateCourse(null);
     }
 
     public void onLanguageBtnClick(ActionEvent actionEvent) throws IOException {
@@ -316,32 +311,18 @@ public class Home_ScreenController extends ScreenController {
         langImageView.setImage(languageImage);
     }
 
-    private void initSelectedStudyProgramAndCourse(Setting setting) throws IOException {
+    private void initStudyProgramAndCourse(Setting setting) throws IOException {
         // resetting studyProgram and course
         resetStudyProgramMenuButton();
         loadStudyPrograms();
         resetCourseMenuButton();
 
-        // nothing saved
-        if (setting == null || setting.getCourseId() == null || setting.getStudyProgramId() == null) {
-            MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("menuitem_choose_study_program"));
-            coursesMenuButton.getItems().add(menuItem);
-            return;
-        }
-
-        // set last used studyProgram and course
-        /*
-        StudyProgram studyProgram = studyProgramService.getById(setting.getStudyProgramId());
-        setStudyProgram(studyProgram);
-        loadCourses();
-        Course course = courseService.getById(setting.getCourseId());
-        setCourse(course);
-         */
+        MenuItem menuItem = new MenuItem(MainApp.resourceBundle.getString("menuitem_choose_study_program"));
+        coursesMenuButton.getItems().add(menuItem);
     }
 
     private void setStudyProgram(StudyProgram studyProgram) {
         studyProgramMenuButton.setText(studyProgram.getName());
-        settingService.updateStudyProgram(studyProgram.getId());
         try {
             SharedData.setSelectedStudyProgram(studyProgram);
             coursesMenuButton.setDisable(false);
@@ -353,10 +334,10 @@ public class Home_ScreenController extends ScreenController {
 
     private void setCourse(Course course) {
         coursesMenuButton.setText(course.getName());
-        settingService.updateCourse(course.getId());
-        continueButton.setDisable(false);
         try {
             SharedData.setSelectedCourse(course);
+            coursesMenuButton.setDisable(false);
+            continueButton.setDisable(false);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
