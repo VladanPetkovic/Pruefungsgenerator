@@ -4,17 +4,16 @@ import com.example.application.MainApp;
 import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
+import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +27,10 @@ import static com.example.application.frontend.controller.SwitchScene.switchScen
 @Component
 @Scope("prototype")
 public class PdfPreview_ScreenController extends ScreenController {
+    @FXML
+    public SplitPane splitPane;
+    @FXML
+    public ScrollPane previewScrollPane;
     @FXML
     private Slider questionCountSlider;
     @FXML
@@ -48,6 +51,17 @@ public class PdfPreview_ScreenController extends ScreenController {
                 MainApp.resourceBundle.getString("question_filter_selected_course"),
                 SharedData.getSelectedCourse().getName())
         );
+
+        // wait 0,5 seconds after moving the divider to prevent calling the function too often
+        PauseTransition pause = new PauseTransition(Duration.millis(500));
+        pause.setOnFinished(event -> onDividerMovedDone());
+
+        splitPane.getDividers().forEach(divider -> {
+            divider.positionProperty().addListener((observable, oldValue, newValue) -> {
+                // restart timer after every change
+                pause.playFromStart();
+            });
+        });
     }
 
     public void applyExportBtnClicked(ActionEvent actionEvent) {
@@ -96,13 +110,14 @@ public class PdfPreview_ScreenController extends ScreenController {
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
-        // get and insert the images (each page is one image) into the vbox
 
         ObservableList<Question> questions = SharedData.getTestQuestions();
         ArrayList<Question> questionList = new ArrayList<>(questions);
-        exportPdf.getPreviewImages(questionList);
-
         showPreview(exportPdf.getPreviewImages(questionList));
+    }
+
+    private void onDividerMovedDone() {
+        applyFormattingBtnClicked(null);
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
@@ -117,8 +132,8 @@ public class PdfPreview_ScreenController extends ScreenController {
     public void showPreview(ArrayList<Image> images) {
         // removing previous images
         this.vbox_previewPane.getChildren().clear();
-
-        double targetWidth = this.vbox_previewPane.getWidth();
+        // get updated width of vbox-parent (the scroll-pane)
+        double targetWidth = previewScrollPane.getViewportBounds().getWidth();
 
         for (int i = 0; i < images.size(); i++) {
             ImageView imageView = new ImageView(images.get(i));

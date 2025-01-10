@@ -87,15 +87,4 @@ public class ExportTests {
         // assert
         assertTrue(docxWasCreated);
     }
-
-    @Test
-    void createFileName_checkFileName() {
-        System.out.println("Check: valid file-name");
-
-        Export export = new Export();
-        System.out.println(export.createFileName(true));
-        System.out.println(export.createFileName(false));
-
-        assertTrue(true);
-    }
 }

@@ -30,6 +30,9 @@ module com.example.demo {
     requires javafx.web;
     requires html2pdf;
     requires org.jsoup;
+    requires com.aspose.words;
+//    requires org.docx4j.core;
+//    requires docx4j_ImportXHTML;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;
