@@ -207,11 +207,10 @@ public class CreateManual_ScreenController extends ScreenController {
         EditorScreenController controller = loader.getController();
         questionTextController.add(controller);
 
-        // set question-text
-        controller.setHtmlText(question.getQuestion());
         controller.setNumberOfQuestion(numberOfQuestion);
         controller.setParentVbox(vbox_testQuestionsPreview);
-        controller.initialize();
+        // set question-text
+        controller.editor.setHtmlText(question.getQuestion());
 
         return previewQuestionVbox;
     }

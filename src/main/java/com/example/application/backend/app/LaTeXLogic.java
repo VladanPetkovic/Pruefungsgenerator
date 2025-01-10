@@ -69,6 +69,8 @@ public class LaTeXLogic {
     }
 
     public Image getImageFromLatex(String latexInput) {
+        latexInput = sanitizeLatexHtmlString(latexInput);
+
         TeXFormula formula = new TeXFormula(latexInput);
 
         TeXIcon icon = formula.createTeXIcon(TeXFormula.SERIF, 20); // Font size = 20
@@ -88,5 +90,16 @@ public class LaTeXLogic {
 
         // convert to JavaFX Image
         return SwingFXUtils.toFXImage(image, null);
+    }
+
+    /**
+     * This function 'repairs' the latex-string.
+     * For example when entering '&' in a html-editor, it is translated to '&amp;' and not used as '&'.
+     * TODO: find other problems
+     */
+    private String sanitizeLatexHtmlString(String latexHtmlInput) {
+        return latexHtmlInput
+                .replace("&amp;", "&")
+                .replace("\\&amp;", "\\&");
     }
 }

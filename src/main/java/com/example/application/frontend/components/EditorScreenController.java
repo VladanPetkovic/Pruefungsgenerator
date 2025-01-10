@@ -6,10 +6,14 @@ import com.example.application.backend.app.LogLevel;
 import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.SharedData;
 import com.example.application.backend.db.models.Message;
+import com.example.application.frontend.modals.Latex_ScreenController;
 import com.example.application.frontend.modals.ModalOpener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,25 +38,34 @@ import org.jsoup.nodes.Element;
 @Component
 @Scope("prototype")
 public class EditorScreenController {
-
-    @Getter
-    @Setter
-    private String htmlText;
+    public TabPane tabPane;
+    public Tab previewTab;
+    public Tab editorTab;
     @Setter
     private int numberOfQuestion;
     @Setter
     private VBox parentVbox;
     @Getter
     public HTMLEditor editor;
-    //public TextFlow questionPreview;
     @FXML
     private WebView questionPreview;
     public HBox displayImagesHbox;
     public final ArrayList<ImageWithButtons> imageList = new ArrayList<>();
 
     public void initialize() {
-        editor.setHtmlText(getHtmlText());
         setScrollingBehaviour();
+        initTabPaneListener();
+    }
+
+    private void initTabPaneListener() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observableValue, Tab oldTab, Tab newTab) {
+                if (newTab == previewTab) {
+                    onPreviewTabClick();
+                }
+            }
+        });
     }
 
     private void setScrollingBehaviour() {
@@ -105,16 +118,16 @@ public class EditorScreenController {
     public void onAddLatexBtnClick(ActionEvent actionEvent) {
         ModalOpener modalOpener = new ModalOpener();
         Stage newStage = modalOpener.openModal(ModalOpener.LATEX);
+        Latex_ScreenController controller = (Latex_ScreenController) modalOpener.getModal().controller;
 
         // listener for when the latex modal is closed
         newStage.setOnHidden(event -> {
-            String latexCode = SharedData.getLatexCode();
+            String latexCode = controller.getLatexCode();
 
-            if (latexCode != null && !latexCode.isEmpty()) {
-
+            if (latexCode != null && !latexCode.isEmpty() && controller.isInsertLatex()) {
                 String latexTag = "<latex>" + latexCode + "</latex>";
                 insertTextWithJsoup(latexTag);
-                System.out.println("Updated HTML Content: " + editor.getHtmlText());
+//                System.out.println("Updated HTML Content: " + editor.getHtmlText());
             }
             // simulate user presses space (otherwise the binding listener does recognize a change and the up/down buttons dont work as intended)
             editor.fireEvent(new KeyEvent(
@@ -156,7 +169,7 @@ public class EditorScreenController {
         }
     }
 
-    public void onPreviewTabClick(Event event) {
+    public void onPreviewTabClick() {
         LaTeXLogic laTeXLogic = new LaTeXLogic();
 
         Logger.log(getClass().getName(), "previewContentBefore: " + editor.getHtmlText(), LogLevel.INFO);
@@ -171,7 +184,6 @@ public class EditorScreenController {
     }
 
     private void insertTextWithJsoup(String newText) {
-
         String currentHtml = editor.getHtmlText();
         //parse html with jsoup
         Document doc = Jsoup.parse(currentHtml);
@@ -183,7 +195,6 @@ public class EditorScreenController {
         body.appendElement("p").text(newText);
 
         //add new body to html
-        //setHtmlText(doc.body().html());
         editor.setHtmlText(doc.body().html());
     }
 
@@ -195,5 +206,4 @@ public class EditorScreenController {
         String newValue = editor.getHtmlText();
         SharedData.getTestQuestions().get(numberOfQuestion).setQuestion(newValue);
     }
-
 }
