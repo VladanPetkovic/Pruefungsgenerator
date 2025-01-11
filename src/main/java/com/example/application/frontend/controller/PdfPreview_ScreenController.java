@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -32,7 +33,7 @@ public class PdfPreview_ScreenController extends ScreenController {
     @FXML
     public ScrollPane previewScrollPane;
     @FXML
-    private Slider questionCountSlider;
+    private Slider distanceBetweenQuestionsSlider;
     @FXML
     private TextField titleTextField;
     @FXML
@@ -41,6 +42,10 @@ public class PdfPreview_ScreenController extends ScreenController {
     private Label label_selectedCourse;
     @FXML
     private CheckBox checkbox_applyHeader;
+    @FXML
+    public GridPane headerSpecificGridPane;
+    @FXML
+    public CheckBox checkbox_applyHeaderAllPages;
     @FXML
     private CheckBox checkbox_showPageNumber;
     public Label label_selectedDirectory;
@@ -71,9 +76,10 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
 
         ExportPdf exportPdf = new ExportPdf(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
         ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
         ArrayList<Question> questionsList = new ArrayList<>(observableQuestions);
@@ -90,9 +96,10 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
 
         ExportDocx exportDocx = new ExportDocx(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
 
         ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
@@ -106,9 +113,10 @@ public class PdfPreview_ScreenController extends ScreenController {
     public void applyFormattingBtnClicked(ActionEvent actionEvent) {
         // set the latest options
         ExportPdf exportPdf = new ExportPdf(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
 
         ObservableList<Question> questions = SharedData.getTestQuestions();
@@ -168,12 +176,16 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
     }
 
-    private int getQuestionCount() {
-        return (int) questionCountSlider.getValue();
+    private int getQuestionDistance() {
+        return (int) distanceBetweenQuestionsSlider.getValue();
     }
 
     public void onGoBackBtnClick(ActionEvent mouseEvent) throws IOException {
         SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
         switchScene(SwitchScene.CREATE_TEST_MANUAL);
+    }
+
+    public void onApplyHeaderClick(ActionEvent actionEvent) {
+        headerSpecificGridPane.setDisable(!checkbox_applyHeader.isSelected());
     }
 }

@@ -67,7 +67,8 @@
                                         <VBox prefHeight="100.0" prefWidth="358.0">
                                             <children>
                                                 <Label styleClass="option_label" text="%count_questions_on_page" />
-                                                  <Slider fx:id="questionCountSlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="78.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0">
+                                                  <Slider fx:id="distanceBetweenQuestionsSlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0"
+                                                          minorTickCount="1" prefHeight="78.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" styleClass="slider-tool" value="5.0">
                                        <cursor>
                                           <Cursor fx:constant="DEFAULT" />
                                        </cursor>
@@ -84,7 +85,20 @@
                                 </rowConstraints>
                                  <children>
                                     <Label styleClass="option_label" text="%apply_header" />
-                                    <CheckBox fx:id="checkbox_applyHeader" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                                    <CheckBox fx:id="checkbox_applyHeader" mnemonicParsing="false" onAction="#onApplyHeaderClick" selected="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                                 </children>
+                              </GridPane>
+                              <GridPane fx:id="headerSpecificGridPane" prefHeight="40.0" prefWidth="358.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label styleClass="option_label" text="%apply_header_all_pages" />
+                                    <CheckBox fx:id="checkbox_applyHeaderAllPages" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                                  </children>
                               </GridPane>
                               <GridPane prefHeight="40.0" prefWidth="358.0">
@@ -102,7 +116,7 @@
                               </GridPane>
                                         <VBox prefHeight="170.0" prefWidth="358.0">
                                             <children>
-                                                <Label prefHeight="3.0" prefWidth="134.0" styleClass="option_label" text="%destination_folder" />
+                                                <Label prefHeight="38.0" prefWidth="162.0" styleClass="option_label" text="%destination_folder" />
                                     <Label fx:id="label_selectedDirectory" prefHeight="38.0" prefWidth="320.0" styleClass="option_label" text="&quot;&quot;">
                                        <VBox.margin>
                                           <Insets left="20.0" />

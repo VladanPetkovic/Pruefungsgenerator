@@ -1,9 +1,9 @@
 package com.example.application.backend.app;
 
+import com.example.application.MainApp;
 import com.example.application.backend.db.models.Answer;
 import com.example.application.backend.db.models.Question;
 import com.example.application.backend.db.models.Type;
-import javafx.scene.image.Image;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
@@ -15,38 +15,39 @@ import com.aspose.words.SaveFormat;
 //import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 //import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ExportDocx extends Export {
-    private final LaTeXLogic laTeXLogic = new LaTeXLogic();
-    protected int questionsPerSite;
-    protected int numberOfPages;
-    protected String title;
-    protected String destinationFolder;
-    protected boolean setHeader;
-    protected boolean setPageNumber;
+    private final int distancePerQuestion;
+    private final String title;
+    private final String destinationFolder;
+    private final boolean setHeader;
+    private final boolean setHeaderAllPages;
+    private final boolean setPageNumber;
 
     public ExportDocx(String testHeader,
-                      int questionsPerSite,
+                      int distancePerQuestion,
                       String destFolder,
                       boolean setHeader,
+                      boolean setHeaderAllPages,
                       boolean setPageNumber) {
         this.title = testHeader;
-        this.questionsPerSite = questionsPerSite;
+        this.distancePerQuestion = distancePerQuestion;
         this.destinationFolder = destFolder;
         this.setHeader = setHeader;
+        this.setHeaderAllPages = setHeaderAllPages;
         this.setPageNumber = setPageNumber;
     }
 
-    /** Using Aspose */
+    /**
+     * Using Aspose
+     */
     public boolean exportDocument(ArrayList<Question> testQuestions) {
-        String htmlContent = buildHtmlContent(testQuestions);
+        String htmlContent = buildHtmlContent(testQuestions, title, distancePerQuestion);
         String filePath = this.destinationFolder + "/" + createFileName(false);
         try {
             Document doc = new Document();
@@ -59,13 +60,15 @@ public class ExportDocx extends Export {
             doc.save(new FileOutputStream(filePath), SaveFormat.DOCX);
             Logger.log(getClass().getName(), "Docx-file created successfully", LogLevel.INFO);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(getClass().getName(), "Error exporting Docx-file: " + e.getMessage(), LogLevel.ERROR);
             return false;
         }
         return true;
     }
 
-    /** Using Docx4J */
+    /**
+     * Using Docx4J
+     */
 //    public boolean exportDocument(ArrayList<Question> testQuestions) {
 //        String htmlContent = buildHtmlContent(testQuestions);
 //        String filePath = this.destinationFolder + "/" + createFileName(false, title);
@@ -86,80 +89,15 @@ public class ExportDocx extends Export {
 //        }
 //        return true;
 //    }
-
-    private String buildHtmlContent(ArrayList<Question> testQuestions) {
-        StringBuilder htmlBuilder = new StringBuilder();
-
-        htmlBuilder.append("<html><head>")
-                .append("<style>")
-                .append("body { font-family: Arial, sans-serif; margin: 20px; }")
-                .append("h1 { text-align: center; font-size: 20px; }")
-                .append(".question { margin: 15px 0; }")
-                .append(".answers { margin-left: 20px; }")
-                .append("</style>")
-                .append("</head><body>");
-
-        // title
-        htmlBuilder.append("<h1>").append(this.title).append("</h1>");
-
-        // questions
-        int questionNumber = 1;
-        for (Question question : testQuestions) {
-            htmlBuilder.append("<div class='question'>").append(questionNumber).append(". ")
-                    .append(extractHtmlContent(question.getQuestion())).append("</div>");
-
-            htmlBuilder.append("<div class='answers'>");
-            if (Type.isOpen(question.getType())) {
-                htmlBuilder.append("<p>A: ___________</p>");
-            } else if (Type.isMultipleChoice(question.getType())) {
-                for (Answer answer : question.getAnswers()) {
-                    htmlBuilder.append("<p>□ ").append(answer.getAnswer()).append("</p>");
-                }
-            } else if (Type.isTrueFalse(question.getType())) {
-                htmlBuilder.append("<p>□ True</p>").append("<p>□ False</p>");
-            }
-            htmlBuilder.append("</div>");
-
-            questionNumber++;
-        }
-
-        htmlBuilder.append("</body></html>");
-        return laTeXLogic.transformLatexTags(htmlBuilder.toString(), false);
-    }
-
-    /**
-     * TODO:
-     * - set content header
-     * - set content page number
-     * - set questionsPerSite
-     * - set images
-     */
-
-    private String extractHtmlContent(String questionHtml) {
-        if (questionHtml.contains("<body")) {
-            int bodyStart = questionHtml.indexOf("<body");
-            int bodyEnd = questionHtml.indexOf("</body>") + 7;
-            return questionHtml.substring(bodyStart, bodyEnd);
-        }
-        return questionHtml;
-    }
-
-
-
     protected XWPFDocument buildDocument(ArrayList<Question> testQuestions) {
-        numberOfPages = getNumberOfPages(testQuestions.size(), questionsPerSite);
-
         try {
             XWPFDocument document = new XWPFDocument();
 
-            // TITLE and HEADER --> is set once for the whole document
-            setTitle(document, this.title);
-            if (this.setHeader) {
+            if (setHeader) {
                 setContentHeader(document);
             }
 
-            // PAGE-NUMBER --> is set once for the whole document
-            if (this.setPageNumber) {
+            if (setPageNumber) {
                 setContentPageNumber(document);
             }
 
@@ -172,20 +110,6 @@ public class ExportDocx extends Export {
         }
 
         return null;
-    }
-
-    public ArrayList<Image> getPreviewImages(ArrayList<Question> testQuestions) {
-        return null;
-    }
-
-    private void setTitle(XWPFDocument document, String title) {
-        XWPFParagraph titleParagraph = document.createParagraph();
-        titleParagraph.setAlignment(ParagraphAlignment.CENTER);
-
-        XWPFRun titleRun = titleParagraph.createRun();
-        titleRun.setBold(true);
-        titleRun.setFontSize(18);
-        titleRun.setText(title);
     }
 
     private void setContentHeader(XWPFDocument document) {
@@ -216,10 +140,10 @@ public class ExportDocx extends Export {
         addTabStop(paragraph, "CENTER", 3.25);
 
         XWPFRun run = paragraph.createRun();
-        run.setText("Page ");
+        run.setText(MainApp.resourceBundle.getString("page") + " ");
         paragraph.getCTP().addNewFldSimple().setInstr("PAGE \\* MERGEFORMAT");
         run = paragraph.createRun();
-        run.setText(" of ");
+        run.setText(" " + MainApp.resourceBundle.getString("of") + " ");
         paragraph.getCTP().addNewFldSimple().setInstr("NUMPAGES \\* MERGEFORMAT");
     }
 
@@ -321,15 +245,15 @@ public class ExportDocx extends Export {
      * @return the number of paragraphs between questions (the answer-block)
      */
     private int getParagraphCount(int questionNumber) {
-        int paragraphsOnOnePage = 25 - this.questionsPerSite;
+        int paragraphsOnOnePage = 25 - this.distancePerQuestion;
 
         // first page
-        if (questionNumber < this.questionsPerSite) {
+        if (questionNumber < this.distancePerQuestion) {
             // mind the title
-            return (int) (paragraphsOnOnePage - 2) / this.questionsPerSite;
+            return (int) (paragraphsOnOnePage - 2) / this.distancePerQuestion;
         }
 
         // following pages
-        return (int) paragraphsOnOnePage / this.questionsPerSite;
+        return (int) paragraphsOnOnePage / this.distancePerQuestion;
     }
 }
