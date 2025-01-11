@@ -149,17 +149,6 @@
             <version>22.11</version>
             <classifier>javadoc</classifier>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.docx4j</groupId>-->
-<!--            <artifactId>docx4j-ImportXHTML</artifactId>-->
-<!--            <version>11.4.8</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.docx4j</groupId>-->
-<!--                    <artifactId>docx4j</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
     </dependencies>
 
     <repositories>
