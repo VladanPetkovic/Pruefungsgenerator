@@ -132,7 +132,6 @@ public class EditorScreenController {
             if (latexCode != null && !latexCode.isEmpty() && controller.isInsertLatex()) {
                 String latexTag = "<latex>" + latexCode + "</latex>";
                 insertTextWithJsoup(latexTag);
-//                System.out.println("Updated HTML Content: " + editor.getHtmlText());
             }
             // simulate user presses space (otherwise the binding listener does recognize a change and the up/down buttons dont work as intended)
             editor.fireEvent(new KeyEvent(

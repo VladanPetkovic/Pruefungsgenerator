@@ -252,7 +252,6 @@ public class Settings_ScreenController extends ScreenController {
 
         errorModalStage.setOnHidden(e -> {
             // TODO peter: add logic if necessary (maybe reset view, when the error-modal closes...)
-            System.out.println("something happens when this modal closes");
         });
     }
     /* IMPORT RELATED FUNCTIONS - END */

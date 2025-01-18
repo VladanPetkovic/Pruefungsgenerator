@@ -1,5 +1,7 @@
 package com.example.application.backend.db.models;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import jakarta.persistence.*;
 import javafx.embed.swing.SwingFXUtils;
 import lombok.AllArgsConstructor;
@@ -70,7 +72,7 @@ public class Image implements Serializable {
             ImageIO.write(bufferedImage, format, baos);
             return baos.toByteArray();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Logger.log(this.getClass().getName(), e.getMessage(), LogLevel.ERROR);
         }
         return null;
     }
@@ -85,7 +87,7 @@ public class Image implements Serializable {
             // Convert BufferedImage to JavaFX Image
             return SwingFXUtils.toFXImage(bufferedImage, null);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(this.getClass().getName(), e.getMessage(), LogLevel.ERROR);
         }
         return null;
     }
