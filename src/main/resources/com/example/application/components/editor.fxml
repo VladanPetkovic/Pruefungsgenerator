@@ -15,9 +15,9 @@
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.application.frontend.components.EditorScreenController">
    <children>
-      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="700.0" styleClass="tabPane" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="700.0" styleClass="tabPane" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="%editor">
+            <Tab fx:id="editorTab" text="%editor">
                <content>
                   <GridPane>
                      <columnConstraints>
@@ -53,7 +53,7 @@
                   </GridPane>
                </content>
             </Tab>
-            <Tab onSelectionChanged="#onPreviewTabClick" text="%editor_preview">
+            <Tab fx:id="previewTab" text="%editor_preview">
                <content>
                   <WebView fx:id="questionPreview" prefHeight="200.0" prefWidth="200.0" />
                </content>

@@ -30,6 +30,7 @@ module com.example.demo {
     requires javafx.web;
     requires html2pdf;
     requires org.jsoup;
+    requires com.aspose.words;
 
     opens com.example.application to javafx.fxml, spring.core;
     exports com.example.application;

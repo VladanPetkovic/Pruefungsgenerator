@@ -13,6 +13,7 @@ public class Logger {
     public static void log(String className, String message, LogLevel level) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timestamp = dateFormat.format(new Date());
+        String shortenedClassName = className.substring(className.lastIndexOf('.') + 1);
 
         String logLevelString;
         String color;
@@ -40,7 +41,7 @@ public class Logger {
         }
 
         String formattedMessage = String.format("[%s]: (%s%s%s) \"%s\": %s",
-                timestamp, color, logLevelString, ANSI_RESET, className, message);
+                timestamp, color, logLevelString, ANSI_RESET, shortenedClassName, message);
 
         System.out.println(formattedMessage);
     }

@@ -21,7 +21,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label prefHeight="51.0" prefWidth="209.0" styleClass="modal_topic_label" text="TODO" GridPane.halignment="CENTER" />
+            <Label prefHeight="51.0" prefWidth="209.0" styleClass="modal_topic_label" text="%latex_preview" GridPane.halignment="CENTER" />
             <Button mnemonicParsing="false" onAction="#onGoBackBtnClick" styleClass="btn_add_icon">
                <graphic>
                   <ImageView fitHeight="39.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
@@ -61,8 +61,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Button onAction="#onCreateBtnClick" prefHeight="27.0" prefWidth="119.0" styleClass="btn_green" text="%create" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <Button onAction="#onUpdateBtnClick" prefHeight="27.0" prefWidth="119.0" styleClass="btn_blue" text="%update" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Button fx:id="createBtn" disable="true" onAction="#onCreateBtnClick" prefHeight="27.0" prefWidth="119.0" styleClass="btn_green" text="%create" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
             <Button onAction="#onResetBtnClick" prefHeight="27.0" prefWidth="119.0" styleClass="btn_orange" text="%reset" />
          </children>
       </GridPane>

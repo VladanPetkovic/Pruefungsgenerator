@@ -1,124 +1,110 @@
 package com.example.application.backend.app;
 
-import com.example.application.backend.db.models.Answer;
+import com.aspose.words.*;
+import com.aspose.words.Document;
+import com.example.application.MainApp;
 import com.example.application.backend.db.models.Question;
-import com.example.application.backend.db.models.Type;
-import javafx.scene.image.Image;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class ExportDocx extends Export {
-    protected int questionsPerSite;
-    protected int numberOfPages;
-    protected String title;
-    protected String destinationFolder;
-    protected boolean setHeader;
-    protected boolean setPageNumber;
+    private final int distancePerQuestion;
+    private final String title;
+    private final String destinationFolder;
+    private final boolean setHeader;
+    private final boolean setHeaderAllPages;
+    private final boolean setPageNumber;
 
     public ExportDocx(String testHeader,
-                      int questionsPerSite,
+                      int distancePerQuestion,
                       String destFolder,
                       boolean setHeader,
+                      boolean setHeaderAllPages,
                       boolean setPageNumber) {
         this.title = testHeader;
-        this.questionsPerSite = questionsPerSite;
+        this.distancePerQuestion = distancePerQuestion;
         this.destinationFolder = destFolder;
         this.setHeader = setHeader;
+        this.setHeaderAllPages = setHeaderAllPages;
         this.setPageNumber = setPageNumber;
     }
 
     public boolean exportDocument(ArrayList<Question> testQuestions) {
+        String htmlContent = buildHtmlContent(testQuestions, title, distancePerQuestion);
+        String filePath = this.destinationFolder + "/" + createFileName(false);
+        String tempFilePath = "bin/export_docx_temp.docx";
         try {
-            // Create a new Word document
-            XWPFDocument document = buildDocument(testQuestions);
-            if (document == null) {
-                return false;
-            }
+            Document doc = new Document();
+            DocumentBuilder builder = new DocumentBuilder(doc);
+            builder.insertHtml(htmlContent);
 
-            // Save the document to a file
-            FileOutputStream out = new FileOutputStream(this.destinationFolder + "/" + createFileName(false));
-            document.write(out);
-            out.close();
+            // save document as word
+            doc.save(new FileOutputStream(tempFilePath), SaveFormat.DOCX);
+            processOptions(tempFilePath, filePath); // add header and/or pageNumbers
             Logger.log(getClass().getName(), "Docx-file created successfully", LogLevel.INFO);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(getClass().getName(), "Error exporting Docx-file: " + e.getMessage(), LogLevel.ERROR);
             return false;
         }
         return true;
     }
 
-    protected XWPFDocument buildDocument(ArrayList<Question> testQuestions) {
-        numberOfPages = getNumberOfPages(testQuestions.size(), questionsPerSite);
-
+    private void processOptions(String oldFilePath, String newFilePath) throws Exception {
         try {
-            XWPFDocument document = new XWPFDocument();
-
-            // TITLE and HEADER --> is set once for the whole document
-            setTitle(document, this.title);
-            if (this.setHeader) {
-                setContentHeader(document);
+            XWPFDocument document = new XWPFDocument(new FileInputStream(oldFilePath));
+            if (setPageNumber) {
+                addPageNumbers(document);
             }
-
-            // PAGE-NUMBER --> is set once for the whole document
-            if (this.setPageNumber) {
-                setContentPageNumber(document);
+            if (setHeader) {
+                addHeader(document);
             }
-
-            // CONTENT with questions
-            setContent(document, testQuestions);
-
-            return document;
+            removeEvaluationText(document);
+            // deleting old file
+            if (new File(oldFilePath).delete()) {
+                Logger.log(getClass().getName(), oldFilePath + " deleted successfully.", LogLevel.DEBUG);
+            }
+            try (FileOutputStream out = new FileOutputStream(newFilePath)) {
+                document.write(out);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e);
         }
-
-        return null;
     }
 
-    public ArrayList<Image> getPreviewImages(ArrayList<Question> testQuestions) {
-        return null;
-    }
-
-    private void setTitle(XWPFDocument document, String title) {
-        XWPFParagraph titleParagraph = document.createParagraph();
-        titleParagraph.setAlignment(ParagraphAlignment.CENTER);
-
-        XWPFRun titleRun = titleParagraph.createRun();
-        titleRun.setBold(true);
-        titleRun.setFontSize(18);
-        titleRun.setText(title);
-    }
-
-    private void setContentHeader(XWPFDocument document) {
+    // TODO: setHeaderAllPages does not work
+    private void addHeader(XWPFDocument document) {
         XWPFHeaderFooterPolicy headerFooterPolicy = document.createHeaderFooterPolicy();
-        XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+        XWPFHeader header = headerFooterPolicy
+                .createHeader(setHeaderAllPages ? XWPFHeaderFooterPolicy.DEFAULT : XWPFHeaderFooterPolicy.FIRST);
+
         XWPFParagraph headerParagraph = header.createParagraph();
         XWPFRun run = headerParagraph.createRun();
+        String dateText = MainApp.resourceBundle.getString("date_pdf");
+        String nameText = MainApp.resourceBundle.getString("name_pdf");
+        String uidText = MainApp.resourceBundle.getString("uid_pdf");
 
-        // DATE, NAME and UID
-        run.setText("Date:");
+        run.setText(dateText);
         for (int i = 0; i < 11; i++) {
             run.addTab();
         }
-        run.setText("Name:");
+        run.setText(nameText);
         run.addCarriageReturn();
         for (int i = 0; i < 11; i++) {
             run.addTab();
         }
-        run.setText("UID:");
+        run.setText(uidText);
     }
 
-    private void setContentPageNumber(XWPFDocument document) {
+    private void addPageNumbers(XWPFDocument document) {
+        for (XWPFFooter footer : document.getFooterList()) {
+            footer.clearHeaderFooter();
+        }
         XWPFFooter footer = document.createFooter(HeaderFooterType.DEFAULT);
 
         XWPFParagraph paragraph = footer.getParagraphArray(0);
@@ -127,11 +113,31 @@ public class ExportDocx extends Export {
         addTabStop(paragraph, "CENTER", 3.25);
 
         XWPFRun run = paragraph.createRun();
-        run.setText("Page ");
+        run.setText(MainApp.resourceBundle.getString("page") + " ");
         paragraph.getCTP().addNewFldSimple().setInstr("PAGE \\* MERGEFORMAT");
         run = paragraph.createRun();
-        run.setText(" of ");
+        run.setText(" " + MainApp.resourceBundle.getString("of") + " ");
         paragraph.getCTP().addNewFldSimple().setInstr("NUMPAGES \\* MERGEFORMAT");
+    }
+
+    // TODO: currently it does not work
+    private void removeWaterMark(Document doc) {
+        if (doc.getWatermark().getType() == WatermarkType.TEXT) {
+            doc.getWatermark().remove();
+        }
+    }
+
+    private void removeEvaluationText(XWPFDocument document) {
+        String textToRemove = "Evaluation Only. Created with Aspose.Words. Copyright 2003-2022 Aspose Pty Ltd.";
+        XWPFParagraph firstParagraph = document.getParagraphs().get(0);
+
+        if (firstParagraph != null) {
+            String paragraphText = firstParagraph.getText();
+
+            if (paragraphText.contains(textToRemove)) {
+                document.removeBodyElement(0);
+            }
+        }
     }
 
     /**
@@ -174,73 +180,5 @@ public class ExportDocx extends Export {
             default:
                 // simply do nothing
         }
-
-    }
-
-    private void setContent(XWPFDocument document, ArrayList<Question> testQuestions) {
-        int questionNumber = 0;
-
-        for (Question question : testQuestions) {
-            questionNumber++;
-
-            // questionString
-            XWPFParagraph questionParagraph = document.createParagraph();
-            XWPFRun questionRun = questionParagraph.createRun();
-            questionRun.setBold(true);
-            questionRun.setText(questionNumber + ". " + question.getQuestion());
-
-            // answer
-            XWPFRun answerRun = questionParagraph.createRun();
-            answerRun.setBold(false);
-            // different questionTypes
-            if (Type.isOpen(question.getType())) {
-                answerRun.addCarriageReturn();
-                answerRun.setText("A:");
-            } else if (Type.isMultipleChoice(question.getType())) {
-                for (Answer answer : question.getAnswers()) {
-                    setMcAnswer(answer.getAnswer(), answerRun);
-                }
-            } else if (Type.isTrueFalse(question.getType())) {
-                setMcAnswer("True", answerRun);
-                setMcAnswer("False", answerRun);
-            }
-
-
-            for (int j = 0; j < getParagraphCount(questionNumber) && questionNumber != testQuestions.size(); j++) {
-                document.createParagraph();
-            }
-        }
-    }
-
-    private void setMcAnswer(String answerText, XWPFRun answerRun) {
-        try {
-            answerRun.addCarriageReturn();
-            answerRun.addTab();
-            answerRun.addPicture(new FileInputStream("src/main/resources/com/example/application/icons/checkbox.png"), XWPFDocument.PICTURE_TYPE_PNG, "unchecked_checkbox.png", Units.toEMU(15), Units.toEMU(15));
-            answerRun.setText(answerText);
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Calculation the number of paragraphs between questions.
-     * So that setting of 4, 5,... questions per site looks ok.
-     *
-     * @return the number of paragraphs between questions (the answer-block)
-     */
-    private int getParagraphCount(int questionNumber) {
-        int paragraphsOnOnePage = 25 - this.questionsPerSite;
-
-        // first page
-        if (questionNumber < this.questionsPerSite) {
-            // mind the title
-            return (int) (paragraphsOnOnePage - 2) / this.questionsPerSite;
-        }
-
-        // following pages
-        return (int) paragraphsOnOnePage / this.questionsPerSite;
     }
 }

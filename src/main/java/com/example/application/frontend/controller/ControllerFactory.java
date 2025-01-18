@@ -61,7 +61,7 @@ public class ControllerFactory {
                     new ConfirmDeletion_ScreenController(studyProgramService, courseService, questionService);
             case "ImageResizer_ScreenController" -> new ImageResizer_ScreenController();
             case "ImportErrorScreenController" -> new ImportErrorScreenController();
-            case "Latex_ScreenController" -> new Latex_ScreenController(imageService);
+            case "Latex_ScreenController" -> new Latex_ScreenController();
             default -> throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
         };
     }

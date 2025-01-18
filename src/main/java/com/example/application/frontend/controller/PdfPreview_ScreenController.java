@@ -4,17 +4,17 @@ import com.example.application.MainApp;
 import com.example.application.backend.app.*;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
+import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,11 @@ import static com.example.application.frontend.controller.SwitchScene.switchScen
 @Scope("prototype")
 public class PdfPreview_ScreenController extends ScreenController {
     @FXML
-    private Slider questionCountSlider;
+    public SplitPane splitPane;
+    @FXML
+    public ScrollPane previewScrollPane;
+    @FXML
+    private Slider distanceBetweenQuestionsSlider;
     @FXML
     private TextField titleTextField;
     @FXML
@@ -38,6 +42,10 @@ public class PdfPreview_ScreenController extends ScreenController {
     private Label label_selectedCourse;
     @FXML
     private CheckBox checkbox_applyHeader;
+    @FXML
+    public GridPane headerSpecificGridPane;
+    @FXML
+    public CheckBox checkbox_applyHeaderAllPages;
     @FXML
     private CheckBox checkbox_showPageNumber;
     public Label label_selectedDirectory;
@@ -48,6 +56,17 @@ public class PdfPreview_ScreenController extends ScreenController {
                 MainApp.resourceBundle.getString("question_filter_selected_course"),
                 SharedData.getSelectedCourse().getName())
         );
+
+        // wait 0,5 seconds after moving the divider to prevent calling the function too often
+        PauseTransition pause = new PauseTransition(Duration.millis(500));
+        pause.setOnFinished(event -> onDividerMovedDone());
+
+        splitPane.getDividers().forEach(divider -> {
+            divider.positionProperty().addListener((observable, oldValue, newValue) -> {
+                // restart timer after every change
+                pause.playFromStart();
+            });
+        });
     }
 
     public void applyExportBtnClicked(ActionEvent actionEvent) {
@@ -57,9 +76,10 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
 
         ExportPdf exportPdf = new ExportPdf(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
         ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
         ArrayList<Question> questionsList = new ArrayList<>(observableQuestions);
@@ -76,9 +96,10 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
 
         ExportDocx exportDocx = new ExportDocx(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
 
         ObservableList<Question> observableQuestions = SharedData.getTestQuestions();
@@ -92,17 +113,19 @@ public class PdfPreview_ScreenController extends ScreenController {
     public void applyFormattingBtnClicked(ActionEvent actionEvent) {
         // set the latest options
         ExportPdf exportPdf = new ExportPdf(getTestHeader(),
-                getQuestionCount(),
+                getQuestionDistance(),
                 this.label_selectedDirectory.getText(),
                 this.checkbox_applyHeader.isSelected(),
+                this.checkbox_applyHeaderAllPages.isSelected(),
                 this.checkbox_showPageNumber.isSelected());
-        // get and insert the images (each page is one image) into the vbox
 
         ObservableList<Question> questions = SharedData.getTestQuestions();
         ArrayList<Question> questionList = new ArrayList<>(questions);
-        exportPdf.getPreviewImages(questionList);
-
         showPreview(exportPdf.getPreviewImages(questionList));
+    }
+
+    private void onDividerMovedDone() {
+        applyFormattingBtnClicked(null);
     }
 
     public void chooseDirectoryBtnClicked(ActionEvent actionEvent) {
@@ -117,8 +140,8 @@ public class PdfPreview_ScreenController extends ScreenController {
     public void showPreview(ArrayList<Image> images) {
         // removing previous images
         this.vbox_previewPane.getChildren().clear();
-
-        double targetWidth = this.vbox_previewPane.getWidth();
+        // get updated width of vbox-parent (the scroll-pane)
+        double targetWidth = previewScrollPane.getViewportBounds().getWidth();
 
         for (int i = 0; i < images.size(); i++) {
             ImageView imageView = new ImageView(images.get(i));
@@ -153,12 +176,16 @@ public class PdfPreview_ScreenController extends ScreenController {
         }
     }
 
-    private int getQuestionCount() {
-        return (int) questionCountSlider.getValue();
+    private int getQuestionDistance() {
+        return (int) distanceBetweenQuestionsSlider.getValue();
     }
 
     public void onGoBackBtnClick(ActionEvent mouseEvent) throws IOException {
         SharedData.setCurrentScreen(Screen.CREATE_MANUAL);
         switchScene(SwitchScene.CREATE_TEST_MANUAL);
+    }
+
+    public void onApplyHeaderClick(ActionEvent actionEvent) {
+        headerSpecificGridPane.setDisable(!checkbox_applyHeader.isSelected());
     }
 }
