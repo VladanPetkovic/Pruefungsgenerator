@@ -51,7 +51,8 @@ public class EditorScreenController {
     public HTMLEditor editor;
     @FXML
     private WebView questionPreview;
-    public HBox displayImagesHbox;
+    @FXML
+    private HBox displayImagesHbox;
     public final ArrayList<ImageWithButtons> imageList = new ArrayList<>();
 
     public void initialize() {
