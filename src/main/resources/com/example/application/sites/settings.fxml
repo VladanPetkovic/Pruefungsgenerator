@@ -57,22 +57,23 @@
                                     </items>
                                 </MenuButton>
 
-                                <Label fx:id="importModeHintLabel" styleClass="option_label" text="%choose_import_mode_hint" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="importModeHintLabel" styleClass="option_label" text="%import_step_1" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
                                 <Label fx:id="title_selectedStudyProgram" styleClass="option_label" text="%selected_study_program" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                 <MenuButton fx:id="chooseStudyProgramMenuBtnImport" mnemonicParsing="false" styleClass="menuButton_dark" text="%select_study_program" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                <Label fx:id="studyProgramHintLabel" styleClass="option_label" text="%choose_study_program_hint" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <Label fx:id="studyProgramHintLabel" styleClass="option_label" text="%import_step_2" GridPane.columnIndex="0" GridPane.rowIndex="4" />
 
                                 <Label fx:id="title_selectedCourse" styleClass="option_label" text="%selected_course" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                 <MenuButton fx:id="chooseCourseMenuButtonImport" mnemonicParsing="false" styleClass="menuButton_dark" text="%select_course" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                <Label fx:id="courseHintLabel" styleClass="option_label" text="%choose_course_hint" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                <Label fx:id="courseHintLabel" styleClass="option_label" text="%import_step_3" GridPane.columnIndex="0" GridPane.rowIndex="6" />
 
                                 <Button fx:id="selectCsvFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSelectCsvFileBtnClick" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%select_csv_file" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                     <cursor>
                                         <Cursor fx:constant="DEFAULT" />
                                     </cursor>
                                 </Button>
-                                <Label fx:id="csvFileHintLabel" styleClass="option_label" text="%select_csv_file_hint" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                                <Label fx:id="csvFileHintLabel" styleClass="option_label" text="%import_step_4" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                                <Label fx:id="alternativeCsvFileHintLabel" styleClass="option_label" text="%import_step_2" GridPane.columnIndex="0" GridPane.rowIndex="8" />
 
                                 <Label styleClass="option_label" text="%selected_file" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                 <Label fx:id="label_selectedFile" styleClass="option_label" text="&quot;&quot;" GridPane.columnIndex="1" GridPane.rowIndex="10" />
@@ -83,7 +84,12 @@
                         <!-- Export Section -->
                         <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" styleClass="settings_gridPane" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                             <columnConstraints>
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="669.0" minWidth="0.0" prefWidth="511.2" />
+
+                                <!-- Column for hint labels (smaller width) -->
+                                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="80.0" prefWidth="100.0" />
+
+                                <!-- Column for buttons (wider width) -->
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="200.0" prefWidth="450.0" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for export label -->
@@ -97,26 +103,36 @@
                                 <RowConstraints /> <!-- Row for export button -->
                             </rowConstraints>
                             <children>
-                                <Label styleClass="topic_label" text="%export_questions_to_csv" GridPane.rowIndex="0" />
-                                <Label styleClass="option_label" text="%select_questions_for_export" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                                <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%all_questions" GridPane.rowIndex="2">
+                                <Label styleClass="topic_label" text="%export_questions_to_csv" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                <Label styleClass="option_label" text="%select_questions_for_export" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <MenuButton fx:id="chooseQuestionsMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" text="%all_questions" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#allQuestionsSelectedForExport" text="%all_questions" />
                                         <MenuItem mnemonicParsing="false" onAction="#questionsOfSPselected" text="%questions_of_study_program" />
                                         <MenuItem mnemonicParsing="false" onAction="#questionsOfCourseSelected" text="%questions_of_course" />
                                     </items>
                                 </MenuButton>
-                                <Label fx:id="chooseQuestionsLabel" styleClass="option_label" text="%select_course" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                <MenuButton fx:id="chooseCourseMenuButton" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.rowIndex="4" />
-                                <MenuButton fx:id="chooseStudyProgramMenuBtn" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.rowIndex="4" />
-                                <Label styleClass="option_label" text="%destination_folder" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-                                <Label fx:id="label_selectedDirectory" styleClass="option_label" text="&quot;&quot;" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-                                <Button fx:id="chooseDirectoryBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" visible="false" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                                <Label fx:id="exportModeHintLabel" styleClass="option_label" text="%export_step_1" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                                <Label fx:id="chooseQuestionsLabel" styleClass="option_label" text="%select_course" visible="false" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <Label fx:id="chooseQuestionsHintLabel" styleClass="option_label" text="%export_step_2" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+
+                                <MenuButton fx:id="chooseCourseMenuButtonExport" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <MenuButton fx:id="chooseStudyProgramMenuBtnExport" mnemonicParsing="false" styleClass="menuButton_dark" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                <Label styleClass="option_label" text="%destination_folder" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <Label fx:id="label_selectedDirectory" styleClass="option_label" text="&quot;&quot;" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                                <Button fx:id="chooseDirectoryBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chooseDirectoryBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%choose_folder_to_save_file" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                     <cursor>
                                         <Cursor fx:constant="DEFAULT" />
                                     </cursor>
                                 </Button>
-                                <Button fx:id="settingsExportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" visible="false" GridPane.rowIndex="8" />
+                                <Label fx:id="directoryHintLabel" styleClass="option_label" text="%export_step_3" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                <Label fx:id="alternativeDirectoryHintLabel" styleClass="option_label" text="%export_step_2" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+
+                                <Button fx:id="settingsExportBtn" mnemonicParsing="false" onAction="#applyExportBtnClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_dark" text="%export" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                             </children>
                         </GridPane>
                     </children>
