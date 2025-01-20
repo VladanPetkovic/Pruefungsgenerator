@@ -42,7 +42,7 @@
                   </GridPane>
                   <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
                       <content>
-                        <VBox fx:id="vbox_testQuestionsPreview" />
+                        <VBox fx:id="vbox_testQuestionsPreview" style="-fx-background-color: #3A3A3A;" />
                    </content>
                   </ScrollPane>
                   </children>

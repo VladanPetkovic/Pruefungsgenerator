@@ -350,12 +350,11 @@ public class CreateManual_ScreenController extends ScreenController {
     private VBox createAnswersVBox(Question question) {
         VBox answersVBox = new VBox();
 
-        // Add a label for the answers section
         Label answersLabel = new Label("Answers:");
-        answersLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+        answersLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white");
         answersVBox.getChildren().add(answersLabel);
 
-        // Create a TextArea for each answer and add listeners
+        //create textArea for each answer
         for (Answer answer : question.getAnswers()) {
 
             TextArea answerTextArea = new TextArea(answer.getAnswer());
@@ -366,17 +365,15 @@ public class CreateManual_ScreenController extends ScreenController {
                 answer.setAnswer(newValue.trim());
             });
 
+            //create Hbox that stores answer textArea and remove button
             HBox answerBox = new HBox();
             answerBox.setMaxHeight(50);
             Button removeButton = new Button("X");
             removeButton.setOnAction(event -> {
-                question.getAnswers().remove(answer); // Remove the answer from the Question object
-                answersVBox.getChildren().remove(answerBox); // Remove the HBox from the VBox
+                question.getAnswers().remove(answer);
+                answersVBox.getChildren().remove(answerBox);
             });
-
-            // Add TextArea and Remove Button to the HBox
             answerBox.getChildren().addAll(answerTextArea, removeButton);
-
             answersVBox.getChildren().add(answerBox);
         }
 
