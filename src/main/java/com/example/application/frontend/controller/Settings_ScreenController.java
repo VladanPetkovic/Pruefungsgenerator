@@ -208,6 +208,7 @@ public class Settings_ScreenController extends ScreenController {
         chooseCourseMenuButtonImport.setVisible(false);
         courseHintLabel.setVisible(false);
         selectCsvFileBtn.setVisible(true);
+        csvFileHintLabel.setVisible(false);
         alternativeCsvFileHintLabel.setVisible(true);
         settingsImportBtn.setVisible(false);
         label_selectedFile.setText("");

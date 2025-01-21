@@ -3,6 +3,7 @@ package com.example.application.backend.app;
 import com.example.application.backend.db.models.*;
 import com.example.application.backend.db.services.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,6 +24,7 @@ public class ImportCSV {
     private final String importTargetStudyProgram;
     private final String importTargetCourse;
     @Getter
+    @Setter
     private String errorMessage;
 
     public ImportCSV(String filePath,
@@ -61,13 +63,13 @@ public class ImportCSV {
         // Checks if the filePath is null, which means no file was selected
         if (filePath == null) {
             Logger.log(getClass().getName(), "No file selected.", LogLevel.INFO);
+            setErrorMessage("No file selected. Please select a file!");
             return false;
         }
 
         Logger.log(getClass().getName(), "Checking data from file: " + filePath, LogLevel.INFO);
         if (!checkingDataFromFile(filePath)) {
             Logger.log(getClass().getName(), "File-check failed!", LogLevel.WARN);
-            // TODO: write the errorMessage for every use-case
             return false;
         }
 
@@ -88,7 +90,7 @@ public class ImportCSV {
             String header = reader.readLine();
             if (header == null || !header.contains("question_id")) {
                 Logger.log(getClass().getName(), "Invalid or missing header in CSV.", LogLevel.WARN);
-                errorMessage = "Invalid or missing header in CSV."; // TODO: continue with assignments like this
+                errorMessage = "Invalid or missing header in CSV.";
                 return false;
             }
 
@@ -101,6 +103,7 @@ public class ImportCSV {
                 // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
                 if (fields.length != 12) {
                     Logger.log(getClass().getName(), "Invalid format - expected 12 fields per line at line " + lineNumber, LogLevel.WARN);
+                    errorMessage = "Invalid format - expected 12 fields per line at line " + lineNumber;
                     return false;
                 }
 
@@ -134,6 +137,7 @@ public class ImportCSV {
 
                 } catch (IllegalArgumentException e) {
                     Logger.log(getClass().getName(), "Data validation error at line " + lineNumber + ": " + e.getMessage(), LogLevel.WARN);
+                    errorMessage = "Data validation error at line " + lineNumber + ": " + e.getMessage();
                     return false;
                 }
             }
@@ -141,6 +145,7 @@ public class ImportCSV {
             return true; // All checks passed
         } catch (IOException e) {
             Logger.log(getClass().getName(), "Error reading file for data check: " + e.getMessage(), LogLevel.ERROR);
+            errorMessage = "Error reading file for data check: " + e.getMessage();
             return false;
         }
     }
@@ -167,6 +172,7 @@ public class ImportCSV {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            errorMessage = "Error reading file for data import: " + e.getMessage();
             return false;
         }
         // Return true to indicate that the data import was successful
@@ -178,14 +184,15 @@ public class ImportCSV {
         ParsedCSVRow parsedRow = parseCSVRow(values);
 
         if (isCreateMode) {
-            parsedRow.setCourseName(importTargetCourse);
             parsedRow.setStudyProgramName(importTargetStudyProgram);
+            parsedRow.setCourseName(importTargetCourse);
             handleQuestions(parsedRow, true);
         } else {
             handleQuestions(parsedRow, false);
         }
     }
 
+    // question_id; question_text; category_name; difficulty; points; question_type; remarks; answers; keywords; course_name; course_number; studyprogram_name
     private ParsedCSVRow parseCSVRow(String[] values) {
         Long question_id = Long.parseLong(values[0]);
         String questionText = values[1];

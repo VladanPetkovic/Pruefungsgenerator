@@ -22,16 +22,11 @@
                         <!-- Import Section -->
                         <GridPane alignment="CENTER" minHeight="550.0" prefWidth="600.0" styleClass="settings_gridPane" stylesheets="@../css/main.css" HBox.hgrow="ALWAYS">
                             <columnConstraints>
-                                <!--
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="79.40001220703124" />
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="409.0000122070313" />
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="563.2" minWidth="10.0" prefWidth="81.19998779296873" />
-                                -->
                                 <!-- Column for hint labels (smaller width) -->
-                                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="80.0" prefWidth="100.0" />
+                                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="50.0" prefWidth="70.0" />
 
                                 <!-- Column for buttons (wider width) -->
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="200.0" prefWidth="450.0" />
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="230.0" prefWidth="480.0" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for import label -->
@@ -86,10 +81,10 @@
                             <columnConstraints>
 
                                 <!-- Column for hint labels (smaller width) -->
-                                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="80.0" prefWidth="100.0" />
+                                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="50.0" prefWidth="70.0" />
 
                                 <!-- Column for buttons (wider width) -->
-                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="200.0" prefWidth="450.0" />
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="230.0" prefWidth="480.0" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" /> <!-- Row for export label -->
