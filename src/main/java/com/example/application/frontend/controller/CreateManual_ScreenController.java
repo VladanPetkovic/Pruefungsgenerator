@@ -1,5 +1,7 @@
 package com.example.application.frontend.controller;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.Screen;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
@@ -189,7 +191,7 @@ public class CreateManual_ScreenController extends ScreenController {
             Button editButton = getEditButton(numberOfQuestion);
 
             //create showAnswers button if multiple-choice
-            System.out.println("QuestionType: " + question.getType());
+            Logger.log(this.getClass().getName(), "QuestionType: " + question.getType(), LogLevel.DEBUG);
             // Create an editable TextArea to show answers
 
             //create HBox that contains the label and buttons
@@ -347,7 +349,7 @@ public class CreateManual_ScreenController extends ScreenController {
     private VBox createAnswersVBox(Question question) {
         VBox answersVBox = new VBox();
 
-        Label answersLabel = new Label("Answers:");
+        Label answersLabel = new Label(MainApp.resourceBundle.getString("answers_preview"));
         answersLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white");
         answersVBox.getChildren().add(answersLabel);
 
