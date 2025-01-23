@@ -135,7 +135,6 @@ public class CreateManual_ScreenController extends ScreenController {
     private void showFilteredQuestions(ObservableList<Question> questions) {
         double spacing = 20.0;
 
-        // Check if the list of questions is empty.
         if (questions.isEmpty()) {
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
@@ -143,7 +142,6 @@ public class CreateManual_ScreenController extends ScreenController {
 
         this.vbox_filteredQuestionsPreview.getChildren().clear();
 
-        // Iterate through each question in the list.
         for (Question question : questions) {
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
@@ -177,7 +175,6 @@ public class CreateManual_ScreenController extends ScreenController {
             questionNumberLabel.getStyleClass().add("manualCreate_Question_Label");
 
 
-
             VBox questionHtmlEditor = null;
             try {
                 questionHtmlEditor = createHtmlEditor(question, numberOfQuestion);
@@ -192,7 +189,7 @@ public class CreateManual_ScreenController extends ScreenController {
             Button editButton = getEditButton(numberOfQuestion);
 
             //create showAnswers button if multiple-choice
-            System.out.println("QuestionType: "+ question.getType());
+            System.out.println("QuestionType: " + question.getType());
             // Create an editable TextArea to show answers
 
             //create HBox that contains the label and buttons

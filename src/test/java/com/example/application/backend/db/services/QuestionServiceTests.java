@@ -202,7 +202,7 @@ class QuestionServiceTests {
         List<Question> questions = List.of(new Question(), new Question());
 
         Sort expectedSort = Sort.by(Sort.Direction.DESC, "points");
-        Pageable expectedPageable = PageRequest.of(0, 50, expectedSort);
+        Pageable expectedPageable = PageRequest.of(0, 30, expectedSort);
 
         when(questionRepository.findByFilters(
                 any(), isNull(), isNull(), isNull(), isNull(), isNull(), isNull(),

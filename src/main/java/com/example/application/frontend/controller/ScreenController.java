@@ -9,6 +9,8 @@ import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.ListChangeListener;
+import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
@@ -17,6 +19,8 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 
@@ -65,24 +69,33 @@ public abstract class ScreenController extends ControlsInitializer {
      * @return The VBox containing the question details.
      */
     protected VBox createQuestionVBox(Question question) {
-        // Create a new VBox to hold the question details.
         VBox questionVbox = new VBox();
 
         // Create labels to display question information.
         Label questionNumberLabel = createLabel(MainApp.resourceBundle.getString("possible_points") + " " + question.getPoints(), Color.WHITE);
         Label questionDifficultyLabel = createLabel(MainApp.resourceBundle.getString("create_manual_difficulty") + " " + question.getDifficulty(), Color.WHITE);
-        Label questionTextLabel = createLabel(question.getQuestion(), Color.WHITE);
-        Label questionAnswersLabel = createLabel(question.getAnswersAsString(), Color.WHITE);
-        Label questionRemarksLabel = createLabel(question.getRemark(), Color.WHITE);
 
-        // Allow the question text label to wrap text if necessary.
-        questionTextLabel.setWrapText(true);
+        // add question details to the VBox.
+        questionVbox.getChildren().addAll(questionNumberLabel, questionDifficultyLabel);
 
-        // Add question details to the VBox.
-        questionVbox.getChildren().addAll(questionNumberLabel, questionDifficultyLabel, questionTextLabel);
-        addIfNotNull(questionVbox, questionAnswersLabel);
-        addIfNotNull(questionVbox, questionRemarksLabel);
+        WebView questionWebView = new WebView();
+        questionWebView.setMinHeight(150);
+        String htmlContent = question.getQuestion();
+        questionWebView.getEngine().loadContent(htmlContent);
+        questionWebView.setOnScroll(Event::consume);
+        questionWebView.setMouseTransparent(true);
+        // remove the vertical scrollbar
+        questionWebView.getChildrenUnmodifiable().addListener(new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(Change<? extends Node> change) {
+                Set<Node> deadSeaScrolls = questionWebView.lookupAll(".scroll-bar");
+                for (Node scroll : deadSeaScrolls) {
+                    scroll.setVisible(false);
+                }
+            }
+        });
 
+        questionVbox.getChildren().add(questionWebView);
         return questionVbox;
     }
 
