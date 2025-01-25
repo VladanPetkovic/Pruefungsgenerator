@@ -35,7 +35,7 @@ https://www.oracle.com/java/technologies/downloads/#jdk21-windows
 
 - create a new folder ``exam_generator``
     - add here the folder ``jre/jdk-21/...``
-    - add the .jar-file ``Pruefungsgenerator-1.0-SNAPSHOT-spring-boot``
+    - add the .jar-file ``Pruefungsgenerator-1.0.0-spring-boot``
     - create a ``bin``-folder
     - create the correct folder-structure for the main.css and all pictures
         - something like: ``src/main/resources/com/example/application/``
