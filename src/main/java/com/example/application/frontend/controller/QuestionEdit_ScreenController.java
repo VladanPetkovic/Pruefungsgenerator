@@ -1,5 +1,7 @@
 package com.example.application.frontend.controller;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.db.models.*;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
@@ -99,8 +101,8 @@ public class QuestionEdit_ScreenController extends ScreenController {
 
         //if user clicked on the edit button in manualCreate Screen
         if (SharedData.getQuestionToEdit() != null) {
-            System.out.println("QUESTION IS HERE");
-            System.out.println("Question questiontext: " + SharedData.getQuestionToEdit().getQuestion());
+            Logger.log(this.getClass().getName(), "QUESTION IS HERE, questiontext: " +
+                    SharedData.getQuestionToEdit().getQuestion(), LogLevel.DEBUG);
             displayQuestionFromTestCreation();
         }
     }

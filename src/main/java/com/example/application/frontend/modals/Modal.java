@@ -1,6 +1,8 @@
 package com.example.application.frontend.modals;
 
 import com.example.application.MainApp;
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.frontend.controller.FXMLDependencyInjection;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -40,7 +42,7 @@ public class Modal<T> {
             // create scene from loaded root
             scene = new Scene(root);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Logger.log(this.getClass().getName(), e.getMessage(), LogLevel.ERROR);
         }
         // get the controller associated with the scene
         controller = fxmlLoader.getController();

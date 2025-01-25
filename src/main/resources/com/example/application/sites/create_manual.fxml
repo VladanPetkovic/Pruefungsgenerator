@@ -40,9 +40,9 @@
                         <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#applyExportButtonClicked" onMousePressed="#onButtonPressed" onMouseReleased="#onButtonReleased" styleClass="btn_red" text="%export" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
                      </children>
                   </GridPane>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: #3A3A3A;" VBox.vgrow="ALWAYS">
                       <content>
-                        <VBox fx:id="vbox_testQuestionsPreview" />
+                        <VBox fx:id="vbox_testQuestionsPreview" style="-fx-background-color: #3A3A3A;" />
                    </content>
                   </ScrollPane>
                   </children>

@@ -1,12 +1,14 @@
 package com.example.application.frontend.controller;
 
+import com.example.application.backend.app.LogLevel;
+import com.example.application.backend.app.Logger;
 import com.example.application.backend.app.Screen;
 import com.example.application.backend.app.SharedData;
 import com.example.application.MainApp;
+import com.example.application.backend.db.models.Answer;
 import com.example.application.backend.db.models.Message;
 import com.example.application.backend.db.models.Question;
 import com.example.application.frontend.components.EditorScreenController;
-import com.example.application.frontend.components.EditorSmallScreenController;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,6 +37,8 @@ public class CreateManual_ScreenController extends ScreenController {
     private VBox vbox_testQuestionsPreview;
     @FXML
     private VBox vbox_filteredQuestionsPreview;
+    @FXML
+    private HBox answersHBox;
     private final List<EditorScreenController> questionTextController = new ArrayList<>();
 
     @FXML
@@ -79,6 +83,7 @@ public class CreateManual_ScreenController extends ScreenController {
                 VBox questionVbox = new VBox();
                 String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), questionCounter, question.getPoints());
                 Label questionNumberLabel = new Label(previewLabel);
+                questionNumberLabel.getStyleClass().add("manualCreate_Question_Label");
 
 
                 VBox questionHtmlEditor = null;
@@ -96,7 +101,7 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 //create hbox for questionlabel and remove button
                 HBox newQuestionHbox = new HBox();
-                newQuestionHbox.setSpacing(10);
+                //newQuestionHbox.setSpacing(10);
                 HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
                 questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -105,6 +110,12 @@ public class CreateManual_ScreenController extends ScreenController {
 
                 // add labels to the VBox
                 questionVbox.getChildren().addAll(newQuestionHbox, questionHtmlEditor);
+
+                //for multiple choice questions add the answers
+                if ("MULTIPLE_CHOICE".equalsIgnoreCase(question.getType())) {
+                    VBox answersVBox = createAnswersVBox(question);
+                    questionVbox.getChildren().add(answersVBox);
+                }
 
                 // add the question VBox to the test preview area (VBox)
                 vbox_testQuestionsPreview.getChildren().add(questionVbox);
@@ -126,7 +137,6 @@ public class CreateManual_ScreenController extends ScreenController {
     private void showFilteredQuestions(ObservableList<Question> questions) {
         double spacing = 20.0;
 
-        // Check if the list of questions is empty.
         if (questions.isEmpty()) {
             this.vbox_filteredQuestionsPreview.getChildren().clear();
             return;
@@ -134,7 +144,6 @@ public class CreateManual_ScreenController extends ScreenController {
 
         this.vbox_filteredQuestionsPreview.getChildren().clear();
 
-        // Iterate through each question in the list.
         for (Question question : questions) {
             VBox questionVbox = createQuestionVBox(question);
             questionVbox.getStyleClass().add("filter_question_preview_vbox");
@@ -165,6 +174,8 @@ public class CreateManual_ScreenController extends ScreenController {
             VBox newQuestionVbox = new VBox();
             String previewLabel = MessageFormat.format(MainApp.resourceBundle.getString("question_number_label"), numberOfQuestion + 1, question.getPoints());
             Label questionNumberLabel = new Label(previewLabel);
+            questionNumberLabel.getStyleClass().add("manualCreate_Question_Label");
+
 
             VBox questionHtmlEditor = null;
             try {
@@ -179,16 +190,27 @@ public class CreateManual_ScreenController extends ScreenController {
             Button removeButton = getRemoveButton(questionVbox, question);
             Button editButton = getEditButton(numberOfQuestion);
 
+            //create showAnswers button if multiple-choice
+            Logger.log(this.getClass().getName(), "QuestionType: " + question.getType(), LogLevel.DEBUG);
+            // Create an editable TextArea to show answers
+
             //create HBox that contains the label and buttons
             HBox newQuestionHbox = new HBox();
-            newQuestionHbox.setSpacing(10);
+            //newQuestionHbox.setSpacing(10);
             HBox.setHgrow(questionNumberLabel, Priority.ALWAYS);
             questionNumberLabel.setMaxWidth(Double.MAX_VALUE);
 
+
             newQuestionHbox.getChildren().addAll(questionNumberLabel, upButton, downButton, editButton, removeButton);
             newQuestionHbox.setAlignment(Pos.CENTER_RIGHT);
+
             // add labels, buttons and textarea to the questionVBox
             newQuestionVbox.getChildren().addAll(newQuestionHbox, questionHtmlEditor);
+            //for multiple choice questions add the answers
+            if ("MULTIPLE_CHOICE".equalsIgnoreCase(question.getType())) {
+                VBox answersVBox = createAnswersVBox(question);
+                newQuestionVbox.getChildren().add(answersVBox);
+            }
 
             if (!containsQuestionWithId(question.getId(), SharedData.getTestQuestions())) {
                 // add this question to the vbox_testQuestionsPreview, if not added
@@ -322,5 +344,38 @@ public class CreateManual_ScreenController extends ScreenController {
             }
         });
         return editButton;
+    }
+
+    private VBox createAnswersVBox(Question question) {
+        VBox answersVBox = new VBox();
+
+        Label answersLabel = new Label(MainApp.resourceBundle.getString("answers_preview"));
+        answersLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white");
+        answersVBox.getChildren().add(answersLabel);
+
+        //create textArea for each answer
+        for (Answer answer : question.getAnswers()) {
+
+            TextArea answerTextArea = new TextArea(answer.getAnswer());
+            answerTextArea.setWrapText(true); // continue on next line if text extends width
+
+            //update answers on user input
+            answerTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+                answer.setAnswer(newValue.trim());
+            });
+
+            //create Hbox that stores answer textArea and remove button
+            HBox answerBox = new HBox();
+            answerBox.setMaxHeight(50);
+            Button removeButton = new Button("X");
+            removeButton.setOnAction(event -> {
+                question.getAnswers().remove(answer);
+                answersVBox.getChildren().remove(answerBox);
+            });
+            answerBox.getChildren().addAll(answerTextArea, removeButton);
+            answersVBox.getChildren().add(answerBox);
+        }
+
+        return answersVBox;
     }
 }

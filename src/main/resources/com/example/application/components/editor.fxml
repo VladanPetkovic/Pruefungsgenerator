@@ -64,7 +64,7 @@
             <URL value="@../css/main.css" />
          </stylesheets>
       </TabPane>
-      <HBox fx:id="displayImagesHbox" minHeight="150.0">
+      <HBox fx:id="displayImagesHbox" maxHeight="300">
       </HBox>
    </children>
 </VBox>

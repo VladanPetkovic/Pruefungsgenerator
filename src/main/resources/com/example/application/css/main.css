@@ -639,3 +639,9 @@ This rule rotates the button by 45 degrees and applies a darker drop shadow effe
 .dialog-pane .label {
     -fx-text-fill: white;
 }
+
+.manualCreate_Question_Label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
