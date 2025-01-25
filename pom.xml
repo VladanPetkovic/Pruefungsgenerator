@@ -7,6 +7,17 @@
     <artifactId>Pruefungsgenerator</artifactId>
     <version>1.0.0</version>
     <name>Pruefungsgenerator</name>
+    <developers>
+        <developer>
+            <name>Vladan Petkovic</name>
+        </developer>
+        <developer>
+            <name>Simon Heider</name>
+        </developer>
+        <developer>
+            <name>Peter Tavaszi</name>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
